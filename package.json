@@ -13,9 +13,9 @@
 	"scripts": {
 		"test": "npm run build:ts && tsc -p test/tsconfig.json && tap --ts \"test/**/*.test.ts\"",
 		"start": "npm run build:ts && fastify start -a '0.0.0.0' -l info dist/app.js",
-		"build:ts": "rm -rf dist && tsc",
+		"build:ts": "rm -rf dist && tsc && tsc-alias -p tsconfig.json",
 		"watch:ts": "tsc -w",
-		"dev": "npm run build:ts && concurrently -k -p \"[{name}]\" -n \"TypeScript,App\" -c \"yellow.bold,cyan.bold\" \"npm:watch:ts\" \"npm:dev:start\"",
+		"dev": "nodemon",
 		"dev:start": "fastify start  -a '0.0.0.0' --ignore-watch=.ts$ -w -l info -P dist/app.js",
 		"prepare": "husky install",
 		"model": "npx ts-node ./src/scripts/auto.ts",
@@ -57,6 +57,8 @@
 		"sequelize-auto": "^0.8.8",
 		"tap": "^16.1.0",
 		"ts-node": "^10.4.0",
-		"typescript": "^4.5.4"
+		"typescript": "^5.1.6",
+		"tsc-alias": "^1.8.8",
+		"tsconfig-paths": "^4.2.0"
 	}
 }
