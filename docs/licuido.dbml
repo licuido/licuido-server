@@ -1,0 +1,424 @@
+Project Licuido {
+  database_type: 'PostgreSQL'
+  Note: '''
+    # Licuido Database
+    ****
+  '''
+}
+
+Table master_investor_types {
+    id integer [primary key,note: 'Unique identifier for the investor type']
+    name text [note: 'Denotes if the investor is individual / corporate']
+    is_active boolean [note: 'Indicates whether the investor type is active or not']
+    created_at timestamp [note: 'Timestamp for when the record was created']
+    updated_at timestamp [note: 'Timestamp for when the record was last updated']
+    note: "Table for storing types of investors"
+}
+
+Table master_business_sectors {
+    id integer [primary key,note: 'Unique identifier for the business sector']
+    name text [note: 'Name of the business sector']
+    is_active boolean [note: 'Indicates whether the business sector is active or not']
+    created_at timestamp [note: 'Timestamp for when the record was created']
+    updated_at timestamp [note: 'Timestamp for when the record was last updated']
+    note: "Table for storing business sectors"
+}
+
+Table master_regions {
+    id integer [primary key,note: 'Unique identifier for the region']
+    name text [note: 'Name of the region']
+    is_active boolean [note: 'Indicates whether the region is active or not']
+    created_at timestamp [note: 'Timestamp for when the record was created']
+    updated_at timestamp [note: 'Timestamp for when the record was last updated']
+    note: "Table for storing regions"
+}
+
+Table master_countries {
+    id integer [primary key,note: 'Unique identifier for the country']
+    name text [note: 'Name of the country']
+    iso3 text [note: 'ISO 3166-1 alpha-3 code for the country']
+    phone_code text [note: 'Phone code of the country']
+    currency text [note: 'Currency of the country']
+    currency_code text [note: 'Currency code of the country']
+    emoji text [note: 'Emoji representation of the country flag']
+    emoji_unicode text [note: 'Unicode representation of the country flag emoji']
+    region_id integer [ref: > master_regions.id,note: 'Foreign key referencing the region table']
+    is_active boolean [note: 'Indicates whether the country is active or not']
+    created_at timestamp [note: 'Timestamp for when the record was created']
+    updated_at timestamp [note: 'Timestamp for when the record was last updated']
+    note: "Table for storing countries along with their details"
+}
+
+Table master_entity_types {
+    id integer [primary key,note: 'Unique identifier for the entity type']
+    name text [note: 'Denotes if the entity is investor / issuer']
+    is_active boolean [note: 'Indicates whether the entity type is active or not']
+    created_at timestamp [note: 'Timestamp for when the record was created']
+    updated_at timestamp [note: 'Timestamp for when the record was last updated']
+    note: "Table for storing types of entities"
+}
+
+Table assets {
+    id uuid [primary key,note: 'Unique identifier for the asset']
+    type text [note: 'Type of asset']
+    url text [note: 'URL related to the asset']
+    order integer [note: 'Order of the asset']
+    is_active boolean [note: 'Indicates whether the asset is active or not']
+    created_by uuid [ref: > user_profiles.id,note: 'Foreign key referencing the user_profiles table for the creator']
+    updated_by uuid [ref: > user_profiles.id,note: 'Foreign key referencing the user_profiles table for the updater']
+    created_at timestamp [note: 'Timestamp for when the record was created']
+    updated_at timestamp [note: 'Timestamp for when the record was last updated']
+    note: "Table for storing assets"
+}
+
+Table user_profiles {
+    id uuid [primary key,note: 'Unique identifier for the user profile']
+    name text [note: 'Name of the user']
+    position text [note: 'Position/Role of the user']
+    email_id text [note: 'Email address of the user']
+    mobile_no_std_code text [note: 'Standard code for mobile number']
+    mobile_no text [note: 'Mobile number of the user']
+    is_active boolean [note: 'Indicates whether the user profile is active or not']
+    created_at timestamp [note: 'Timestamp for when the user profile was created']
+    updated_at timestamp [note: 'Timestamp for when the user profile was last updated']
+    note: "Table for storing user profiles"
+}
+
+Table user_identities {
+    id uuid [primary key,note: 'Unique identifier for the user identity']
+    asset_id uuid [ref: > assets.id,note: 'Foreign key referencing the assets table']
+    alias text [note: 'Alias for the user identity']
+    is_active boolean [note: 'Indicates whether the user identity is active or not']
+    created_by uuid [ref: > user_profiles.id,note: 'Foreign key referencing the user_profiles table for the creator']
+    updated_by uuid [ref: > user_profiles.id,note: 'Foreign key referencing the user_profiles table for the updater']
+    created_at timestamp [note: 'Timestamp for when the user identity was created']
+    updated_at timestamp [note: 'Timestamp for when the user identity was last updated']
+    note: "Table for storing user identities"
+}
+
+Table individual_investors {
+    id uuid [primary key,note: 'Unique identifier for the individual investor']
+    contact_profile_id uuid [ref: > user_profiles.id,note: 'Foreign key referencing the user_profiles table for the contact profile']
+    investor_pic_id uuid [ref: > assets.id,note: 'Foreign key referencing the assets table for the investor picture']
+    legal_address text [note: 'Legal address of the individual investor']
+    zipcode text [note: 'Zipcode of the individual investor']
+    country_id integer [ref: > master_countries.id,note: 'Foreign key referencing the master_countries table for the country']
+    is_active boolean [note: 'Indicates whether the individual investor is active or not']
+    created_by uuid [ref: > user_profiles.id,note: 'Foreign key referencing the user_profiles table for the creator']
+    updated_by uuid [ref: > user_profiles.id,note: 'Foreign key referencing the user_profiles table for the updater']
+    created_at timestamp [note: 'Timestamp for when the individual investor was created']
+    updated_at timestamp [note: 'Timestamp for when the individual investor was last updated']
+    note: "Table for storing individual investors"
+}
+
+Table entities {
+    id uuid [primary key,note: 'Unique identifier for the entity']
+    entity_type_id integer [ref: > master_entity_types.id,note: 'Foreign key referencing the master_entity_types table for the entity type']
+    legal_name text [note: 'Legal name of the entity']
+    lei_number text [note: 'Legal Entity Identifier (LEI) number of the entity']
+    legal_address text [note: 'Legal address of the entity']
+    zipcode text [note: 'Zipcode of the entity']
+    country_id integer [ref: > master_countries.id,note: 'Foreign key referencing the master_countries table for the country']
+    logo_asset_id uuid [ref: > assets.id,note: 'Foreign key referencing the assets table for the entity logo']
+    business_sector_id integer [ref: > master_business_sectors.id,note: 'Foreign key referencing the master_business_sectors table for the business sector']
+    contact_profile_id uuid [ref: > user_profiles.id,note: 'Foreign key referencing the user_profiles table for the contact profile']
+    is_active boolean [note: 'Indicates whether the entity is active or not']
+    created_by uuid [ref: > user_profiles.id,note: 'Foreign key referencing the user_profiles table for the creator']
+    updated_by uuid [ref: > user_profiles.id,note: 'Foreign key referencing the user_profiles table for the updater']
+    created_at timestamp [note: 'Timestamp for when the entity was created']
+    updated_at timestamp [note: 'Timestamp for when the entity was last updated']
+    note: "Table for storing entities"
+}
+
+Table business_documents {
+    id uuid [primary key,note: 'Unique identifier for the business document']
+    business_id uuid [ref: > entities.id,note: 'Foreign key referencing the entities table for the business']
+    asset_id uuid [ref: > assets.id,note: 'Foreign key referencing the assets table for the document asset']
+    asset_type text [note: 'Type of the asset']
+    is_active boolean [note: 'Indicates whether the business document is active or not']
+    created_by uuid [ref: > user_profiles.id,note: 'Foreign key referencing the user_profiles table for the creator']
+    updated_by uuid [ref: > user_profiles.id,note: 'Foreign key referencing the user_profiles table for the updater']
+    created_at timestamp [note: 'Timestamp for when the business document was created']
+    updated_at timestamp [note: 'Timestamp for when the business document was last updated']
+    note: "Table for storing business documents"
+}
+
+Table ekyc {
+    id uuid [primary key,note: 'Unique identifier for the electronic Know Your Customer (eKYC) record']
+    kyc_profile_id uuid [ref: > user_profiles.id,note: 'Foreign key referencing the user_profiles table for the KYC profile']
+    captured_asset_id uuid [ref: > assets.id,note: 'Foreign key referencing the assets table for the captured asset']
+    is_processed boolean [note: 'Indicates whether the eKYC record is processed or not']
+    is_verified boolean [note: 'Indicates whether the eKYC record is verified or not']
+    is_active boolean [note: 'Indicates whether the eKYC record is active or not']
+    created_by uuid [ref: > user_profiles.id,note: 'Foreign key referencing the user_profiles table for the creator']
+    updated_by uuid [ref: > user_profiles.id,note: 'Foreign key referencing the user_profiles table for the updater']
+    created_at timestamp [note: 'Timestamp for when the eKYC record was created']
+    updated_at timestamp [note: 'Timestamp for when the eKYC record was last updated']
+    note: "Table for storing electronic Know Your Customer (eKYC) records"
+}
+
+Table master_wallet_types {
+    id integer [primary key,note: 'Unique identifier for the wallet type']
+    name text [note: 'Name of the wallet type']
+    is_active boolean [note: 'Indicates whether the wallet type is active or not']
+    created_at timestamp [note: 'Timestamp for when the wallet type was created']
+    updated_at timestamp [note: 'Timestamp for when the wallet type was last updated']
+    note: "Table for storing master wallet types"
+}
+
+Table customer_wallets {
+    id uuid [primary key,note: 'Unique identifier for the customer wallet']
+    wallet_type_id integer [ref: > master_wallet_types.id,note: 'Foreign key referencing the master_wallet_types table for the wallet type']
+    wallet_address text [note: 'Address of the customer wallet']
+    investor_entity_id uuid [ref: > entities.id,note: 'Foreign key referencing the entities table for the investor entity']
+    individual_investor_id uuid [ref: > individual_investors.id,note: 'Foreign key referencing the individual_investors table for the individual investor']
+    is_authenticated boolean [note: 'Indicates whether the customer wallet is authenticated or not']
+    is_active boolean [note: 'Indicates whether the customer wallet is active or not']
+    created_by uuid [ref: > user_profiles.id,note: 'Foreign key referencing the user_profiles table for the creator']
+    updated_by uuid [ref: > user_profiles.id,note: 'Foreign key referencing the user_profiles table for the updater']
+    created_at timestamp [note: 'Timestamp for when the customer wallet was created']
+    updated_at timestamp [note: 'Timestamp for when the customer wallet was last updated']
+    note: "Table for storing customer wallets"
+}
+
+
+Table master_token_offering_status {
+    id integer [primary key,note: 'Unique identifier for the token offering status']
+    name text [note: 'Name of the token offering status']
+    is_active boolean [note: 'Indicates whether the token offering status is active or not']
+    created_at timestamp [note: 'Timestamp for when the record was created']
+    updated_at timestamp [note: 'Timestamp for when the record was last updated']
+    note: "Table for storing master token offering status"
+}
+
+Table master_token_status {
+    id integer [primary key,note: 'Unique identifier for the token status']
+    name text [note: 'Name of the token status']
+    is_active boolean [note: 'Indicates whether the token status is active or not']
+    created_at timestamp [note: 'Timestamp for when the record was created']
+    updated_at timestamp [note: 'Timestamp for when the record was last updated']
+    note: "Table for storing master token status"
+}
+
+Table master_token_type {
+    id integer [primary key,note: 'Unique identifier for the token type']
+    name text [note: 'Name of the token type']
+    is_active boolean [note: 'Indicates whether the token type is active or not']
+    created_at timestamp [note: 'Timestamp for when the record was created']
+    updated_at timestamp [note: 'Timestamp for when the record was last updated']
+    note: "Table for storing master token types"
+}
+
+Table master_blockchain_networks {
+    id integer [primary key,note: 'Unique identifier for the blockchain network']
+    name text [note: 'Name of the blockchain network']
+    is_active boolean [note: 'Indicates whether the blockchain network is active or not']
+    created_at timestamp [note: 'Timestamp for when the record was created']
+    updated_at timestamp [note: 'Timestamp for when the record was last updated']
+    note: "Table for storing master blockchain networks"
+}
+
+Table token_offerings {
+    id uuid [primary key,note: 'Unique identifier for the token offering']
+    issuer_entity_id uuid [ref: > entities.id,note: 'Foreign key referencing the entities table for the issuer entity']
+    name text [note: 'Name of the token offering']
+    description text [note: 'Description of the token offering']
+    isin_number text [note: 'ISIN number of the token offering']
+    symbol text [note: 'Symbol of the token offering']
+    token_type_id integer [ref: > master_token_type.id,note: 'Foreign key referencing the master_token_type table for the token type']
+    base_currency text [note: 'Base currency of the token offering']
+    base_currency_code text [note: 'Currency code of the base currency']
+    blockchain_network integer [ref: > master_blockchain_networks.id,note: 'Foreign key referencing the master_blockchain_networks table for the blockchain network']
+    logo_asset_id uuid [ref: > assets.id,note: 'Foreign key referencing the assets table for the logo asset']
+    banner_asset_id uuid [ref: > assets.id,note: 'Foreign key referencing the assets table for the banner asset']
+    offering_price numeric [note: 'Offering price of the token offering']
+    jurisdiction integer [ref: > master_countries.id,note: 'Foreign key referencing the master_countries table for the jurisdiction']
+    start_date date [note: 'Start date of the token offering']
+    end_date date [note: 'End date of the token offering']
+    minimum_investment_limit numeric [note: 'Minimum investment limit of the token offering']
+    maximum_investment_limit numeric [note: 'Maximum investment limit of the token offering']
+    bank_name text [note: 'Name of the bank for the token offering']
+    bank_account_name text [note: 'Name of the bank account for the token offering']
+    swift_bic_no text [note: 'SWIFT/BIC number of the bank for the token offering']
+    iban_no text [note: 'IBAN number of the bank for the token offering']
+    is_fund_rating_enabled boolean [note: 'Indicates whether fund rating is enabled for the token offering']
+    is_projected_rate_of_return_enabled boolean [note: 'Indicates whether projected rate of return is enabled for the token offering']
+    is_expected_annual_perc_yield_enabled boolean [note: 'Indicates whether expected annual percentage yield is enabled for the token offering']
+    is_payback_period_enabled boolean [note: 'Indicates whether payback period is enabled for the token offering']
+    is_eligible_for_collateral_enabled boolean [note: 'Indicates whether eligibility for collateral is enabled for the token offering']
+    offer_status_id integer [ref: > master_token_offering_status.id,note: 'Foreign key referencing the master_token_offering_status table for the offer status']
+    status_id integer [ref: > master_token_status.id,note: 'Foreign key referencing the master_token_status table for the status']
+    is_active boolean [note: 'Indicates whether the token offering is active or not']
+    created_by uuid [ref: > user_profiles.id,note: 'Foreign key referencing the user_profiles table for the creator']
+    updated_by uuid [ref: > user_profiles.id,note: 'Foreign key referencing the user_profiles table for the updater']
+    created_at timestamp [note: 'Timestamp for when the token offering was created']
+    updated_at timestamp [note: 'Timestamp for when the token offering was last updated']
+    note: "Table for storing token offerings"
+}
+
+Table token_offering_allowed_currencies {
+    id uuid [primary key,note: 'Unique identifier for the allowed currency']
+    token_offering_id uuid [ref: > token_offerings.id,note: 'Foreign key referencing the token_offerings table for the token offering']
+    currency text [note: 'Allowed currency for the token offering']
+    currency_code text [note: 'Currency code of the allowed currency']
+    is_active boolean [note: 'Indicates whether the allowed currency is active or not']
+    created_by uuid [ref: > user_profiles.id,note: 'Foreign key referencing the user_profiles table for the creator']
+    updated_by uuid [ref: > user_profiles.id,note: 'Foreign key referencing the user_profiles table for the updater']
+    created_at timestamp [note: 'Timestamp for when the allowed currency was created']
+    updated_at timestamp [note: 'Timestamp for when the allowed currency was last updated']
+    note: "Table for storing allowed currencies for token offerings"
+}
+
+Table token_offering_allowed_countries {
+    id uuid [primary key,note: 'Unique identifier for the allowed country']
+    token_offering_id uuid [ref: > token_offerings.id,note: 'Foreign key referencing the token_offerings table for the token offering']
+    allowed_country_id integer [ref: > master_countries.id,note: 'Foreign key referencing the master_countries table for the allowed country']
+    is_active boolean [note: 'Indicates whether the allowed country is active or not']
+    created_by uuid [ref: > user_profiles.id,note: 'Foreign key referencing the user_profiles table for the creator']
+    updated_by uuid [ref: > user_profiles.id,note: 'Foreign key referencing the user_profiles table for the updater']
+    created_at timestamp [note: 'Timestamp for when the allowed country was created']
+    updated_at timestamp [note: 'Timestamp for when the allowed country was last updated']
+    note: "Table for storing allowed countries for token offerings"
+}
+
+Table token_offering_documents {
+    id uuid [primary key,note: 'Unique identifier for the token offering document']
+    token_offering_id uuid [ref: > token_offerings.id,note: 'Foreign key referencing the token_offerings table for the token offering']
+    document_id uuid [ref: > assets.id,note: 'Foreign key referencing the assets table for the document asset']
+    is_active boolean [note: 'Indicates whether the token offering document is active or not']
+    created_by uuid [ref: > user_profiles.id,note: 'Foreign key referencing the user_profiles table for the creator']
+    updated_by uuid [ref: > user_profiles.id,note: 'Foreign key referencing the user_profiles table for the updater']
+    created_at timestamp [note: 'Timestamp for when the token offering document was created']
+    updated_at timestamp [note: 'Timestamp for when the token offering document was last updated']
+    note: "Table for storing token offering documents"
+}
+
+Table token_offering_teams {
+    id uuid [primary key,note: 'Unique identifier for the token offering team']
+    token_offering_id uuid [ref: > token_offerings.id,note: 'Foreign key referencing the token_offerings table for the token offering']
+    member_name text [note: 'Name of the team member']
+    member_title text [note: 'Title/Role of the team member']
+    member_picture_id uuid [ref: > assets.id,note: 'Foreign key referencing the assets table for the member picture']
+    is_active boolean [note: 'Indicates whether the token offering team member is active or not']
+    created_by uuid [ref: > user_profiles.id,note: 'Foreign key referencing the user_profiles table for the creator']
+    updated_by uuid [ref: > user_profiles.id,note: 'Foreign key referencing the user_profiles table for the updater']
+    created_at timestamp [note: 'Timestamp for when the token offering team member was created']
+    updated_at timestamp [note: 'Timestamp for when the token offering team member was last updated']
+    note: "Table for storing token offering teams"
+}
+
+Table master_entity_investor_status {
+    id integer [primary key,note: 'Unique identifier for the entity investor status']
+    name text [note: 'Name of the entity investor status']
+    is_active boolean [note: 'Indicates whether the entity investor status is active or not']
+    created_at timestamp [note: 'Timestamp for when the record was created']
+    updated_at timestamp [note: 'Timestamp for when the record was last updated']
+    note: "Table for storing master entity investor status"
+}
+
+Table entity_investors {
+    id uuid [primary key,note: 'Unique identifier for the entity investor']
+    investor_type_id integer [ref: > master_investor_types.id,note: 'Foreign key referencing the master_investor_types table for the investor type']
+    investor_entity_id uuid [ref: > entities.id,note: 'Foreign key referencing the entities table for the investor entity']
+    individual_investor_id uuid [ref: > individual_investors.id,note: 'Foreign key referencing the individual_investors table for the individual investor']
+    status_id integer [ref: > master_entity_investor_status.id,note: 'Foreign key referencing the master_entity_investor_status table for the investor status']
+    is_active boolean [note: 'Indicates whether the entity investor is active or not']
+    created_by uuid [ref: > user_profiles.id,note: 'Foreign key referencing the user_profiles table for the creator']
+    updated_by uuid [ref: > user_profiles.id,note: 'Foreign key referencing the user_profiles table for the updater']
+    created_at timestamp [note: 'Timestamp for when the entity investor was created']
+    updated_at timestamp [note: 'Timestamp for when the entity investor was last updated']
+    note: "Table for storing entity investors"
+}
+
+Enum investment_types {
+  by_token_volume
+  by_investment_value
+}
+
+Enum order_types {
+  subscription
+  redemption
+}
+
+Enum transaction_types {
+  mint
+  burn
+}
+
+Table master_order_status {
+    id integer [primary key,note: 'Unique identifier for the order status']
+    name text [note: 'Name of the order status']
+    is_active boolean [note: 'Indicates whether the order status is active or not']
+    created_at timestamp [note: 'Timestamp for when the record was created']
+    updated_at timestamp [note: 'Timestamp for when the record was last updated']
+    note: "Table for storing master order status"
+}
+
+Table token_orders {
+    id uuid [primary key,note: 'Unique identifier for the token order']
+    type order_types [note: 'Type of the order']
+    investment_type investment_types [note: 'Type of investment']
+    issuer_entity_id uuid [ref: > entities.id,note: 'Foreign key referencing the entities table for the issuer entity']
+    receiver_entity_id uuid [ref: > entities.id,note: 'Foreign key referencing the entities table for the receiver entity']
+    individual_receiving_investor_id uuid [ref: > individual_investors.id,note: 'Foreign key referencing the individual_investors table for the individual receiving investor']
+    token_offering_id uuid [ref: > token_offerings.id,note: 'Foreign key referencing the token_offerings table for the token offering']
+    currency text [note: 'Currency of the order']
+    currency_code text [note: 'Currency code of the order']
+    ordered_tokens numeric [note: 'Number of tokens ordered']
+    price_per_token numeric [note: 'Price per token']
+    net_investment_value numeric [note: 'Net investment value']
+    fee numeric [note: 'Fee for the order']
+    total_paid numeric [note: 'Total amount paid']
+    payment_reference text [note: 'Reference for the payment']
+    status_id integer [ref: > master_order_status.id,note: 'Foreign key referencing the master_order_status table for the status']
+    is_active boolean [note: 'Indicates whether the token order is active or not']
+    created_by uuid [ref: > user_profiles.id,note: 'Foreign key referencing the user_profiles table for the creator']
+    updated_by uuid [ref: > user_profiles.id,note: 'Foreign key referencing the user_profiles table for the updater']
+    created_at timestamp [note: 'Timestamp for when the token order was created']
+    updated_at timestamp [note: 'Timestamp for when the token order was last updated']
+    note: "Table for storing token orders"
+}
+
+Table master_transaction_status {
+    id integer [primary key,note: 'Unique identifier for the transaction status']
+    name text [note: 'Name of the transaction status']
+    is_active boolean [note: 'Indicates whether the transaction status is active or not']
+    created_at timestamp [note: 'Timestamp for when the record was created']
+    updated_at timestamp [note: 'Timestamp for when the record was last updated']
+    note: "Table for storing master transaction status"
+}
+
+Table token_transactions {
+    id uuid [primary key,note: 'Unique identifier for the token transaction']
+    type transaction_types [note: 'Type of the transaction']
+    order_id uuid [ref: > token_orders.id,note: 'Foreign key referencing the token_orders table for the order']
+    amount numeric [note: 'Amount of the transaction']
+    sender_balance numeric [note: 'Sender balance after the transaction']
+    receiver_balance numeric [note: 'Receiver balance after the transaction']
+    total_supply numeric [note: 'Total supply after the transaction']
+    transaction_hash text [note: 'Hash of the transaction']
+    status_id integer [ref: > master_transaction_status.id,note: 'Foreign key referencing the master_transaction_status table for the status']
+    is_active boolean [note: 'Indicates whether the token transaction is active or not']
+    created_by uuid [ref: > user_profiles.id,note: 'Foreign key referencing the user_profiles table for the creator']
+    updated_by uuid [ref: > user_profiles.id,note: 'Foreign key referencing the user_profiles table for the updater']
+    created_at timestamp [note: 'Timestamp for when the token transaction was created']
+    updated_at timestamp [note: 'Timestamp for when the token transaction was last updated']
+    note: "Table for storing token transactions"
+}
+
+Table wallet_tokens {
+    id uuid [primary key,note: 'Unique identifier for the token transaction']
+    customer_wallet_id uuid [ref: > customer_wallets.id, note: 'Foreign key referencing the customer_wallets table for the wallet']
+    token_offering_id uuid [ref: > token_offerings.id,note: 'Foreign key referencing the token_offerings table for the token offering']
+    invested_amount numeric [note: 'Amount invested in tokens']
+    value numeric [note: 'Value of the tokens']
+    pledged numeric [note: 'Amount pledged']
+    pending_tokens numeric [note: 'Number of pending tokens']
+    available_tokens numeric [note: 'Number of available tokens']
+    is_active boolean [note: 'Indicates whether the token transaction is active or not']
+    created_by uuid [ref: > user_profiles.id,note: 'Foreign key referencing the user_profiles table for the creator']
+    updated_by uuid [ref: > user_profiles.id,note: 'Foreign key referencing the user_profiles table for the updater']
+    created_at timestamp [note: 'Timestamp for when the token transaction was created']
+    updated_at timestamp [note: 'Timestamp for when the token transaction was last updated']
+    note: "Table for storing wallet tokens"
+}

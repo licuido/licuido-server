@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,4 +5,544 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model assets {
+  id                                                      String                     @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  type                                                    String?
+  url                                                     String?
+  order                                                   Int?
+  is_active                                               Boolean?
+  created_by                                              String?                    @db.Uuid
+  updated_by                                              String?                    @db.Uuid
+  created_at                                              DateTime?                  @default(now()) @db.Timestamp(6)
+  updated_at                                              DateTime?                  @default(now()) @db.Timestamp(6)
+  user_profiles_assets_created_byTouser_profiles          user_profiles?             @relation("assets_created_byTouser_profiles", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_profiles_assets_updated_byTouser_profiles          user_profiles?             @relation("assets_updated_byTouser_profiles", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  business_documents                                      business_documents[]
+  ekyc                                                    ekyc[]
+  entities                                                entities[]
+  individual_investors                                    individual_investors[]
+  token_offering_documents                                token_offering_documents[]
+  token_offering_teams                                    token_offering_teams[]
+  token_offerings_token_offerings_banner_asset_idToassets token_offerings[]          @relation("token_offerings_banner_asset_idToassets")
+  token_offerings_token_offerings_logo_asset_idToassets   token_offerings[]          @relation("token_offerings_logo_asset_idToassets")
+  user_identities                                         user_identities[]
+}
+
+model business_documents {
+  id                                                         String         @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  business_id                                                String?        @db.Uuid
+  asset_id                                                   String?        @db.Uuid
+  asset_type                                                 String?
+  is_active                                                  Boolean?
+  created_by                                                 String?        @db.Uuid
+  updated_by                                                 String?        @db.Uuid
+  created_at                                                 DateTime?      @default(now()) @db.Timestamp(6)
+  updated_at                                                 DateTime?      @default(now()) @db.Timestamp(6)
+  assets                                                     assets?        @relation(fields: [asset_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  entities                                                   entities?      @relation(fields: [business_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_profiles_business_documents_created_byTouser_profiles user_profiles? @relation("business_documents_created_byTouser_profiles", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_profiles_business_documents_updated_byTouser_profiles user_profiles? @relation("business_documents_updated_byTouser_profiles", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model customer_wallets {
+  id                                                       String                @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  wallet_type_id                                           Int?
+  wallet_address                                           String?
+  investor_entity_id                                       String?               @db.Uuid
+  individual_investor_id                                   String?               @db.Uuid
+  is_authenticated                                         Boolean?
+  is_active                                                Boolean?
+  created_by                                               String?               @db.Uuid
+  updated_by                                               String?               @db.Uuid
+  created_at                                               DateTime?             @default(now()) @db.Timestamp(6)
+  updated_at                                               DateTime?             @default(now()) @db.Timestamp(6)
+  user_profiles_customer_wallets_created_byTouser_profiles user_profiles?        @relation("customer_wallets_created_byTouser_profiles", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  individual_investors                                     individual_investors? @relation(fields: [individual_investor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  entities                                                 entities?             @relation(fields: [investor_entity_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_profiles_customer_wallets_updated_byTouser_profiles user_profiles?        @relation("customer_wallets_updated_byTouser_profiles", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_wallet_types                                      master_wallet_types?  @relation(fields: [wallet_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  wallet_tokens                                            wallet_tokens[]
+}
+
+model ekyc {
+  id                                               String         @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  kyc_profile_id                                   String?        @db.Uuid
+  captured_asset_id                                String?        @db.Uuid
+  is_processed                                     Boolean?
+  is_verified                                      Boolean?
+  is_active                                        Boolean?
+  created_by                                       String?        @db.Uuid
+  updated_by                                       String?        @db.Uuid
+  created_at                                       DateTime?      @default(now()) @db.Timestamp(6)
+  updated_at                                       DateTime?      @default(now()) @db.Timestamp(6)
+  assets                                           assets?        @relation(fields: [captured_asset_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_profiles_ekyc_created_byTouser_profiles     user_profiles? @relation("ekyc_created_byTouser_profiles", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_profiles_ekyc_kyc_profile_idTouser_profiles user_profiles? @relation("ekyc_kyc_profile_idTouser_profiles", fields: [kyc_profile_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_profiles_ekyc_updated_byTouser_profiles     user_profiles? @relation("ekyc_updated_byTouser_profiles", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model entities {
+  id                                                       String                   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  entity_type_id                                           Int?
+  legal_name                                               String?
+  lei_number                                               String?
+  legal_address                                            String?
+  zipcode                                                  String?
+  country_id                                               Int?
+  logo_asset_id                                            String?                  @db.Uuid
+  business_sector_id                                       Int?
+  contact_profile_id                                       String?                  @db.Uuid
+  is_active                                                Boolean?
+  created_by                                               String?                  @db.Uuid
+  updated_by                                               String?                  @db.Uuid
+  created_at                                               DateTime?                @default(now()) @db.Timestamp(6)
+  updated_at                                               DateTime?                @default(now()) @db.Timestamp(6)
+  business_documents                                       business_documents[]
+  customer_wallets                                         customer_wallets[]
+  master_business_sectors                                  master_business_sectors? @relation(fields: [business_sector_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_profiles_entities_contact_profile_idTouser_profiles user_profiles?           @relation("entities_contact_profile_idTouser_profiles", fields: [contact_profile_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_countries                                         master_countries?        @relation(fields: [country_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_profiles_entities_created_byTouser_profiles         user_profiles?           @relation("entities_created_byTouser_profiles", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_entity_types                                      master_entity_types?     @relation(fields: [entity_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  assets                                                   assets?                  @relation(fields: [logo_asset_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_profiles_entities_updated_byTouser_profiles         user_profiles?           @relation("entities_updated_byTouser_profiles", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  entity_investors                                         entity_investors[]
+  token_offerings                                          token_offerings[]
+  token_orders_token_orders_issuer_entity_idToentities     token_orders[]           @relation("token_orders_issuer_entity_idToentities")
+  token_orders_token_orders_receiver_entity_idToentities   token_orders[]           @relation("token_orders_receiver_entity_idToentities")
+}
+
+model entity_investors {
+  id                                                       String                         @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  investor_type_id                                         Int?
+  investor_entity_id                                       String?                        @db.Uuid
+  individual_investor_id                                   String?                        @db.Uuid
+  status_id                                                Int?
+  is_active                                                Boolean?
+  created_by                                               String?                        @db.Uuid
+  updated_by                                               String?                        @db.Uuid
+  created_at                                               DateTime?                      @default(now()) @db.Timestamp(6)
+  updated_at                                               DateTime?                      @default(now()) @db.Timestamp(6)
+  user_profiles_entity_investors_created_byTouser_profiles user_profiles?                 @relation("entity_investors_created_byTouser_profiles", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  individual_investors                                     individual_investors?          @relation(fields: [individual_investor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  entities                                                 entities?                      @relation(fields: [investor_entity_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_investor_types                                    master_investor_types?         @relation(fields: [investor_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_entity_investor_status                            master_entity_investor_status? @relation(fields: [status_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_profiles_entity_investors_updated_byTouser_profiles user_profiles?                 @relation("entity_investors_updated_byTouser_profiles", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model individual_investors {
+  id                                                                   String             @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  contact_profile_id                                                   String?            @db.Uuid
+  investor_pic_id                                                      String?            @db.Uuid
+  legal_address                                                        String?
+  zipcode                                                              String?
+  country_id                                                           Int?
+  is_active                                                            Boolean?
+  created_by                                                           String?            @db.Uuid
+  updated_by                                                           String?            @db.Uuid
+  created_at                                                           DateTime?          @default(now()) @db.Timestamp(6)
+  updated_at                                                           DateTime?          @default(now()) @db.Timestamp(6)
+  customer_wallets                                                     customer_wallets[]
+  entity_investors                                                     entity_investors[]
+  user_profiles_individual_investors_contact_profile_idTouser_profiles user_profiles?     @relation("individual_investors_contact_profile_idTouser_profiles", fields: [contact_profile_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_countries                                                     master_countries?  @relation(fields: [country_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_profiles_individual_investors_created_byTouser_profiles         user_profiles?     @relation("individual_investors_created_byTouser_profiles", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  assets                                                               assets?            @relation(fields: [investor_pic_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_profiles_individual_investors_updated_byTouser_profiles         user_profiles?     @relation("individual_investors_updated_byTouser_profiles", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  token_orders                                                         token_orders[]
+}
+
+model master_blockchain_networks {
+  id              Int               @id @default(autoincrement())
+  name            String?
+  is_active       Boolean?
+  created_at      DateTime?         @default(now()) @db.Timestamp(6)
+  updated_at      DateTime?         @default(now()) @db.Timestamp(6)
+  token_offerings token_offerings[]
+}
+
+model master_business_sectors {
+  id         Int        @id @default(autoincrement())
+  name       String?
+  is_active  Boolean?
+  created_at DateTime?  @default(now()) @db.Timestamp(6)
+  updated_at DateTime?  @default(now()) @db.Timestamp(6)
+  entities   entities[]
+}
+
+model master_countries {
+  id                               Int                                @id @default(autoincrement())
+  name                             String?
+  iso3                             String?
+  phone_code                       String?
+  currency                         String?
+  currency_code                    String?
+  emoji                            String?
+  emoji_unicode                    String?
+  region_id                        Int?
+  is_active                        Boolean?
+  created_at                       DateTime?                          @default(now()) @db.Timestamp(6)
+  updated_at                       DateTime?                          @default(now()) @db.Timestamp(6)
+  entities                         entities[]
+  individual_investors             individual_investors[]
+  master_regions                   master_regions?                    @relation(fields: [region_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  token_offering_allowed_countries token_offering_allowed_countries[]
+  token_offerings                  token_offerings[]
+}
+
+model master_entity_investor_status {
+  id               Int                @id @default(autoincrement())
+  name             String?
+  is_active        Boolean?
+  created_at       DateTime?          @default(now()) @db.Timestamp(6)
+  updated_at       DateTime?          @default(now()) @db.Timestamp(6)
+  entity_investors entity_investors[]
+}
+
+model master_entity_types {
+  id         Int        @id @default(autoincrement())
+  name       String?
+  is_active  Boolean?
+  created_at DateTime?  @default(now()) @db.Timestamp(6)
+  updated_at DateTime?  @default(now()) @db.Timestamp(6)
+  entities   entities[]
+}
+
+model master_investor_types {
+  id               Int                @id @default(autoincrement())
+  name             String?
+  is_active        Boolean?
+  created_at       DateTime?          @default(now()) @db.Timestamp(6)
+  updated_at       DateTime?          @default(now()) @db.Timestamp(6)
+  entity_investors entity_investors[]
+}
+
+model master_order_status {
+  id           Int            @id @default(autoincrement())
+  name         String?
+  is_active    Boolean?
+  created_at   DateTime?      @default(now()) @db.Timestamp(6)
+  updated_at   DateTime?      @default(now()) @db.Timestamp(6)
+  token_orders token_orders[]
+}
+
+model master_regions {
+  id               Int                @id @default(autoincrement())
+  name             String?
+  is_active        Boolean?
+  created_at       DateTime?          @default(now()) @db.Timestamp(6)
+  updated_at       DateTime?          @default(now()) @db.Timestamp(6)
+  master_countries master_countries[]
+}
+
+model master_token_offering_status {
+  id              Int               @id @default(autoincrement())
+  name            String?
+  is_active       Boolean?
+  created_at      DateTime?         @default(now()) @db.Timestamp(6)
+  updated_at      DateTime?         @default(now()) @db.Timestamp(6)
+  token_offerings token_offerings[]
+}
+
+model master_token_status {
+  id              Int               @id @default(autoincrement())
+  name            String?
+  is_active       Boolean?
+  created_at      DateTime?         @default(now()) @db.Timestamp(6)
+  updated_at      DateTime?         @default(now()) @db.Timestamp(6)
+  token_offerings token_offerings[]
+}
+
+model master_token_type {
+  id              Int               @id @default(autoincrement())
+  name            String?
+  is_active       Boolean?
+  created_at      DateTime?         @default(now()) @db.Timestamp(6)
+  updated_at      DateTime?         @default(now()) @db.Timestamp(6)
+  token_offerings token_offerings[]
+}
+
+model master_transaction_status {
+  id                 Int                  @id @default(autoincrement())
+  name               String?
+  is_active          Boolean?
+  created_at         DateTime?            @default(now()) @db.Timestamp(6)
+  updated_at         DateTime?            @default(now()) @db.Timestamp(6)
+  token_transactions token_transactions[]
+}
+
+model master_wallet_types {
+  id               Int                @id @default(autoincrement())
+  name             String?
+  is_active        Boolean?
+  created_at       DateTime?          @default(now()) @db.Timestamp(6)
+  updated_at       DateTime?          @default(now()) @db.Timestamp(6)
+  customer_wallets customer_wallets[]
+}
+
+model token_offering_allowed_countries {
+  id                                                                       String            @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  token_offering_id                                                        String?           @db.Uuid
+  allowed_country_id                                                       Int?
+  is_active                                                                Boolean?
+  created_by                                                               String?           @db.Uuid
+  updated_by                                                               String?           @db.Uuid
+  created_at                                                               DateTime?         @default(now()) @db.Timestamp(6)
+  updated_at                                                               DateTime?         @default(now()) @db.Timestamp(6)
+  master_countries                                                         master_countries? @relation(fields: [allowed_country_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_profiles_token_offering_allowed_countries_created_byTouser_profiles user_profiles?    @relation("token_offering_allowed_countries_created_byTouser_profiles", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  token_offerings                                                          token_offerings?  @relation(fields: [token_offering_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_profiles_token_offering_allowed_countries_updated_byTouser_profiles user_profiles?    @relation("token_offering_allowed_countries_updated_byTouser_profiles", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model token_offering_allowed_currencies {
+  id                                                                        String           @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  token_offering_id                                                         String?          @db.Uuid
+  currency                                                                  String?
+  currency_code                                                             String?
+  is_active                                                                 Boolean?
+  created_by                                                                String?          @db.Uuid
+  updated_by                                                                String?          @db.Uuid
+  created_at                                                                DateTime?        @default(now()) @db.Timestamp(6)
+  updated_at                                                                DateTime?        @default(now()) @db.Timestamp(6)
+  user_profiles_token_offering_allowed_currencies_created_byTouser_profiles user_profiles?   @relation("token_offering_allowed_currencies_created_byTouser_profiles", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  token_offerings                                                           token_offerings? @relation(fields: [token_offering_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_profiles_token_offering_allowed_currencies_updated_byTouser_profiles user_profiles?   @relation("token_offering_allowed_currencies_updated_byTouser_profiles", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model token_offering_documents {
+  id                                                               String           @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  token_offering_id                                                String?          @db.Uuid
+  document_id                                                      String?          @db.Uuid
+  is_active                                                        Boolean?
+  created_by                                                       String?          @db.Uuid
+  updated_by                                                       String?          @db.Uuid
+  created_at                                                       DateTime?        @default(now()) @db.Timestamp(6)
+  updated_at                                                       DateTime?        @default(now()) @db.Timestamp(6)
+  user_profiles_token_offering_documents_created_byTouser_profiles user_profiles?   @relation("token_offering_documents_created_byTouser_profiles", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  assets                                                           assets?          @relation(fields: [document_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  token_offerings                                                  token_offerings? @relation(fields: [token_offering_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_profiles_token_offering_documents_updated_byTouser_profiles user_profiles?   @relation("token_offering_documents_updated_byTouser_profiles", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model token_offering_teams {
+  id                                                           String           @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  token_offering_id                                            String?          @db.Uuid
+  member_name                                                  String?
+  member_title                                                 String?
+  member_picture_id                                            String?          @db.Uuid
+  is_active                                                    Boolean?
+  created_by                                                   String?          @db.Uuid
+  updated_by                                                   String?          @db.Uuid
+  created_at                                                   DateTime?        @default(now()) @db.Timestamp(6)
+  updated_at                                                   DateTime?        @default(now()) @db.Timestamp(6)
+  user_profiles_token_offering_teams_created_byTouser_profiles user_profiles?   @relation("token_offering_teams_created_byTouser_profiles", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  assets                                                       assets?          @relation(fields: [member_picture_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  token_offerings                                              token_offerings? @relation(fields: [token_offering_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_profiles_token_offering_teams_updated_byTouser_profiles user_profiles?   @relation("token_offering_teams_updated_byTouser_profiles", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model token_offerings {
+  id                                                      String                              @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  issuer_entity_id                                        String?                             @db.Uuid
+  name                                                    String?
+  description                                             String?
+  isin_number                                             String?
+  symbol                                                  String?
+  token_type_id                                           Int?
+  base_currency                                           String?
+  base_currency_code                                      String?
+  blockchain_network                                      Int?
+  logo_asset_id                                           String?                             @db.Uuid
+  banner_asset_id                                         String?                             @db.Uuid
+  offering_price                                          Decimal?                            @db.Decimal
+  jurisdiction                                            Int?
+  start_date                                              DateTime?                           @db.Date
+  end_date                                                DateTime?                           @db.Date
+  minimum_investment_limit                                Decimal?                            @db.Decimal
+  maximum_investment_limit                                Decimal?                            @db.Decimal
+  bank_name                                               String?
+  bank_account_name                                       String?
+  swift_bic_no                                            String?
+  iban_no                                                 String?
+  is_fund_rating_enabled                                  Boolean?
+  is_projected_rate_of_return_enabled                     Boolean?
+  is_expected_annual_perc_yield_enabled                   Boolean?
+  is_payback_period_enabled                               Boolean?
+  is_eligible_for_collateral_enabled                      Boolean?
+  offer_status_id                                         Int?
+  status_id                                               Int?
+  is_active                                               Boolean?
+  created_by                                              String?                             @db.Uuid
+  updated_by                                              String?                             @db.Uuid
+  created_at                                              DateTime?                           @default(now()) @db.Timestamp(6)
+  updated_at                                              DateTime?                           @default(now()) @db.Timestamp(6)
+  token_offering_allowed_countries                        token_offering_allowed_countries[]
+  token_offering_allowed_currencies                       token_offering_allowed_currencies[]
+  token_offering_documents                                token_offering_documents[]
+  token_offering_teams                                    token_offering_teams[]
+  assets_token_offerings_banner_asset_idToassets          assets?                             @relation("token_offerings_banner_asset_idToassets", fields: [banner_asset_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_blockchain_networks                              master_blockchain_networks?         @relation(fields: [blockchain_network], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_profiles_token_offerings_created_byTouser_profiles user_profiles?                      @relation("token_offerings_created_byTouser_profiles", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  entities                                                entities?                           @relation(fields: [issuer_entity_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_countries                                        master_countries?                   @relation(fields: [jurisdiction], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  assets_token_offerings_logo_asset_idToassets            assets?                             @relation("token_offerings_logo_asset_idToassets", fields: [logo_asset_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_token_offering_status                            master_token_offering_status?       @relation(fields: [offer_status_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_token_status                                     master_token_status?                @relation(fields: [status_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_token_type                                       master_token_type?                  @relation(fields: [token_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_profiles_token_offerings_updated_byTouser_profiles user_profiles?                      @relation("token_offerings_updated_byTouser_profiles", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  token_orders                                            token_orders[]
+  wallet_tokens                                           wallet_tokens[]
+}
+
+model token_orders {
+  id                                                   String                @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  type                                                 order_types?
+  investment_type                                      investment_types?
+  issuer_entity_id                                     String?               @db.Uuid
+  receiver_entity_id                                   String?               @db.Uuid
+  individual_receiving_investor_id                     String?               @db.Uuid
+  token_offering_id                                    String?               @db.Uuid
+  currency                                             String?
+  currency_code                                        String?
+  ordered_tokens                                       Decimal?              @db.Decimal
+  price_per_token                                      Decimal?              @db.Decimal
+  net_investment_value                                 Decimal?              @db.Decimal
+  fee                                                  Decimal?              @db.Decimal
+  total_paid                                           Decimal?              @db.Decimal
+  payment_reference                                    String?
+  status_id                                            Int?
+  is_active                                            Boolean?
+  created_by                                           String?               @db.Uuid
+  updated_by                                           String?               @db.Uuid
+  created_at                                           DateTime?             @default(now()) @db.Timestamp(6)
+  updated_at                                           DateTime?             @default(now()) @db.Timestamp(6)
+  user_profiles_token_orders_created_byTouser_profiles user_profiles?        @relation("token_orders_created_byTouser_profiles", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  individual_investors                                 individual_investors? @relation(fields: [individual_receiving_investor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  entities_token_orders_issuer_entity_idToentities     entities?             @relation("token_orders_issuer_entity_idToentities", fields: [issuer_entity_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  entities_token_orders_receiver_entity_idToentities   entities?             @relation("token_orders_receiver_entity_idToentities", fields: [receiver_entity_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_order_status                                  master_order_status?  @relation(fields: [status_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  token_offerings                                      token_offerings?      @relation(fields: [token_offering_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_profiles_token_orders_updated_byTouser_profiles user_profiles?        @relation("token_orders_updated_byTouser_profiles", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  token_transactions                                   token_transactions[]
+}
+
+model token_transactions {
+  id                                                         String                     @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  type                                                       transaction_types?
+  order_id                                                   String?                    @db.Uuid
+  amount                                                     Decimal?                   @db.Decimal
+  sender_balance                                             Decimal?                   @db.Decimal
+  receiver_balance                                           Decimal?                   @db.Decimal
+  total_supply                                               Decimal?                   @db.Decimal
+  transaction_hash                                           String?
+  status_id                                                  Int?
+  is_active                                                  Boolean?
+  created_by                                                 String?                    @db.Uuid
+  updated_by                                                 String?                    @db.Uuid
+  created_at                                                 DateTime?                  @default(now()) @db.Timestamp(6)
+  updated_at                                                 DateTime?                  @default(now()) @db.Timestamp(6)
+  user_profiles_token_transactions_created_byTouser_profiles user_profiles?             @relation("token_transactions_created_byTouser_profiles", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  token_orders                                               token_orders?              @relation(fields: [order_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_transaction_status                                  master_transaction_status? @relation(fields: [status_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_profiles_token_transactions_updated_byTouser_profiles user_profiles?             @relation("token_transactions_updated_byTouser_profiles", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model user_identities {
+  id                                                      String         @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  asset_id                                                String?        @db.Uuid
+  alias                                                   String?
+  is_active                                               Boolean?
+  created_by                                              String?        @db.Uuid
+  updated_by                                              String?        @db.Uuid
+  created_at                                              DateTime?      @default(now()) @db.Timestamp(6)
+  updated_at                                              DateTime?      @default(now()) @db.Timestamp(6)
+  assets                                                  assets?        @relation(fields: [asset_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_profiles_user_identities_created_byTouser_profiles user_profiles? @relation("user_identities_created_byTouser_profiles", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_profiles_user_identities_updated_byTouser_profiles user_profiles? @relation("user_identities_updated_byTouser_profiles", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model user_profiles {
+  id                                                                                            String                              @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name                                                                                          String?
+  position                                                                                      String?
+  email_id                                                                                      String?
+  mobile_no_std_code                                                                            String?
+  mobile_no                                                                                     String?
+  is_active                                                                                     Boolean?
+  created_at                                                                                    DateTime?                           @default(now()) @db.Timestamp(6)
+  updated_at                                                                                    DateTime?                           @default(now()) @db.Timestamp(6)
+  assets_assets_created_byTouser_profiles                                                       assets[]                            @relation("assets_created_byTouser_profiles")
+  assets_assets_updated_byTouser_profiles                                                       assets[]                            @relation("assets_updated_byTouser_profiles")
+  business_documents_business_documents_created_byTouser_profiles                               business_documents[]                @relation("business_documents_created_byTouser_profiles")
+  business_documents_business_documents_updated_byTouser_profiles                               business_documents[]                @relation("business_documents_updated_byTouser_profiles")
+  customer_wallets_customer_wallets_created_byTouser_profiles                                   customer_wallets[]                  @relation("customer_wallets_created_byTouser_profiles")
+  customer_wallets_customer_wallets_updated_byTouser_profiles                                   customer_wallets[]                  @relation("customer_wallets_updated_byTouser_profiles")
+  ekyc_ekyc_created_byTouser_profiles                                                           ekyc[]                              @relation("ekyc_created_byTouser_profiles")
+  ekyc_ekyc_kyc_profile_idTouser_profiles                                                       ekyc[]                              @relation("ekyc_kyc_profile_idTouser_profiles")
+  ekyc_ekyc_updated_byTouser_profiles                                                           ekyc[]                              @relation("ekyc_updated_byTouser_profiles")
+  entities_entities_contact_profile_idTouser_profiles                                           entities[]                          @relation("entities_contact_profile_idTouser_profiles")
+  entities_entities_created_byTouser_profiles                                                   entities[]                          @relation("entities_created_byTouser_profiles")
+  entities_entities_updated_byTouser_profiles                                                   entities[]                          @relation("entities_updated_byTouser_profiles")
+  entity_investors_entity_investors_created_byTouser_profiles                                   entity_investors[]                  @relation("entity_investors_created_byTouser_profiles")
+  entity_investors_entity_investors_updated_byTouser_profiles                                   entity_investors[]                  @relation("entity_investors_updated_byTouser_profiles")
+  individual_investors_individual_investors_contact_profile_idTouser_profiles                   individual_investors[]              @relation("individual_investors_contact_profile_idTouser_profiles")
+  individual_investors_individual_investors_created_byTouser_profiles                           individual_investors[]              @relation("individual_investors_created_byTouser_profiles")
+  individual_investors_individual_investors_updated_byTouser_profiles                           individual_investors[]              @relation("individual_investors_updated_byTouser_profiles")
+  token_offering_allowed_countries_token_offering_allowed_countries_created_byTouser_profiles   token_offering_allowed_countries[]  @relation("token_offering_allowed_countries_created_byTouser_profiles")
+  token_offering_allowed_countries_token_offering_allowed_countries_updated_byTouser_profiles   token_offering_allowed_countries[]  @relation("token_offering_allowed_countries_updated_byTouser_profiles")
+  token_offering_allowed_currencies_token_offering_allowed_currencies_created_byTouser_profiles token_offering_allowed_currencies[] @relation("token_offering_allowed_currencies_created_byTouser_profiles")
+  token_offering_allowed_currencies_token_offering_allowed_currencies_updated_byTouser_profiles token_offering_allowed_currencies[] @relation("token_offering_allowed_currencies_updated_byTouser_profiles")
+  token_offering_documents_token_offering_documents_created_byTouser_profiles                   token_offering_documents[]          @relation("token_offering_documents_created_byTouser_profiles")
+  token_offering_documents_token_offering_documents_updated_byTouser_profiles                   token_offering_documents[]          @relation("token_offering_documents_updated_byTouser_profiles")
+  token_offering_teams_token_offering_teams_created_byTouser_profiles                           token_offering_teams[]              @relation("token_offering_teams_created_byTouser_profiles")
+  token_offering_teams_token_offering_teams_updated_byTouser_profiles                           token_offering_teams[]              @relation("token_offering_teams_updated_byTouser_profiles")
+  token_offerings_token_offerings_created_byTouser_profiles                                     token_offerings[]                   @relation("token_offerings_created_byTouser_profiles")
+  token_offerings_token_offerings_updated_byTouser_profiles                                     token_offerings[]                   @relation("token_offerings_updated_byTouser_profiles")
+  token_orders_token_orders_created_byTouser_profiles                                           token_orders[]                      @relation("token_orders_created_byTouser_profiles")
+  token_orders_token_orders_updated_byTouser_profiles                                           token_orders[]                      @relation("token_orders_updated_byTouser_profiles")
+  token_transactions_token_transactions_created_byTouser_profiles                               token_transactions[]                @relation("token_transactions_created_byTouser_profiles")
+  token_transactions_token_transactions_updated_byTouser_profiles                               token_transactions[]                @relation("token_transactions_updated_byTouser_profiles")
+  user_identities_user_identities_created_byTouser_profiles                                     user_identities[]                   @relation("user_identities_created_byTouser_profiles")
+  user_identities_user_identities_updated_byTouser_profiles                                     user_identities[]                   @relation("user_identities_updated_byTouser_profiles")
+  wallet_tokens_wallet_tokens_created_byTouser_profiles                                         wallet_tokens[]                     @relation("wallet_tokens_created_byTouser_profiles")
+  wallet_tokens_wallet_tokens_updated_byTouser_profiles                                         wallet_tokens[]                     @relation("wallet_tokens_updated_byTouser_profiles")
+}
+
+model wallet_tokens {
+  id                                                    String            @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  customer_wallet_id                                    String?           @db.Uuid
+  token_offering_id                                     String?           @db.Uuid
+  invested_amount                                       Decimal?          @db.Decimal
+  value                                                 Decimal?          @db.Decimal
+  pledged                                               Decimal?          @db.Decimal
+  pending_tokens                                        Decimal?          @db.Decimal
+  available_tokens                                      Decimal?          @db.Decimal
+  is_active                                             Boolean?
+  created_by                                            String?           @db.Uuid
+  updated_by                                            String?           @db.Uuid
+  created_at                                            DateTime?         @default(now()) @db.Timestamp(6)
+  updated_at                                            DateTime?         @default(now()) @db.Timestamp(6)
+  user_profiles_wallet_tokens_created_byTouser_profiles user_profiles?    @relation("wallet_tokens_created_byTouser_profiles", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  customer_wallets                                      customer_wallets? @relation(fields: [customer_wallet_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  token_offerings                                       token_offerings?  @relation(fields: [token_offering_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_profiles_wallet_tokens_updated_byTouser_profiles user_profiles?    @relation("wallet_tokens_updated_byTouser_profiles", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+enum investment_types {
+  by_token_volume
+  by_investment_value
+}
+
+enum order_types {
+  subscription
+  redemption
+}
+
+enum transaction_types {
+  mint
+  burn
 }

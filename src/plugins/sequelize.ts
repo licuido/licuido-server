@@ -1,15 +1,20 @@
 import { FastifyPluginCallback } from "fastify";
-import { Sequelize } from "sequelize";
+import { Dialect, Sequelize } from "sequelize";
 import fp from "fastify-plugin";
-import { initModels } from "../models/init-models";
-import { env } from "@config";
-interface SequelizeOptions {
+import { initModels } from "@models";
+import { establishCustomRelations } from "../models/customRelations";
+
+const { DB_NAME, DB_USERNAME, DB_PASSWORD, DB_HOST, DB_PORT, DB_DIALECT }: any =
+  process.env;
+
+export interface SequelizeOptions {
   database: string;
   username: string;
   password: string;
   host: string;
-  dialect: string;
+  dialect: Dialect;
   port: number;
+  schema: string | "public";
 }
 
 declare module "fastify" {
@@ -20,17 +25,31 @@ declare module "fastify" {
 
 const sequelizePlugin: FastifyPluginCallback<SequelizeOptions> = async (
   fastify: any,
-  options
+  _
 ) => {
-  const { DB_NAME, DB_USERNAME, DB_PASSWORD, DB_PORT, DB_HOST, DB_DIALECT } =
-    env;
-
-  const sequelize = new Sequelize(DB_NAME, DB_USERNAME, DB_PASSWORD, {
-    logging: false,
+  let dbConfig: SequelizeOptions = {
+    database: DB_NAME,
+    username: DB_USERNAME,
+    password: DB_PASSWORD,
     host: DB_HOST,
-    dialect: DB_DIALECT,
     port: DB_PORT,
-  });
+    dialect: DB_DIALECT,
+    schema: "public",
+  };
+
+  const sequelize = new Sequelize(
+    dbConfig.database,
+    dbConfig.username,
+    dbConfig.password,
+    {
+      logging: false,
+      host: dbConfig.host,
+      dialect: dbConfig.dialect,
+      port: dbConfig.port,
+      dialectOptions: {},
+      timezone: "Asia/Kolkata",
+    }
+  );
   sequelize
     .authenticate()
     .then(() => {
@@ -41,6 +60,7 @@ const sequelizePlugin: FastifyPluginCallback<SequelizeOptions> = async (
     });
 
   initModels(sequelize);
+  establishCustomRelations(sequelize);
   fastify.decorate("sequelize", sequelize);
 };
 

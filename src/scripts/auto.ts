@@ -30,7 +30,9 @@ async function main() {
     dialect: DB_DIALECT,
     directory: "./src/models",
     additional: {
-      timestamps: false,
+      timestamps: true,
+      createdAt: "created_at",
+      updatedAt: "updated_at",
     },
     noAlias: false,
     singularize: true,

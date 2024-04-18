@@ -11,7 +11,7 @@
     "allowSyntheticDefaultImports": true,
     "paths": {
       "@config": ["config/index"],
-      "@models": ["models/index"],
+      "@models": ["models/init-models"],
       "@helpers": ["helpers/index"],
       "@interactors": ["interactors/index"],
       "@mappers": ["mappers/index"],
