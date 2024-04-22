@@ -6,6 +6,7 @@
  */
 
 import { constants, makeNetworkRequest, Logger } from "@helpers";
+import { createUserEntities, createUserProfile } from "@services";
 
 const { auth } = constants;
 interface signUpPayload {
@@ -13,6 +14,8 @@ interface signUpPayload {
   password: string;
   username?: string;
   mobile_no?: string;
+  is_agree_terms_condition?: boolean;
+  entity_id: number;
 }
 
 interface signInPayload {
@@ -233,11 +236,28 @@ export const resendEmailOtp = async (body: forgetPasswordInterface) => {
 export const signUp = async (body: signUpPayload) => {
   try {
     const payload: signUpPayload = body;
-    const response: any = await makeNetworkRequest<any, signUpPayload>(
-      auth.SIGN_UP_CALL,
-      payload
-    );
-    return response;
+    const { email_id, password, entity_id } = payload;
+
+    const response: any = await makeNetworkRequest<
+      any,
+      { email_id: string; password: string }
+    >(auth.SIGN_UP_CALL, { email_id, password });
+
+    if (response?.data?.user) {
+      //create new profile
+      const user = await createUserProfile({
+        email_id,
+        user_id: response?.data?.user?.id,
+        is_agree_terms_condition: payload?.is_agree_terms_condition ?? false,
+      });
+      if (user?.dataValues?.id) {
+        await createUserEntities({
+          user_profile_id: user?.dataValues?.id,
+          entity_id: entity_id,
+        });
+      }
+      return { user_profile_id: user?.dataValues?.id };
+    }
   } catch (error: any) {
     Logger.error(error.message, error);
     throw error;

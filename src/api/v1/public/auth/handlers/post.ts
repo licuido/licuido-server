@@ -29,6 +29,7 @@ import {
   resetPasswordInterface,
   resetUserPasswordPayload,
 } from "@types";
+import { findUserExisit } from "@services";
 
 // Sign In
 export async function SIGN_IN(request: FastifyRequest, reply: FastifyReply) {
@@ -77,23 +78,33 @@ export async function SIGN_IN(request: FastifyRequest, reply: FastifyReply) {
 // Sign Up
 export async function SIGN_UP(request: FastifyRequest, reply: FastifyReply) {
   try {
-    const { email_id, password } = postRequestInfo(request);
+    const { email_id, password, is_agree_terms_condition, entity_id } =
+      postRequestInfo(request);
     const payload = {
       email_id,
       password,
+      is_agree_terms_condition,
+      entity_id,
     };
+
+    const isUserExisit = await findUserExisit({ entity_id, email_id });
+    if (isUserExisit?.count !== 0) {
+      return handleResponse(request, reply, responseType?.UNAUTHORIZED, {
+        customMessage: "User Already Exisits",
+      });
+    }
+
     // -----------------------------
     //  INTRACTOR
     // -----------------------------
     const result = await signUp(payload as signInType);
 
-    console.log(result, "result");
-
     // -----------------------------
     //  RESPONSE
     // -----------------------------
     return handleResponse(request, reply, responseType?.OK, {
-      data: result,
+      data: { result },
+      customMessage: "User Created Successfully",
     });
   } catch (error: any) {
     Logger.error(request, error.message, error);

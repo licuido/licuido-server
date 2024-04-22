@@ -14,6 +14,7 @@ function postRequestInfo<T>(request: any) {
     processNestedObjects(body);
 
     return {
+      entity_id: request?.entity_id,
       ...body,
     };
   } catch (error: any) {

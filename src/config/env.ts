@@ -10,6 +10,9 @@ const {
   DB_DIALECT,
   NODE_ENV,
   AUTH_API_LOCAL,
+  INVESTOR_URL,
+  ADMIN_URL,
+  ISSUER_URL,
 }: any = process.env;
 
 export default {
@@ -21,4 +24,7 @@ export default {
   DB_DIALECT,
   NODE_ENV,
   AUTH_API_LOCAL,
+  INVESTOR_URL,
+  ADMIN_URL,
+  ISSUER_URL,
 };

@@ -16,7 +16,7 @@ export interface user_entityAttributes {
 
 export type user_entityPk = "id";
 export type user_entityId = user_entity[user_entityPk];
-export type user_entityOptionalAttributes = "entity_id" | "user_profile_id" | "is_active" | "created_by" | "updated_by" | "created_at" | "updated_at";
+export type user_entityOptionalAttributes = "id" | "entity_id" | "user_profile_id" | "is_active" | "created_by" | "updated_by" | "created_at" | "updated_at";
 export type user_entityCreationAttributes = Optional<user_entityAttributes, user_entityOptionalAttributes>;
 
 export class user_entity extends Model<user_entityAttributes, user_entityCreationAttributes> implements user_entityAttributes {
@@ -55,6 +55,7 @@ export class user_entity extends Model<user_entityAttributes, user_entityCreatio
     id: {
       type: DataTypes.UUID,
       allowNull: false,
+      defaultValue: DataTypes.UUIDV4,
       primaryKey: true
     },
     entity_id: {

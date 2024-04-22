@@ -8,6 +8,7 @@ interface RequestParameters {
   offset: number;
   limit: number;
   search?: string;
+  entity_id: number; // Remove duplicate declaration here
 }
 
 /**
@@ -20,13 +21,14 @@ interface RequestParameters {
 function queryRequestInfo(request: any): RequestParameters {
   try {
     const {
-      query: { id, offset = 0, limit = 10, search, ...rest },
+      query: { id, offset = 0, limit = 10, search, entity_id, ...rest },
     } = request as {
       query: {
         id: string;
         offset: string;
         limit: string;
         search: string;
+        entity_id: string; // Include entity_id only once here
         rest: { [key: string]: string | number };
       };
     };
@@ -36,6 +38,7 @@ function queryRequestInfo(request: any): RequestParameters {
       offset: Number(offset),
       limit: Number(limit),
       search,
+      entity_id: Number(entity_id), // Ensure entity_id is of type number
       ...rest,
     };
   } catch (error: any) {

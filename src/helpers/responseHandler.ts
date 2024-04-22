@@ -117,13 +117,13 @@ function handleResponse(
   const isErrorResponse = statusInfo.code >= 400;
 
   reply.code(statusInfo.code).header("Content-Type", headers);
-
   if (isErrorResponse) {
     return reply.send({
       error: {
         isError: true,
         origin: request.url,
         timestamp: new Date(),
+        message: customMessage,
         ...error,
       },
     });

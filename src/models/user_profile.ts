@@ -30,12 +30,13 @@ export interface user_profileAttributes {
   is_verified?: boolean;
   created_at?: Date;
   updated_at?: Date;
-  user_id?: string;
+  is_setup_done?: boolean;
+  user_id?: number;
 }
 
 export type user_profilePk = "id";
 export type user_profileId = user_profile[user_profilePk];
-export type user_profileOptionalAttributes = "id" | "name" | "position" | "email_id" | "mobile_no_std_code" | "mobile_no" | "is_active" | "is_agree_terms_condition" | "is_verified" | "created_at" | "updated_at" | "user_id";
+export type user_profileOptionalAttributes = "id" | "name" | "position" | "email_id" | "mobile_no_std_code" | "mobile_no" | "is_active" | "is_agree_terms_condition" | "is_verified" | "created_at" | "updated_at" | "is_setup_done" | "user_id";
 export type user_profileCreationAttributes = Optional<user_profileAttributes, user_profileOptionalAttributes>;
 
 export class user_profile extends Model<user_profileAttributes, user_profileCreationAttributes> implements user_profileAttributes {
@@ -50,7 +51,8 @@ export class user_profile extends Model<user_profileAttributes, user_profileCrea
   is_verified?: boolean;
   created_at?: Date;
   updated_at?: Date;
-  user_id?: string;
+  is_setup_done?: boolean;
+  user_id?: number;
 
   // user_profile hasMany asset via created_by
   assets!: asset[];
@@ -549,8 +551,12 @@ export class user_profile extends Model<user_profileAttributes, user_profileCrea
       type: DataTypes.BOOLEAN,
       allowNull: true
     },
+    is_setup_done: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true
+    },
     user_id: {
-      type: DataTypes.UUID,
+      type: DataTypes.INTEGER,
       allowNull: true
     }
   }, {

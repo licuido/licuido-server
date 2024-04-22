@@ -32,51 +32,52 @@ export class logged_in_record extends Model<logged_in_recordAttributes, logged_i
 
   static initModel(sequelize: Sequelize.Sequelize): typeof logged_in_record {
     return logged_in_record.init({
-      id: {
-        autoIncrement: true,
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        primaryKey: true
+    id: {
+      autoIncrement: true,
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      primaryKey: true
+    },
+    user_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'users',
+        key: 'id'
+      }
+    },
+    logger_details: {
+      type: DataTypes.JSON,
+      allowNull: true
+    },
+    logged_at: {
+      type: DataTypes.DATE,
+      allowNull: true
+    },
+    created_at: {
+      type: DataTypes.DATE,
+      allowNull: true
+    },
+    updated_at: {
+      type: DataTypes.DATE,
+      allowNull: true
+    },
+  }, {
+    sequelize,
+    tableName: 'logged_in_records',
+    schema: 'auth',
+    timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
+    indexes: [
+      {
+        name: "logged_in_records_pkey",
+        unique: true,
+        fields: [
+          { name: "id" },
+        ]
       },
-      user_id: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-        references: {
-          model: 'users',
-          key: 'id'
-        }
-      },
-      logger_details: {
-        type: DataTypes.JSON,
-        allowNull: true
-      },
-      logged_at: {
-        type: DataTypes.DATE,
-        allowNull: true
-      },
-      created_at: {
-        type: DataTypes.DATE,
-        allowNull: true
-      },
-      updated_at: {
-        type: DataTypes.DATE,
-        allowNull: true
-      },
-    }, {
-      sequelize,
-      tableName: 'logged_in_records',
-      schema: 'auth',
-      timestamps: true,
-      createdAt: 'created_at',
-      updatedAt: 'updated_at',
-      indexes: [
-        {
-          name: 'logged_in_records_pkey',
-          unique: true,
-          fields: ['id'] // Corrected syntax for defining index fields
-        }
-      ]
-    });
-    
+    ]
+  });
   }
 }

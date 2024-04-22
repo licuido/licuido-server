@@ -478,7 +478,8 @@ model user_profiles {
   is_verified                                                                                   Boolean?
   created_at                                                                                    DateTime?                           @default(now()) @db.Timestamp(6)
   updated_at                                                                                    DateTime?                           @default(now()) @db.Timestamp(6)
-  user_id                                                                                       String?                             @db.Uuid
+  is_setup_done                                                                                 Boolean?
+  user_id                                                                                       Int?
   assets_assets_created_byTouser_profiles                                                       assets[]                            @relation("assets_created_byTouser_profiles")
   assets_assets_updated_byTouser_profiles                                                       assets[]                            @relation("assets_updated_byTouser_profiles")
   business_documents_business_documents_created_byTouser_profiles                               business_documents[]                @relation("business_documents_created_byTouser_profiles")
@@ -540,7 +541,7 @@ model wallet_tokens {
 }
 
 model user_entities {
-  id                                                         String               @id @db.Uuid
+  id                                                         String               @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   entity_id                                                  Int?
   user_profile_id                                            String?              @db.Uuid
   is_active                                                  Boolean?             @default(true)
