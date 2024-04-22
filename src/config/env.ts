@@ -9,6 +9,7 @@ const {
   DB_PORT,
   DB_DIALECT,
   NODE_ENV,
+  AUTH_API_LOCAL,
 }: any = process.env;
 
 export default {
@@ -19,4 +20,5 @@ export default {
   DB_PORT,
   DB_DIALECT,
   NODE_ENV,
+  AUTH_API_LOCAL,
 };

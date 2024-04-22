@@ -1,6 +1,7 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
 import type { entity, entityId } from './entity';
+import type { user_entity, user_entityId } from './user_entity';
 
 export interface master_entity_typeAttributes {
   id: number;
@@ -34,6 +35,18 @@ export class master_entity_type extends Model<master_entity_typeAttributes, mast
   hasEntity!: Sequelize.HasManyHasAssociationMixin<entity, entityId>;
   hasEntities!: Sequelize.HasManyHasAssociationsMixin<entity, entityId>;
   countEntities!: Sequelize.HasManyCountAssociationsMixin;
+  // master_entity_type hasMany user_entity via entity_id
+  user_entities!: user_entity[];
+  getUser_entities!: Sequelize.HasManyGetAssociationsMixin<user_entity>;
+  setUser_entities!: Sequelize.HasManySetAssociationsMixin<user_entity, user_entityId>;
+  addUser_entity!: Sequelize.HasManyAddAssociationMixin<user_entity, user_entityId>;
+  addUser_entities!: Sequelize.HasManyAddAssociationsMixin<user_entity, user_entityId>;
+  createUser_entity!: Sequelize.HasManyCreateAssociationMixin<user_entity>;
+  removeUser_entity!: Sequelize.HasManyRemoveAssociationMixin<user_entity, user_entityId>;
+  removeUser_entities!: Sequelize.HasManyRemoveAssociationsMixin<user_entity, user_entityId>;
+  hasUser_entity!: Sequelize.HasManyHasAssociationMixin<user_entity, user_entityId>;
+  hasUser_entities!: Sequelize.HasManyHasAssociationsMixin<user_entity, user_entityId>;
+  countUser_entities!: Sequelize.HasManyCountAssociationsMixin;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof master_entity_type {
     return master_entity_type.init({

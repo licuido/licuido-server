@@ -1,4 +1,6 @@
 import type { Sequelize } from "sequelize";
+import { SequelizeMetum as _SequelizeMetum } from "./SequelizeMetum";
+import type { SequelizeMetumAttributes, SequelizeMetumCreationAttributes } from "./SequelizeMetum";
 import { asset as _asset } from "./asset";
 import type { assetAttributes, assetCreationAttributes } from "./asset";
 import { business_document as _business_document } from "./business_document";
@@ -13,6 +15,8 @@ import { entity_investor as _entity_investor } from "./entity_investor";
 import type { entity_investorAttributes, entity_investorCreationAttributes } from "./entity_investor";
 import { individual_investor as _individual_investor } from "./individual_investor";
 import type { individual_investorAttributes, individual_investorCreationAttributes } from "./individual_investor";
+import { logged_in_record as _logged_in_record } from "./logged_in_record";
+import type { logged_in_recordAttributes, logged_in_recordCreationAttributes } from "./logged_in_record";
 import { master_blockchain_network as _master_blockchain_network } from "./master_blockchain_network";
 import type { master_blockchain_networkAttributes, master_blockchain_networkCreationAttributes } from "./master_blockchain_network";
 import { master_business_sector as _master_business_sector } from "./master_business_sector";
@@ -39,6 +43,8 @@ import { master_transaction_status as _master_transaction_status } from "./maste
 import type { master_transaction_statusAttributes, master_transaction_statusCreationAttributes } from "./master_transaction_status";
 import { master_wallet_type as _master_wallet_type } from "./master_wallet_type";
 import type { master_wallet_typeAttributes, master_wallet_typeCreationAttributes } from "./master_wallet_type";
+import { otp_token as _otp_token } from "./otp_token";
+import type { otp_tokenAttributes, otp_tokenCreationAttributes } from "./otp_token";
 import { token_offering_allowed_country as _token_offering_allowed_country } from "./token_offering_allowed_country";
 import type { token_offering_allowed_countryAttributes, token_offering_allowed_countryCreationAttributes } from "./token_offering_allowed_country";
 import { token_offering_allowed_currency as _token_offering_allowed_currency } from "./token_offering_allowed_currency";
@@ -53,14 +59,19 @@ import { token_order as _token_order } from "./token_order";
 import type { token_orderAttributes, token_orderCreationAttributes } from "./token_order";
 import { token_transaction as _token_transaction } from "./token_transaction";
 import type { token_transactionAttributes, token_transactionCreationAttributes } from "./token_transaction";
+import { user_entity as _user_entity } from "./user_entity";
+import type { user_entityAttributes, user_entityCreationAttributes } from "./user_entity";
 import { user_identity as _user_identity } from "./user_identity";
 import type { user_identityAttributes, user_identityCreationAttributes } from "./user_identity";
 import { user_profile as _user_profile } from "./user_profile";
 import type { user_profileAttributes, user_profileCreationAttributes } from "./user_profile";
+import { user as _user } from "./user";
+import type { userAttributes, userCreationAttributes } from "./user";
 import { wallet_token as _wallet_token } from "./wallet_token";
 import type { wallet_tokenAttributes, wallet_tokenCreationAttributes } from "./wallet_token";
 
 export {
+  _SequelizeMetum as SequelizeMetum,
   _asset as asset,
   _business_document as business_document,
   _customer_wallet as customer_wallet,
@@ -68,6 +79,7 @@ export {
   _entity as entity,
   _entity_investor as entity_investor,
   _individual_investor as individual_investor,
+  _logged_in_record as logged_in_record,
   _master_blockchain_network as master_blockchain_network,
   _master_business_sector as master_business_sector,
   _master_country as master_country,
@@ -81,6 +93,7 @@ export {
   _master_token_type as master_token_type,
   _master_transaction_status as master_transaction_status,
   _master_wallet_type as master_wallet_type,
+  _otp_token as otp_token,
   _token_offering_allowed_country as token_offering_allowed_country,
   _token_offering_allowed_currency as token_offering_allowed_currency,
   _token_offering_document as token_offering_document,
@@ -88,12 +101,16 @@ export {
   _token_offering as token_offering,
   _token_order as token_order,
   _token_transaction as token_transaction,
+  _user_entity as user_entity,
   _user_identity as user_identity,
   _user_profile as user_profile,
+  _user as user,
   _wallet_token as wallet_token,
 };
 
 export type {
+  SequelizeMetumAttributes,
+  SequelizeMetumCreationAttributes,
   assetAttributes,
   assetCreationAttributes,
   business_documentAttributes,
@@ -108,6 +125,8 @@ export type {
   entity_investorCreationAttributes,
   individual_investorAttributes,
   individual_investorCreationAttributes,
+  logged_in_recordAttributes,
+  logged_in_recordCreationAttributes,
   master_blockchain_networkAttributes,
   master_blockchain_networkCreationAttributes,
   master_business_sectorAttributes,
@@ -134,6 +153,8 @@ export type {
   master_transaction_statusCreationAttributes,
   master_wallet_typeAttributes,
   master_wallet_typeCreationAttributes,
+  otp_tokenAttributes,
+  otp_tokenCreationAttributes,
   token_offering_allowed_countryAttributes,
   token_offering_allowed_countryCreationAttributes,
   token_offering_allowed_currencyAttributes,
@@ -148,15 +169,20 @@ export type {
   token_orderCreationAttributes,
   token_transactionAttributes,
   token_transactionCreationAttributes,
+  user_entityAttributes,
+  user_entityCreationAttributes,
   user_identityAttributes,
   user_identityCreationAttributes,
   user_profileAttributes,
   user_profileCreationAttributes,
+  userAttributes,
+  userCreationAttributes,
   wallet_tokenAttributes,
   wallet_tokenCreationAttributes,
 };
 
 export function initModels(sequelize: Sequelize) {
+  const SequelizeMetum = _SequelizeMetum.initModel(sequelize);
   const asset = _asset.initModel(sequelize);
   const business_document = _business_document.initModel(sequelize);
   const customer_wallet = _customer_wallet.initModel(sequelize);
@@ -164,6 +190,7 @@ export function initModels(sequelize: Sequelize) {
   const entity = _entity.initModel(sequelize);
   const entity_investor = _entity_investor.initModel(sequelize);
   const individual_investor = _individual_investor.initModel(sequelize);
+  const logged_in_record = _logged_in_record.initModel(sequelize);
   const master_blockchain_network = _master_blockchain_network.initModel(sequelize);
   const master_business_sector = _master_business_sector.initModel(sequelize);
   const master_country = _master_country.initModel(sequelize);
@@ -177,6 +204,7 @@ export function initModels(sequelize: Sequelize) {
   const master_token_type = _master_token_type.initModel(sequelize);
   const master_transaction_status = _master_transaction_status.initModel(sequelize);
   const master_wallet_type = _master_wallet_type.initModel(sequelize);
+  const otp_token = _otp_token.initModel(sequelize);
   const token_offering_allowed_country = _token_offering_allowed_country.initModel(sequelize);
   const token_offering_allowed_currency = _token_offering_allowed_currency.initModel(sequelize);
   const token_offering_document = _token_offering_document.initModel(sequelize);
@@ -184,10 +212,16 @@ export function initModels(sequelize: Sequelize) {
   const token_offering = _token_offering.initModel(sequelize);
   const token_order = _token_order.initModel(sequelize);
   const token_transaction = _token_transaction.initModel(sequelize);
+  const user_entity = _user_entity.initModel(sequelize);
   const user_identity = _user_identity.initModel(sequelize);
   const user_profile = _user_profile.initModel(sequelize);
+  const user = _user.initModel(sequelize);
   const wallet_token = _wallet_token.initModel(sequelize);
 
+  logged_in_record.belongsTo(user, { as: "user", foreignKey: "user_id"});
+  user.hasMany(logged_in_record, { as: "logged_in_records", foreignKey: "user_id"});
+  otp_token.belongsTo(user, { as: "user", foreignKey: "user_id"});
+  user.hasMany(otp_token, { as: "otp_tokens", foreignKey: "user_id"});
   business_document.belongsTo(asset, { as: "asset", foreignKey: "asset_id"});
   asset.hasMany(business_document, { as: "business_documents", foreignKey: "asset_id"});
   ekyc.belongsTo(asset, { as: "captured_asset", foreignKey: "captured_asset_id"});
@@ -242,6 +276,8 @@ export function initModels(sequelize: Sequelize) {
   master_entity_investor_status.hasMany(entity_investor, { as: "entity_investors", foreignKey: "status_id"});
   entity.belongsTo(master_entity_type, { as: "entity_type", foreignKey: "entity_type_id"});
   master_entity_type.hasMany(entity, { as: "entities", foreignKey: "entity_type_id"});
+  user_entity.belongsTo(master_entity_type, { as: "entity", foreignKey: "entity_id"});
+  master_entity_type.hasMany(user_entity, { as: "user_entities", foreignKey: "entity_id"});
   entity_investor.belongsTo(master_investor_type, { as: "investor_type", foreignKey: "investor_type_id"});
   master_investor_type.hasMany(entity_investor, { as: "entity_investors", foreignKey: "investor_type_id"});
   token_order.belongsTo(master_order_status, { as: "status", foreignKey: "status_id"});
@@ -334,6 +370,12 @@ export function initModels(sequelize: Sequelize) {
   user_profile.hasMany(token_transaction, { as: "token_transactions", foreignKey: "created_by"});
   token_transaction.belongsTo(user_profile, { as: "updated_by_user_profile", foreignKey: "updated_by"});
   user_profile.hasMany(token_transaction, { as: "updated_by_token_transactions", foreignKey: "updated_by"});
+  user_entity.belongsTo(user_profile, { as: "created_by_user_profile", foreignKey: "created_by"});
+  user_profile.hasMany(user_entity, { as: "user_entities", foreignKey: "created_by"});
+  user_entity.belongsTo(user_profile, { as: "updated_by_user_profile", foreignKey: "updated_by"});
+  user_profile.hasMany(user_entity, { as: "updated_by_user_entities", foreignKey: "updated_by"});
+  user_entity.belongsTo(user_profile, { as: "user_profile", foreignKey: "user_profile_id"});
+  user_profile.hasMany(user_entity, { as: "user_profile_user_entities", foreignKey: "user_profile_id"});
   user_identity.belongsTo(user_profile, { as: "created_by_user_profile", foreignKey: "created_by"});
   user_profile.hasMany(user_identity, { as: "user_identities", foreignKey: "created_by"});
   user_identity.belongsTo(user_profile, { as: "updated_by_user_profile", foreignKey: "updated_by"});
@@ -344,6 +386,7 @@ export function initModels(sequelize: Sequelize) {
   user_profile.hasMany(wallet_token, { as: "updated_by_wallet_tokens", foreignKey: "updated_by"});
 
   return {
+    SequelizeMetum: SequelizeMetum,
     asset: asset,
     business_document: business_document,
     customer_wallet: customer_wallet,
@@ -351,6 +394,7 @@ export function initModels(sequelize: Sequelize) {
     entity: entity,
     entity_investor: entity_investor,
     individual_investor: individual_investor,
+    logged_in_record: logged_in_record,
     master_blockchain_network: master_blockchain_network,
     master_business_sector: master_business_sector,
     master_country: master_country,
@@ -364,6 +408,7 @@ export function initModels(sequelize: Sequelize) {
     master_token_type: master_token_type,
     master_transaction_status: master_transaction_status,
     master_wallet_type: master_wallet_type,
+    otp_token: otp_token,
     token_offering_allowed_country: token_offering_allowed_country,
     token_offering_allowed_currency: token_offering_allowed_currency,
     token_offering_document: token_offering_document,
@@ -371,8 +416,10 @@ export function initModels(sequelize: Sequelize) {
     token_offering: token_offering,
     token_order: token_order,
     token_transaction: token_transaction,
+    user_entity: user_entity,
     user_identity: user_identity,
     user_profile: user_profile,
+    user: user,
     wallet_token: wallet_token,
   };
 }

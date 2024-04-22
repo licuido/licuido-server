@@ -14,6 +14,7 @@ import type { token_offering_team, token_offering_teamId } from './token_offerin
 import type { token_offering, token_offeringId } from './token_offering';
 import type { token_order, token_orderId } from './token_order';
 import type { token_transaction, token_transactionId } from './token_transaction';
+import type { user_entity, user_entityId } from './user_entity';
 import type { user_identity, user_identityId } from './user_identity';
 import type { wallet_token, wallet_tokenId } from './wallet_token';
 
@@ -25,13 +26,16 @@ export interface user_profileAttributes {
   mobile_no_std_code?: string;
   mobile_no?: string;
   is_active?: boolean;
+  is_agree_terms_condition?: boolean;
+  is_verified?: boolean;
   created_at?: Date;
   updated_at?: Date;
+  user_id?: string;
 }
 
 export type user_profilePk = "id";
 export type user_profileId = user_profile[user_profilePk];
-export type user_profileOptionalAttributes = "id" | "name" | "position" | "email_id" | "mobile_no_std_code" | "mobile_no" | "is_active" | "created_at" | "updated_at";
+export type user_profileOptionalAttributes = "id" | "name" | "position" | "email_id" | "mobile_no_std_code" | "mobile_no" | "is_active" | "is_agree_terms_condition" | "is_verified" | "created_at" | "updated_at" | "user_id";
 export type user_profileCreationAttributes = Optional<user_profileAttributes, user_profileOptionalAttributes>;
 
 export class user_profile extends Model<user_profileAttributes, user_profileCreationAttributes> implements user_profileAttributes {
@@ -42,8 +46,11 @@ export class user_profile extends Model<user_profileAttributes, user_profileCrea
   mobile_no_std_code?: string;
   mobile_no?: string;
   is_active?: boolean;
+  is_agree_terms_condition?: boolean;
+  is_verified?: boolean;
   created_at?: Date;
   updated_at?: Date;
+  user_id?: string;
 
   // user_profile hasMany asset via created_by
   assets!: asset[];
@@ -417,6 +424,42 @@ export class user_profile extends Model<user_profileAttributes, user_profileCrea
   hasUpdated_by_token_transaction!: Sequelize.HasManyHasAssociationMixin<token_transaction, token_transactionId>;
   hasUpdated_by_token_transactions!: Sequelize.HasManyHasAssociationsMixin<token_transaction, token_transactionId>;
   countUpdated_by_token_transactions!: Sequelize.HasManyCountAssociationsMixin;
+  // user_profile hasMany user_entity via created_by
+  user_entities!: user_entity[];
+  getUser_entities!: Sequelize.HasManyGetAssociationsMixin<user_entity>;
+  setUser_entities!: Sequelize.HasManySetAssociationsMixin<user_entity, user_entityId>;
+  addUser_entity!: Sequelize.HasManyAddAssociationMixin<user_entity, user_entityId>;
+  addUser_entities!: Sequelize.HasManyAddAssociationsMixin<user_entity, user_entityId>;
+  createUser_entity!: Sequelize.HasManyCreateAssociationMixin<user_entity>;
+  removeUser_entity!: Sequelize.HasManyRemoveAssociationMixin<user_entity, user_entityId>;
+  removeUser_entities!: Sequelize.HasManyRemoveAssociationsMixin<user_entity, user_entityId>;
+  hasUser_entity!: Sequelize.HasManyHasAssociationMixin<user_entity, user_entityId>;
+  hasUser_entities!: Sequelize.HasManyHasAssociationsMixin<user_entity, user_entityId>;
+  countUser_entities!: Sequelize.HasManyCountAssociationsMixin;
+  // user_profile hasMany user_entity via updated_by
+  updated_by_user_entities!: user_entity[];
+  getUpdated_by_user_entities!: Sequelize.HasManyGetAssociationsMixin<user_entity>;
+  setUpdated_by_user_entities!: Sequelize.HasManySetAssociationsMixin<user_entity, user_entityId>;
+  addUpdated_by_user_entity!: Sequelize.HasManyAddAssociationMixin<user_entity, user_entityId>;
+  addUpdated_by_user_entities!: Sequelize.HasManyAddAssociationsMixin<user_entity, user_entityId>;
+  createUpdated_by_user_entity!: Sequelize.HasManyCreateAssociationMixin<user_entity>;
+  removeUpdated_by_user_entity!: Sequelize.HasManyRemoveAssociationMixin<user_entity, user_entityId>;
+  removeUpdated_by_user_entities!: Sequelize.HasManyRemoveAssociationsMixin<user_entity, user_entityId>;
+  hasUpdated_by_user_entity!: Sequelize.HasManyHasAssociationMixin<user_entity, user_entityId>;
+  hasUpdated_by_user_entities!: Sequelize.HasManyHasAssociationsMixin<user_entity, user_entityId>;
+  countUpdated_by_user_entities!: Sequelize.HasManyCountAssociationsMixin;
+  // user_profile hasMany user_entity via user_profile_id
+  user_profile_user_entities!: user_entity[];
+  getUser_profile_user_entities!: Sequelize.HasManyGetAssociationsMixin<user_entity>;
+  setUser_profile_user_entities!: Sequelize.HasManySetAssociationsMixin<user_entity, user_entityId>;
+  addUser_profile_user_entity!: Sequelize.HasManyAddAssociationMixin<user_entity, user_entityId>;
+  addUser_profile_user_entities!: Sequelize.HasManyAddAssociationsMixin<user_entity, user_entityId>;
+  createUser_profile_user_entity!: Sequelize.HasManyCreateAssociationMixin<user_entity>;
+  removeUser_profile_user_entity!: Sequelize.HasManyRemoveAssociationMixin<user_entity, user_entityId>;
+  removeUser_profile_user_entities!: Sequelize.HasManyRemoveAssociationsMixin<user_entity, user_entityId>;
+  hasUser_profile_user_entity!: Sequelize.HasManyHasAssociationMixin<user_entity, user_entityId>;
+  hasUser_profile_user_entities!: Sequelize.HasManyHasAssociationsMixin<user_entity, user_entityId>;
+  countUser_profile_user_entities!: Sequelize.HasManyCountAssociationsMixin;
   // user_profile hasMany user_identity via created_by
   user_identities!: user_identity[];
   getUser_identities!: Sequelize.HasManyGetAssociationsMixin<user_identity>;
@@ -496,6 +539,18 @@ export class user_profile extends Model<user_profileAttributes, user_profileCrea
     },
     is_active: {
       type: DataTypes.BOOLEAN,
+      allowNull: true
+    },
+    is_agree_terms_condition: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true
+    },
+    is_verified: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true
+    },
+    user_id: {
+      type: DataTypes.UUID,
       allowNull: true
     }
   }, {
