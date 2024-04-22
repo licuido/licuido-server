@@ -29,7 +29,7 @@ export async function findUserExisit({
 }) {
   try {
     // Creating User Profile
-    return await user_entity.findAndCountAll({
+    return await user_entity.findAll({
       where: {
         entity_id,
       },

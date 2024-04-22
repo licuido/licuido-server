@@ -6,7 +6,11 @@
  */
 
 import { constants, makeNetworkRequest, Logger } from "@helpers";
-import { createUserEntities, createUserProfile } from "@services";
+import {
+  createUserEntities,
+  createUserProfile,
+  findUserExisit,
+} from "@services";
 
 const { auth } = constants;
 interface signUpPayload {
@@ -21,6 +25,7 @@ interface signUpPayload {
 interface signInPayload {
   email_id: string;
   password: string;
+  entity_id: number;
 }
 
 interface forgetPasswordInterface {
@@ -70,12 +75,27 @@ const addAuthoriaztion = (token: string, apiConfig: AxiosConfig) => {
 // Sign In Call
 export const signIn = async (body: signInPayload) => {
   try {
-    const payload: signInPayload = body;
-    const response: any = await makeNetworkRequest<any, signInPayload>(
-      auth.SIGN_IN_CALL,
-      payload
-    );
-    return response;
+    const { email_id, password, entity_id }: signInPayload = body;
+
+    const response: any = await makeNetworkRequest<
+      any,
+      { email_id: string; password: string }
+    >(auth.SIGN_IN_CALL, { email_id, password });
+
+    if (response?.success) {
+      const user = await findUserExisit({ email_id, entity_id });
+      return {
+        user_profile: user?.[0]?.id,
+        token: response?.token,
+        success: true,
+        message: "Logged In Successfully",
+      };
+    } else {
+      return {
+        success: false,
+        message: response?.message,
+      };
+    }
   } catch (error: any) {
     Logger.error(error.message, error);
     throw error;

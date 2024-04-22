@@ -45,14 +45,11 @@ const ResetBodyByUser = Schema.object()
 // ====================================================================
 // Response Schema of Sign In
 const signInResponse: JSONSchema = Schema.object()
-  .prop(
-    "data",
-    Schema.object()
-      .prop("token", Schema.string())
-      .prop("isAlreadyLoggedin", Schema.boolean())
-  )
+  .prop("token", Schema.string())
+  .prop("user_profile", Schema.string())
   .prop("message", Schema.string())
   .prop("success", Schema.boolean())
+  .prop("meta", Schema.object().additionalProperties(true))
   .valueOf() as JSONSchema;
 
 // Response Schema of PreValidate

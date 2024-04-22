@@ -34,24 +34,37 @@ import { findUserExisit } from "@services";
 // Sign In
 export async function SIGN_IN(request: FastifyRequest, reply: FastifyReply) {
   try {
-    const { email_id, password } = postRequestInfo(request);
+    const { email_id, password, entity_id } = postRequestInfo(request);
     const payload = {
       email_id,
       password,
+      entity_id,
     };
     // -----------------------------
     //  INTRACTOR
     // -----------------------------
     const result = await signIn(payload as signInType);
 
-    console.log(result, "result");
+    const token = await reply.jwtSign({
+      id: result?.user_profile,
+      entity_id,
+    });
 
     // -----------------------------
     //  RESPONSE
     // -----------------------------
-    return handleResponse(request, reply, responseType?.OK, {
-      data: result,
-    });
+    return handleResponse(
+      request,
+      reply,
+      result?.success ? responseType?.OK : responseType.BAD_GATEWAY,
+      {
+        data: {
+          token,
+          user_profile: result?.user_profile,
+        },
+        customMessage: result?.message,
+      }
+    );
   } catch (error: any) {
     Logger.error(request, error.message, error);
     if (error?.response?.data?.statusCode === 403) {
@@ -88,7 +101,7 @@ export async function SIGN_UP(request: FastifyRequest, reply: FastifyReply) {
     };
 
     const isUserExisit = await findUserExisit({ entity_id, email_id });
-    if (isUserExisit?.count !== 0) {
+    if (isUserExisit?.length !== 0) {
       return handleResponse(request, reply, responseType?.UNAUTHORIZED, {
         customMessage: "User Already Exisits",
       });
@@ -103,7 +116,7 @@ export async function SIGN_UP(request: FastifyRequest, reply: FastifyReply) {
     //  RESPONSE
     // -----------------------------
     return handleResponse(request, reply, responseType?.OK, {
-      data: { result },
+      data: result,
       customMessage: "User Created Successfully",
     });
   } catch (error: any) {
