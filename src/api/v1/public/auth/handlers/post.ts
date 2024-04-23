@@ -8,7 +8,7 @@
 
 import { FastifyReply, FastifyRequest } from "fastify";
 
-import { Logger, handleResponse, responseType} from "@helpers";
+import { Logger, handleResponse, responseType } from "@helpers";
 import {
   forgetPassword,
   preValidateUser,
@@ -58,11 +58,12 @@ export async function SIGN_IN(request: FastifyRequest, reply: FastifyReply) {
           token: await reply.jwtSign({
             ...result?.token_data,
           }),
+          user_profile: result?.token_data?.user_profile,
         },
         customMessage: result?.message,
-        error:{
-          message:result?.message,
-        }
+        error: {
+          message: result?.message,
+        },
       }
     );
   } catch (error: any) {
@@ -191,7 +192,7 @@ export async function FORGET_PASSWORD(
     // -----------------------------
     const data = await forgetPassword(payload as forgetPasswordInterface);
 
-    // if(data?.data?.token && entity_id){ 
+    // if(data?.data?.token && entity_id){
     //   const user:any = await findUserExisit({ entity_id, email_id });
     //   await sendAlert({
     //     reference_id: "reset_password",
@@ -204,8 +205,6 @@ export async function FORGET_PASSWORD(
     //     console.log(res,"user")
     //   })
     // }
-
-   
 
     // -----------------------------
     //  RESPONSE

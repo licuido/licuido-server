@@ -87,7 +87,10 @@ export const signIn = async (body: signInPayload) => {
       // check user
       const user: any = await findUserExisit({ email_id, entity_id });
       //if user did not set up the account don't allow to login
-      if (!user?.[0]?.dataValues?.user_profile?.dataValues?.is_setup_done && entity_id !== entityTypeMaster?.admin) {
+      if (
+        !user?.[0]?.dataValues?.user_profile?.dataValues?.is_setup_done &&
+        entity_id !== entityTypeMaster?.admin
+      ) {
         return {
           success: false,
           message: "You did not completed your account set up",
@@ -288,7 +291,7 @@ export const signUp = async (body: signUpPayload) => {
           entity_id: entity_id,
         });
       }
-      return { user_profile_id: user?.dataValues?.id };
+      return { user_profile: user?.dataValues?.id };
     }
   } catch (error: any) {
     Logger.error(error.message, error);
