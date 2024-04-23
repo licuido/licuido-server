@@ -3,7 +3,7 @@ import AutoLoad, { AutoloadPluginOptions } from "@fastify/autoload";
 import { FastifyPluginAsync } from "fastify";
 import v1 from "./api/v1";
 import { cpus } from "os";
-import { Logger, handleResponse, responseType } from "@helpers";
+// import { Logger, handleResponse, responseType } from "@helpers";
 
 process.env.UV_THREADPOOL_SIZE = String(cpus().length);
 
@@ -37,12 +37,12 @@ const app: FastifyPluginAsync<AppOptions> = async (
   });
 
   fastify.addHook("onRequest", (request: any, response, next) => {
-    if (!request?.headers?.referer) {
-      Logger.error(request, "Please Provide Referrer", false, "APP");
-      return handleResponse(request, response, responseType.FORBIDDEN, {
-        customMessage: "Please Provide Referrer",
-      });
-    }
+    // if (!request?.headers?.referer) {
+    //   Logger.error(request, "Please Provide Referrer", false, "APP");
+    //   return handleResponse(request, response, responseType.FORBIDDEN, {
+    //     customMessage: "Please Provide Referrer",
+    //   });
+    // }
     request.entity_id = entity_types[request?.headers?.referer];
     return next();
   });

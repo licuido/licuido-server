@@ -3,6 +3,7 @@ import schema from "./schema";
 import handlers from "./handlers";
 
 const example: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
+  // fastify.addHook("preHandler", fastify.authenticate);
   fastify
     .post("/login", { schema: schema.SIGN_IN }, handlers.SIGN_IN)
     .post("/register", { schema: schema.SIGN_IN }, handlers.SIGN_UP)

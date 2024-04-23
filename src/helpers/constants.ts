@@ -104,6 +104,16 @@ enum assetIdentificationType {
   engineNumber = "Engine Number",
 }
 
+export const authorizationMessages: any = {
+  badRequestErrorMessage: `Format must be Authorization: Bearer <token>`,
+  noAuthorizationInHeaderMessage: "Autorization header is missing!",
+  authorizationTokenExpiredMessage: "token expired!",
+  // for the below message you can pass a sync function that must return a string as shown or a string
+  authorizationTokenInvalid: (err: any) => {
+    return `Authorization token is invalid: ${err.message}`;
+  },
+};
+
 enum paymentType {
   fullPayment = "Full payment",
   installment = "Installment",

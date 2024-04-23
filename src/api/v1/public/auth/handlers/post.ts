@@ -45,11 +45,6 @@ export async function SIGN_IN(request: FastifyRequest, reply: FastifyReply) {
     // -----------------------------
     const result = await signIn(payload as signInType);
 
-    const token = await reply.jwtSign({
-      id: result?.user_profile,
-      entity_id,
-    });
-
     // -----------------------------
     //  RESPONSE
     // -----------------------------
@@ -59,8 +54,9 @@ export async function SIGN_IN(request: FastifyRequest, reply: FastifyReply) {
       result?.success ? responseType?.OK : responseType.BAD_GATEWAY,
       {
         data: {
-          token,
-          user_profile: result?.user_profile,
+          token: await reply.jwtSign({
+            ...result?.token_data,
+          }),
         },
         customMessage: result?.message,
       }

@@ -83,10 +83,21 @@ export const signIn = async (body: signInPayload) => {
     >(auth.SIGN_IN_CALL, { email_id, password });
 
     if (response?.success) {
-      const user = await findUserExisit({ email_id, entity_id });
+      // check user
+      const user: any = await findUserExisit({ email_id, entity_id });
+      //if user did not set up the account don't allow to login
+      if (!user?.[0]?.dataValues?.user_profile?.dataValues?.is_setup_done) {
+        return {
+          success: false,
+          message: "You did not completed your account set up",
+        };
+      }
       return {
-        user_profile: user?.[0]?.id,
-        token: response?.token,
+        token_data: {
+          user_profile: user?.[0]?.dataValues?.user_profile_id,
+          is_setup_done:
+            user?.[0]?.dataValues?.user_profile?.dataValues?.is_setup_done,
+        },
         success: true,
         message: "Logged In Successfully",
       };
