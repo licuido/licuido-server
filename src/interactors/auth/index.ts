@@ -163,7 +163,7 @@ export const resetPassword = async (
   id: any
 ) => {
   try {
-    const apiConfig = addAuthoriaztion(token, auth.RESET_PASSWORD_CALL);
+    const apiConfig = addAuthoriaztion(token, auth.SET_PASSWORD_CALL);
     const payload: resetPasswordInterface = body;
     const response: any = await makeNetworkRequest(apiConfig, payload, id);
     return response;

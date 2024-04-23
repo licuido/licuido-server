@@ -31,7 +31,7 @@ const RESET_PASSWORD_CALL = {
 const SET_PASSWORD_CALL = {
   url: env.AUTH_API_LOCAL + "/auth/reset_password",
   config: {
-    method: "patch",
+    method: "post",
   },
 };
 
