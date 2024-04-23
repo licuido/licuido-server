@@ -3,6 +3,7 @@ import AutoLoad, { AutoloadPluginOptions } from "@fastify/autoload";
 import { FastifyPluginAsync } from "fastify";
 import v1 from "./api/v1";
 import { cpus } from "os";
+import { entityTypeMaster } from "helpers/constants";
 // import { Logger, handleResponse, responseType } from "@helpers";
 
 process.env.UV_THREADPOOL_SIZE = String(cpus().length);
@@ -43,7 +44,7 @@ const app: FastifyPluginAsync<AppOptions> = async (
     //     customMessage: "Please Provide Referrer",
     //   });
     // }
-    request.entity_id = entity_types[request?.headers?.referer];
+    request.entity_id = entity_types[request?.headers?.referer]??entityTypeMaster?.admin;
     return next();
   });
 

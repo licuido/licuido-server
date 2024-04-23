@@ -8,7 +8,7 @@
 
 import { FastifyReply, FastifyRequest } from "fastify";
 
-import { Logger, handleResponse, responseType } from "@helpers";
+import { Logger, handleResponse, responseType ,sendAlert} from "@helpers";
 import {
   forgetPassword,
   preValidateUser,
@@ -30,6 +30,7 @@ import {
   resetUserPasswordPayload,
 } from "@types";
 import { findUserExisit } from "@services";
+import { entityUrl } from "helpers/constants";
 
 // Sign In
 export async function SIGN_IN(request: FastifyRequest, reply: FastifyReply) {
@@ -178,13 +179,30 @@ export async function FORGET_PASSWORD(
   request: FastifyRequest,
   reply: FastifyReply
 ) {
-  const { email_id } = request.body as { email_id: string };
+  const { email_id, entity_id } = postRequestInfo(request);
   const payload = { email_id };
+
   try {
     // -----------------------------
     //  INTRACTOR
     // -----------------------------
     const data = await forgetPassword(payload as forgetPasswordInterface);
+
+    if(data?.data?.token && entity_id){ 
+      const user:any = await findUserExisit({ entity_id, email_id });
+      await sendAlert({
+        reference_id: "reset_password",
+        email_subject: ["email_subject"],
+        email_body: [
+          `Hi ${user?.[0]?.dataValues?.user_profile?.name} proceed to login by the below link  ${entityUrl?.[1]??""}.`,
+        ],
+        to_emails: [email_id],
+      }).then((res)=>{
+        console.log(res,"user")
+      })
+    }
+
+   
 
     // -----------------------------
     //  RESPONSE

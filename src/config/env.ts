@@ -13,6 +13,7 @@ const {
   INVESTOR_URL,
   ADMIN_URL,
   ISSUER_URL,
+  ALERTSHUB_KEY
 }: any = process.env;
 
 export default {
@@ -27,4 +28,5 @@ export default {
   INVESTOR_URL,
   ADMIN_URL,
   ISSUER_URL,
+  ALERTSHUB_KEY
 };
