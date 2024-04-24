@@ -77,3 +77,22 @@ export const CREATE_PERSON_INFO_DETAILS = {
     body: createBusinessBody,
     response: makeResponseSchema(businessDocumentCreateResponse),
   };
+
+
+  const createkycBody = Schema.object()
+  .prop("profile_id", Schema.string().format("uuid"))
+  .prop("captured_url", Schema.string())
+  .prop("is_verified", Schema.boolean())
+  .valueOf() as JSONSchema;
+
+
+
+  export const CREATE_EKYC = {
+    description:
+      "The purpose of this schema is to create ekyc verification",
+    tags: ["ONBOARDING"],
+    body: createkycBody,
+    response: makeResponseSchema(businessDocumentCreateResponse),
+  };
+
+  

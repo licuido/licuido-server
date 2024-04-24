@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { Logger, handleResponse, responseType } from "@helpers";
-import { Entity,UserProfile,BusinessDocuments } from "interactors";
+import { Entity,UserProfile,BusinessDocuments,Ekyc } from "interactors";
 import { postRequestInfo } from "@mappers";
 
 export async function CREATE_BUSSINESS_DETAILS(
@@ -111,6 +111,51 @@ export async function CREATE_BUSINESS_DOCUMENT(
     //  INTERACTOR
     // -----------------------------
     const result = await BusinessDocuments.createBussinessDocuments({
+      ...rest,
+    });
+    // -----------------------------
+    //  RESPONSE
+    // -----------------------------
+
+    if (result?.success) {
+      return handleResponse(request, reply, responseType?.CREATED, {
+        customMessage: result?.message,
+      });
+    } else {
+      return handleResponse(
+        request,
+        reply,
+        responseType?.INTERNAL_SERVER_ERROR,
+        {
+          error: {
+            message: result?.message,
+          },
+        }
+      );
+    }
+  } catch (error: any) {
+    Logger.error(request, error.message, error);
+    return handleResponse(request, reply, responseType?.INTERNAL_SERVER_ERROR, {
+      error: {
+        message: responseType?.INTERNAL_SERVER_ERROR,
+      },
+    });
+  }
+}
+
+export async function CREATE_EKYC(
+  request: FastifyRequest,
+  reply: FastifyReply
+) {
+  try {
+    // -----------------------------
+    //  MAPPER
+    // -----------------------------
+    const { ...rest } = postRequestInfo(request);
+    // -----------------------------
+    //  INTERACTOR
+    // -----------------------------
+    const result = await Ekyc.createKyc({
       ...rest,
     });
     // -----------------------------

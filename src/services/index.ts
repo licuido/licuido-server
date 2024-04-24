@@ -8,6 +8,8 @@ export * from "./entities";
 export * from "./assets";
 export * from "./user_identities";
 export * from "./business_documents";
+export * from "./ekyc";
+
 
 
 

@@ -5,6 +5,8 @@ import MasterPositions from "./master_position";
 import Entity from "./entities";
 import UserProfile from "./user_profile";
 import BusinessDocuments from "./business_documents";
+import Ekyc from "./ekyc";
+
 
 
 
@@ -15,5 +17,6 @@ export {
   MasterPositions,
   Entity,
   UserProfile,
-  BusinessDocuments
+  BusinessDocuments,
+  Ekyc
 };
