@@ -128,12 +128,15 @@ export class user extends Model<userAttributes, userCreationAttributes> implemen
     },
     created_at: {
       type: DataTypes.DATE,
-      allowNull: true
+      allowNull: true,
+      defaultValue: new Date()
     },
     updated_at: {
       type: DataTypes.DATE,
-      allowNull: true
-    },
+      allowNull: true,
+      defaultValue: new Date()
+    }
+    
   }, {
     sequelize,
     tableName: 'users',

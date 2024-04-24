@@ -31,6 +31,8 @@ import { master_investor_type as _master_investor_type } from "./master_investor
 import type { master_investor_typeAttributes, master_investor_typeCreationAttributes } from "./master_investor_type";
 import { master_order_status as _master_order_status } from "./master_order_status";
 import type { master_order_statusAttributes, master_order_statusCreationAttributes } from "./master_order_status";
+import { master_position as _master_position } from "./master_position";
+import type { master_positionAttributes, master_positionCreationAttributes } from "./master_position";
 import { master_region as _master_region } from "./master_region";
 import type { master_regionAttributes, master_regionCreationAttributes } from "./master_region";
 import { master_token_offering_status as _master_token_offering_status } from "./master_token_offering_status";
@@ -87,6 +89,7 @@ export {
   _master_entity_type as master_entity_type,
   _master_investor_type as master_investor_type,
   _master_order_status as master_order_status,
+  _master_position as master_position,
   _master_region as master_region,
   _master_token_offering_status as master_token_offering_status,
   _master_token_status as master_token_status,
@@ -141,6 +144,8 @@ export type {
   master_investor_typeCreationAttributes,
   master_order_statusAttributes,
   master_order_statusCreationAttributes,
+  master_positionAttributes,
+  master_positionCreationAttributes,
   master_regionAttributes,
   master_regionCreationAttributes,
   master_token_offering_statusAttributes,
@@ -198,6 +203,7 @@ export function initModels(sequelize: Sequelize) {
   const master_entity_type = _master_entity_type.initModel(sequelize);
   const master_investor_type = _master_investor_type.initModel(sequelize);
   const master_order_status = _master_order_status.initModel(sequelize);
+  const master_position = _master_position.initModel(sequelize);
   const master_region = _master_region.initModel(sequelize);
   const master_token_offering_status = _master_token_offering_status.initModel(sequelize);
   const master_token_status = _master_token_status.initModel(sequelize);
@@ -282,6 +288,8 @@ export function initModels(sequelize: Sequelize) {
   master_investor_type.hasMany(entity_investor, { as: "entity_investors", foreignKey: "investor_type_id"});
   token_order.belongsTo(master_order_status, { as: "status", foreignKey: "status_id"});
   master_order_status.hasMany(token_order, { as: "token_orders", foreignKey: "status_id"});
+  user_profile.belongsTo(master_position, { as: "position", foreignKey: "position_id"});
+  master_position.hasMany(user_profile, { as: "user_profiles", foreignKey: "position_id"});
   master_country.belongsTo(master_region, { as: "region", foreignKey: "region_id"});
   master_region.hasMany(master_country, { as: "master_countries", foreignKey: "region_id"});
   token_offering.belongsTo(master_token_offering_status, { as: "offer_status", foreignKey: "offer_status_id"});
@@ -402,6 +410,7 @@ export function initModels(sequelize: Sequelize) {
     master_entity_type: master_entity_type,
     master_investor_type: master_investor_type,
     master_order_status: master_order_status,
+    master_position: master_position,
     master_region: master_region,
     master_token_offering_status: master_token_offering_status,
     master_token_status: master_token_status,

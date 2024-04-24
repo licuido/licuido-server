@@ -56,12 +56,14 @@ export class logged_in_record extends Model<logged_in_recordAttributes, logged_i
     },
     created_at: {
       type: DataTypes.DATE,
-      allowNull: true
+      allowNull: true,
+      defaultValue: new Date()
     },
     updated_at: {
       type: DataTypes.DATE,
-      allowNull: true
-    },
+      allowNull: true,
+      defaultValue: new Date()
+    }
   }, {
     sequelize,
     tableName: 'logged_in_records',

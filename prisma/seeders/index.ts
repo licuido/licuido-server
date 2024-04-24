@@ -3,6 +3,8 @@ import {
   master_entity_types,
   master_regions,
   master_countries,
+  master_business_sectors,
+  master_position,
 } from "@prisma/client";
 
 const prisma = new PrismaClient();
@@ -43,6 +45,32 @@ const main = async () => {
       seed.data.forEach((data: master_countries) => {
         upsertPromises.push(
           prisma.master_countries.upsert({
+            where: { id: data.id },
+            update: data,
+            create: data,
+          })
+        );
+      });
+    }
+    //Master Business sectors
+
+    if (seed.table == "master_business_sectors") {
+      seed.data.forEach((data: master_business_sectors) => {
+        upsertPromises.push(
+          prisma.master_business_sectors.upsert({
+            where: { id: data.id },
+            update: data,
+            create: data,
+          })
+        );
+      });
+    }
+
+    //Master Position
+    if (seed.table == "master_position") {
+      seed.data.forEach((data: master_position) => {
+        upsertPromises.push(
+          prisma.master_position.upsert({
             where: { id: data.id },
             update: data,
             create: data,

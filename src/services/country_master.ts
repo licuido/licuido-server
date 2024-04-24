@@ -27,6 +27,7 @@ class Countries {
           region_id,
           name: { [Op.iLike]: `%${search}%` },
         },
+        order: [["id", "ASC"]],
         offset,
         limit,
       });

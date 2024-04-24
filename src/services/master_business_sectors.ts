@@ -1,7 +1,7 @@
-import { master_region } from "@models";
+import { master_business_sector } from "@models";
 import { Op } from "sequelize";
 
-class MasterRegion {
+class MasterBusinessSectors {
   /**
    * this function used for get all country master list.
    *
@@ -20,7 +20,7 @@ class MasterRegion {
     try {
       const { offset, limit, search } = options;
 
-      const { rows, count } = await master_region.findAndCountAll({
+      const { rows, count } = await master_business_sector.findAndCountAll({
         where: {
           is_active: true,
           name: { [Op.iLike]: `%${search}%` },
@@ -39,4 +39,4 @@ class MasterRegion {
   }
 }
 
-export { MasterRegion };
+export { MasterBusinessSectors };

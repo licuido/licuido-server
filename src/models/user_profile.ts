@@ -7,6 +7,7 @@ import type { ekyc, ekycId } from './ekyc';
 import type { entity, entityId } from './entity';
 import type { entity_investor, entity_investorId } from './entity_investor';
 import type { individual_investor, individual_investorId } from './individual_investor';
+import type { master_position, master_positionId } from './master_position';
 import type { token_offering_allowed_country, token_offering_allowed_countryId } from './token_offering_allowed_country';
 import type { token_offering_allowed_currency, token_offering_allowed_currencyId } from './token_offering_allowed_currency';
 import type { token_offering_document, token_offering_documentId } from './token_offering_document';
@@ -21,39 +22,46 @@ import type { wallet_token, wallet_tokenId } from './wallet_token';
 export interface user_profileAttributes {
   id: string;
   name?: string;
-  position?: string;
+  user_id?: number;
+  // position?: string;
   email_id?: string;
   mobile_no_std_code?: string;
   mobile_no?: string;
   is_active?: boolean;
   is_agree_terms_condition?: boolean;
+  is_setup_done?: boolean;
   is_verified?: boolean;
   created_at?: Date;
   updated_at?: Date;
-  is_setup_done?: boolean;
-  user_id?: number;
+  position_id?: number;
 }
 
 export type user_profilePk = "id";
 export type user_profileId = user_profile[user_profilePk];
-export type user_profileOptionalAttributes = "id" | "name" | "position" | "email_id" | "mobile_no_std_code" | "mobile_no" | "is_active" | "is_agree_terms_condition" | "is_verified" | "created_at" | "updated_at" | "is_setup_done" | "user_id";
+export type user_profileOptionalAttributes = "id" | "name" | "user_id"  | "email_id" | "mobile_no_std_code" | "mobile_no" | "is_active" | "is_agree_terms_condition" | "is_setup_done" | "is_verified" | "created_at" | "updated_at" | "position_id";
 export type user_profileCreationAttributes = Optional<user_profileAttributes, user_profileOptionalAttributes>;
 
 export class user_profile extends Model<user_profileAttributes, user_profileCreationAttributes> implements user_profileAttributes {
   id!: string;
   name?: string;
-  position?: string;
+  user_id?: number;
+  // position?: string;
   email_id?: string;
   mobile_no_std_code?: string;
   mobile_no?: string;
   is_active?: boolean;
   is_agree_terms_condition?: boolean;
+  is_setup_done?: boolean;
   is_verified?: boolean;
   created_at?: Date;
   updated_at?: Date;
-  is_setup_done?: boolean;
-  user_id?: number;
+  position_id?: number;
 
+  // user_profile belongsTo master_position via position_id
+  position!: master_position;
+  getPosition!: Sequelize.BelongsToGetAssociationMixin<master_position>;
+  setPosition!: Sequelize.BelongsToSetAssociationMixin<master_position, master_positionId>;
+  createPosition!: Sequelize.BelongsToCreateAssociationMixin<master_position>;
   // user_profile hasMany asset via created_by
   assets!: asset[];
   getAssets!: Sequelize.HasManyGetAssociationsMixin<asset>;
@@ -523,8 +531,8 @@ export class user_profile extends Model<user_profileAttributes, user_profileCrea
       type: DataTypes.TEXT,
       allowNull: true
     },
-    position: {
-      type: DataTypes.TEXT,
+    user_id: {
+      type: DataTypes.INTEGER,
       allowNull: true
     },
     email_id: {
@@ -547,17 +555,21 @@ export class user_profile extends Model<user_profileAttributes, user_profileCrea
       type: DataTypes.BOOLEAN,
       allowNull: true
     },
-    is_verified: {
-      type: DataTypes.BOOLEAN,
-      allowNull: true
-    },
     is_setup_done: {
       type: DataTypes.BOOLEAN,
       allowNull: true
     },
-    user_id: {
-      type: DataTypes.INTEGER,
+    is_verified: {
+      type: DataTypes.BOOLEAN,
       allowNull: true
+    },
+    position_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'master_position',
+        key: 'id'
+      }
     }
   }, {
     sequelize,
