@@ -22,22 +22,25 @@ const createBussinessDetails = async (options: createEntity) => {
     if(logo){
       const asset = await Asset.upsert({
         type:logo_type,
-        url:logo
+        url:logo,
+        is_active:true
       })
       asset_id=asset?.[0]?.dataValues?.id
     }
 
 
-    const data= await Entities.upsert({
+   const data = await Entities.upsert({
       ...options,
       logo_asset_id:asset_id,
-      logo:undefined
+      logo:undefined,
     });
 
     return{
         success:true,
         message:`Business Detail Successfully ${id? "Updated":"Created"}`,
-        data:data?.[0]?.dataValues
+        data:{
+          entity_id:data?.[0]?.dataValues?.id
+        }
     }
 
   } catch (error: any) {

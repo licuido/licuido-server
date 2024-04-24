@@ -6,5 +6,9 @@ export * from "./master_business_sectors";
 export * from "./master_position";
 export * from "./entities";
 export * from "./assets";
+export * from "./user_identities";
+export * from "./business_documents";
+
+
 
 

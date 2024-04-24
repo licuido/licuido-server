@@ -4,7 +4,7 @@ import { createAsset } from "@types";
 
 class Asset {
   /**
-   * this function used for insert user entities.
+   * this function used for insert asset.
    *
    * @param {createEntity} options - The response object containing paginated information.
    * @throws {Error} Throws an error if there's an issue extracting parameters from the response.
@@ -18,6 +18,15 @@ class Asset {
     }
   }
 
+
+  static async bulkInsert(options: createAsset[]): Promise<any> {
+    try {
+        return await asset.bulkCreate(options);
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
 }
 
 export { Asset };

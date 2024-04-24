@@ -1,5 +1,9 @@
 export * from "./user_profile";
 export * from "./entities";
 export * from "./asset";
+export * from "./user_identities";
+export * from "./business_document";
+
+
 
 

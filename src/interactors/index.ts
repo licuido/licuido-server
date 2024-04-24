@@ -1,15 +1,19 @@
-import User from "./user";
 import CountryMaster from "./country_master";
 import RegionMaster from "./master_regions";
 import MasterBusinessSectors from "./master_business_sectors";
 import MasterPositions from "./master_position";
 import Entity from "./entities";
+import UserProfile from "./user_profile";
+import BusinessDocuments from "./business_documents";
+
+
 
 export {
   CountryMaster,
   RegionMaster,
-  User,
   MasterBusinessSectors,
   MasterPositions,
-  Entity
+  Entity,
+  UserProfile,
+  BusinessDocuments
 };

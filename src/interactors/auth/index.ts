@@ -7,8 +7,8 @@
 
 import { constants, makeNetworkRequest, Logger } from "@helpers";
 import {
+  UserProfile,
   createUserEntities,
-  createUserProfile,
   findUserExisit,
 } from "@services";
 import { entityTypeMaster } from "helpers/constants";
@@ -280,7 +280,7 @@ export const signUp = async (body: signUpPayload) => {
 
     if (response?.data?.user) {
       //create new profile
-      const user = await createUserProfile({
+      const user = await UserProfile.createUserProfile({
         email_id,
         user_id: response?.data?.user?.id,
         is_agree_terms_condition: payload?.is_agree_terms_condition ?? false,
