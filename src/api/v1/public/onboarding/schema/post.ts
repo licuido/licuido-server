@@ -116,3 +116,20 @@ export const CREATE_PERSON_INFO_DETAILS = {
 
 
   
+
+  const setAccountBody = Schema.object()
+  .prop("profile_id", Schema.string().format("uuid"))
+  .valueOf() as JSONSchema;
+
+
+
+  export const   SET_ACCOUNT  = {
+    description:
+      "The purpose of this schema is set final step of setup",
+    tags: ["ONBOARDING"],
+    body: setAccountBody,
+    response: makeResponseSchema(businessDocumentCreateResponse),
+  };
+
+
+  

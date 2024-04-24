@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { Logger, handleResponse, responseType } from "@helpers";
-import { Entity,UserProfile,BusinessDocuments,Ekyc,CustomersWallet } from "interactors";
+import { Entity,UserProfile,BusinessDocuments,Ekyc,CustomersWallet} from "interactors";
 import { postRequestInfo } from "@mappers";
 
 export async function CREATE_BUSSINESS_DETAILS(
@@ -204,6 +204,49 @@ export async function CREATE_CUSTOMER_WALLET(
     const result = await CustomersWallet.createCustomersWallet({
       ...rest,
     });
+    // -----------------------------
+    //  RESPONSE
+    // -----------------------------
+
+    if (result?.success) {
+      return handleResponse(request, reply, responseType?.CREATED, {
+        customMessage: result?.message,
+      });
+    } else {
+      return handleResponse(
+        request,
+        reply,
+        responseType?.INTERNAL_SERVER_ERROR,
+        {
+          error: {
+            message: result?.message,
+          },
+        }
+      );
+    }
+  } catch (error: any) {
+    Logger.error(request, error.message, error);
+    return handleResponse(request, reply, responseType?.INTERNAL_SERVER_ERROR, {
+      error: {
+        message: responseType?.INTERNAL_SERVER_ERROR,
+      },
+    });
+  }
+}
+
+export async function SET_ACCOUNT(
+  request: FastifyRequest,
+  reply: FastifyReply
+) {
+  try {
+    // -----------------------------
+    //  MAPPER
+    // -----------------------------
+    const { profile_id } = postRequestInfo(request);
+    // -----------------------------
+    //  INTERACTOR
+    // -----------------------------
+    const result = await UserProfile.setupUserAccount(profile_id);
     // -----------------------------
     //  RESPONSE
     // -----------------------------

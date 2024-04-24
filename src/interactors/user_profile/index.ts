@@ -49,6 +49,28 @@ const createPersonInfoDetails = async (options: createPersonInfo) => {
   }
 };
 
+
+// after set up last step 
+const setupUserAccount = async (id:string) => {
+  try {
+    
+    await UserProfile.upsertPersonInfo({
+      id,
+      is_agree_terms_condition:true,
+      is_setup_done:true
+    });
+
+ 
+   return {
+      success: true,
+      message: `Your Account Updated`,
+    };
+  } catch (error: any) {
+    Logger.error(error.message, error);
+    throw error;
+  }
+};
 export default {
   createPersonInfoDetails,
+  setupUserAccount
 };

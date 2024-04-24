@@ -10,6 +10,7 @@ const onBoarding: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
   .post("/business_documents", { schema: schema.CREATE_BUSINESS_DOCUMENT }, handler.CREATE_BUSINESS_DOCUMENT)
   .post("/e_kyc", { schema: schema.CREATE_EKYC }, handler.CREATE_EKYC)
   .post("/wallet", { schema: schema.CREATE_CUSTOMER_WALLET }, handler.CREATE_CUSTOMER_WALLET)
+  .post("/set_account", { schema: schema.SET_ACCOUNT }, handler.SET_ACCOUNT)
 
     
 };

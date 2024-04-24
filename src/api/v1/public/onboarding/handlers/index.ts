@@ -4,6 +4,7 @@ import {
   CREATE_BUSINESS_DOCUMENT,
   CREATE_EKYC,
   CREATE_CUSTOMER_WALLET,
+  SET_ACCOUNT
 } from "./post";
 
 export default {
@@ -12,4 +13,5 @@ export default {
   CREATE_BUSINESS_DOCUMENT,
   CREATE_EKYC,
   CREATE_CUSTOMER_WALLET,
+  SET_ACCOUNT
 };

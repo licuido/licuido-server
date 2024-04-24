@@ -23,12 +23,14 @@ export interface resetUserPasswordPayload {
 
 
 export interface createPersonInfo{
-  name:string;
-  position_id:number;
-  mobile_no_std_code:string;
-  mobile_no:string;
+  name?:string;
+  position_id?:number;
+  mobile_no_std_code?:string;
+  mobile_no?:string;
   email_id?:string;
   identity?:createAsset[];
   deletedIdentity?:string[];
   id:string;
+  is_agree_terms_condition?:boolean;
+  is_setup_done?:boolean;
 }
