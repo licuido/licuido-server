@@ -3,6 +3,7 @@ import CountryMaster from "./country_master";
 import RegionMaster from "./master_regions";
 import MasterBusinessSectors from "./master_business_sectors";
 import MasterPositions from "./master_position";
+import Entity from "./entities";
 
 export {
   CountryMaster,
@@ -10,4 +11,5 @@ export {
   User,
   MasterBusinessSectors,
   MasterPositions,
+  Entity
 };

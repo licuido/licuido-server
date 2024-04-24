@@ -124,6 +124,7 @@ function handleResponse(
         origin: request.url,
         timestamp: new Date(),
         message: customMessage,
+        data,
         ...error,
       },
     });

@@ -49,6 +49,7 @@ const signInResponse: JSONSchema = Schema.object()
   .prop("user_profile", Schema.string())
   .prop("message", Schema.string())
   .prop("success", Schema.boolean())
+  .prop("error", Schema.object())
   .prop("meta", Schema.object().additionalProperties(true))
   .valueOf() as JSONSchema;
 

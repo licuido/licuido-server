@@ -101,10 +101,14 @@ export async function SIGN_UP(request: FastifyRequest, reply: FastifyReply) {
       entity_id,
     };
 
-    const isUserExisit = await findUserExisit({ entity_id, email_id });
+    const isUserExisit:any = await findUserExisit({ entity_id, email_id });
     if (isUserExisit?.length !== 0) {
       return handleResponse(request, reply, responseType?.UNAUTHORIZED, {
         customMessage: "User Already Exisits",
+        error:{
+          email_id,
+          user_profile: !isUserExisit?.[0]?.dataValues?.user_profile?.dataValues?.is_setup_done ? isUserExisit?.[0]?.dataValues?.user_profile_id:undefined,
+        }
       });
     }
 

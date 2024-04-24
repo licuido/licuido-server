@@ -43,6 +43,7 @@ export const makeResponseSchema = (response: JSONSchema) => {
       .prop(
         "error",
         Schema.object()
+          .additionalProperties(true)
           .prop("isError", Schema.boolean())
           .prop("message", Schema.string())
           .prop("origin", Schema.string())
@@ -59,6 +60,7 @@ export const makeResponseSchema = (response: JSONSchema) => {
       .prop(
         "error",
         Schema.object()
+           .prop("data", Schema.object())
           .prop("isError", Schema.boolean())
           .prop("message", Schema.string())
           .prop("origin", Schema.string())

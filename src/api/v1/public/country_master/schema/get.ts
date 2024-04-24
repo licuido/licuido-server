@@ -24,7 +24,7 @@ const countryResponse: JSONSchema = Schema.object()
   .prop("meta", Schema.object().prop("message", Schema.string()))
   .valueOf() as JSONSchema;
 
-const customParams = Schema.object().prop("region_id", Schema.number());
+const customParams = Schema.object().prop("region_id", Schema.number()).prop("offset", Schema.number()).prop("limit", Schema.number()).prop("search", Schema.string());
 
 export const GET_ALL_COUNTRIES = {
   description:
