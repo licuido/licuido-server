@@ -9,6 +9,10 @@ export * from "./assets";
 export * from "./user_identities";
 export * from "./business_documents";
 export * from "./ekyc";
+export * from "./customer_wallets";
+export * from "./master_wallet_types";
+
+
 
 
 

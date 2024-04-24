@@ -95,4 +95,24 @@ export const CREATE_PERSON_INFO_DETAILS = {
     response: makeResponseSchema(businessDocumentCreateResponse),
   };
 
+
+  const createWalletBody = Schema.object()
+  .prop("profile_id", Schema.string().format("uuid"))
+  .prop("wallet_type_id", Schema.number())
+  .prop("investor_entity_id", Schema.string())
+  .prop("wallet_address", Schema.string())
+  .prop("is_authenticated", Schema.boolean())
+  .valueOf() as JSONSchema;
+
+
+
+  export const   CREATE_CUSTOMER_WALLET  = {
+    description:
+      "The purpose of this schema is to create ekyc verification",
+    tags: ["ONBOARDING"],
+    body: createWalletBody,
+    response: makeResponseSchema(businessDocumentCreateResponse),
+  };
+
+
   

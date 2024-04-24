@@ -5,6 +5,7 @@ import {
   master_countries,
   master_business_sectors,
   master_position,
+  master_wallet_types
 } from "@prisma/client";
 
 const prisma = new PrismaClient();
@@ -78,6 +79,19 @@ const main = async () => {
         );
       });
     }
+
+    if (seed.table == "master_wallet_types") {
+      seed.data.forEach((data: master_wallet_types) => {
+        upsertPromises.push(
+          prisma.master_wallet_types.upsert({
+            where: { id: data.id },
+            update: data,
+            create: data,
+          })
+        );
+      });
+    }
+
   });
 
   await Promise.all(upsertPromises);
