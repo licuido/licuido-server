@@ -2,13 +2,16 @@ import { FastifyPluginAsync } from "fastify";
 import schema from "./schema";
 import handlers from "./handlers";
 
-const countries: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
+const masterRegions: FastifyPluginAsync = async (
+  fastify,
+  opts
+): Promise<void> => {
   // fastify.addHook("preHandler", fastify.authenticate);
   fastify.get(
     "/",
-    { schema: schema.GET_ALL_COUNTRIES },
-    handlers.GET_ALL_COUNTRIES
+    { schema: schema.GET_ALL_REGIONS },
+    handlers.GET_ALL_REGIONS
   );
 };
 
-export default countries;
+export default masterRegions;

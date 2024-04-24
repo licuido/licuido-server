@@ -9,6 +9,7 @@ interface RequestParameters {
   limit: number;
   search?: string;
   entity_id: number; // Remove duplicate declaration here
+  url: string;
 }
 
 /**
@@ -22,15 +23,17 @@ function queryRequestInfo(request: any): RequestParameters {
   try {
     const {
       query: { id, offset = 0, limit = 10, search, entity_id, ...rest },
+      url,
     } = request as {
       query: {
         id: string;
         offset: string;
         limit: string;
         search: string;
-        entity_id: string; // Include entity_id only once here
+        entity_id: number; // Include entity_id only once here
         rest: { [key: string]: string | number };
       };
+      url: string;
     };
 
     return {
@@ -38,7 +41,8 @@ function queryRequestInfo(request: any): RequestParameters {
       offset: Number(offset),
       limit: Number(limit),
       search,
-      entity_id: Number(entity_id), // Ensure entity_id is of type number
+      url,
+      entity_id, // Ensure entity_id is of type number
       ...rest,
     };
   } catch (error: any) {

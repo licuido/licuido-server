@@ -104,11 +104,10 @@ enum assetIdentificationType {
   engineNumber = "Engine Number",
 }
 
-
-export const entityUrl = {
-  1:process.env.ADMIN_URL??"",
-  2:process.env.ISSUER_URL??"",
-  3:process.env.INVESTOR_URL??"",
+export const entityUrl: any = {
+  1: process.env.ADMIN_URL ?? "",
+  2: process.env.ISSUER_URL ?? "",
+  3: process.env.INVESTOR_URL ?? "",
 };
 
 export const authorizationMessages: any = {
@@ -131,9 +130,8 @@ export default {
   paymentType,
 };
 
-
-export const entityTypeMaster={
-  "admin":1,
-  "issuer":2,
-  "investor":3
-}
+export const entityTypeMaster = {
+  admin: 1,
+  issuer: 2,
+  investor: 3,
+};
