@@ -13,7 +13,11 @@ const {
   INVESTOR_URL,
   ADMIN_URL,
   ISSUER_URL,
-  ALERTSHUB_KEY
+  ALERTSHUB_KEY,
+  AWS_BUCKET_NAME,
+  S3_END_PONIT,
+  S3_ACCESS_KEY,
+  S3_SECRET_KEY,
 }: any = process.env;
 
 export default {
@@ -28,5 +32,9 @@ export default {
   INVESTOR_URL,
   ADMIN_URL,
   ISSUER_URL,
-  ALERTSHUB_KEY
+  ALERTSHUB_KEY,
+  AWS_BUCKET_NAME,
+  S3_END_PONIT,
+  S3_ACCESS_KEY,
+  S3_SECRET_KEY,
 };

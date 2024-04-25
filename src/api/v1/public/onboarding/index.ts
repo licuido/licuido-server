@@ -12,7 +12,7 @@ const onBoarding: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
   .post("/wallet", { schema: schema.CREATE_CUSTOMER_WALLET }, handler.CREATE_CUSTOMER_WALLET)
   .post("/set_account", { schema: schema.SET_ACCOUNT }, handler.SET_ACCOUNT)
 
-  fastify.get("/",{}, handler.FIND_ONE)
+  fastify.get("/",{schema: schema.GET_ENTITY}, handler.FIND_ONE)
     
 };
 
