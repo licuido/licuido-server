@@ -49,6 +49,27 @@ const createBussinessDetails = async (options: createEntity) => {
   }
 };
 
+
+// find entitity
+const findEntity = async (user_profile_id: string) => {
+  try {
+
+   
+   const data = await Entities.findOne(user_profile_id);
+
+    return{
+        success:true,
+        message:`Business Detail Successfully`,
+        data
+    }
+
+  } catch (error: any) {
+    Logger.error(error.message, error);
+    throw error;
+  }
+};
+
 export default {
     createBussinessDetails,
+    findEntity
 };

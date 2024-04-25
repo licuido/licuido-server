@@ -77,12 +77,12 @@ export class otp_token extends Model<otp_tokenAttributes, otp_tokenCreationAttri
     created_at: {
       type: DataTypes.DATE,
       allowNull: true,
-      defaultValue: new Date()
+      defaultValue:new Date()
     },
     updated_at: {
       type: DataTypes.DATE,
       allowNull: true,
-      defaultValue: new Date()
+      defaultValue:new Date()
     }
   }, {
     sequelize,

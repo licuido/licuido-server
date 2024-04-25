@@ -23,7 +23,6 @@ export interface user_profileAttributes {
   id: string;
   name?: string;
   user_id?: number;
-  // position?: string;
   email_id?: string;
   mobile_no_std_code?: string;
   mobile_no?: string;
@@ -34,11 +33,12 @@ export interface user_profileAttributes {
   created_at?: Date;
   updated_at?: Date;
   position_id?: number;
+  contact_email?: string;
 }
 
 export type user_profilePk = "id";
 export type user_profileId = user_profile[user_profilePk];
-export type user_profileOptionalAttributes = "id" | "name" | "user_id"  | "email_id" | "mobile_no_std_code" | "mobile_no" | "is_active" | "is_agree_terms_condition" | "is_setup_done" | "is_verified" | "created_at" | "updated_at" | "position_id";
+export type user_profileOptionalAttributes = "id" | "name" | "user_id" | "email_id" | "mobile_no_std_code" | "mobile_no" | "is_active" | "is_agree_terms_condition" | "is_setup_done" | "is_verified" | "created_at" | "updated_at" | "position_id" | "contact_email";
 export type user_profileCreationAttributes = Optional<user_profileAttributes, user_profileOptionalAttributes>;
 
 export class user_profile extends Model<user_profileAttributes, user_profileCreationAttributes> implements user_profileAttributes {
@@ -56,6 +56,7 @@ export class user_profile extends Model<user_profileAttributes, user_profileCrea
   created_at?: Date;
   updated_at?: Date;
   position_id?: number;
+  contact_email?: string;
 
   // user_profile belongsTo master_position via position_id
   position!: master_position;
@@ -570,6 +571,10 @@ export class user_profile extends Model<user_profileAttributes, user_profileCrea
         model: 'master_position',
         key: 'id'
       }
+    },
+    contact_email: {
+      type: DataTypes.TEXT,
+      allowNull: true
     }
   }, {
     sequelize,

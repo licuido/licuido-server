@@ -7,6 +7,7 @@ import type { entity_investor, entity_investorId } from './entity_investor';
 import type { master_business_sector, master_business_sectorId } from './master_business_sector';
 import type { master_country, master_countryId } from './master_country';
 import type { master_entity_type, master_entity_typeId } from './master_entity_type';
+import type { master_region, master_regionId } from './master_region';
 import type { token_offering, token_offeringId } from './token_offering';
 import type { token_order, token_orderId } from './token_order';
 import type { user_profile, user_profileId } from './user_profile';
@@ -27,11 +28,12 @@ export interface entityAttributes {
   updated_by?: string;
   created_at?: Date;
   updated_at?: Date;
+  region_id?: number;
 }
 
 export type entityPk = "id";
 export type entityId = entity[entityPk];
-export type entityOptionalAttributes = "id" | "entity_type_id" | "legal_name" | "lei_number" | "legal_address" | "zipcode" | "country_id" | "logo_asset_id" | "business_sector_id" | "contact_profile_id" | "is_active" | "created_by" | "updated_by" | "created_at" | "updated_at";
+export type entityOptionalAttributes = "id" | "entity_type_id" | "legal_name" | "lei_number" | "legal_address" | "zipcode" | "country_id" | "logo_asset_id" | "business_sector_id" | "contact_profile_id" | "is_active" | "created_by" | "updated_by" | "created_at" | "updated_at" | "region_id";
 export type entityCreationAttributes = Optional<entityAttributes, entityOptionalAttributes>;
 
 export class entity extends Model<entityAttributes, entityCreationAttributes> implements entityAttributes {
@@ -50,6 +52,7 @@ export class entity extends Model<entityAttributes, entityCreationAttributes> im
   updated_by?: string;
   created_at?: Date;
   updated_at?: Date;
+  region_id?: number;
 
   // entity belongsTo asset via logo_asset_id
   logo_asset!: asset;
@@ -143,6 +146,11 @@ export class entity extends Model<entityAttributes, entityCreationAttributes> im
   getEntity_type!: Sequelize.BelongsToGetAssociationMixin<master_entity_type>;
   setEntity_type!: Sequelize.BelongsToSetAssociationMixin<master_entity_type, master_entity_typeId>;
   createEntity_type!: Sequelize.BelongsToCreateAssociationMixin<master_entity_type>;
+  // entity belongsTo master_region via region_id
+  region!: master_region;
+  getRegion!: Sequelize.BelongsToGetAssociationMixin<master_region>;
+  setRegion!: Sequelize.BelongsToSetAssociationMixin<master_region, master_regionId>;
+  createRegion!: Sequelize.BelongsToCreateAssociationMixin<master_region>;
   // entity belongsTo user_profile via contact_profile_id
   contact_profile!: user_profile;
   getContact_profile!: Sequelize.BelongsToGetAssociationMixin<user_profile>;
@@ -240,6 +248,14 @@ export class entity extends Model<entityAttributes, entityCreationAttributes> im
       allowNull: true,
       references: {
         model: 'user_profiles',
+        key: 'id'
+      }
+    },
+    region_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'master_regions',
         key: 'id'
       }
     }

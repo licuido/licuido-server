@@ -99,6 +99,7 @@ model entities {
   updated_by                                               String?                  @db.Uuid
   created_at                                               DateTime?                @default(now()) @db.Timestamp(6)
   updated_at                                               DateTime?                @default(now()) @db.Timestamp(6)
+  region_id                                                Int?
   business_documents                                       business_documents[]
   customer_wallets                                         customer_wallets[]
   master_business_sectors                                  master_business_sectors? @relation(fields: [business_sector_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -107,6 +108,7 @@ model entities {
   user_profiles_entities_created_byTouser_profiles         user_profiles?           @relation("entities_created_byTouser_profiles", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
   master_entity_types                                      master_entity_types?     @relation(fields: [entity_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   assets                                                   assets?                  @relation(fields: [logo_asset_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_regions                                           master_regions?          @relation(fields: [region_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   user_profiles_entities_updated_byTouser_profiles         user_profiles?           @relation("entities_updated_byTouser_profiles", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
   entity_investors                                         entity_investors[]
   token_offerings                                          token_offerings[]
@@ -236,6 +238,7 @@ model master_regions {
   is_active        Boolean?
   created_at       DateTime?          @default(now()) @db.Timestamp(6)
   updated_at       DateTime?          @default(now()) @db.Timestamp(6)
+  entities         entities[]
   master_countries master_countries[]
 }
 
@@ -481,6 +484,7 @@ model user_profiles {
   created_at                                                                                    DateTime?                           @default(now()) @db.Timestamp(6)
   updated_at                                                                                    DateTime?                           @default(now()) @db.Timestamp(6)
   position_id                                                                                   Int?
+  contact_email                                                                                 String?
   assets_assets_created_byTouser_profiles                                                       assets[]                            @relation("assets_created_byTouser_profiles")
   assets_assets_updated_byTouser_profiles                                                       assets[]                            @relation("assets_updated_byTouser_profiles")
   business_documents_business_documents_created_byTouser_profiles                               business_documents[]                @relation("business_documents_created_byTouser_profiles")

@@ -7,11 +7,14 @@ import {
   SET_ACCOUNT
 } from "./post";
 
+import {FIND_ONE} from "./get";
+
 export default {
   CREATE_BUSSINESS_DETAILS,
   CREATE_CONTACT_PERSON,
   CREATE_BUSINESS_DOCUMENT,
   CREATE_EKYC,
   CREATE_CUSTOMER_WALLET,
-  SET_ACCOUNT
+  SET_ACCOUNT,
+  FIND_ONE
 };

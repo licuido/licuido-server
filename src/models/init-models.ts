@@ -290,6 +290,8 @@ export function initModels(sequelize: Sequelize) {
   master_order_status.hasMany(token_order, { as: "token_orders", foreignKey: "status_id"});
   user_profile.belongsTo(master_position, { as: "position", foreignKey: "position_id"});
   master_position.hasMany(user_profile, { as: "user_profiles", foreignKey: "position_id"});
+  entity.belongsTo(master_region, { as: "region", foreignKey: "region_id"});
+  master_region.hasMany(entity, { as: "entities", foreignKey: "region_id"});
   master_country.belongsTo(master_region, { as: "region", foreignKey: "region_id"});
   master_region.hasMany(master_country, { as: "master_countries", foreignKey: "region_id"});
   token_offering.belongsTo(master_token_offering_status, { as: "offer_status", foreignKey: "offer_status_id"});
