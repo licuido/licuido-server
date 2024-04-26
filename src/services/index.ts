@@ -11,10 +11,4 @@ export * from "./business_documents";
 export * from "./ekyc";
 export * from "./customer_wallets";
 export * from "./master_wallet_types";
-
-
-
-
-
-
-
+export * from "./master_investor_types";

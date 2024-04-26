@@ -191,6 +191,7 @@ CREATE TABLE "master_investor_types" (
     "id" SERIAL NOT NULL,
     "name" TEXT,
     "is_active" BOOLEAN,
+    "is_deleted" BOOLEAN,
     "created_at" TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP,
 
@@ -439,7 +440,6 @@ CREATE TABLE "user_profiles" (
     "id" UUID NOT NULL DEFAULT uuid_generate_v4(),
     "name" TEXT,
     "user_id" INTEGER,
-    "position" TEXT,
     "email_id" TEXT,
     "mobile_no_std_code" TEXT,
     "mobile_no" TEXT,

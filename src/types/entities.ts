@@ -9,15 +9,14 @@ export interface createEntity {
   contact_profile_id: string;
   created_at?: Date;
   created_by?: string;
-  id?:string;
-  logo?:string;
-  logo_type?:string;
-  logo_asset_id?:string;
+  id?: string;
+  logo?: string;
+  logo_type?: string;
+  investor_type_id?: number;
+  logo_asset_id?: string;
 }
 
-
 export interface findEntity {
-    entity_type_id: number;
-    contact_profile_id: string;
-  }
-  
+  entity_type_id: number;
+  contact_profile_id: string;
+}

@@ -38,7 +38,8 @@ export async function findUserExisit({
           model: user_profile,
           as: "user_profile",
           where: { email_id },
-          attributes: ["is_setup_done","name"],
+          attributes: ["is_setup_done", "name"],
+          required: false,
         }, // Include the related user_profile record for user_profile_id
       ],
     });

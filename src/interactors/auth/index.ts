@@ -6,11 +6,7 @@
  */
 
 import { constants, makeNetworkRequest, Logger } from "@helpers";
-import {
-  UserProfile,
-  createUserEntities,
-  findUserExisit,
-} from "@services";
+import { UserProfile, createUserEntities, findUserExisit } from "@services";
 import { entityTypeMaster } from "helpers/constants";
 
 const { auth } = constants;
@@ -101,6 +97,7 @@ export const signIn = async (body: signInPayload) => {
           user_profile: user?.[0]?.dataValues?.user_profile_id,
           is_setup_done:
             user?.[0]?.dataValues?.user_profile?.dataValues?.is_setup_done,
+          entity_id,
         },
         success: true,
         message: "Logged In Successfully",

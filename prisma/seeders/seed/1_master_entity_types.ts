@@ -13,7 +13,7 @@ export const masterEntityTypes: { table: string; data: master_entity_types[] } =
       },
       {
         id: 2,
-        name: "Ivestor",
+        name: "Investor",
         is_active: true,
         created_at: new Date(),
         updated_at: new Date(),

@@ -7,6 +7,7 @@ import type { ekyc, ekycId } from './ekyc';
 import type { entity, entityId } from './entity';
 import type { entity_investor, entity_investorId } from './entity_investor';
 import type { individual_investor, individual_investorId } from './individual_investor';
+import type { master_investor_type, master_investor_typeId } from './master_investor_type';
 import type { master_position, master_positionId } from './master_position';
 import type { token_offering_allowed_country, token_offering_allowed_countryId } from './token_offering_allowed_country';
 import type { token_offering_allowed_currency, token_offering_allowed_currencyId } from './token_offering_allowed_currency';
@@ -34,18 +35,18 @@ export interface user_profileAttributes {
   updated_at?: Date;
   position_id?: number;
   contact_email?: string;
+  investor_type_id?: number;
 }
 
 export type user_profilePk = "id";
 export type user_profileId = user_profile[user_profilePk];
-export type user_profileOptionalAttributes = "id" | "name" | "user_id" | "email_id" | "mobile_no_std_code" | "mobile_no" | "is_active" | "is_agree_terms_condition" | "is_setup_done" | "is_verified" | "created_at" | "updated_at" | "position_id" | "contact_email";
+export type user_profileOptionalAttributes = "id" | "name" | "user_id" | "email_id" | "mobile_no_std_code" | "mobile_no" | "is_active" | "is_agree_terms_condition" | "is_setup_done" | "is_verified" | "created_at" | "updated_at" | "position_id" | "contact_email" | "investor_type_id";
 export type user_profileCreationAttributes = Optional<user_profileAttributes, user_profileOptionalAttributes>;
 
 export class user_profile extends Model<user_profileAttributes, user_profileCreationAttributes> implements user_profileAttributes {
   id!: string;
   name?: string;
   user_id?: number;
-  // position?: string;
   email_id?: string;
   mobile_no_std_code?: string;
   mobile_no?: string;
@@ -57,7 +58,13 @@ export class user_profile extends Model<user_profileAttributes, user_profileCrea
   updated_at?: Date;
   position_id?: number;
   contact_email?: string;
+  investor_type_id?: number;
 
+  // user_profile belongsTo master_investor_type via investor_type_id
+  investor_type!: master_investor_type;
+  getInvestor_type!: Sequelize.BelongsToGetAssociationMixin<master_investor_type>;
+  setInvestor_type!: Sequelize.BelongsToSetAssociationMixin<master_investor_type, master_investor_typeId>;
+  createInvestor_type!: Sequelize.BelongsToCreateAssociationMixin<master_investor_type>;
   // user_profile belongsTo master_position via position_id
   position!: master_position;
   getPosition!: Sequelize.BelongsToGetAssociationMixin<master_position>;
@@ -575,6 +582,14 @@ export class user_profile extends Model<user_profileAttributes, user_profileCrea
     contact_email: {
       type: DataTypes.TEXT,
       allowNull: true
+    },
+    investor_type_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'master_investor_types',
+        key: 'id'
+      }
     }
   }, {
     sequelize,

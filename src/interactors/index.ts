@@ -6,10 +6,9 @@ import Entity from "./entities";
 import UserProfile from "./user_profile";
 import BusinessDocuments from "./business_documents";
 import Ekyc from "./ekyc";
-import CustomersWallet from "./customer_wallets"
+import CustomersWallet from "./customer_wallets";
 import MasterWallet from "./master_wallet_type";
-
-
+import MasterInvestorTypes from "./master_investor_type";
 
 export {
   CountryMaster,
@@ -21,5 +20,6 @@ export {
   BusinessDocuments,
   Ekyc,
   CustomersWallet,
-  MasterWallet
+  MasterWallet,
+  MasterInvestorTypes,
 };
