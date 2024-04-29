@@ -15,6 +15,8 @@ function postRequestInfo<T>(request: any) {
 
     return {
       entity_id: request?.entity_id,
+      user_entity_id: request?.user_entity_id,
+      user_profile_id: request?.user_profile_id,
       ...body,
     };
   } catch (error: any) {

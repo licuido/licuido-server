@@ -16,6 +16,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 8,
       is_active: true,
+      currency_symbol: "؋",
     },
     {
       id: 2,
@@ -30,6 +31,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 5,
       is_active: true,
+      currency_symbol: "€",
     },
     {
       id: 3,
@@ -44,6 +46,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 5,
       is_active: true,
+      currency_symbol: "Lek",
     },
     {
       id: 4,
@@ -58,6 +61,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "دج",
     },
     {
       id: 5,
@@ -72,6 +76,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 9,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 6,
@@ -86,6 +91,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 5,
       is_active: true,
+      currency_symbol: "€",
     },
     {
       id: 7,
@@ -100,6 +106,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "Kz",
     },
     {
       id: 8,
@@ -114,6 +121,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 4,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 9,
@@ -128,6 +136,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 9,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 10,
@@ -142,6 +151,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 4,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 11,
@@ -156,6 +166,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 3,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 12,
@@ -170,6 +181,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 8,
       is_active: true,
+      currency_symbol: "֏",
     },
     {
       id: 13,
@@ -184,6 +196,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 4,
       is_active: true,
+      currency_symbol: "ƒ",
     },
     {
       id: 14,
@@ -198,6 +211,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 9,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 15,
@@ -212,6 +226,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 5,
       is_active: true,
+      currency_symbol: "€",
     },
     {
       id: 16,
@@ -226,6 +241,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 8,
       is_active: true,
+      currency_symbol: "m",
     },
     {
       id: 18,
@@ -240,6 +256,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 7,
       is_active: true,
+      currency_symbol: ".د.ب",
     },
     {
       id: 19,
@@ -254,6 +271,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 8,
       is_active: true,
+      currency_symbol: "৳",
     },
     {
       id: 20,
@@ -268,6 +286,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 4,
       is_active: true,
+      currency_symbol: "Bds$",
     },
     {
       id: 21,
@@ -282,6 +301,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 5,
       is_active: true,
+      currency_symbol: "Br",
     },
     {
       id: 22,
@@ -296,6 +316,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 5,
       is_active: true,
+      currency_symbol: "€",
     },
     {
       id: 23,
@@ -310,6 +331,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 2,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 24,
@@ -324,6 +346,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "CFA",
     },
     {
       id: 25,
@@ -338,6 +361,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 1,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 26,
@@ -352,6 +376,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 8,
       is_active: true,
+      currency_symbol: "Nu.",
     },
     {
       id: 27,
@@ -366,6 +391,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 3,
       is_active: true,
+      currency_symbol: "Bs.",
     },
     {
       id: 155,
@@ -380,6 +406,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 4,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 28,
@@ -394,6 +421,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 5,
       is_active: true,
+      currency_symbol: "KM",
     },
     {
       id: 29,
@@ -408,6 +436,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "P",
     },
     {
       id: 30,
@@ -422,6 +451,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 9,
       is_active: true,
+      currency_symbol: "kr",
     },
     {
       id: 31,
@@ -436,6 +466,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 3,
       is_active: true,
+      currency_symbol: "R$",
     },
     {
       id: 32,
@@ -450,6 +481,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 9,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 33,
@@ -464,6 +496,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 8,
       is_active: true,
+      currency_symbol: "B$",
     },
     {
       id: 34,
@@ -478,6 +511,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 5,
       is_active: true,
+      currency_symbol: "Лв.",
     },
     {
       id: 35,
@@ -492,6 +526,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "CFA",
     },
     {
       id: 36,
@@ -506,6 +541,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "FBu",
     },
     {
       id: 37,
@@ -520,6 +556,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 8,
       is_active: true,
+      currency_symbol: "KHR",
     },
     {
       id: 38,
@@ -534,6 +571,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "FCFA",
     },
     {
       id: 39,
@@ -548,6 +586,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 1,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 40,
@@ -562,6 +601,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 41,
@@ -576,6 +616,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 4,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 42,
@@ -590,6 +631,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "FCFA",
     },
     {
       id: 43,
@@ -604,6 +646,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "FCFA",
     },
     {
       id: 44,
@@ -618,6 +661,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 3,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 45,
@@ -632,6 +676,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 8,
       is_active: true,
+      currency_symbol: "¥",
     },
     {
       id: 46,
@@ -646,6 +691,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 9,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 47,
@@ -660,6 +706,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 9,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 48,
@@ -674,6 +721,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 3,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 49,
@@ -688,6 +736,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "CF",
     },
     {
       id: 50,
@@ -702,6 +751,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "FC",
     },
     {
       id: 52,
@@ -716,6 +766,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 9,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 53,
@@ -730,6 +781,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 2,
       is_active: true,
+      currency_symbol: "₡",
     },
     {
       id: 54,
@@ -744,6 +796,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "CFA",
     },
     {
       id: 55,
@@ -758,6 +811,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 5,
       is_active: true,
+      currency_symbol: "kn",
     },
     {
       id: 56,
@@ -772,6 +826,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 4,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 249,
@@ -786,6 +841,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 4,
       is_active: true,
+      currency_symbol: "ƒ",
     },
     {
       id: 57,
@@ -800,6 +856,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 5,
       is_active: true,
+      currency_symbol: "€",
     },
     {
       id: 58,
@@ -814,6 +871,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 5,
       is_active: true,
+      currency_symbol: "Kč",
     },
     {
       id: 51,
@@ -828,6 +886,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "FC",
     },
     {
       id: 59,
@@ -842,6 +901,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 5,
       is_active: true,
+      currency_symbol: "Kr.",
     },
     {
       id: 60,
@@ -856,6 +916,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "Fdj",
     },
     {
       id: 61,
@@ -870,6 +931,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 4,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 62,
@@ -884,6 +946,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 4,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 64,
@@ -898,6 +961,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 3,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 65,
@@ -912,6 +976,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "ج.م",
     },
     {
       id: 66,
@@ -926,6 +991,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 2,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 67,
@@ -940,6 +1006,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "FCFA",
     },
     {
       id: 68,
@@ -954,6 +1021,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "Nfk",
     },
     {
       id: 69,
@@ -968,6 +1036,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 5,
       is_active: true,
+      currency_symbol: "€",
     },
     {
       id: 212,
@@ -982,6 +1051,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "E",
     },
     {
       id: 70,
@@ -996,6 +1066,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "Nkf",
     },
     {
       id: 71,
@@ -1010,6 +1081,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 3,
       is_active: true,
+      currency_symbol: "£",
     },
     {
       id: 72,
@@ -1024,6 +1096,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 5,
       is_active: true,
+      currency_symbol: "Kr.",
     },
     {
       id: 73,
@@ -1038,6 +1111,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 9,
       is_active: true,
+      currency_symbol: "FJ$",
     },
     {
       id: 74,
@@ -1052,6 +1126,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 5,
       is_active: true,
+      currency_symbol: "€",
     },
     {
       id: 75,
@@ -1066,6 +1141,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 5,
       is_active: true,
+      currency_symbol: "€",
     },
     {
       id: 76,
@@ -1080,6 +1156,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 3,
       is_active: true,
+      currency_symbol: "€",
     },
     {
       id: 77,
@@ -1094,6 +1171,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 9,
       is_active: true,
+      currency_symbol: "₣",
     },
     {
       id: 78,
@@ -1106,8 +1184,9 @@ export const masterContries: { table: string; data: master_countries[] } = {
       emoji_unicode: "U+1F1F9 U+1F1EB",
       created_at: new Date(),
       updated_at: new Date(),
-      is_active: true,
       region_id: 10,
+      is_active: true,
+      currency_symbol: "€",
     },
     {
       id: 79,
@@ -1122,6 +1201,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "FCFA",
     },
     {
       id: 80,
@@ -1136,6 +1216,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "D",
     },
     {
       id: 81,
@@ -1150,6 +1231,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 5,
       is_active: true,
+      currency_symbol: "ლ",
     },
     {
       id: 82,
@@ -1164,6 +1246,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 5,
       is_active: true,
+      currency_symbol: "€",
     },
     {
       id: 83,
@@ -1178,6 +1261,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "GH₵",
     },
     {
       id: 84,
@@ -1192,6 +1276,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 5,
       is_active: true,
+      currency_symbol: "£",
     },
     {
       id: 85,
@@ -1206,6 +1291,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 5,
       is_active: true,
+      currency_symbol: "€",
     },
     {
       id: 86,
@@ -1220,6 +1306,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 1,
       is_active: true,
+      currency_symbol: "Kr.",
     },
     {
       id: 87,
@@ -1234,6 +1321,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 4,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 88,
@@ -1248,6 +1336,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 4,
       is_active: true,
+      currency_symbol: "€",
     },
     {
       id: 89,
@@ -1262,6 +1351,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 9,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 90,
@@ -1276,6 +1366,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 2,
       is_active: true,
+      currency_symbol: "Q",
     },
     {
       id: 91,
@@ -1290,6 +1381,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 5,
       is_active: true,
+      currency_symbol: "£",
     },
     {
       id: 92,
@@ -1304,6 +1396,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "FG",
     },
     {
       id: 93,
@@ -1318,6 +1411,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "CFA",
     },
     {
       id: 94,
@@ -1332,6 +1426,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 3,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 95,
@@ -1346,6 +1441,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 4,
       is_active: true,
+      currency_symbol: "G",
     },
     {
       id: 96,
@@ -1358,8 +1454,9 @@ export const masterContries: { table: string; data: master_countries[] } = {
       emoji_unicode: "U+1F1ED U+1F1F2",
       created_at: new Date(),
       updated_at: new Date(),
-      is_active: true,
       region_id: 10,
+      is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 97,
@@ -1374,6 +1471,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 2,
       is_active: true,
+      currency_symbol: "L",
     },
     {
       id: 98,
@@ -1388,6 +1486,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 8,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 99,
@@ -1402,6 +1501,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 5,
       is_active: true,
+      currency_symbol: "Ft",
     },
     {
       id: 100,
@@ -1416,6 +1516,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 5,
       is_active: true,
+      currency_symbol: "kr",
     },
     {
       id: 101,
@@ -1430,6 +1531,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 8,
       is_active: true,
+      currency_symbol: "₹",
     },
     {
       id: 102,
@@ -1444,6 +1546,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 8,
       is_active: true,
+      currency_symbol: "Rp",
     },
     {
       id: 103,
@@ -1458,6 +1561,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 7,
       is_active: true,
+      currency_symbol: "﷼",
     },
     {
       id: 104,
@@ -1472,6 +1576,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 7,
       is_active: true,
+      currency_symbol: "د.ع",
     },
     {
       id: 105,
@@ -1486,6 +1591,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 5,
       is_active: true,
+      currency_symbol: "€",
     },
     {
       id: 106,
@@ -1500,6 +1606,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 7,
       is_active: true,
+      currency_symbol: "₪",
     },
     {
       id: 107,
@@ -1514,6 +1621,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 5,
       is_active: true,
+      currency_symbol: "€",
     },
     {
       id: 108,
@@ -1528,6 +1636,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 4,
       is_active: true,
+      currency_symbol: "J$",
     },
     {
       id: 109,
@@ -1542,6 +1651,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 8,
       is_active: true,
+      currency_symbol: "¥",
     },
     {
       id: 110,
@@ -1556,6 +1666,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 5,
       is_active: true,
+      currency_symbol: "£",
     },
     {
       id: 111,
@@ -1570,6 +1681,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 7,
       is_active: true,
+      currency_symbol: "ا.د",
     },
     {
       id: 112,
@@ -1584,6 +1696,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 8,
       is_active: true,
+      currency_symbol: "лв",
     },
     {
       id: 113,
@@ -1598,6 +1711,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "KSh",
     },
     {
       id: 114,
@@ -1612,6 +1726,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 9,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 248,
@@ -1626,6 +1741,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 5,
       is_active: true,
+      currency_symbol: "€",
     },
     {
       id: 117,
@@ -1640,6 +1756,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 7,
       is_active: true,
+      currency_symbol: "ك.د",
     },
     {
       id: 118,
@@ -1654,6 +1771,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 8,
       is_active: true,
+      currency_symbol: "лв",
     },
     {
       id: 119,
@@ -1668,6 +1786,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 8,
       is_active: true,
+      currency_symbol: "₭",
     },
     {
       id: 120,
@@ -1682,6 +1801,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 5,
       is_active: true,
+      currency_symbol: "€",
     },
     {
       id: 121,
@@ -1696,6 +1816,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 7,
       is_active: true,
+      currency_symbol: "£",
     },
     {
       id: 122,
@@ -1710,6 +1831,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "L",
     },
     {
       id: 123,
@@ -1724,6 +1846,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 124,
@@ -1738,6 +1861,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "د.ل",
     },
     {
       id: 125,
@@ -1752,6 +1876,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 5,
       is_active: true,
+      currency_symbol: "CHf",
     },
     {
       id: 126,
@@ -1766,6 +1891,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 5,
       is_active: true,
+      currency_symbol: "€",
     },
     {
       id: 127,
@@ -1780,6 +1906,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 5,
       is_active: true,
+      currency_symbol: "€",
     },
     {
       id: 128,
@@ -1794,6 +1921,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 8,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 130,
@@ -1808,6 +1936,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "Ar",
     },
     {
       id: 131,
@@ -1822,6 +1951,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "MK",
     },
     {
       id: 132,
@@ -1836,6 +1966,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 8,
       is_active: true,
+      currency_symbol: "RM",
     },
     {
       id: 133,
@@ -1850,6 +1981,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 8,
       is_active: true,
+      currency_symbol: "Rf",
     },
     {
       id: 134,
@@ -1864,6 +1996,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "CFA",
     },
     {
       id: 135,
@@ -1878,6 +2011,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 5,
       is_active: true,
+      currency_symbol: "€",
     },
     {
       id: 136,
@@ -1892,6 +2026,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 5,
       is_active: true,
+      currency_symbol: "£",
     },
     {
       id: 137,
@@ -1906,6 +2041,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 9,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 138,
@@ -1920,6 +2056,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 4,
       is_active: true,
+      currency_symbol: "€",
     },
     {
       id: 139,
@@ -1934,6 +2071,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "MRU",
     },
     {
       id: 140,
@@ -1948,6 +2086,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "₨",
     },
     {
       id: 141,
@@ -1962,6 +2101,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "€",
     },
     {
       id: 142,
@@ -1976,6 +2116,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 1,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 143,
@@ -1990,6 +2131,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 9,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 144,
@@ -2004,6 +2146,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 5,
       is_active: true,
+      currency_symbol: "L",
     },
     {
       id: 145,
@@ -2018,6 +2161,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 5,
       is_active: true,
+      currency_symbol: "€",
     },
     {
       id: 146,
@@ -2032,6 +2176,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 8,
       is_active: true,
+      currency_symbol: "₮",
     },
     {
       id: 147,
@@ -2046,6 +2191,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 5,
       is_active: true,
+      currency_symbol: "€",
     },
     {
       id: 148,
@@ -2060,6 +2206,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 4,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 149,
@@ -2074,6 +2221,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "DH",
     },
     {
       id: 150,
@@ -2088,6 +2236,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "MT",
     },
     {
       id: 151,
@@ -2102,6 +2251,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 8,
       is_active: true,
+      currency_symbol: "K",
     },
     {
       id: 152,
@@ -2116,6 +2266,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 153,
@@ -2130,6 +2281,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 9,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 154,
@@ -2144,6 +2296,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 8,
       is_active: true,
+      currency_symbol: "₨",
     },
     {
       id: 156,
@@ -2158,6 +2311,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 5,
       is_active: true,
+      currency_symbol: "€",
     },
     {
       id: 157,
@@ -2172,6 +2326,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 9,
       is_active: true,
+      currency_symbol: "₣",
     },
     {
       id: 158,
@@ -2186,6 +2341,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 9,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 159,
@@ -2200,6 +2356,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 2,
       is_active: true,
+      currency_symbol: "C$",
     },
     {
       id: 160,
@@ -2214,6 +2371,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "CFA",
     },
     {
       id: 161,
@@ -2228,6 +2386,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "₦",
     },
     {
       id: 162,
@@ -2242,6 +2401,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 9,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 163,
@@ -2256,6 +2416,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 9,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 115,
@@ -2270,6 +2431,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 8,
       is_active: true,
+      currency_symbol: "₩",
     },
     {
       id: 129,
@@ -2284,6 +2446,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 5,
       is_active: true,
+      currency_symbol: "ден",
     },
     {
       id: 164,
@@ -2298,6 +2461,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 9,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 165,
@@ -2312,6 +2476,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 5,
       is_active: true,
+      currency_symbol: "kr",
     },
     {
       id: 166,
@@ -2326,6 +2491,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 7,
       is_active: true,
+      currency_symbol: ".ع.ر",
     },
     {
       id: 167,
@@ -2340,6 +2506,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 8,
       is_active: true,
+      currency_symbol: "₨",
     },
     {
       id: 168,
@@ -2354,6 +2521,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 9,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 169,
@@ -2368,6 +2536,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 7,
       is_active: true,
+      currency_symbol: "₪",
     },
     {
       id: 170,
@@ -2382,6 +2551,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 2,
       is_active: true,
+      currency_symbol: "B/.",
     },
     {
       id: 171,
@@ -2396,6 +2566,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 9,
       is_active: true,
+      currency_symbol: "K",
     },
     {
       id: 172,
@@ -2410,6 +2581,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 3,
       is_active: true,
+      currency_symbol: "₲",
     },
     {
       id: 173,
@@ -2424,6 +2596,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 3,
       is_active: true,
+      currency_symbol: "S/.",
     },
     {
       id: 174,
@@ -2438,6 +2611,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 8,
       is_active: true,
+      currency_symbol: "₱",
     },
     {
       id: 175,
@@ -2452,6 +2626,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 9,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 176,
@@ -2466,6 +2641,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 5,
       is_active: true,
+      currency_symbol: "zł",
     },
     {
       id: 177,
@@ -2480,6 +2656,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 5,
       is_active: true,
+      currency_symbol: "€",
     },
     {
       id: 178,
@@ -2494,6 +2671,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 4,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 179,
@@ -2508,6 +2686,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 7,
       is_active: true,
+      currency_symbol: "ق.ر",
     },
     {
       id: 180,
@@ -2522,6 +2701,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "€",
     },
     {
       id: 181,
@@ -2536,6 +2716,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 5,
       is_active: true,
+      currency_symbol: "lei",
     },
     {
       id: 182,
@@ -2550,6 +2731,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 5,
       is_active: true,
+      currency_symbol: "₽",
     },
     {
       id: 183,
@@ -2564,6 +2746,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "FRw",
     },
     {
       id: 184,
@@ -2578,6 +2761,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "£",
     },
     {
       id: 185,
@@ -2592,6 +2776,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 4,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 186,
@@ -2606,6 +2791,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 4,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 187,
@@ -2620,6 +2806,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 1,
       is_active: true,
+      currency_symbol: "€",
     },
     {
       id: 188,
@@ -2634,6 +2821,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 4,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 189,
@@ -2648,6 +2836,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 4,
       is_active: true,
+      currency_symbol: "€",
     },
     {
       id: 190,
@@ -2662,6 +2851,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 4,
       is_active: true,
+      currency_symbol: "€",
     },
     {
       id: 191,
@@ -2676,6 +2866,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 9,
       is_active: true,
+      currency_symbol: "SAT",
     },
     {
       id: 192,
@@ -2690,6 +2881,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 5,
       is_active: true,
+      currency_symbol: "€",
     },
     {
       id: 193,
@@ -2704,6 +2896,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "Db",
     },
     {
       id: 194,
@@ -2718,6 +2911,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 7,
       is_active: true,
+      currency_symbol: "﷼",
     },
     {
       id: 195,
@@ -2732,6 +2926,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "CFA",
     },
     {
       id: 196,
@@ -2746,6 +2941,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 5,
       is_active: true,
+      currency_symbol: "din",
     },
     {
       id: 197,
@@ -2760,6 +2956,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "SRe",
     },
     {
       id: 198,
@@ -2774,6 +2971,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "Le",
     },
     {
       id: 199,
@@ -2788,6 +2986,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 8,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 250,
@@ -2802,6 +3001,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 4,
       is_active: true,
+      currency_symbol: "ƒ",
     },
     {
       id: 200,
@@ -2816,6 +3016,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 5,
       is_active: true,
+      currency_symbol: "€",
     },
     {
       id: 201,
@@ -2830,6 +3031,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 5,
       is_active: true,
+      currency_symbol: "€",
     },
     {
       id: 202,
@@ -2844,6 +3046,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 9,
       is_active: true,
+      currency_symbol: "Si$",
     },
     {
       id: 203,
@@ -2858,6 +3061,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "Sh.so.",
     },
     {
       id: 204,
@@ -2872,6 +3076,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "R",
     },
     {
       id: 205,
@@ -2884,8 +3089,9 @@ export const masterContries: { table: string; data: master_countries[] } = {
       emoji_unicode: "U+1F1EC U+1F1F8",
       created_at: new Date(),
       updated_at: new Date(),
-      is_active: true,
       region_id: 10,
+      is_active: true,
+      currency_symbol: "£",
     },
     {
       id: 116,
@@ -2900,6 +3106,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 8,
       is_active: true,
+      currency_symbol: "₩",
     },
     {
       id: 206,
@@ -2914,6 +3121,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "£",
     },
     {
       id: 207,
@@ -2928,6 +3136,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 5,
       is_active: true,
+      currency_symbol: "€",
     },
     {
       id: 208,
@@ -2942,6 +3151,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 8,
       is_active: true,
+      currency_symbol: "Rs",
     },
     {
       id: 209,
@@ -2956,6 +3166,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: ".س.ج",
     },
     {
       id: 210,
@@ -2970,6 +3181,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 3,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 211,
@@ -2984,6 +3196,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 5,
       is_active: true,
+      currency_symbol: "kr",
     },
     {
       id: 213,
@@ -2998,6 +3211,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 5,
       is_active: true,
+      currency_symbol: "kr",
     },
     {
       id: 214,
@@ -3012,6 +3226,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 5,
       is_active: true,
+      currency_symbol: "CHf",
     },
     {
       id: 215,
@@ -3026,6 +3241,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 7,
       is_active: true,
+      currency_symbol: "LS",
     },
     {
       id: 216,
@@ -3040,6 +3256,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 8,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 217,
@@ -3054,6 +3271,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 8,
       is_active: true,
+      currency_symbol: "SM",
     },
     {
       id: 218,
@@ -3068,6 +3286,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "TSh",
     },
     {
       id: 219,
@@ -3082,6 +3301,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 8,
       is_active: true,
+      currency_symbol: "฿",
     },
     {
       id: 17,
@@ -3096,6 +3316,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 4,
       is_active: true,
+      currency_symbol: "B$",
     },
     {
       id: 63,
@@ -3110,6 +3331,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 8,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 220,
@@ -3124,6 +3346,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "CFA",
     },
     {
       id: 221,
@@ -3138,6 +3361,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 9,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 222,
@@ -3152,6 +3376,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 9,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 223,
@@ -3166,6 +3391,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 4,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 224,
@@ -3180,6 +3406,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "ت.د",
     },
     {
       id: 225,
@@ -3194,6 +3421,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 7,
       is_active: true,
+      currency_symbol: "₺",
     },
     {
       id: 226,
@@ -3208,6 +3436,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 8,
       is_active: true,
+      currency_symbol: "T",
     },
     {
       id: 227,
@@ -3222,6 +3451,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 4,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 228,
@@ -3236,6 +3466,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 9,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 229,
@@ -3250,6 +3481,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "USh",
     },
     {
       id: 230,
@@ -3264,6 +3496,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 5,
       is_active: true,
+      currency_symbol: "₴",
     },
     {
       id: 231,
@@ -3278,6 +3511,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 7,
       is_active: true,
+      currency_symbol: "إ.د",
     },
     {
       id: 232,
@@ -3292,6 +3526,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 5,
       is_active: true,
+      currency_symbol: "£",
     },
     {
       id: 233,
@@ -3306,6 +3541,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 1,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 234,
@@ -3320,6 +3556,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 9,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 235,
@@ -3334,6 +3571,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 3,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 236,
@@ -3348,6 +3586,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 8,
       is_active: true,
+      currency_symbol: "лв",
     },
     {
       id: 237,
@@ -3362,6 +3601,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 9,
       is_active: true,
+      currency_symbol: "VT",
     },
     {
       id: 238,
@@ -3376,6 +3616,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 5,
       is_active: true,
+      currency_symbol: "€",
     },
     {
       id: 239,
@@ -3390,6 +3631,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 3,
       is_active: true,
+      currency_symbol: "Bs",
     },
     {
       id: 240,
@@ -3404,6 +3646,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 8,
       is_active: true,
+      currency_symbol: "₫",
     },
     {
       id: 241,
@@ -3418,6 +3661,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 4,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 242,
@@ -3432,6 +3676,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 4,
       is_active: true,
+      currency_symbol: "$",
     },
     {
       id: 243,
@@ -3446,6 +3691,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 9,
       is_active: true,
+      currency_symbol: "₣",
     },
     {
       id: 244,
@@ -3460,6 +3706,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "MAD",
     },
     {
       id: 245,
@@ -3474,6 +3721,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 7,
       is_active: true,
+      currency_symbol: "﷼",
     },
     {
       id: 246,
@@ -3488,6 +3736,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "ZK",
     },
     {
       id: 247,
@@ -3502,6 +3751,7 @@ export const masterContries: { table: string; data: master_countries[] } = {
       updated_at: new Date(),
       region_id: 6,
       is_active: true,
+      currency_symbol: "$",
     },
   ],
 };

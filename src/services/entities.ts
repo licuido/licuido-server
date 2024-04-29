@@ -9,8 +9,7 @@ import {
   business_document,
   customer_wallet,
   master_wallet_type,
-  ekyc
-  
+  ekyc,
 } from "@models";
 import { createEntity, findEntity } from "@types";
 
@@ -169,7 +168,7 @@ class Entities {
           {
             model: customer_wallet,
             as: "customer_wallets",
-            attributes: ["id", "wallet_address","is_authenticated"],
+            attributes: ["id", "wallet_address", "is_authenticated"],
             required: false,
             include: [
               {
@@ -179,11 +178,26 @@ class Entities {
                 required: false,
               },
             ],
-          }
+          },
         ],
       });
 
       return data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async findEntity(options: findEntity): Promise<any> {
+    try {
+      const { entity_type_id, contact_profile_id } = options;
+
+      return await entity.findOne({
+        where: {
+          entity_type_id,
+          contact_profile_id,
+        },
+      });
     } catch (error) {
       throw error;
     }

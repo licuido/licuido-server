@@ -132,6 +132,6 @@ export default {
 
 export const entityTypeMaster = {
   admin: 1,
-  issuer: 2,
-  investor: 3,
+  investor: 2,
+  issuer: 3,
 };

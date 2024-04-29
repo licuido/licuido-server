@@ -19,11 +19,12 @@ export interface master_countryAttributes {
   is_active?: boolean;
   created_at?: Date;
   updated_at?: Date;
+  currency_symbol?: string;
 }
 
 export type master_countryPk = "id";
 export type master_countryId = master_country[master_countryPk];
-export type master_countryOptionalAttributes = "id" | "name" | "iso3" | "phone_code" | "currency" | "currency_code" | "emoji" | "emoji_unicode" | "region_id" | "is_active" | "created_at" | "updated_at";
+export type master_countryOptionalAttributes = "id" | "name" | "iso3" | "phone_code" | "currency" | "currency_code" | "emoji" | "emoji_unicode" | "region_id" | "is_active" | "created_at" | "updated_at" | "currency_symbol";
 export type master_countryCreationAttributes = Optional<master_countryAttributes, master_countryOptionalAttributes>;
 
 export class master_country extends Model<master_countryAttributes, master_countryCreationAttributes> implements master_countryAttributes {
@@ -39,6 +40,7 @@ export class master_country extends Model<master_countryAttributes, master_count
   is_active?: boolean;
   created_at?: Date;
   updated_at?: Date;
+  currency_symbol?: string;
 
   // master_country hasMany entity via country_id
   entities!: entity[];
@@ -140,6 +142,10 @@ export class master_country extends Model<master_countryAttributes, master_count
     },
     is_active: {
       type: DataTypes.BOOLEAN,
+      allowNull: true
+    },
+    currency_symbol: {
+      type: DataTypes.TEXT,
       allowNull: true
     }
   }, {

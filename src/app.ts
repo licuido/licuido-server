@@ -10,8 +10,8 @@ process.env.UV_THREADPOOL_SIZE = String(cpus().length);
 
 const entity_types = {
   [String(process.env.ADMIN_URL)]: 1,
-  [String(process.env.ISSUER_URL)]: 2,
-  [String(process.env.INVESTOR_URL)]: 3,
+  [String(process.env.INVESTOR_URL)]: 2,
+  [String(process.env.ISSUER_URL)]: 3,
 };
 
 export type AppOptions = {
@@ -44,7 +44,8 @@ const app: FastifyPluginAsync<AppOptions> = async (
     //     customMessage: "Please Provide Referrer",
     //   });
     // }
-    request.entity_id = entity_types[request?.headers?.referer]??entityTypeMaster?.admin;
+    request.entity_id =
+      entity_types[request?.headers?.referer] ?? entityTypeMaster?.admin;
     return next();
   });
 

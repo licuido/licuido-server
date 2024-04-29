@@ -188,6 +188,7 @@ model master_countries {
   is_active                        Boolean?
   created_at                       DateTime?                          @default(now()) @db.Timestamp(6)
   updated_at                       DateTime?                          @default(now()) @db.Timestamp(6)
+  currency_symbol                  String?
   entities                         entities[]
   individual_investors             individual_investors[]
   master_regions                   master_regions?                    @relation(fields: [region_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -386,6 +387,7 @@ model token_offerings {
   updated_by                                              String?                             @db.Uuid
   created_at                                              DateTime?                           @default(now()) @db.Timestamp(6)
   updated_at                                              DateTime?                           @default(now()) @db.Timestamp(6)
+  is_all_countries_allowed                                Boolean?
   token_offering_allowed_countries                        token_offering_allowed_countries[]
   token_offering_allowed_currencies                       token_offering_allowed_currencies[]
   token_offering_documents                                token_offering_documents[]
