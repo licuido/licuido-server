@@ -54,11 +54,13 @@ export async function SIGN_IN(request: FastifyRequest, reply: FastifyReply) {
       reply,
       result?.success ? responseType?.OK : responseType.BAD_GATEWAY,
       {
-        data: {
-          token: await reply.jwtSign({
-            ...result?.token_data,
-          }),
-        },
+        data: result?.success
+          ? {
+              token: await reply.jwtSign({
+                ...result?.token_data,
+              }),
+            }
+          : undefined,
         customMessage: result?.message,
         error: {
           message: result?.message,

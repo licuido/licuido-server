@@ -7,6 +7,9 @@ import {
   master_position,
   master_wallet_types,
   master_investor_types,
+  master_token_type,
+  master_token_status,
+  master_blockchain_networks,
 } from "@prisma/client";
 
 const prisma = new PrismaClient();
@@ -97,6 +100,43 @@ const main = async () => {
       seed.data.forEach((data: master_investor_types) => {
         upsertPromises.push(
           prisma.master_investor_types.upsert({
+            where: { id: data.id },
+            update: data,
+            create: data,
+          })
+        );
+      });
+    }
+
+    //master token types
+    if (seed.table === "master_token_type") {
+      seed.data.forEach((data: master_token_type) => {
+        upsertPromises.push(
+          prisma.master_token_type.upsert({
+            where: { id: data.id },
+            update: data,
+            create: data,
+          })
+        );
+      });
+    }
+    //master token status
+    if (seed.table === "master_token_status") {
+      seed.data.forEach((data: master_token_status) => {
+        upsertPromises.push(
+          prisma.master_token_status.upsert({
+            where: { id: data.id },
+            update: data,
+            create: data,
+          })
+        );
+      });
+    }
+    //master block chain network
+    if (seed.table === "master_blockchain_networks") {
+      seed.data.forEach((data: master_blockchain_networks) => {
+        upsertPromises.push(
+          prisma.master_blockchain_networks.upsert({
             where: { id: data.id },
             update: data,
             create: data,

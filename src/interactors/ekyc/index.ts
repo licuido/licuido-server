@@ -7,6 +7,14 @@ const createKyc = async (options: createEkyc) => {
   try {
     const { profile_id, captured_url, is_verified } = options;
 
+    const count = await Ekyc.findAlreadyKycProcees(profile_id);
+    if (count !== 0) {
+      return {
+        success: false,
+        message: "You Already Have a Ekyc",
+      };
+    }
+
     if (!captured_url) {
       return {
         success: true,
@@ -43,5 +51,5 @@ const createKyc = async (options: createEkyc) => {
 };
 
 export default {
-    createKyc,
+  createKyc,
 };

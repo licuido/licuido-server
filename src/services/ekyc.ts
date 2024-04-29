@@ -2,7 +2,6 @@ import { ekyc } from "@models";
 
 import { createEkyc } from "@types";
 
-
 class Ekyc {
   /**
    * this function used for insert user entities.
@@ -13,19 +12,31 @@ class Ekyc {
 
   static async create(options: createEkyc): Promise<any> {
     try {
-        const {profile_id,captured_asset_id,is_verified}=options;
-        return await ekyc.create({
-            updated_by:profile_id,
-            kyc_profile_id:profile_id,
-            captured_asset_id,
-            is_verified,
-            is_active:true
-        });
+      const { profile_id, captured_asset_id, is_verified } = options;
+      return await ekyc.create({
+        updated_by: profile_id,
+        kyc_profile_id: profile_id,
+        captured_asset_id,
+        is_verified,
+        is_active: true,
+      });
     } catch (error) {
       throw error;
     }
   }
 
+  static async findAlreadyKycProcees(id: string): Promise<any> {
+    try {
+      return await ekyc.count({
+        where: {
+          kyc_profile_id: id,
+          is_active: true,
+        },
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export { Ekyc };

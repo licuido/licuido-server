@@ -6,7 +6,12 @@
  */
 
 import { constants, makeNetworkRequest, Logger } from "@helpers";
-import { UserProfile, createUserEntities, findUserExisit } from "@services";
+import {
+  Entities,
+  UserProfile,
+  createUserEntities,
+  findUserExisit,
+} from "@services";
 import { entityTypeMaster } from "helpers/constants";
 
 const { auth } = constants;
@@ -92,12 +97,18 @@ export const signIn = async (body: signInPayload) => {
           message: "You did not completed your account set up",
         };
       }
+
+      const entity = await Entities.findEntity({
+        contact_profile_id: user?.[0]?.dataValues?.user_profile_id,
+        entity_type_id: entity_id,
+      });
       return {
         token_data: {
           user_profile: user?.[0]?.dataValues?.user_profile_id,
           is_setup_done:
             user?.[0]?.dataValues?.user_profile?.dataValues?.is_setup_done,
           entity_id,
+          user_entity_id: entity?.dataValues?.id,
         },
         success: true,
         message: "Logged In Successfully",

@@ -51,9 +51,16 @@ const jwtPlugin: FastifyPluginAsync<FastifyJWTOptions> = async (
     "authenticate",
     async function (request: any, reply: FastifyReply) {
       try {
-        await request.jwtVerify();
+        if (!request?.entity_id) {
+          reply.code(500).send({ error: "Please Provide Referrer" });
+        }
+
+        const data = await request.jwtVerify();
+        request.user_profile_id = data?.user_profile;
+        request.user_entity_id = data?.user_entity_id;
       } catch (err) {
         reply.code(500).send(err);
+        console.log("error");
       }
     }
   );

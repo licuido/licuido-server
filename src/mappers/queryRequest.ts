@@ -10,6 +10,8 @@ interface RequestParameters {
   search?: string;
   entity_id: number; // Remove duplicate declaration here
   url: string;
+  user_profile_id?: string;
+  user_entity_id?: string;
 }
 
 /**
@@ -24,6 +26,8 @@ function queryRequestInfo(request: any): RequestParameters {
     const {
       query: { id, offset = 0, limit = 10, search, entity_id, ...rest },
       url,
+      user_profile_id,
+      user_entity_id,
     } = request as {
       query: {
         id: string;
@@ -34,6 +38,8 @@ function queryRequestInfo(request: any): RequestParameters {
         rest: { [key: string]: string | number };
       };
       url: string;
+      user_profile_id?: string;
+      user_entity_id?: string;
     };
 
     return {
@@ -42,6 +48,8 @@ function queryRequestInfo(request: any): RequestParameters {
       limit: Number(limit),
       search,
       url,
+      user_profile_id,
+      user_entity_id,
       entity_id, // Ensure entity_id is of type number
       ...rest,
     };
