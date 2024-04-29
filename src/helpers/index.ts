@@ -6,7 +6,7 @@ import constants from "./constants";
 import { convertTo24HourFormat, processNestedObjects } from "./hoursConvert";
 import { makeResponseSchema, commonHeaders, commonQuerys } from "./schema";
 import { handleResponse, responseType } from "./responseHandler";
-import { sendAlert } from "./alertsHub";
+// import { sendAlert } from "./alertsHub";
 import { pagination } from "./pagination";
 export * from "./s3";
 export {
@@ -21,6 +21,6 @@ export {
   commonQuerys,
   handleResponse,
   responseType,
-  sendAlert,
+  // sendAlert,
   pagination,
 };

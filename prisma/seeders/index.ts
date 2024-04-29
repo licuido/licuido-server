@@ -10,6 +10,7 @@ import {
   master_token_type,
   master_token_status,
   master_blockchain_networks,
+  master_token_offering_status,
 } from "@prisma/client";
 
 const prisma = new PrismaClient();
@@ -137,6 +138,18 @@ const main = async () => {
       seed.data.forEach((data: master_blockchain_networks) => {
         upsertPromises.push(
           prisma.master_blockchain_networks.upsert({
+            where: { id: data.id },
+            update: data,
+            create: data,
+          })
+        );
+      });
+    }
+    // //master token offering
+    if (seed.table === "master_token_offering_status") {
+      seed.data.forEach((data: master_token_offering_status) => {
+        upsertPromises.push(
+          prisma.master_token_offering_status.upsert({
             where: { id: data.id },
             update: data,
             create: data,

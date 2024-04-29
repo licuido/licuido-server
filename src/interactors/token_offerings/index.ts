@@ -178,6 +178,7 @@ const createTokenOfferings = async (options: createTokenOfferingPayload) => {
       iban_no,
       token_type_id,
       is_active: true,
+      offer_status_id: 1,
     });
 
     await createOfferingSubDatas(
