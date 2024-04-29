@@ -1,5 +1,5 @@
 const commonArgs = {
-  tags: ["Auth"],
+  tags: ["USER"],
 };
 
 export const schema = {

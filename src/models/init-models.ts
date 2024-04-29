@@ -27,6 +27,8 @@ import { master_investor_type as _master_investor_type } from "./master_investor
 import type { master_investor_typeAttributes, master_investor_typeCreationAttributes } from "./master_investor_type";
 import { master_order_status as _master_order_status } from "./master_order_status";
 import type { master_order_statusAttributes, master_order_statusCreationAttributes } from "./master_order_status";
+import { master_position as _master_position } from "./master_position";
+import type { master_positionAttributes, master_positionCreationAttributes } from "./master_position";
 import { master_region as _master_region } from "./master_region";
 import type { master_regionAttributes, master_regionCreationAttributes } from "./master_region";
 import { master_token_offering_status as _master_token_offering_status } from "./master_token_offering_status";
@@ -53,6 +55,8 @@ import { token_order as _token_order } from "./token_order";
 import type { token_orderAttributes, token_orderCreationAttributes } from "./token_order";
 import { token_transaction as _token_transaction } from "./token_transaction";
 import type { token_transactionAttributes, token_transactionCreationAttributes } from "./token_transaction";
+import { user_entity as _user_entity } from "./user_entity";
+import type { user_entityAttributes, user_entityCreationAttributes } from "./user_entity";
 import { user_identity as _user_identity } from "./user_identity";
 import type { user_identityAttributes, user_identityCreationAttributes } from "./user_identity";
 import { user_profile as _user_profile } from "./user_profile";
@@ -75,6 +79,7 @@ export {
   _master_entity_type as master_entity_type,
   _master_investor_type as master_investor_type,
   _master_order_status as master_order_status,
+  _master_position as master_position,
   _master_region as master_region,
   _master_token_offering_status as master_token_offering_status,
   _master_token_status as master_token_status,
@@ -88,6 +93,7 @@ export {
   _token_offering as token_offering,
   _token_order as token_order,
   _token_transaction as token_transaction,
+  _user_entity as user_entity,
   _user_identity as user_identity,
   _user_profile as user_profile,
   _wallet_token as wallet_token,
@@ -122,6 +128,8 @@ export type {
   master_investor_typeCreationAttributes,
   master_order_statusAttributes,
   master_order_statusCreationAttributes,
+  master_positionAttributes,
+  master_positionCreationAttributes,
   master_regionAttributes,
   master_regionCreationAttributes,
   master_token_offering_statusAttributes,
@@ -148,6 +156,8 @@ export type {
   token_orderCreationAttributes,
   token_transactionAttributes,
   token_transactionCreationAttributes,
+  user_entityAttributes,
+  user_entityCreationAttributes,
   user_identityAttributes,
   user_identityCreationAttributes,
   user_profileAttributes,
@@ -171,6 +181,7 @@ export function initModels(sequelize: Sequelize) {
   const master_entity_type = _master_entity_type.initModel(sequelize);
   const master_investor_type = _master_investor_type.initModel(sequelize);
   const master_order_status = _master_order_status.initModel(sequelize);
+  const master_position = _master_position.initModel(sequelize);
   const master_region = _master_region.initModel(sequelize);
   const master_token_offering_status = _master_token_offering_status.initModel(sequelize);
   const master_token_status = _master_token_status.initModel(sequelize);
@@ -184,6 +195,7 @@ export function initModels(sequelize: Sequelize) {
   const token_offering = _token_offering.initModel(sequelize);
   const token_order = _token_order.initModel(sequelize);
   const token_transaction = _token_transaction.initModel(sequelize);
+  const user_entity = _user_entity.initModel(sequelize);
   const user_identity = _user_identity.initModel(sequelize);
   const user_profile = _user_profile.initModel(sequelize);
   const wallet_token = _wallet_token.initModel(sequelize);
@@ -242,10 +254,18 @@ export function initModels(sequelize: Sequelize) {
   master_entity_investor_status.hasMany(entity_investor, { as: "entity_investors", foreignKey: "status_id"});
   entity.belongsTo(master_entity_type, { as: "entity_type", foreignKey: "entity_type_id"});
   master_entity_type.hasMany(entity, { as: "entities", foreignKey: "entity_type_id"});
+  user_entity.belongsTo(master_entity_type, { as: "entity", foreignKey: "entity_id"});
+  master_entity_type.hasMany(user_entity, { as: "user_entities", foreignKey: "entity_id"});
   entity_investor.belongsTo(master_investor_type, { as: "investor_type", foreignKey: "investor_type_id"});
   master_investor_type.hasMany(entity_investor, { as: "entity_investors", foreignKey: "investor_type_id"});
+  user_profile.belongsTo(master_investor_type, { as: "investor_type", foreignKey: "investor_type_id"});
+  master_investor_type.hasMany(user_profile, { as: "user_profiles", foreignKey: "investor_type_id"});
   token_order.belongsTo(master_order_status, { as: "status", foreignKey: "status_id"});
   master_order_status.hasMany(token_order, { as: "token_orders", foreignKey: "status_id"});
+  user_profile.belongsTo(master_position, { as: "position", foreignKey: "position_id"});
+  master_position.hasMany(user_profile, { as: "user_profiles", foreignKey: "position_id"});
+  entity.belongsTo(master_region, { as: "region", foreignKey: "region_id"});
+  master_region.hasMany(entity, { as: "entities", foreignKey: "region_id"});
   master_country.belongsTo(master_region, { as: "region", foreignKey: "region_id"});
   master_region.hasMany(master_country, { as: "master_countries", foreignKey: "region_id"});
   token_offering.belongsTo(master_token_offering_status, { as: "offer_status", foreignKey: "offer_status_id"});
@@ -334,6 +354,12 @@ export function initModels(sequelize: Sequelize) {
   user_profile.hasMany(token_transaction, { as: "token_transactions", foreignKey: "created_by"});
   token_transaction.belongsTo(user_profile, { as: "updated_by_user_profile", foreignKey: "updated_by"});
   user_profile.hasMany(token_transaction, { as: "updated_by_token_transactions", foreignKey: "updated_by"});
+  user_entity.belongsTo(user_profile, { as: "created_by_user_profile", foreignKey: "created_by"});
+  user_profile.hasMany(user_entity, { as: "user_entities", foreignKey: "created_by"});
+  user_entity.belongsTo(user_profile, { as: "updated_by_user_profile", foreignKey: "updated_by"});
+  user_profile.hasMany(user_entity, { as: "updated_by_user_entities", foreignKey: "updated_by"});
+  user_entity.belongsTo(user_profile, { as: "user_profile", foreignKey: "user_profile_id"});
+  user_profile.hasMany(user_entity, { as: "user_profile_user_entities", foreignKey: "user_profile_id"});
   user_identity.belongsTo(user_profile, { as: "created_by_user_profile", foreignKey: "created_by"});
   user_profile.hasMany(user_identity, { as: "user_identities", foreignKey: "created_by"});
   user_identity.belongsTo(user_profile, { as: "updated_by_user_profile", foreignKey: "updated_by"});
@@ -358,6 +384,7 @@ export function initModels(sequelize: Sequelize) {
     master_entity_type: master_entity_type,
     master_investor_type: master_investor_type,
     master_order_status: master_order_status,
+    master_position: master_position,
     master_region: master_region,
     master_token_offering_status: master_token_offering_status,
     master_token_status: master_token_status,
@@ -371,6 +398,7 @@ export function initModels(sequelize: Sequelize) {
     token_offering: token_offering,
     token_order: token_order,
     token_transaction: token_transaction,
+    user_entity: user_entity,
     user_identity: user_identity,
     user_profile: user_profile,
     wallet_token: wallet_token,

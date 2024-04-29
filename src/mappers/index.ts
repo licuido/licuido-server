@@ -1,3 +1,5 @@
 import userMappers from "./user";
+import { postRequestInfo } from "./postRequest";
+import { queryRequestInfo } from "./queryRequest";
 
-export { userMappers };
+export { userMappers, postRequestInfo, queryRequestInfo };

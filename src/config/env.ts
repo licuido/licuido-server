@@ -9,6 +9,15 @@ const {
   DB_PORT,
   DB_DIALECT,
   NODE_ENV,
+  AUTH_API_LOCAL,
+  INVESTOR_URL,
+  ADMIN_URL,
+  ISSUER_URL,
+  ALERTSHUB_KEY,
+  AWS_BUCKET_NAME,
+  S3_END_PONIT,
+  S3_ACCESS_KEY,
+  S3_SECRET_KEY,
 }: any = process.env;
 
 export default {
@@ -19,4 +28,13 @@ export default {
   DB_PORT,
   DB_DIALECT,
   NODE_ENV,
+  AUTH_API_LOCAL,
+  INVESTOR_URL,
+  ADMIN_URL,
+  ISSUER_URL,
+  ALERTSHUB_KEY,
+  AWS_BUCKET_NAME,
+  S3_END_PONIT,
+  S3_ACCESS_KEY,
+  S3_SECRET_KEY,
 };

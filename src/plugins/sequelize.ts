@@ -46,9 +46,15 @@ const sequelizePlugin: FastifyPluginCallback<SequelizeOptions> = async (
       host: dbConfig.host,
       dialect: dbConfig.dialect,
       port: dbConfig.port,
-      dialectOptions: {},
       timezone: "Asia/Kolkata",
-    }
+      dialectOptions: {
+        ssl: {
+          require: true, // This will help you. But you will see nwe error
+          rejectUnauthorized: false // This line will fix new error
+        }
+      }
+    },
+   
   );
   sequelize
     .authenticate()

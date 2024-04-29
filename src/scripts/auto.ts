@@ -39,6 +39,7 @@ async function main() {
     useDefine: false,
     lang: "ts",
     skipTables: ["_prisma_migrations", "knex_migration"],
+    schema: "public",
   };
   const auto = new SequelizeAuto(
     DB_NAME,

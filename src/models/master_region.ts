@@ -1,5 +1,6 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
+import type { entity, entityId } from './entity';
 import type { master_country, master_countryId } from './master_country';
 
 export interface master_regionAttributes {
@@ -22,6 +23,18 @@ export class master_region extends Model<master_regionAttributes, master_regionC
   created_at?: Date;
   updated_at?: Date;
 
+  // master_region hasMany entity via region_id
+  entities!: entity[];
+  getEntities!: Sequelize.HasManyGetAssociationsMixin<entity>;
+  setEntities!: Sequelize.HasManySetAssociationsMixin<entity, entityId>;
+  addEntity!: Sequelize.HasManyAddAssociationMixin<entity, entityId>;
+  addEntities!: Sequelize.HasManyAddAssociationsMixin<entity, entityId>;
+  createEntity!: Sequelize.HasManyCreateAssociationMixin<entity>;
+  removeEntity!: Sequelize.HasManyRemoveAssociationMixin<entity, entityId>;
+  removeEntities!: Sequelize.HasManyRemoveAssociationsMixin<entity, entityId>;
+  hasEntity!: Sequelize.HasManyHasAssociationMixin<entity, entityId>;
+  hasEntities!: Sequelize.HasManyHasAssociationsMixin<entity, entityId>;
+  countEntities!: Sequelize.HasManyCountAssociationsMixin;
   // master_region hasMany master_country via region_id
   master_countries!: master_country[];
   getMaster_countries!: Sequelize.HasManyGetAssociationsMixin<master_country>;
