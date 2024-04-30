@@ -21,26 +21,29 @@ class TokenOfferings {
   }
 
   /**
-   * this function used for update token offering
+   * this function used for update token status
    *
    * @param {createTokenOffering} options - The response object containing create data.
    * @throws {Error} Throws an error if there's an issue extracting parameters from the response.
    */
-  static async update({
-    options,
-    id,
+  static async updateTokenStatus({
+    status_id,
+    token_id,
+    updated_by,
   }: {
-    options: createTokenOffering;
-    id: string;
+    status_id: number;
+    token_id: string;
+    updated_by: string;
   }): Promise<any> {
     try {
       return await token_offering.update(
         {
-          ...options,
+          status_id,
+          updated_by,
         },
         {
           where: {
-            id,
+            id: token_id,
           },
         }
       );

@@ -14,7 +14,7 @@ export async function CREATE_TOKEN_OFFERINGS(
     const { entity_id, user_entity_id, user_profile_id, ...rest } =
       postRequestInfo(request);
 
-    if (entity_id !== 3) {
+    if (entity_id === 2) {
       return handleResponse(
         request,
         reply,

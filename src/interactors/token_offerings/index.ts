@@ -199,6 +199,16 @@ const createTokenOfferings = async (options: createTokenOfferingPayload) => {
   }
 };
 
+const updateTokenStatus = async({token_id,status_id,user_profile_id}:{token_id:string,status_id:number,user_profile_id:string})=>{
+  try {
+    return TokenOfferings.updateTokenStatus({token_id,status_id,updated_by:user_profile_id})
+  } catch (error:any) {
+    Logger.error(error.message, error);
+    throw error;
+  }
+}
+
 export default {
   createTokenOfferings,
+  updateTokenStatus
 };
