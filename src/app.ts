@@ -3,16 +3,10 @@ import AutoLoad, { AutoloadPluginOptions } from "@fastify/autoload";
 import { FastifyPluginAsync } from "fastify";
 import v1 from "./api/v1";
 import { cpus } from "os";
-import { entityTypeMaster } from "helpers/constants";
+import { buildCodes } from "helpers/constants";
 // import { Logger, handleResponse, responseType } from "@helpers";
 
 process.env.UV_THREADPOOL_SIZE = String(cpus().length);
-
-const entity_types = {
-  [String(process.env.ADMIN_URL)]: 1,
-  [String(process.env.INVESTOR_URL)]: 2,
-  [String(process.env.ISSUER_URL)]: 3,
-};
 
 export type AppOptions = {
   // Place your custom options for app below here.
@@ -44,8 +38,7 @@ const app: FastifyPluginAsync<AppOptions> = async (
     //     customMessage: "Please Provide Referrer",
     //   });
     // }
-    request.entity_id =
-      entity_types[request?.headers?.referer] ?? entityTypeMaster?.admin;
+    request.entity_id = buildCodes[request?.headers?.build_code ?? "AD-1"];
     return next();
   });
 

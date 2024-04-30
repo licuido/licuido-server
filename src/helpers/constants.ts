@@ -135,3 +135,10 @@ export const entityTypeMaster = {
   investor: 2,
   issuer: 3,
 };
+
+
+export const buildCodes: { [key: string]: number } = {
+  "AD-1": 1,
+  "IN-2": 2,
+  "ISS-3": 3,
+};

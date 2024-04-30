@@ -6,7 +6,7 @@ const getResponse: JSONSchema = Schema.object()
   .prop("data", Schema.object()).additionalProperties(true)
   .valueOf() as JSONSchema;
 
-  const customParams = Schema.object().prop("user_profile_id", Schema.number())
+  const customParams = Schema.object().prop("user_profile_id", Schema.string())
 
 
 export const GET_ENTITY = {
