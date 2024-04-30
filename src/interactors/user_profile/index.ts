@@ -51,13 +51,14 @@ const createPersonInfoDetails = async (options: createPersonInfo) => {
 
 
 // after set up last step 
-const setupUserAccount = async (id:string) => {
+const setupUserAccount = async (id:string,is_fund_offered_by_licuido:boolean) => {
   try {
     
     await UserProfile.upsertPersonInfo({
       id,
       is_agree_terms_condition:true,
-      is_setup_done:true
+      is_setup_done:true,
+      is_fund_offered_by_licuido
     });
 
  

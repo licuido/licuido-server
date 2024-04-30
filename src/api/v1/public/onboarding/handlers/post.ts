@@ -242,11 +242,11 @@ export async function SET_ACCOUNT(
     // -----------------------------
     //  MAPPER
     // -----------------------------
-    const { profile_id } = postRequestInfo(request);
+    const { profile_id,is_fund_offered_by_licuido } = postRequestInfo(request);
     // -----------------------------
     //  INTERACTOR
     // -----------------------------
-    const result = await UserProfile.setupUserAccount(profile_id);
+    const result = await UserProfile.setupUserAccount(profile_id,is_fund_offered_by_licuido);
     // -----------------------------
     //  RESPONSE
     // -----------------------------
