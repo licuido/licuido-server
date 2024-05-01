@@ -60,7 +60,7 @@ export async function SIGN_IN(request: FastifyRequest, reply: FastifyReply) {
                 ...result?.token_data,
               }),
             }
-          : undefined,
+          : result?.token_data?.user_profile,
         customMessage: result?.message,
         error: {
           message: result?.message,
@@ -103,6 +103,7 @@ export async function SIGN_UP(request: FastifyRequest, reply: FastifyReply) {
     };
 
     const isUserExisit: any = await findUserExisit({ entity_id, email_id });
+
     if (isUserExisit?.length !== 0) {
       return handleResponse(request, reply, responseType?.UNAUTHORIZED, {
         customMessage: "User Already Exisits",
