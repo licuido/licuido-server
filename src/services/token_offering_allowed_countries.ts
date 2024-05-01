@@ -1,5 +1,6 @@
 import { token_offering_allowed_country } from "@models";
 import { createTokenOfferingCountries } from "@types";
+import { Op } from "sequelize";
 
 class TokenOfferingsAllowedCountries {
   /**
@@ -38,6 +39,38 @@ class TokenOfferingsAllowedCountries {
         {
           where: {
             id,
+          },
+        }
+      );
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * this function used for update Deleted Status Of Existing Token Offering Allowed Countries
+   *
+   * @throws {Error} Throws an error if there's an issue extracting parameters from the response.
+   */
+  static async updateDeletedStatus({
+    removed_countries,
+    updated_by,
+  }: {
+    removed_countries: string[];
+    updated_by: string;
+  }): Promise<any> {
+    try {
+      // Update The Status As Deleted [Soft Delete - is_active: false]
+      return await token_offering_allowed_country.update(
+        {
+          is_active: false,
+          updated_by: updated_by,
+        },
+        {
+          where: {
+            id: {
+              [Op.in]: removed_countries,
+            },
           },
         }
       );

@@ -11,6 +11,13 @@ const onBoarding: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
     { schema: schema.CREATE_TOKEN },
     handler.CREATE_TOKEN_OFFERINGS
   );
+
+  /* Update Token Offerings */
+  fastify.put(
+    "/update",
+    { schema: schema.UPDATE_TOKEN_OFFERINGS },
+    handler.UPDATE_TOKEN_OFFERINGS
+  );
 };
 
 export default onBoarding;
