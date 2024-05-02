@@ -1,3 +1,3 @@
-import { GET_ALL_COUNTRIES } from "./get";
+import { GET_ALL_COUNTRIES,GET_ALL_CURRENCIES } from "./get";
 
-export default { GET_ALL_COUNTRIES };
+export default { GET_ALL_COUNTRIES ,GET_ALL_CURRENCIES};

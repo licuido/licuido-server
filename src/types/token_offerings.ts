@@ -114,7 +114,6 @@ export interface createTokenOfferingPayload {
       url: string;
       type: string;
     };
-    member_type: string;
   }[];
   status: 1 | 2 | 3;
 }
@@ -136,7 +135,6 @@ export interface createTokenOfferingSubData {
       url: string;
       type: string;
     };
-    member_type: string;
   }[];
 }
 
@@ -173,7 +171,6 @@ export interface updateTokenOfferingPayload
       url: string;
       type: string;
     };
-    member_type: string;
   }[];
   removed_team_members: string[];
   updated_team_members: {
@@ -184,7 +181,6 @@ export interface updateTokenOfferingPayload
       url: string;
       type: string;
     };
-    member_type: string;
   }[];
 }
 
@@ -220,7 +216,6 @@ export interface updateTokenOfferingSubData {
       url: string;
       type: string;
     };
-    member_type: string;
   }[];
   removed_team_members?: string[];
   updated_team_members?: {
@@ -231,7 +226,6 @@ export interface updateTokenOfferingSubData {
       url: string;
       type: string;
     };
-    member_type: string;
   }[];
 }
 

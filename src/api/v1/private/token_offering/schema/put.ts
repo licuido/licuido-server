@@ -108,12 +108,10 @@ const updateTokenBody = Schema.object()
               .prop("type", Schema.string())
               .required(["url", "type"])
           )
-          .prop("member_type", Schema.string())
           .required([
             "member_name",
             "member_title",
             "member_picture",
-            "member_type",
           ])
       )
       .minItems(0)
@@ -137,8 +135,7 @@ const updateTokenBody = Schema.object()
               .prop("type", Schema.string())
               .required(["url", "type"])
           )
-          .prop("member_type", Schema.string())
-          .required(["member_name", "member_title", "member_type"])
+          .required(["member_name", "member_title"])
       )
       .minItems(0)
   )
