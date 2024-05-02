@@ -20,7 +20,8 @@ export async function UPDATE_TOKEN_STATUS(
         responseType?.INTERNAL_SERVER_ERROR,
         {
           error: {
-            message: "Only Issuer can be update token offering status",
+            message:
+              "Only Issuer and admin can be update token offering status",
           },
         }
       );
@@ -61,7 +62,7 @@ export async function UPDATE_TOKEN_OFFERINGS(
     if (entity_id === 2) {
       return handleResponse(request, reply, responseType?.FORBIDDEN, {
         error: {
-          message: "Only Issuer can be update token offering data",
+          message: "Only Issuer and admin can be update token offering data",
         },
       });
     }

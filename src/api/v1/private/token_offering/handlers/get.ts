@@ -1,9 +1,9 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { Logger, handleResponse, responseType } from "@helpers";
 import { TokenOfferings } from "interactors";
-import { postRequestInfo } from "@mappers";
+import { queryRequestInfo } from "@mappers";
 
-export async function CREATE_TOKEN_OFFERINGS(
+export async function FIND_TOKEN(
   request: FastifyRequest,
   reply: FastifyReply
 ) {
@@ -12,7 +12,7 @@ export async function CREATE_TOKEN_OFFERINGS(
     //  MAPPER
     // -----------------------------
     const { entity_id, user_entity_id, user_profile_id, ...rest } =
-      postRequestInfo(request);
+      queryRequestInfo(request);
 
     if (entity_id === 2) {
       return handleResponse(
@@ -21,36 +21,38 @@ export async function CREATE_TOKEN_OFFERINGS(
         responseType?.INTERNAL_SERVER_ERROR,
         {
           error: {
-            message: "Only Issuer and admin can be create token offering",
+            message: "Only Issuer and admin can be view token offering",
           },
         }
       );
     }
+
     // -----------------------------
     //  INTERACTOR
     // -----------------------------
-    const result = await TokenOfferings.createTokenOfferings({
-      ...rest,
-      user_entity_id,
-      user_profile_id,
-    });
+    const result = await TokenOfferings.findToken({
+        user_entity_id:user_entity_id,
+       ...rest
+      });
     // -----------------------------
     //  RESPONSE
     // -----------------------------
-
-    if (result && result?.code === 200) {
+    if (result?.success) {
       return handleResponse(request, reply, responseType?.CREATED, {
-        customMessage: result?.customMessage,
-        data: result?.data,
-      });
-    } else if (result && result?.code === 409) {
-      return handleResponse(request, reply, responseType?.CONFLICT, {
-        customMessage: result?.customMessage,
+        customMessage: result?.message,
+        data:result
       });
     } else {
-      return handleResponse(request, reply, responseType?.ACCEPTED, {
-        customMessage: "Token offering Create is in progress.",
-      });
+      return handleResponse(
+        request,
+        reply,
+        responseType?.INTERNAL_SERVER_ERROR,
+        {
+          error: {
+            message: result?.message,
+          },
+        }
+      );
     }
   } catch (error: any) {
     Logger.error(request, error.message, error);
