@@ -1,6 +1,7 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
 import type { asset, assetId } from './asset';
+import type { master_ekc_status, master_ekc_statusId } from './master_ekc_status';
 import type { user_profile, user_profileId } from './user_profile';
 
 export interface ekycAttributes {
@@ -14,11 +15,12 @@ export interface ekycAttributes {
   updated_by?: string;
   created_at?: Date;
   updated_at?: Date;
+  status_id?: number;
 }
 
 export type ekycPk = "id";
 export type ekycId = ekyc[ekycPk];
-export type ekycOptionalAttributes = "id" | "kyc_profile_id" | "captured_asset_id" | "is_processed" | "is_verified" | "is_active" | "created_by" | "updated_by" | "created_at" | "updated_at";
+export type ekycOptionalAttributes = "id" | "kyc_profile_id" | "captured_asset_id" | "is_processed" | "is_verified" | "is_active" | "created_by" | "updated_by" | "created_at" | "updated_at" | "status_id";
 export type ekycCreationAttributes = Optional<ekycAttributes, ekycOptionalAttributes>;
 
 export class ekyc extends Model<ekycAttributes, ekycCreationAttributes> implements ekycAttributes {
@@ -32,12 +34,18 @@ export class ekyc extends Model<ekycAttributes, ekycCreationAttributes> implemen
   updated_by?: string;
   created_at?: Date;
   updated_at?: Date;
+  status_id?: number;
 
   // ekyc belongsTo asset via captured_asset_id
   captured_asset!: asset;
   getCaptured_asset!: Sequelize.BelongsToGetAssociationMixin<asset>;
   setCaptured_asset!: Sequelize.BelongsToSetAssociationMixin<asset, assetId>;
   createCaptured_asset!: Sequelize.BelongsToCreateAssociationMixin<asset>;
+  // ekyc belongsTo master_ekc_status via status_id
+  status!: master_ekc_status;
+  getStatus!: Sequelize.BelongsToGetAssociationMixin<master_ekc_status>;
+  setStatus!: Sequelize.BelongsToSetAssociationMixin<master_ekc_status, master_ekc_statusId>;
+  createStatus!: Sequelize.BelongsToCreateAssociationMixin<master_ekc_status>;
   // ekyc belongsTo user_profile via created_by
   created_by_user_profile!: user_profile;
   getCreated_by_user_profile!: Sequelize.BelongsToGetAssociationMixin<user_profile>;
@@ -103,6 +111,14 @@ export class ekyc extends Model<ekycAttributes, ekycCreationAttributes> implemen
       allowNull: true,
       references: {
         model: 'user_profiles',
+        key: 'id'
+      }
+    },
+    status_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'master_ekc_status',
         key: 'id'
       }
     }
