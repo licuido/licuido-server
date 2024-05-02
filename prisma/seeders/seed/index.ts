@@ -9,3 +9,4 @@ export * from "./8_master_token_type";
 export * from "./9_master_token_status";
 export * from "./10_master_blockchain_networks";
 export * from "./11_master_token_offering_status";
+export * from "./12_master_ekyc_status";
