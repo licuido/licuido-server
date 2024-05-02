@@ -12,12 +12,12 @@ class Ekyc {
 
   static async create(options: createEkyc): Promise<any> {
     try {
-      const { profile_id, captured_asset_id, is_verified } = options;
+      const { profile_id, captured_asset_id, status_id } = options;
       return await ekyc.create({
         updated_by: profile_id,
         kyc_profile_id: profile_id,
         captured_asset_id,
-        is_verified,
+        status_id,
         is_active: true,
       });
     } catch (error) {
