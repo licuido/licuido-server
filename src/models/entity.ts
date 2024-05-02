@@ -29,12 +29,11 @@ export interface entityAttributes {
   created_at?: Date;
   updated_at?: Date;
   region_id?: number;
-  is_fund_offered_by_licuido?: boolean;
 }
 
 export type entityPk = "id";
 export type entityId = entity[entityPk];
-export type entityOptionalAttributes = "id" | "entity_type_id" | "legal_name" | "lei_number" | "legal_address" | "zipcode" | "country_id" | "logo_asset_id" | "business_sector_id" | "contact_profile_id" | "is_active" | "created_by" | "updated_by" | "created_at" | "updated_at" | "region_id" | "is_fund_offered_by_licuido";
+export type entityOptionalAttributes = "id" | "entity_type_id" | "legal_name" | "lei_number" | "legal_address" | "zipcode" | "country_id" | "logo_asset_id" | "business_sector_id" | "contact_profile_id" | "is_active" | "created_by" | "updated_by" | "created_at" | "updated_at" | "region_id";
 export type entityCreationAttributes = Optional<entityAttributes, entityOptionalAttributes>;
 
 export class entity extends Model<entityAttributes, entityCreationAttributes> implements entityAttributes {
@@ -54,7 +53,6 @@ export class entity extends Model<entityAttributes, entityCreationAttributes> im
   created_at?: Date;
   updated_at?: Date;
   region_id?: number;
-  is_fund_offered_by_licuido?: boolean;
 
   // entity belongsTo asset via logo_asset_id
   logo_asset!: asset;
@@ -260,10 +258,6 @@ export class entity extends Model<entityAttributes, entityCreationAttributes> im
         model: 'master_regions',
         key: 'id'
       }
-    },
-    is_fund_offered_by_licuido: {
-      type: DataTypes.BOOLEAN,
-      allowNull: true
     }
   }, {
     sequelize,

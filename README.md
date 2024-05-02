@@ -28,6 +28,7 @@ Run the test cases.
 DATABASE_URL=postgresql://johndoe:randompassword@localhost:5432/mydb?schema=public
 
 # db docs
+
 https://dbdocs.io/Vardhman%20Baid/Licuido?table=token_offerings&schema=public&view=table_structure
 
 - For Migrations and Seeders we use Prisma @prisma/migrate for SQL friendly migration
@@ -50,10 +51,8 @@ npm run  migrate
 mpm run seed
 ```
 
-
 \*\* after migration done
 npx prisma db pull
-
 
 \*\* after pull
 npx prisma generate
