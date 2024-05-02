@@ -1,6 +1,12 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { Logger, handleResponse, responseType } from "@helpers";
-import { Entity,UserProfile,BusinessDocuments,Ekyc,CustomersWallet} from "interactors";
+import {
+  Entity,
+  UserProfile,
+  BusinessDocuments,
+  Ekyc,
+  CustomersWallet,
+} from "interactors";
 import { postRequestInfo } from "@mappers";
 
 export async function CREATE_BUSSINESS_DETAILS(
@@ -26,7 +32,7 @@ export async function CREATE_BUSSINESS_DETAILS(
     if (result?.success) {
       return handleResponse(request, reply, responseType?.CREATED, {
         customMessage: result?.message,
-        data:result?.data
+        data: result?.data,
       });
     } else {
       return handleResponse(
@@ -49,8 +55,6 @@ export async function CREATE_BUSSINESS_DETAILS(
     });
   }
 }
-
-
 
 export async function CREATE_CONTACT_PERSON(
   request: FastifyRequest,
@@ -96,7 +100,6 @@ export async function CREATE_CONTACT_PERSON(
     });
   }
 }
-
 
 export async function CREATE_BUSINESS_DOCUMENT(
   request: FastifyRequest,
@@ -188,7 +191,6 @@ export async function CREATE_EKYC(
   }
 }
 
-
 export async function CREATE_CUSTOMER_WALLET(
   request: FastifyRequest,
   reply: FastifyReply
@@ -242,11 +244,14 @@ export async function SET_ACCOUNT(
     // -----------------------------
     //  MAPPER
     // -----------------------------
-    const { profile_id } = postRequestInfo(request);
+    const { profile_id, is_fund_offered_by_licuido } = postRequestInfo(request);
     // -----------------------------
     //  INTERACTOR
     // -----------------------------
-    const result = await UserProfile.setupUserAccount(profile_id);
+    const result = await UserProfile.setupUserAccount(
+      profile_id,
+      is_fund_offered_by_licuido
+    );
     // -----------------------------
     //  RESPONSE
     // -----------------------------

@@ -9,9 +9,10 @@ import {
   token_offering_allowed_country,
   token_offering_allowed_currency,
   token_offering_document,
-  token_offering_team
+  token_offering_team,
 } from "@models";
-import { createTokenOffering } from "@types";
+import { createTokenOffering, updateTokenOffering } from "@types";
+import { Op } from "sequelize";
 
 class TokenOfferings {
   /**
@@ -26,6 +27,64 @@ class TokenOfferings {
       return await token_offering.create(options, {
         raw: false,
         returning: true,
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * this function used for update token offering
+   *
+   * @param {updateTokenOffering} options - The response object containing update data.
+   * @throws {Error} Throws an error if there's an issue extracting parameters from the response.
+   */
+
+  static async update(
+    options: updateTokenOffering,
+    token_id: string
+  ): Promise<any> {
+    try {
+      // Update Token Offering Meta Data
+      return await token_offering.update(options, {
+        where: {
+          id: token_id,
+        },
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * this function used for to get count of given token name
+   *
+   * @throws {Error} Throws an error if there's an issue extracting parameters from the response.
+   */
+
+  static async count({
+    id,
+    name,
+  }: {
+    id: string | null;
+    name: string;
+  }): Promise<any> {
+    try {
+      // Get Count Of Given Token Offering Name
+      const whereClause: any = {
+        name: name,
+        is_active: true,
+      };
+
+      if (id) {
+        whereClause["id"] = {
+          [Op.ne]: id,
+        };
+      }
+
+      // To Get Token Name Count Data With this given Token Name
+      return await token_offering.count({
+        where: whereClause,
       });
     } catch (error) {
       throw error;
@@ -160,14 +219,14 @@ class TokenOfferings {
                 model: master_country,
                 as: "allowed_country",
                 attributes: ["id", "name"],
-                required: false
+                required: false,
               },
             ],
           },
           {
             model: token_offering_allowed_currency,
             as: "token_offering_allowed_currencies",
-            attributes: ["id", "currency","currency_code"],
+            attributes: ["id", "currency", "currency_code"],
             required: false,
             where: {
               is_active: true,
@@ -178,7 +237,7 @@ class TokenOfferings {
             as: "token_offering_documents",
             attributes: ["id"],
             required: false,
-            include:[
+            include: [
               {
                 model: asset,
                 as: "document",
@@ -193,9 +252,9 @@ class TokenOfferings {
           {
             model: token_offering_team,
             as: "token_offering_teams",
-            attributes: ["id","member_name","member_title"],
+            attributes: ["id", "member_name", "member_title"],
             required: false,
-            include:[
+            include: [
               {
                 model: asset,
                 as: "member_picture",
@@ -210,34 +269,33 @@ class TokenOfferings {
         ],
       });
 
-      return JSON.parse(JSON.stringify(token_offer))
+      return JSON.parse(JSON.stringify(token_offer));
     } catch (error) {
       throw error;
     }
   }
 
-
-   /**
+  /**
    * this function used for checking user have token access
    *
    * @param {token_id:string, user_entity_id:string} options - The response object containing create data.
    * @throws {Error} Throws an error if there's an issue extracting parameters from the response.
    */
 
-   static async checkTokenHaveAccess({
+  static async checkTokenHaveAccess({
     token_id,
-    user_entity_id
+    user_entity_id,
   }: {
     token_id: string;
-    user_entity_id:string;
+    user_entity_id: string;
   }): Promise<any> {
     try {
-     return await token_offering.count({
-        where:{
-          id:token_id,
-          issuer_entity_id:user_entity_id
-        }
-       })
+      return await token_offering.count({
+        where: {
+          id: token_id,
+          issuer_entity_id: user_entity_id,
+        },
+      });
     } catch (error) {
       throw error;
     }

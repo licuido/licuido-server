@@ -87,8 +87,8 @@ export const signIn = async (body: signInPayload) => {
     if (response?.success) {
       // check user
       const user: any = await findUserExisit({ email_id, entity_id });
-      
-      if(!user?.[0]?.dataValues?.id){
+
+      if (!user?.[0]?.dataValues?.id) {
         return {
           success: false,
           message: "User Doesn't Exisit",
@@ -128,6 +128,7 @@ export const signIn = async (body: signInPayload) => {
       };
     }
   } catch (error: any) {
+    console.log(error);
     Logger.error(error.message, error);
     throw error;
   }

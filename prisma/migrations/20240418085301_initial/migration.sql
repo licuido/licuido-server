@@ -449,6 +449,7 @@ CREATE TABLE "user_profiles" (
     "is_agree_terms_condition" BOOLEAN,
     "is_setup_done" BOOLEAN,
     "is_verified" BOOLEAN,
+    "is_fund_offered_by_licuido" BOOLEAN,
     "created_at" TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP,
 

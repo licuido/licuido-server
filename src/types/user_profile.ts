@@ -21,16 +21,16 @@ export interface resetUserPasswordPayload {
   new_password: string;
 }
 
-
-export interface createPersonInfo{
-  name?:string;
-  position_id?:number;
-  mobile_no_std_code?:string;
-  mobile_no?:string;
-  email_id?:string;
-  identity?:createAsset[];
-  deletedIdentity?:string[];
-  id:string;
-  is_agree_terms_condition?:boolean;
-  is_setup_done?:boolean;
+export interface createPersonInfo {
+  name?: string;
+  position_id?: number;
+  mobile_no_std_code?: string;
+  mobile_no?: string;
+  email_id?: string;
+  identity?: createAsset[];
+  deletedIdentity?: string[];
+  id: string;
+  is_agree_terms_condition?: boolean;
+  is_setup_done?: boolean;
+  is_fund_offered_by_licuido?: boolean;
 }

@@ -1,5 +1,6 @@
 import { token_offering_team } from "@models";
-import { createTokenOfferingTeams } from "@types";
+import { createTokenOfferingTeams, updateTokenOfferingTeams } from "@types";
+import { Op } from "sequelize";
 
 class TokenOfferingsTeams {
   /**
@@ -27,7 +28,7 @@ class TokenOfferingsTeams {
     options,
     id,
   }: {
-    options: createTokenOfferingTeams;
+    options: updateTokenOfferingTeams;
     id: string;
   }): Promise<any> {
     try {
@@ -38,6 +39,38 @@ class TokenOfferingsTeams {
         {
           where: {
             id,
+          },
+        }
+      );
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * this function used for update Deleted Status Of Existing Token Offering Team Members
+   *
+   * @throws {Error} Throws an error if there's an issue extracting parameters from the response.
+   */
+  static async updateDeletedStatus({
+    removed_team_members,
+    updated_by,
+  }: {
+    removed_team_members: string[];
+    updated_by: string;
+  }): Promise<any> {
+    try {
+      // Update The Status As Deleted [Soft Delete - is_active: false]
+      return await token_offering_team.update(
+        {
+          is_active: false,
+          updated_by: updated_by,
+        },
+        {
+          where: {
+            id: {
+              [Op.in]: removed_team_members,
+            },
           },
         }
       );

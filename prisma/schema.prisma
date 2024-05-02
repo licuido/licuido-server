@@ -489,6 +489,7 @@ model user_profiles {
   position_id                                                                                   Int?
   contact_email                                                                                 String?
   investor_type_id                                                                              Int?
+  is_fund_offered_by_licuido                                                                    Boolean?
   assets_assets_created_byTouser_profiles                                                       assets[]                            @relation("assets_created_byTouser_profiles")
   assets_assets_updated_byTouser_profiles                                                       assets[]                            @relation("assets_updated_byTouser_profiles")
   business_documents_business_documents_created_byTouser_profiles                               business_documents[]                @relation("business_documents_created_byTouser_profiles")
