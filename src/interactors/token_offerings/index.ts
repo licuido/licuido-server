@@ -8,6 +8,7 @@ import {
   TokenOfferingsDocuments,
 } from "@services";
 import {
+  TeamsPayload,
   createTokenOfferingPayload,
   createTokenOfferingSubData,
   updateTokenOfferingPayload,
@@ -132,10 +133,24 @@ const createTokenOfferings = async (options: createTokenOfferingPayload) => {
       token_type_id,
     } = options;
 
+    // Check if the Token Name Already Exists
+    const count: number = await TokenOfferings.count({
+      id: null,
+      name,
+    });
+
+    // If the Given Token Name Already Exists
+    if (count > 0) {
+      return {
+        code: 409,
+        customMessage: errorCustomMessage.tokenNameAlreadyExists,
+      };
+    }
+
     let logo_asset_id;
     let banner_asset_id;
 
-    if (logo_asset?.url) {
+    if (logo_asset && logo_asset?.url) {
       const asset = await Asset.upsert({
         type: logo_asset?.type,
         url: logo_asset?.url,
@@ -143,7 +158,7 @@ const createTokenOfferings = async (options: createTokenOfferingPayload) => {
       });
       logo_asset_id = asset?.[0]?.dataValues?.id;
     }
-    if (banner_asset?.url) {
+    if (banner_asset && banner_asset?.url) {
       const asset = await Asset.upsert({
         type: banner_asset?.type,
         url: banner_asset?.url,
@@ -197,7 +212,11 @@ const createTokenOfferings = async (options: createTokenOfferingPayload) => {
       user_profile_id
     );
 
-    return data;
+    return {
+      code: 200,
+      customMessage: successCustomMessage.tokenOfferingCreated,
+      data: { token_id: data?.dataValues?.id },
+    };
   } catch (error: any) {
     Logger.error(error.message, error);
     throw error;
@@ -368,18 +387,27 @@ const updateOfferingSubDatas = async (
     // For Updating existing Team Member Details
     if (updated_team_members && updated_team_members?.length > 0) {
       for (const team of updated_team_members) {
-        const asset = await Asset.upsert({
-          type: team?.member_picture?.type,
-          url: team?.member_picture?.url,
-          is_active: true,
-        });
-
-        const teamsPayload = {
-          member_picture_id: asset?.[0]?.dataValues?.id,
-          member_name: team?.member_name,
-          member_title: team?.member_title,
+        let teamsPayload: TeamsPayload = {
+          member_name: team.member_name,
+          member_title: team.member_title,
           updated_by: user_profile_id,
         };
+
+        if (
+          team &&
+          team?.member_picture &&
+          team?.member_picture?.type &&
+          team?.member_picture?.url
+        ) {
+          const asset = await Asset.upsert({
+            type: team?.member_picture?.type,
+            url: team?.member_picture?.url,
+            is_active: true,
+          });
+
+          teamsPayload.member_picture_id =
+            asset && asset.length > 0 ? asset[0].dataValues.id : undefined;
+        }
 
         await TokenOfferingsTeams.update({
           options: teamsPayload,

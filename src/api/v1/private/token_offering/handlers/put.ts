@@ -74,7 +74,7 @@ export async function UPDATE_TOKEN_OFFERINGS(
 
     /* -----------  RESPONSE ----------- */
     if (result && result?.code === 200) {
-      return handleResponse(request, reply, responseType?.OK, {
+      return handleResponse(request, reply, responseType?.CREATED, {
         customMessage: result?.customMessage,
       });
     } else if (result && result?.code === 409) {

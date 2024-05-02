@@ -50,7 +50,13 @@ class TokenOfferings {
    * @throws {Error} Throws an error if there's an issue extracting parameters from the response.
    */
 
-  static async count({ id, name }: { id: string; name: string }): Promise<any> {
+  static async count({
+    id,
+    name,
+  }: {
+    id: string | null;
+    name: string;
+  }): Promise<any> {
     try {
       // Get Count Of Given Token Offering Name
       const whereClause: any = {

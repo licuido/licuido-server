@@ -4,5 +4,6 @@ export const errorCustomMessage = {
 };
 
 export const successCustomMessage = {
+  tokenOfferingCreated: "Token Offering Created",
   tokenOfferingUpdated: "Token Offering Updated",
 };

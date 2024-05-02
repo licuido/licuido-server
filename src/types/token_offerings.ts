@@ -57,7 +57,7 @@ export interface createTokenOfferingTeams {
   token_offering_id: string;
   member_name: string;
   member_title: string;
-  member_picture_id: string;
+  member_picture_id?: string;
   is_active: boolean;
   created_by: string;
 }
@@ -241,4 +241,11 @@ export interface updateTokenOfferingTeams
     "token_offering_id" | "created_by" | "is_active"
   > {
   updated_by: string;
+}
+
+export interface TeamsPayload {
+  member_name: string;
+  member_title: string;
+  updated_by: string;
+  member_picture_id?: string;
 }
