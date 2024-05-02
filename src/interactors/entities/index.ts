@@ -12,10 +12,9 @@ const createBussinessDetails = async (options: createEntity) => {
       id,
       logo,
       logo_type,
-      investor_type_id,
     } = options;
 
-    if (entity_type_id != entityTypeMaster?.investor && investor_type_id) {
+    if (entity_type_id === entityTypeMaster?.issuer) {
       return {
         success: false,
         message: "You are Issuer issuer but why you passing investor type",
