@@ -208,6 +208,22 @@ const updateTokenStatus = async({token_id,status_id,user_profile_id}:{token_id:s
   }
 }
 
+// // find entitity
+// const findToken = async ({token_id,user_entity_id}:{token_id:string;user_entity_id:string;}) => {
+//   try {
+//     const data = await TokenOfferings.findOne(user_profile_id);
+
+//     return {
+//       success: true,
+//       message: `Business Detail Successfully`,
+//       data,
+//     };
+//   } catch (error: any) {
+//     Logger.error(error.message, error);
+//     throw error;
+//   }
+// };
+
 export default {
   createTokenOfferings,
   updateTokenStatus

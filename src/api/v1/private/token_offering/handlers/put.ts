@@ -39,7 +39,7 @@ export async function UPDATE_TOKEN_STATUS(
       // -----------------------------
   
       return handleResponse(request, reply, responseType?.CREATED, {
-        customMessage: "Token Offering Created",
+        customMessage: "Token Offering Status Updated",
         data: result?.data,
       });
     } catch (error: any) {
