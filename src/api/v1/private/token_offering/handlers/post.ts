@@ -39,10 +39,20 @@ export async function CREATE_TOKEN_OFFERINGS(
     //  RESPONSE
     // -----------------------------
 
-    return handleResponse(request, reply, responseType?.CREATED, {
-      customMessage: "Token Offering Created",
-      data: result?.data,
-    });
+    if (result && result?.code === 200) {
+      return handleResponse(request, reply, responseType?.CREATED, {
+        customMessage: result?.customMessage,
+        data: result?.data,
+      });
+    } else if (result && result?.code === 409) {
+      return handleResponse(request, reply, responseType?.CONFLICT, {
+        customMessage: result?.customMessage,
+      });
+    } else {
+      return handleResponse(request, reply, responseType?.ACCEPTED, {
+        customMessage: "Token offering Create is in progress.",
+      });
+    }
   } catch (error: any) {
     Logger.error(request, error.message, error);
     return handleResponse(request, reply, responseType?.INTERNAL_SERVER_ERROR, {

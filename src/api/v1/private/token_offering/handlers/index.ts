@@ -1,8 +1,8 @@
 import { CREATE_TOKEN_OFFERINGS } from "./post";
-import { UPDATE_TOKEN_STATUS } from "./put";
-
+import { UPDATE_TOKEN_STATUS, UPDATE_TOKEN_OFFERINGS } from "./put";
 
 export default {
   CREATE_TOKEN_OFFERINGS,
-  UPDATE_TOKEN_STATUS
+  UPDATE_TOKEN_STATUS,
+  UPDATE_TOKEN_OFFERINGS,
 };

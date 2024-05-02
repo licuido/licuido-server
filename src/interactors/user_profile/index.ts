@@ -5,7 +5,7 @@ import { createAsset, createPersonInfo } from "@types";
 // create and update person info details
 const createPersonInfoDetails = async (options: createPersonInfo) => {
   try {
-    const { identity, deletedIdentity,id } = options;
+    const { identity, deletedIdentity, id } = options;
     await UserProfile.upsertPersonInfo({
       ...options,
       email_id: undefined,
@@ -16,23 +16,21 @@ const createPersonInfoDetails = async (options: createPersonInfo) => {
         return {
           ...val,
           is_active: true,
-          created_by:id,
+          created_by: id,
         };
       });
 
       const assetData = await Asset.bulkInsert(insertData);
 
-       let userIdentities=assetData?.map((val:any)=>{
-         return{
-            asset_id:val?.dataValues?.id,
-            created_by:id,
-            is_active:true
-         }
-       })
+      let userIdentities = assetData?.map((val: any) => {
+        return {
+          asset_id: val?.dataValues?.id,
+          created_by: id,
+          is_active: true,
+        };
+      });
 
       await UserIdentities.createBulkIdentity(userIdentities);
-       
-      
     }
 
     if (deletedIdentity && deletedIdentity?.length > 0) {
@@ -49,20 +47,20 @@ const createPersonInfoDetails = async (options: createPersonInfo) => {
   }
 };
 
-
-// after set up last step 
-const setupUserAccount = async (id:string,is_fund_offered_by_licuido:boolean) => {
+// after set up last step
+const setupUserAccount = async (
+  id: string,
+  is_fund_offered_by_licuido: boolean
+) => {
   try {
-    
     await UserProfile.upsertPersonInfo({
       id,
-      is_agree_terms_condition:true,
-      is_setup_done:true,
-      is_fund_offered_by_licuido
+      is_agree_terms_condition: true,
+      is_setup_done: true,
+      is_fund_offered_by_licuido,
     });
 
- 
-   return {
+    return {
       success: true,
       message: `Your Account Updated`,
     };
@@ -73,5 +71,5 @@ const setupUserAccount = async (id:string,is_fund_offered_by_licuido:boolean) =>
 };
 export default {
   createPersonInfoDetails,
-  setupUserAccount
+  setupUserAccount,
 };

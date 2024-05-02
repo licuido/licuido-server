@@ -74,6 +74,11 @@ const httpStatusCodes: Record<
     code: 406,
     description: "The server is unable to produce a response",
   },
+  CONFLICT: {
+    code: 409,
+    description:
+      "The server is unable to process the request due to a conflict in the current state of the resource.",
+  },
   INTERNAL_SERVER_ERROR: {
     code: 500,
     description:

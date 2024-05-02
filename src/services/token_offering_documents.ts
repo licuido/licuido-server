@@ -1,5 +1,6 @@
 import { token_offering_document } from "@models";
 import { createTokenOfferingDocuments } from "@types";
+import { Op } from "sequelize";
 
 class TokenOfferingsDocuments {
   /**
@@ -38,6 +39,38 @@ class TokenOfferingsDocuments {
         {
           where: {
             id,
+          },
+        }
+      );
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * this function used for update Deleted Status Of Existing Token Offering Documents
+   *
+   * @throws {Error} Throws an error if there's an issue extracting parameters from the response.
+   */
+  static async updateDeletedStatus({
+    removed_documents,
+    updated_by,
+  }: {
+    removed_documents: string[];
+    updated_by: string;
+  }): Promise<any> {
+    try {
+      // Update The Status As Deleted [Soft Delete - is_active: false]
+      return await token_offering_document.update(
+        {
+          is_active: false,
+          updated_by: updated_by,
+        },
+        {
+          where: {
+            id: {
+              [Op.in]: removed_documents,
+            },
           },
         }
       );

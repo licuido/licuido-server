@@ -57,7 +57,7 @@ export interface createTokenOfferingTeams {
   token_offering_id: string;
   member_name: string;
   member_title: string;
-  member_picture_id: string;
+  member_picture_id?: string;
   is_active: boolean;
   created_by: string;
 }
@@ -138,4 +138,114 @@ export interface createTokenOfferingSubData {
     };
     member_type: string;
   }[];
+}
+
+export interface updateTokenOfferingPayload
+  extends Omit<
+    createTokenOfferingPayload,
+    | "user_entity_id"
+    | "created_by"
+    | "offer_status_id"
+    | "allowed_currencies"
+    | "allowed_countries"
+    | "status"
+    | "documents"
+    | "teams"
+  > {
+  updated_by: string;
+  token_id: string;
+  added_currencies: {
+    currency: string;
+    currency_code: string;
+  }[];
+  removed_currencies: string[];
+  added_countries: number[];
+  removed_countries: string[];
+  added_documents: {
+    url: string;
+    type: string;
+  }[];
+  removed_documents: string[];
+  new_team_members: {
+    member_name: string;
+    member_title: string;
+    member_picture: {
+      url: string;
+      type: string;
+    };
+    member_type: string;
+  }[];
+  removed_team_members: string[];
+  updated_team_members: {
+    member_id: string;
+    member_name: string;
+    member_title: string;
+    member_picture: {
+      url: string;
+      type: string;
+    };
+    member_type: string;
+  }[];
+}
+
+export interface updateTokenOffering
+  extends Omit<
+    createTokenOffering,
+    | "issuer_entity_id"
+    | "created_by"
+    | "is_active"
+    | "status_id"
+    | "offer_status_id"
+  > {
+  updated_by: string;
+}
+
+export interface updateTokenOfferingSubData {
+  added_currencies?: {
+    currency: string;
+    currency_code: string;
+  }[];
+  removed_currencies?: string[];
+  added_countries?: number[];
+  removed_countries?: string[];
+  added_documents?: {
+    url: string;
+    type: string;
+  }[];
+  removed_documents?: string[];
+  new_team_members?: {
+    member_name: string;
+    member_title: string;
+    member_picture: {
+      url: string;
+      type: string;
+    };
+    member_type: string;
+  }[];
+  removed_team_members?: string[];
+  updated_team_members?: {
+    member_id: string;
+    member_name: string;
+    member_title: string;
+    member_picture: {
+      url: string;
+      type: string;
+    };
+    member_type: string;
+  }[];
+}
+
+export interface updateTokenOfferingTeams
+  extends Omit<
+    createTokenOfferingTeams,
+    "token_offering_id" | "created_by" | "is_active"
+  > {
+  updated_by: string;
+}
+
+export interface TeamsPayload {
+  member_name: string;
+  member_title: string;
+  updated_by: string;
+  member_picture_id?: string;
 }
