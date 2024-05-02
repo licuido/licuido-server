@@ -22,7 +22,7 @@ export async function UPDATE_TOKEN_STATUS(
           responseType?.INTERNAL_SERVER_ERROR,
           {
             error: {
-              message: "Only Issuer can be update token offering status",
+              message: "Only Issuer and admin can be update token offering status",
             },
           }
         );

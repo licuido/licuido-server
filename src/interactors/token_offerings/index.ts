@@ -208,23 +208,41 @@ const updateTokenStatus = async({token_id,status_id,user_profile_id}:{token_id:s
   }
 }
 
-// // find entitity
-// const findToken = async ({token_id,user_entity_id}:{token_id:string;user_entity_id:string;}) => {
-//   try {
-//     const data = await TokenOfferings.findOne(user_profile_id);
+// find entitity
+const findToken = async ({token_id,user_entity_id}:{token_id?:string;user_entity_id?:string;}) => {
+  try {
 
-//     return {
-//       success: true,
-//       message: `Business Detail Successfully`,
-//       data,
-//     };
-//   } catch (error: any) {
-//     Logger.error(error.message, error);
-//     throw error;
-//   }
-// };
+    if(!token_id || !user_entity_id){
+      return {
+        success: false,
+        message: `Please Pass Token ID`,
+      };
+    }
+
+    const count = await TokenOfferings.checkTokenHaveAccess({token_id,user_entity_id});
+
+    if(count === 0){
+      return {
+        success: false,
+        message: `You Don't Have a access for this token or please verify this token`,
+      };
+    }
+
+    const data = await TokenOfferings.getTokenOffering({token_id})
+
+    return {
+      success: true,
+      message: "Token Fetched Successfully",
+      data
+    };
+  } catch (error: any) {
+    Logger.error(error.message, error);
+    throw error;
+  }
+};
 
 export default {
   createTokenOfferings,
-  updateTokenStatus
+  updateTokenStatus,
+  findToken
 };

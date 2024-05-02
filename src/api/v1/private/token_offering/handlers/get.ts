@@ -1,7 +1,7 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { Logger, handleResponse, responseType } from "@helpers";
 import { TokenOfferings } from "interactors";
-import { postRequestInfo } from "@mappers";
+import { queryRequestInfo } from "@mappers";
 
 export async function CREATE_TOKEN_OFFERINGS(
   request: FastifyRequest,
@@ -12,7 +12,7 @@ export async function CREATE_TOKEN_OFFERINGS(
     //  MAPPER
     // -----------------------------
     const { entity_id, user_entity_id, user_profile_id, ...rest } =
-      postRequestInfo(request);
+      queryRequestInfo(request);
 
     if (entity_id === 2) {
       return handleResponse(
@@ -21,20 +21,19 @@ export async function CREATE_TOKEN_OFFERINGS(
         responseType?.INTERNAL_SERVER_ERROR,
         {
           error: {
-            message: "Only Issuer and admin can be create token offering",
+            message: "Only Issuer can be create token offering",
           },
         }
       );
     }
-    console.log(user_entity_id);
+
     // -----------------------------
     //  INTERACTOR
     // -----------------------------
-    const result = await TokenOfferings.createTokenOfferings({
-      ...rest,
-      user_entity_id,
-      user_profile_id,
-    });
+    const result = await TokenOfferings.findToken({
+        user_entity_id:user_entity_id,
+       ...rest
+      });
     // -----------------------------
     //  RESPONSE
     // -----------------------------
