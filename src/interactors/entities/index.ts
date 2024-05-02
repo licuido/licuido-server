@@ -12,13 +12,16 @@ const createBussinessDetails = async (options: createEntity) => {
       id,
       logo,
       logo_type,
+      investor_type_id,
     } = options;
 
     if (entity_type_id === entityTypeMaster?.issuer) {
-      return {
-        success: false,
-        message: "You are Issuer issuer but why you passing investor type",
-      };
+      if (investor_type_id) {
+        return {
+          success: false,
+          message: "You are Issuer issuer but why you passing investor type",
+        };
+      }
     }
 
     const { count } = await Entities.findEntityExisit({
