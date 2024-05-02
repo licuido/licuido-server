@@ -87,6 +87,14 @@ export const signIn = async (body: signInPayload) => {
     if (response?.success) {
       // check user
       const user: any = await findUserExisit({ email_id, entity_id });
+      
+      if(!user?.[0]?.dataValues?.id){
+        return {
+          success: false,
+          message: "User Doesn't Exisit",
+        };
+      }
+
       //if user did not set up the account don't allow to login
       if (
         !user?.[0]?.dataValues?.user_profile?.dataValues?.is_setup_done &&

@@ -76,7 +76,7 @@ class TokenOfferings {
     token_id: string;
   }): Promise<any> {
     try {
-      return await token_offering.findOne({
+      const token_offer = await token_offering.findOne({
         where: {
           id: token_id,
         },
@@ -192,8 +192,8 @@ class TokenOfferings {
           },
           {
             model: token_offering_team,
-            as: "token_offering_documents",
-            attributes: ["id"],
+            as: "token_offering_teams",
+            attributes: ["id","member_name","member_title"],
             required: false,
             include:[
               {
@@ -209,6 +209,8 @@ class TokenOfferings {
           },
         ],
       });
+
+      return JSON.parse(JSON.stringify(token_offer))
     } catch (error) {
       throw error;
     }

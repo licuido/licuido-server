@@ -26,7 +26,6 @@ export async function CREATE_TOKEN_OFFERINGS(
         }
       );
     }
-    console.log(user_entity_id);
     // -----------------------------
     //  INTERACTOR
     // -----------------------------

@@ -3,7 +3,7 @@ import { Logger, handleResponse, responseType } from "@helpers";
 import { TokenOfferings } from "interactors";
 import { queryRequestInfo } from "@mappers";
 
-export async function CREATE_TOKEN_OFFERINGS(
+export async function FIND_TOKEN(
   request: FastifyRequest,
   reply: FastifyReply
 ) {
@@ -21,7 +21,7 @@ export async function CREATE_TOKEN_OFFERINGS(
         responseType?.INTERNAL_SERVER_ERROR,
         {
           error: {
-            message: "Only Issuer can be create token offering",
+            message: "Only Issuer and admin can be view token offering",
           },
         }
       );
@@ -37,11 +37,23 @@ export async function CREATE_TOKEN_OFFERINGS(
     // -----------------------------
     //  RESPONSE
     // -----------------------------
-
-    return handleResponse(request, reply, responseType?.CREATED, {
-      customMessage: "Token Offering Created",
-      data: result?.data,
-    });
+    if (result?.success) {
+      return handleResponse(request, reply, responseType?.CREATED, {
+        customMessage: result?.message,
+        data:result
+      });
+    } else {
+      return handleResponse(
+        request,
+        reply,
+        responseType?.INTERNAL_SERVER_ERROR,
+        {
+          error: {
+            message: result?.message,
+          },
+        }
+      );
+    }
   } catch (error: any) {
     Logger.error(request, error.message, error);
     return handleResponse(request, reply, responseType?.INTERNAL_SERVER_ERROR, {
