@@ -38,7 +38,8 @@ const app: FastifyPluginAsync<AppOptions> = async (
     //     customMessage: "Please Provide Referrer",
     //   });
     // }
-    request.entity_id = buildCodes[request?.headers?.Build ?? "AD-1"];
+    console.log(request?.headers,"request?.headers?.Build")
+    request.entity_id = buildCodes[request?.headers?.build ?? "AD-1"];
     return next();
   });
 
