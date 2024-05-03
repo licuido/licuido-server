@@ -1,3 +1,4 @@
+import { checkUserBuild } from "@middlewares";
 import { FastifyInstance } from "fastify";
 import { readdirSync } from "fs";
 import { join } from "path";
@@ -13,6 +14,7 @@ const routesLoader = (fastify: FastifyInstance, sourceDir: string) => {
 };
 
 const routes = (fastify: FastifyInstance, _: any, done: any) => {
+  fastify.addHook("onRequest", (request: any, response, next) => {checkUserBuild(request,response,next)});
   //Routes of Public API
   routesLoader(fastify, join(__dirname, "public"));
   //Routes of Private API
