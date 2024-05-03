@@ -10,6 +10,7 @@ import {
   customer_wallet,
   master_wallet_type,
   ekyc,
+  master_business_sector,
 } from "@models";
 import { createEntity, findEntity } from "@types";
 
@@ -133,6 +134,12 @@ class Entities {
           {
             model: master_country,
             as: "country",
+            attributes: ["id", "name"],
+            required: false,
+          },
+          {
+            model: master_business_sector,
+            as: "business_sector",
             attributes: ["id", "name"],
             required: false,
           },
