@@ -76,7 +76,7 @@ import {
   
       return {
         fileId: response.UploadId,
-        fileKey: response.Key,
+        fileKey: response.Key ? response?.Key?.replace(`${AWS_BUCKET_NAME}/`, ""):""
       };
     } catch (e) {
       console.log(e);
