@@ -4,7 +4,6 @@ import { FastifyPluginAsync } from "fastify";
 import v1 from "./api/v1";
 import { cpus } from "os";
 import { buildCodes } from "helpers/constants";
-// import { Logger, handleResponse, responseType } from "@helpers";
 
 process.env.UV_THREADPOOL_SIZE = String(cpus().length);
 

@@ -45,3 +45,20 @@ export const GET_ALL_CURRENCIES = {
   query: customCurrencyParams,
 };
 
+
+const customRegionCountryParams = Schema.object().prop("search", Schema.string());
+
+export const GET_ALL_COUNTRY_WITH_REGIONS = {
+  description:
+    "The purpose of this schema is get all countries with regions",
+  tags: ["MASTER_COUNTRIES"],
+  response: makeResponseSchema( Schema.object()
+  .prop(
+    "page",
+    Schema.object().additionalProperties(true)
+  )),
+  query: customRegionCountryParams,
+};
+
+
+

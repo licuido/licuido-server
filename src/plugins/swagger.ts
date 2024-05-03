@@ -10,17 +10,21 @@ const swaggerPlugin: FastifyPluginCallback<SwaggerOptions> = async (
   fastify.register(swagger, {
     swagger: {
       info: {
-        title: "Crayond Fastify Sequelize Boilerplate",
-        description: "API documentation",
-        version: "1.0.0",
+        title: "Licuido API Service",
+        description: "Licuido API Swagger Collection",
+        version: "0.0.1",
+      },
+      externalDocs: {
+        url: "https://swagger.io",
+        description: "Find more info here",
       },
     },
     exposeRoute: true,
   });
   fastify.register(fastifySwaggerUi, {
-    routePrefix: "/",
+    routePrefix: "/docs",
     uiConfig: {
-      docExpansion: "full",
+      // docExpansion: "full",
       deepLinking: false,
     },
     uiHooks: {
