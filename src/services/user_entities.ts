@@ -47,3 +47,34 @@ export async function findUserExisit({
     throw new Error(error.message);
   }
 }
+
+export async function getInvestorCount({
+  entity_type_id,
+}: {
+  entity_type_id: 1 | 2 | 3;
+}) {
+  try {
+    // Get Count of Investor for Qualification
+
+    return await user_entity.count({
+      where: {
+        entity_id: entity_type_id,
+        is_active: true,
+      },
+      include: [
+        {
+          model: user_profile,
+          as: "user_profile",
+          where: {
+            is_active: true,
+            is_setup_done: true, // Complete Onboarding
+          },
+          required: true,
+        },
+      ],
+    });
+  } catch (error: any) {
+    console.log(error);
+    throw new Error(error.message);
+  }
+}

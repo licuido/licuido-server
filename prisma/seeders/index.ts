@@ -11,6 +11,7 @@ import {
   master_token_status,
   master_blockchain_networks,
   master_token_offering_status,
+  master_ekc_status,
 } from "@prisma/client";
 
 const prisma = new PrismaClient();
@@ -150,6 +151,19 @@ const main = async () => {
       seed.data.forEach((data: master_token_offering_status) => {
         upsertPromises.push(
           prisma.master_token_offering_status.upsert({
+            where: { id: data.id },
+            update: data,
+            create: data,
+          })
+        );
+      });
+    }
+
+    // Master ekyc status
+    if (seed.table === "master_ekc_status") {
+      seed.data.forEach((data: master_ekc_status) => {
+        upsertPromises.push(
+          prisma.master_ekc_status.upsert({
             where: { id: data.id },
             update: data,
             create: data,
