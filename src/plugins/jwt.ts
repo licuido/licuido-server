@@ -1,6 +1,7 @@
 import fp from "fastify-plugin";
 import { FastifyPluginAsync, FastifyReply } from "fastify";
 import fastifyJwt, { FastifyJWTOptions } from "@fastify/jwt";
+import { buildCodes } from "helpers/constants";
 
 const authorizationMessages: any = {
   badRequestErrorMessage: `Format must be Authorization: Bearer <token>`,
@@ -51,10 +52,19 @@ const jwtPlugin: FastifyPluginAsync<FastifyJWTOptions> = async (
     "authenticate",
     async function (request: any, reply: FastifyReply) {
       try {
-        if (!request?.entity_id) {
-          reply.code(500).send({ error: "Please Provide Referrer" });
+        if (!request?.headers?.build) {
+          console.log("calling");
+          reply.code(500).send({
+            error: {
+              isError: true,
+              origin: request.url,
+              timestamp: new Date(),
+              message: "Please Provide Your Build",
+            },
+          });
         }
 
+        request.entity_id = buildCodes[request?.headers?.build];
         const data = await request.jwtVerify();
         request.user_profile_id = data?.user_profile;
         request.user_entity_id = data?.user_entity_id;
