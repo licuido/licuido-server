@@ -33,7 +33,6 @@
 	"dependencies": {
 		"@aws-sdk/client-s3": "^3.556.0",
 		"@aws-sdk/s3-request-presigner": "^3.556.0",
-		"@crayond_dev/alertshub-client-sdk": "^1.0.3",
 		"@fastify/autoload": "^5.0.0",
 		"@fastify/cors": "^8.2.0",
 		"@fastify/helmet": "^10.1.0",

@@ -1,7 +1,7 @@
-import AlertshubClient from "@crayond_dev/alertshub-client-sdk";
+// import AlertshubClient from "@crayond_dev/alertshub-client-sdk";
 
 import { Logger } from "@helpers";
-import { env } from "@config";
+// import { env } from "@config";
 
 interface EmailAttachment {
   content?: string;
@@ -62,30 +62,31 @@ interface sendAlertOptions {
   slack_provider_name?: string;
 }
 
-class AlertsHub extends AlertshubClient {
-  constructor() {
-    super({ apiKey: env.ALERTSHUB_KEY });
-  }
+// class AlertsHub extends AlertshubClient {
+//   constructor() {
+//     super({ apiKey: env.ALERTSHUB_KEY });
+//   }
 
-  // ----------SEND ALERT-----------------
-  async sendAlert(options: sendAlertOptions) {
-    try {
-      return super.triggerAlert({ ...options }).catch((error) => {
-        Logger.error(error.message, error);
-        throw new Error(error.message);
-      });
-    } catch (error: any) {
-      Logger.error(error.message, error);
-      throw new Error(error.message);
-    }
-  }
-}
+//   // ----------SEND ALERT-----------------
+//   async sendAlert(options: sendAlertOptions) {
+//     try {
+//       return super.triggerAlert({ ...options }).catch((error) => {
+//         Logger.error(error.message, error);
+//         throw new Error(error.message);
+//       });
+//     } catch (error: any) {
+//       Logger.error(error.message, error);
+//       throw new Error(error.message);
+//     }
+//   }
+// }
 
-const alertsHub = new AlertsHub();
+// const alertsHub = new AlertsHub();
 
 export const sendAlert = async (options: sendAlertOptions) => {
     try {
-      return await alertsHub.sendAlert({ ...options });
+      // return await alertsHub.sendAlert({ ...options });
+      console.log(options,"We did not configured alerts it's just function")
     } catch (error: any) {
       Logger.error(error.message, error);
       throw new Error(error.message);
