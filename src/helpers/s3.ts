@@ -14,7 +14,7 @@ import {
   
   const {
     AWS_BUCKET_NAME = "",
-    REGION = "us-east-1",
+    REGION = "eu-west-1",
     S3_END_PONIT,
     S3_ACCESS_KEY,
     S3_SECRET_KEY,
