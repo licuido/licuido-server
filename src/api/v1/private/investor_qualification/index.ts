@@ -9,7 +9,7 @@ const investorQualification: FastifyPluginAsync = async (
 ): Promise<void> => {
   fastify.addHook("preHandler", fastify.authenticate);
 
-  // Get Investor Count for Qualification
+  // Get Investor Count & All Data for Qualification
   fastify
     .get(
       "/count/get",
@@ -21,6 +21,13 @@ const investorQualification: FastifyPluginAsync = async (
       { schema: schema.GET_INVESTOR_DATA_FOR_QUALIFY },
       handler.GET_INVESTOR_DATA_FOR_QUALIFY
     );
+
+  // Upsert Investor Status
+  fastify.put(
+    "/status/upsert",
+    { schema: schema.UPSERT_INVESTOR_STATUS },
+    handler.UPSERT_INVESTOR_STATUS
+  );
 };
 
 export default investorQualification;

@@ -89,6 +89,7 @@ export async function getInvestorData(options: {
   kyc_status_filters?: number[] | [];
   investor_type_filters?: number[] | [];
   entity_type_id: 1 | 2 | 3;
+  user_profile_id?: string;
 }): Promise<{
   rows: any[];
   count: number;
@@ -98,6 +99,7 @@ export async function getInvestorData(options: {
       offset,
       limit,
       entity_type_id,
+      user_profile_id,
       search,
       status_filters,
       kyc_status_filters,
@@ -110,6 +112,7 @@ export async function getInvestorData(options: {
         offset,
         limit,
         entity_type_id,
+        user_profile_id,
         search,
         status_filters,
         kyc_status_filters,
@@ -121,6 +124,7 @@ export async function getInvestorData(options: {
     const [dataCount]: any[] = await sequelize.query(
       queries.getAllInvestorsCountQuery(
         entity_type_id,
+        user_profile_id,
         search,
         status_filters,
         kyc_status_filters,

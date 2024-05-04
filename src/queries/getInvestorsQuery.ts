@@ -2,6 +2,7 @@ export const getAllInvestorsQuery = (
   offset: number,
   limit: number,
   entity_type_id: 1 | 2 | 3,
+  user_profile_id?: string,
   search?: string,
   status_filters?: number[] | [],
   kyc_status_filters?: number[] | [],
@@ -53,7 +54,7 @@ export const getAllInvestorsQuery = (
     statusFilter = `  AND (
         CAST(
           CASE
-            WHEN eni.status_id IS NOT NULL THEN eni.status_id
+            WHEN eni.status_id IS NOT NULL AND eni.issuer_profile_id = '${user_profile_id}' THEN eni.status_id
             ELSE 1
           END AS INT
         ) IN (${status_filters?.join(",")})
@@ -69,6 +70,7 @@ export const getAllInvestorsQuery = (
       up.email_id AS email_id,
       up.investor_type_id AS investor_type_id,
       mit.name AS investor_type_name,
+      en.id AS investor_entity_id,
       en.legal_name AS company_name,
       en.lei_number AS lei_number,
       ek.status_id AS ek_status_id,
@@ -81,15 +83,19 @@ export const getAllInvestorsQuery = (
       cw.wallet_address AS wallet_address,
       mwt.name AS wallet_type_name,
       ue.created_at AS creation_date,
+      CASE
+          WHEN eni.status_id IS NOT NULL AND eni.issuer_profile_id = '${user_profile_id}' THEN eni.id
+          ELSE null
+        END  AS entity_investor_id,
       CAST(
         CASE
-          WHEN eni.status_id IS NOT NULL THEN eni.status_id
+          WHEN eni.status_id IS NOT NULL AND eni.issuer_profile_id = '${user_profile_id}' THEN eni.status_id
           ELSE 1
         END AS INT
       ) AS investor_status_id,
       CAST(
         CASE
-          WHEN eni.status_id IS NOT NULL THEN mes.name
+          WHEN eni.status_id IS NOT NULL AND eni.issuer_profile_id = '${user_profile_id}' THEN mes.name
           ELSE 'Pending'
         END AS VARCHAR
       ) AS investor_status_name
@@ -128,6 +134,7 @@ ORDER BY
 
 export const getAllInvestorsCountQuery = (
   entity_type_id: 1 | 2 | 3,
+  user_profile_id?: string,
   search?: string,
   status_filters?: number[] | [],
   kyc_status_filters?: number[] | [],
@@ -172,7 +179,7 @@ export const getAllInvestorsCountQuery = (
     statusFilter = `  AND (
         CAST(
           CASE
-            WHEN eni.status_id IS NOT NULL THEN eni.status_id
+            WHEN eni.status_id IS NOT NULL AND eni.issuer_profile_id = '${user_profile_id}' THEN eni.status_id
             ELSE 1
           END AS INT
         ) IN (${status_filters?.join(",")})
@@ -188,6 +195,7 @@ export const getAllInvestorsCountQuery = (
       up.email_id AS email_id,
       up.investor_type_id AS investor_type_id,
       mit.name AS investor_type_name,
+      en.id AS investor_entity_id,
       en.legal_name AS company_name,
       en.lei_number AS lei_number,
       ek.status_id AS ek_status_id,
@@ -200,15 +208,19 @@ export const getAllInvestorsCountQuery = (
       cw.wallet_address AS wallet_address,
       mwt.name AS wallet_type_name,
       ue.created_at AS creation_date,
+      CASE
+          WHEN eni.status_id IS NOT NULL AND eni.issuer_profile_id = '${user_profile_id}' THEN eni.id
+          ELSE null
+        END  AS entity_investor_id,
       CAST(
         CASE
-          WHEN eni.status_id IS NOT NULL THEN eni.status_id
+          WHEN eni.status_id IS NOT NULL AND eni.issuer_profile_id = '${user_profile_id}' THEN eni.status_id
           ELSE 1
         END AS INT
       ) AS investor_status_id,
       CAST(
         CASE
-          WHEN eni.status_id IS NOT NULL THEN mes.name
+          WHEN eni.status_id IS NOT NULL AND eni.issuer_profile_id = '${user_profile_id}' THEN mes.name
           ELSE 'Pending'
         END AS VARCHAR
       ) AS investor_status_name

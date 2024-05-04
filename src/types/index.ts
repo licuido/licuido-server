@@ -7,3 +7,4 @@ export * from "./ekyc";
 export * from "./customer_wallets";
 export * from "./token_offerings";
 export * from "./user_entities";
+export * from "./entity_investors";
