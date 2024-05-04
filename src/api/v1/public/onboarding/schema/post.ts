@@ -74,6 +74,7 @@ const createkycBody = Schema.object()
   .prop("profile_id", Schema.string().format("uuid"))
   .prop("captured_url", Schema.string())
   .prop("is_verified", Schema.boolean())
+  .prop("status_id", Schema.integer())
   .valueOf() as JSONSchema;
 
 export const CREATE_EKYC = {

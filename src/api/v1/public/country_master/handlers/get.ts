@@ -59,7 +59,6 @@ export async function GET_ALL_COUNTRIES(
   }
 }
 
-
 export async function GET_ALL_COUNTRIES_GROUP_BY_REGIONS(
   request: FastifyRequest,
   reply: FastifyReply
@@ -75,12 +74,11 @@ export async function GET_ALL_COUNTRIES_GROUP_BY_REGIONS(
       ...rest,
     });
 
-
     // -----------------------------
     //  RESPONSE
     // -----------------------------
     return handleResponse(request, reply, responseType?.OK, {
-      data:result,
+      data: result,
     });
   } catch (error: any) {
     Logger.error(request, error.message, error);

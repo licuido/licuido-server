@@ -1,7 +1,6 @@
 import { Logger } from "@helpers";
 import { Countries } from "@services";
 
-
 export function groupByRegion(array: any[]) {
   return array.reduce((result: Record<string, any[]>, obj: any) => {
     const key = obj?.region?.name;
@@ -32,7 +31,6 @@ const getAllCountriesList = async (options: any) => {
   }
 };
 
-
 // get all countries based on regions
 const getAllCountriesListGroupByRegion = async (options: any) => {
   try {
@@ -42,7 +40,7 @@ const getAllCountriesListGroupByRegion = async (options: any) => {
       search,
     });
 
-    const result = groupByRegion(rows)
+    const result = groupByRegion(rows);
 
     return { page: result };
   } catch (error: any) {
@@ -63,7 +61,6 @@ const getAllCurrenciesList = async (options: any) => {
     });
 
     return { page: rows, count: rows?.length, totalCount: count };
-
   } catch (error: any) {
     Logger.error(error.message, error);
     throw error;
@@ -73,5 +70,5 @@ const getAllCurrenciesList = async (options: any) => {
 export default {
   getAllCountriesList,
   getAllCountriesListGroupByRegion,
-  getAllCurrenciesList
+  getAllCurrenciesList,
 };

@@ -27,7 +27,7 @@ class Countries {
           region_id,
           name: { [Op.iLike]: `%${search}%` },
         },
-        attributes: ["id", "name","iso3","emoji"],
+        attributes: ["id", "name", "iso3", "emoji"],
         order: [["id", "ASC"]],
         offset,
         limit,
@@ -69,16 +69,14 @@ class Countries {
             required: false,
             attributes: ["id", "name"],
           },
-        ]
+        ],
       });
 
-
-      return {rows:JSON.parse(JSON.stringify(data))};
+      return { rows: JSON.parse(JSON.stringify(data)) };
     } catch (error) {
       throw error;
     }
   }
-
 
   static async findAllCurrencies(options: {
     offset: number;

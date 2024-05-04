@@ -20,7 +20,8 @@
       "@serializers": ["serializers/index"],
       "@database": ["database/index"],
       "@types": ["types/index"],
-      "@utils": ["utils/index"]
+      "@utils": ["utils/index"],
+      "@queries": ["queries/index"]
     },
     "sourceMap": false,
     "types": ["dotenv"]

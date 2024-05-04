@@ -5,7 +5,7 @@ import { createEkyc } from "@types";
 // create and update business details
 const createKyc = async (options: createEkyc) => {
   try {
-    const { profile_id, captured_url, is_verified } = options;
+    const { profile_id, captured_url, status_id } = options;
 
     const count = await Ekyc.findAlreadyKycProcees(profile_id);
     if (count !== 0) {
@@ -35,7 +35,7 @@ const createKyc = async (options: createEkyc) => {
       await Ekyc.create({
         profile_id,
         captured_url,
-        is_verified,
+        status_id,
         captured_asset_id: asset_id,
       });
     }

@@ -10,6 +10,7 @@ import {
   customer_wallet,
   master_wallet_type,
   ekyc,
+  master_ekc_status,
   master_business_sector,
 } from "@models";
 import { createEntity, findEntity } from "@types";
@@ -115,7 +116,7 @@ class Entities {
               {
                 model: ekyc,
                 as: "kyc_profile_ekycs",
-                attributes: ["id", "is_verified"],
+                attributes: ["id", "status_id"],
                 required: false,
                 where: {
                   is_active: true,
@@ -125,6 +126,12 @@ class Entities {
                     model: asset,
                     as: "captured_asset",
                     attributes: ["id", "url"],
+                    required: false,
+                  },
+                  {
+                    model: master_ekc_status,
+                    as: "status",
+                    attributes: ["id", "name"],
                     required: false,
                   },
                 ],

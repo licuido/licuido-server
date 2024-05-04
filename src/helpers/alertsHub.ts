@@ -84,11 +84,11 @@ interface sendAlertOptions {
 // const alertsHub = new AlertsHub();
 
 export const sendAlert = async (options: sendAlertOptions) => {
-    try {
-      // return await alertsHub.sendAlert({ ...options });
-      console.log(options,"We did not configured alerts it's just function")
-    } catch (error: any) {
-      Logger.error(error.message, error);
-      throw new Error(error.message);
-    }
-  };
+  try {
+    // return await alertsHub.sendAlert({ ...options });
+    console.log(options, "We did not configured alerts it's just function");
+  } catch (error: any) {
+    Logger.error(error.message, error);
+    throw new Error(error.message);
+  }
+};

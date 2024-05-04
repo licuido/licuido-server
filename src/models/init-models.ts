@@ -19,6 +19,8 @@ import { master_business_sector as _master_business_sector } from "./master_busi
 import type { master_business_sectorAttributes, master_business_sectorCreationAttributes } from "./master_business_sector";
 import { master_country as _master_country } from "./master_country";
 import type { master_countryAttributes, master_countryCreationAttributes } from "./master_country";
+import { master_ekc_status as _master_ekc_status } from "./master_ekc_status";
+import type { master_ekc_statusAttributes, master_ekc_statusCreationAttributes } from "./master_ekc_status";
 import { master_entity_investor_status as _master_entity_investor_status } from "./master_entity_investor_status";
 import type { master_entity_investor_statusAttributes, master_entity_investor_statusCreationAttributes } from "./master_entity_investor_status";
 import { master_entity_type as _master_entity_type } from "./master_entity_type";
@@ -75,6 +77,7 @@ export {
   _master_blockchain_network as master_blockchain_network,
   _master_business_sector as master_business_sector,
   _master_country as master_country,
+  _master_ekc_status as master_ekc_status,
   _master_entity_investor_status as master_entity_investor_status,
   _master_entity_type as master_entity_type,
   _master_investor_type as master_investor_type,
@@ -120,6 +123,8 @@ export type {
   master_business_sectorCreationAttributes,
   master_countryAttributes,
   master_countryCreationAttributes,
+  master_ekc_statusAttributes,
+  master_ekc_statusCreationAttributes,
   master_entity_investor_statusAttributes,
   master_entity_investor_statusCreationAttributes,
   master_entity_typeAttributes,
@@ -177,6 +182,7 @@ export function initModels(sequelize: Sequelize) {
   const master_blockchain_network = _master_blockchain_network.initModel(sequelize);
   const master_business_sector = _master_business_sector.initModel(sequelize);
   const master_country = _master_country.initModel(sequelize);
+  const master_ekc_status = _master_ekc_status.initModel(sequelize);
   const master_entity_investor_status = _master_entity_investor_status.initModel(sequelize);
   const master_entity_type = _master_entity_type.initModel(sequelize);
   const master_investor_type = _master_investor_type.initModel(sequelize);
@@ -250,6 +256,8 @@ export function initModels(sequelize: Sequelize) {
   master_country.hasMany(token_offering_allowed_country, { as: "token_offering_allowed_countries", foreignKey: "allowed_country_id"});
   token_offering.belongsTo(master_country, { as: "jurisdiction_master_country", foreignKey: "jurisdiction"});
   master_country.hasMany(token_offering, { as: "token_offerings", foreignKey: "jurisdiction"});
+  ekyc.belongsTo(master_ekc_status, { as: "status", foreignKey: "status_id"});
+  master_ekc_status.hasMany(ekyc, { as: "ekycs", foreignKey: "status_id"});
   entity_investor.belongsTo(master_entity_investor_status, { as: "status", foreignKey: "status_id"});
   master_entity_investor_status.hasMany(entity_investor, { as: "entity_investors", foreignKey: "status_id"});
   entity.belongsTo(master_entity_type, { as: "entity_type", foreignKey: "entity_type_id"});
@@ -380,6 +388,7 @@ export function initModels(sequelize: Sequelize) {
     master_blockchain_network: master_blockchain_network,
     master_business_sector: master_business_sector,
     master_country: master_country,
+    master_ekc_status: master_ekc_status,
     master_entity_investor_status: master_entity_investor_status,
     master_entity_type: master_entity_type,
     master_investor_type: master_investor_type,

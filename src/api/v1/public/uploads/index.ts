@@ -4,8 +4,7 @@ import { FastifyPluginAsync } from "fastify";
 import handlers from "./handlers";
 
 const uploads: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
-
-   fastify.post("/start", { schema: {} }, handlers.CREATE_MULTI_PART_UPLOAD);
+  fastify.post("/start", { schema: {} }, handlers.CREATE_MULTI_PART_UPLOAD);
   fastify.post(
     "/presigned-url",
     { schema: {} },

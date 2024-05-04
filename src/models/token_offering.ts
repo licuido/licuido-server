@@ -41,6 +41,7 @@ export interface token_offeringAttributes {
   is_fund_rating_enabled?: boolean;
   is_projected_rate_of_return_enabled?: boolean;
   is_expected_annual_perc_yield_enabled?: boolean;
+  is_all_countries_allowed?: boolean;
   is_payback_period_enabled?: boolean;
   is_eligible_for_collateral_enabled?: boolean;
   offer_status_id?: number;
@@ -50,12 +51,11 @@ export interface token_offeringAttributes {
   updated_by?: string;
   created_at?: Date;
   updated_at?: Date;
-  is_all_countries_allowed?: boolean;
 }
 
 export type token_offeringPk = "id";
 export type token_offeringId = token_offering[token_offeringPk];
-export type token_offeringOptionalAttributes = "id" | "issuer_entity_id" | "name" | "description" | "isin_number" | "symbol" | "token_type_id" | "base_currency" | "base_currency_code" | "blockchain_network" | "logo_asset_id" | "banner_asset_id" | "offering_price" | "jurisdiction" | "start_date" | "end_date" | "minimum_investment_limit" | "maximum_investment_limit" | "bank_name" | "bank_account_name" | "swift_bic_no" | "iban_no" | "is_fund_rating_enabled" | "is_projected_rate_of_return_enabled" | "is_expected_annual_perc_yield_enabled" | "is_payback_period_enabled" | "is_eligible_for_collateral_enabled" | "offer_status_id" | "status_id" | "is_active" | "created_by" | "updated_by" | "created_at" | "updated_at" | "is_all_countries_allowed";
+export type token_offeringOptionalAttributes = "id" | "issuer_entity_id" | "name" | "description" | "isin_number" | "symbol" | "token_type_id" | "base_currency" | "base_currency_code" | "blockchain_network" | "logo_asset_id" | "banner_asset_id" | "offering_price" | "jurisdiction" | "start_date" | "end_date" | "minimum_investment_limit" | "maximum_investment_limit" | "bank_name" | "bank_account_name" | "swift_bic_no" | "iban_no" | "is_fund_rating_enabled" | "is_projected_rate_of_return_enabled" | "is_expected_annual_perc_yield_enabled" | "is_all_countries_allowed" | "is_payback_period_enabled" | "is_eligible_for_collateral_enabled" | "offer_status_id" | "status_id" | "is_active" | "created_by" | "updated_by" | "created_at" | "updated_at";
 export type token_offeringCreationAttributes = Optional<token_offeringAttributes, token_offeringOptionalAttributes>;
 
 export class token_offering extends Model<token_offeringAttributes, token_offeringCreationAttributes> implements token_offeringAttributes {
@@ -84,6 +84,7 @@ export class token_offering extends Model<token_offeringAttributes, token_offeri
   is_fund_rating_enabled?: boolean;
   is_projected_rate_of_return_enabled?: boolean;
   is_expected_annual_perc_yield_enabled?: boolean;
+  is_all_countries_allowed?: boolean;
   is_payback_period_enabled?: boolean;
   is_eligible_for_collateral_enabled?: boolean;
   offer_status_id?: number;
@@ -93,7 +94,6 @@ export class token_offering extends Model<token_offeringAttributes, token_offeri
   updated_by?: string;
   created_at?: Date;
   updated_at?: Date;
-  is_all_countries_allowed?: boolean;
 
   // token_offering belongsTo asset via banner_asset_id
   banner_asset!: asset;
@@ -346,6 +346,10 @@ export class token_offering extends Model<token_offeringAttributes, token_offeri
       type: DataTypes.BOOLEAN,
       allowNull: true
     },
+    is_all_countries_allowed: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true
+    },
     is_payback_period_enabled: {
       type: DataTypes.BOOLEAN,
       allowNull: true
@@ -389,10 +393,6 @@ export class token_offering extends Model<token_offeringAttributes, token_offeri
         model: 'user_profiles',
         key: 'id'
       }
-    },
-    is_all_countries_allowed: {
-      type: DataTypes.BOOLEAN,
-      allowNull: true
     }
   }, {
     sequelize,

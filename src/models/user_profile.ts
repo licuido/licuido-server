@@ -31,17 +31,17 @@ export interface user_profileAttributes {
   is_agree_terms_condition?: boolean;
   is_setup_done?: boolean;
   is_verified?: boolean;
+  is_fund_offered_by_licuido?: boolean;
   created_at?: Date;
   updated_at?: Date;
   position_id?: number;
   contact_email?: string;
   investor_type_id?: number;
-  is_fund_offered_by_licuido?: boolean;
 }
 
 export type user_profilePk = "id";
 export type user_profileId = user_profile[user_profilePk];
-export type user_profileOptionalAttributes = "id" | "name" | "user_id" | "email_id" | "mobile_no_std_code" | "mobile_no" | "is_active" | "is_agree_terms_condition" | "is_setup_done" | "is_verified" | "created_at" | "updated_at" | "position_id" | "contact_email" | "investor_type_id" | "is_fund_offered_by_licuido";
+export type user_profileOptionalAttributes = "id" | "name" | "user_id" | "email_id" | "mobile_no_std_code" | "mobile_no" | "is_active" | "is_agree_terms_condition" | "is_setup_done" | "is_verified" | "is_fund_offered_by_licuido" | "created_at" | "updated_at" | "position_id" | "contact_email" | "investor_type_id";
 export type user_profileCreationAttributes = Optional<user_profileAttributes, user_profileOptionalAttributes>;
 
 export class user_profile extends Model<user_profileAttributes, user_profileCreationAttributes> implements user_profileAttributes {
@@ -55,12 +55,12 @@ export class user_profile extends Model<user_profileAttributes, user_profileCrea
   is_agree_terms_condition?: boolean;
   is_setup_done?: boolean;
   is_verified?: boolean;
+  is_fund_offered_by_licuido?: boolean;
   created_at?: Date;
   updated_at?: Date;
   position_id?: number;
   contact_email?: string;
   investor_type_id?: number;
-  is_fund_offered_by_licuido?: boolean;
 
   // user_profile belongsTo master_investor_type via investor_type_id
   investor_type!: master_investor_type;
@@ -573,6 +573,10 @@ export class user_profile extends Model<user_profileAttributes, user_profileCrea
       type: DataTypes.BOOLEAN,
       allowNull: true
     },
+    is_fund_offered_by_licuido: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true
+    },
     position_id: {
       type: DataTypes.INTEGER,
       allowNull: true,
@@ -592,10 +596,6 @@ export class user_profile extends Model<user_profileAttributes, user_profileCrea
         model: 'master_investor_types',
         key: 'id'
       }
-    },
-    is_fund_offered_by_licuido: {
-      type: DataTypes.BOOLEAN,
-      allowNull: true
     }
   }, {
     sequelize,

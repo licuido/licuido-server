@@ -1,4 +1,6 @@
 import { user_entity, user_profile } from "@models";
+import queries from "@queries";
+import { sequelize } from "@utils";
 
 export async function createUserEntities({
   user_profile_id,
@@ -73,6 +75,63 @@ export async function getInvestorCount({
         },
       ],
     });
+  } catch (error: any) {
+    console.log(error);
+    throw new Error(error.message);
+  }
+}
+
+export async function getInvestorData(options: {
+  offset: number;
+  limit: number;
+  search?: string;
+  status_filters?: number[] | [];
+  kyc_status_filters?: number[] | [];
+  investor_type_filters?: number[] | [];
+  entity_type_id: 1 | 2 | 3;
+}): Promise<{
+  rows: any[];
+  count: number;
+}> {
+  try {
+    const {
+      offset,
+      limit,
+      entity_type_id,
+      search,
+      status_filters,
+      kyc_status_filters,
+      investor_type_filters,
+    } = options;
+
+    // For Data
+    const [result]: any[] = await sequelize.query(
+      queries.getAllInvestorsQuery(
+        offset,
+        limit,
+        entity_type_id,
+        search,
+        status_filters,
+        kyc_status_filters,
+        investor_type_filters
+      )
+    );
+
+    // For Count
+    const [dataCount]: any[] = await sequelize.query(
+      queries.getAllInvestorsCountQuery(
+        entity_type_id,
+        search,
+        status_filters,
+        kyc_status_filters,
+        investor_type_filters
+      )
+    );
+
+    return {
+      rows: result,
+      count: dataCount?.[0]?.count ?? 0,
+    };
   } catch (error: any) {
     console.log(error);
     throw new Error(error.message);
