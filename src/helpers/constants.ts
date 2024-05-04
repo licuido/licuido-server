@@ -106,8 +106,8 @@ enum assetIdentificationType {
 
 export const entityUrl: any = {
   1: process.env.ADMIN_URL ?? "",
-  2: process.env.ISSUER_URL ?? "",
-  3: process.env.INVESTOR_URL ?? "",
+  2: process.env.INVESTOR_URL ?? "",
+  3: process.env.ISSUER_URL ?? "",
 };
 
 export const authorizationMessages: any = {
@@ -135,7 +135,6 @@ export const entityTypeMaster = {
   investor: 2,
   issuer: 3,
 };
-
 
 export const buildCodes: { [key: string]: number } = {
   "AD-1": 1,

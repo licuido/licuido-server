@@ -205,7 +205,8 @@ export async function FORGET_PASSWORD(
     //   const user:any = await findUserExisit({ entity_id, email_id });
     //   await sendAlert({
     //     reference_id: "reset_password",
-    //     email_subject: ["email_subject"],
+    //     email_subject: ["test"],
+    //     email_attachments:[],
     //     email_body: [
     //       `Hi ${user?.[0]?.dataValues?.user_profile?.name} proceed to login by the below link  ${entityUrl?.[1]??""}.`,
     //     ],

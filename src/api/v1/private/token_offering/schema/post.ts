@@ -75,13 +75,7 @@ const createTokenBody = Schema.object()
             .prop("type", Schema.string())
             .required(["url", "type"])
         )
-        .prop("member_type", Schema.string())
-        .required([
-          "member_name",
-          "member_title",
-          "member_picture",
-          "member_type",
-        ])
+        .required(["member_name", "member_title", "member_picture"])
     )
   )
   .valueOf();

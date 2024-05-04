@@ -3,8 +3,7 @@ import AutoLoad, { AutoloadPluginOptions } from "@fastify/autoload";
 import { FastifyPluginAsync } from "fastify";
 import v1 from "./api/v1";
 import { cpus } from "os";
-import { buildCodes } from "helpers/constants";
-// import { Logger, handleResponse, responseType } from "@helpers";
+// import { buildCodes } from "helpers/constants";
 
 process.env.UV_THREADPOOL_SIZE = String(cpus().length);
 
@@ -29,17 +28,6 @@ const app: FastifyPluginAsync<AppOptions> = async (
   void fastify.register(AutoLoad, {
     dir: join(__dirname, "plugins"),
     options: opts,
-  });
-
-  fastify.addHook("onRequest", (request: any, response, next) => {
-    // if (!request?.headers?.referer) {
-    //   Logger.error(request, "Please Provide Referrer", false, "APP");
-    //   return handleResponse(request, response, responseType.FORBIDDEN, {
-    //     customMessage: "Please Provide Referrer",
-    //   });
-    // }
-    request.entity_id = buildCodes[request?.headers?.build ?? "AD-1"];
-    return next();
   });
 
   // This loads all plugins defined in routes

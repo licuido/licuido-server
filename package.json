@@ -42,6 +42,7 @@
 		"@fastify/swagger": "^8.3.1",
 		"@fastify/swagger-ui": "^1.4.0",
 		"@prisma/client": "^5.13.0",
+		"@scalar/fastify-api-reference": "^1.22.20",
 		"axios": "^1.6.8",
 		"fastify": "^4.0.0",
 		"fastify-plugin": "^4.0.0",

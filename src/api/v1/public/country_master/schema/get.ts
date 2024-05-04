@@ -24,7 +24,11 @@ const countryResponse: JSONSchema = Schema.object()
   .prop("meta", Schema.object().prop("message", Schema.string()))
   .valueOf() as JSONSchema;
 
-const customParams = Schema.object().prop("region_id", Schema.number()).prop("offset", Schema.number()).prop("limit", Schema.number()).prop("search", Schema.string());
+const customParams = Schema.object()
+  .prop("region_id", Schema.number())
+  .prop("offset", Schema.number())
+  .prop("limit", Schema.number())
+  .prop("search", Schema.string());
 
 export const GET_ALL_COUNTRIES = {
   description:
@@ -32,4 +36,31 @@ export const GET_ALL_COUNTRIES = {
   tags: ["MASTER_COUNTRIES"],
   response: makeResponseSchema(countryResponse),
   query: customParams,
+};
+
+const customCurrencyParams = Schema.object()
+  .prop("region_id", Schema.number())
+  .prop("offset", Schema.number())
+  .prop("limit", Schema.number())
+  .prop("search", Schema.string());
+
+export const GET_ALL_CURRENCIES = {
+  description: "The purpose of this schema is get all currencies",
+  tags: ["MASTER_COUNTRIES"],
+  response: makeResponseSchema(countryResponse),
+  query: customCurrencyParams,
+};
+
+const customRegionCountryParams = Schema.object().prop(
+  "search",
+  Schema.string()
+);
+
+export const GET_ALL_COUNTRY_WITH_REGIONS = {
+  description: "The purpose of this schema is get all countries with regions",
+  tags: ["MASTER_COUNTRIES"],
+  response: makeResponseSchema(
+    Schema.object().prop("page", Schema.object().additionalProperties(true))
+  ),
+  query: customRegionCountryParams,
 };
