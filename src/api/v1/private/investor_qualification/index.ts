@@ -10,11 +10,17 @@ const investorQualification: FastifyPluginAsync = async (
   fastify.addHook("preHandler", fastify.authenticate);
 
   // Get Investor Count for Qualification
-  fastify.get(
-    "/count/get",
-    { schema: schema.GET_INVESTOR_COUNT_FOR_QUALIFY },
-    handler.GET_INVESTOR_COUNT_FOR_QUALIFY
-  );
+  fastify
+    .get(
+      "/count/get",
+      { schema: schema.GET_INVESTOR_COUNT_FOR_QUALIFY },
+      handler.GET_INVESTOR_COUNT_FOR_QUALIFY
+    )
+    .get(
+      "/get",
+      { schema: schema.GET_INVESTOR_DATA_FOR_QUALIFY },
+      handler.GET_INVESTOR_DATA_FOR_QUALIFY
+    );
 };
 
 export default investorQualification;
