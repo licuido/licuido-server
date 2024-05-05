@@ -141,3 +141,26 @@ export async function getInvestorData(options: {
     throw new Error(error.message);
   }
 }
+
+export async function getAllInvestorData(options: {
+  entity_type_id: 1 | 2 | 3;
+  user_profile_id?: string;
+}): Promise<{
+  rows: any[];
+}> {
+  try {
+    const { entity_type_id, user_profile_id } = options;
+
+    // For All Data
+    const [result]: any[] = await sequelize.query(
+      queries.getAllInvestorsQuery(null, null, entity_type_id, user_profile_id)
+    );
+
+    return {
+      rows: result,
+    };
+  } catch (error: any) {
+    console.log(error);
+    throw new Error(error.message);
+  }
+}

@@ -22,10 +22,26 @@ function getISODateString(date: Date): string {
   return date.toISOString();
 }
 
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+  const day = date.getDate();
+  const month = date.toLocaleString("default", { month: "short" });
+  const year = date.getFullYear();
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+  const seconds = date.getSeconds();
+  const ampm = hours >= 12 ? "pm" : "am";
+
+  return `${day} ${month} ${year}, ${hours % 12 || 12}:${minutes
+    .toString()
+    .padStart(2, "0")}:${seconds.toString().padStart(2, "0")} ${ampm}`;
+};
+
 export default {
   now,
   getDaysBetweenDates,
   getTimeString,
   getShortDateString,
   getISODateString,
+  formatDate,
 };

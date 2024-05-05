@@ -20,6 +20,11 @@ const investorQualification: FastifyPluginAsync = async (
       "/get",
       { schema: schema.GET_INVESTOR_DATA_FOR_QUALIFY },
       handler.GET_INVESTOR_DATA_FOR_QUALIFY
+    )
+    .get(
+      "/export/file",
+      // { schema: schema.EXPORT_INVESTOR_DATA_AS_CSV_FILE },
+      handler.EXPORT_INVESTOR_DATA_AS_CSV_FILE
     );
 
   // Upsert Investor Status

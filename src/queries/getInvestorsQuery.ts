@@ -1,6 +1,6 @@
 export const getAllInvestorsQuery = (
-  offset: number,
-  limit: number,
+  offset: number | null,
+  limit: number | null,
   entity_type_id: 1 | 2 | 3,
   user_profile_id?: string,
   search?: string,
