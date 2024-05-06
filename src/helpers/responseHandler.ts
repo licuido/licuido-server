@@ -135,7 +135,7 @@ function handleResponse(
     });
   } else {
     if (data?.buffer) {
-      reply
+      return reply
         .header("Content-Disposition", `attachment; filename=${data?.fileName}`)
         .type(
           "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
