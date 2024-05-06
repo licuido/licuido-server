@@ -10,6 +10,7 @@ import {
   token_offering_allowed_currency,
   token_offering_document,
   token_offering_team,
+  offer_fund_rating,
 } from "@models";
 import { createTokenOffering, updateTokenOffering } from "@types";
 import { Op } from "sequelize";
@@ -162,6 +163,10 @@ class TokenOfferings {
           "is_payback_period_enabled",
           "is_eligible_for_collateral_enabled",
           "is_all_countries_allowed",
+          "projected_rate_return",
+          "annual_percentage_yield",
+          "payback_period",
+          "payback_period_type",
         ],
         include: [
           {
@@ -265,6 +270,15 @@ class TokenOfferings {
             where: {
               is_active: true,
             },
+          },
+          {
+            model: offer_fund_rating,
+            as: "offer_fund_ratings",
+            attributes: ["id", "agency", "rating"],
+            where: {
+              is_active: true,
+            },
+            required: false,
           },
         ],
       });
