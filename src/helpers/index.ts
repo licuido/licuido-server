@@ -11,6 +11,7 @@ import { pagination } from "./pagination";
 import { errorCustomMessage, successCustomMessage } from "./customMessage";
 import excel from "./excel";
 export * from "./s3";
+import streamToBuffer from "./streamToBuffer";
 
 export {
   dateTime,
@@ -29,4 +30,5 @@ export {
   errorCustomMessage,
   successCustomMessage,
   excel,
+  streamToBuffer,
 };

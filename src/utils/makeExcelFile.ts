@@ -1,6 +1,5 @@
-import { Logger, excel } from "@helpers";
+import { Logger, excel, streamToBuffer } from "@helpers";
 import * as fs from "fs";
-import { promisify } from "util";
 
 async function makeExcelFile(
   data: any,
@@ -18,12 +17,15 @@ async function makeExcelFile(
     await excel.SheetWriter(sheet, headers, data);
     await excel.commitExcel(WorkBook);
 
-    const readFileAsync = promisify(fs.readFile);
+    // const readFileAsync = promisify(fs.readFile);
 
-    const buffer = await readFileAsync(filePath);
+    const buffer = await streamToBuffer.streamToBufferAsync(
+      fs.createReadStream(filePath)
+    );
 
     fs.unlinkSync(filePath);
     const fileName = `${new Date().toISOString().replace(/:/g, "-")}.xlsx`;
+
     return { buffer: buffer, fileName };
   } catch (error: any) {
     Logger.error(error.message, error);
