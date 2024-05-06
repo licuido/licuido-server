@@ -25,6 +25,10 @@ import { master_entity_investor_status as _master_entity_investor_status } from 
 import type { master_entity_investor_statusAttributes, master_entity_investor_statusCreationAttributes } from "./master_entity_investor_status";
 import { master_entity_type as _master_entity_type } from "./master_entity_type";
 import type { master_entity_typeAttributes, master_entity_typeCreationAttributes } from "./master_entity_type";
+import { master_fund_agency as _master_fund_agency } from "./master_fund_agency";
+import type { master_fund_agencyAttributes, master_fund_agencyCreationAttributes } from "./master_fund_agency";
+import { master_fund_agency_rating as _master_fund_agency_rating } from "./master_fund_agency_rating";
+import type { master_fund_agency_ratingAttributes, master_fund_agency_ratingCreationAttributes } from "./master_fund_agency_rating";
 import { master_investor_type as _master_investor_type } from "./master_investor_type";
 import type { master_investor_typeAttributes, master_investor_typeCreationAttributes } from "./master_investor_type";
 import { master_order_status as _master_order_status } from "./master_order_status";
@@ -82,6 +86,8 @@ export {
   _master_ekc_status as master_ekc_status,
   _master_entity_investor_status as master_entity_investor_status,
   _master_entity_type as master_entity_type,
+  _master_fund_agency as master_fund_agency,
+  _master_fund_agency_rating as master_fund_agency_rating,
   _master_investor_type as master_investor_type,
   _master_order_status as master_order_status,
   _master_position as master_position,
@@ -132,6 +138,10 @@ export type {
   master_entity_investor_statusCreationAttributes,
   master_entity_typeAttributes,
   master_entity_typeCreationAttributes,
+  master_fund_agencyAttributes,
+  master_fund_agencyCreationAttributes,
+  master_fund_agency_ratingAttributes,
+  master_fund_agency_ratingCreationAttributes,
   master_investor_typeAttributes,
   master_investor_typeCreationAttributes,
   master_order_statusAttributes,
@@ -190,6 +200,8 @@ export function initModels(sequelize: Sequelize) {
   const master_ekc_status = _master_ekc_status.initModel(sequelize);
   const master_entity_investor_status = _master_entity_investor_status.initModel(sequelize);
   const master_entity_type = _master_entity_type.initModel(sequelize);
+  const master_fund_agency = _master_fund_agency.initModel(sequelize);
+  const master_fund_agency_rating = _master_fund_agency_rating.initModel(sequelize);
   const master_investor_type = _master_investor_type.initModel(sequelize);
   const master_order_status = _master_order_status.initModel(sequelize);
   const master_position = _master_position.initModel(sequelize);
@@ -270,6 +282,10 @@ export function initModels(sequelize: Sequelize) {
   master_entity_type.hasMany(entity, { as: "entities", foreignKey: "entity_type_id"});
   user_entity.belongsTo(master_entity_type, { as: "entity", foreignKey: "entity_id"});
   master_entity_type.hasMany(user_entity, { as: "user_entities", foreignKey: "entity_id"});
+  offer_fund_rating.belongsTo(master_fund_agency, { as: "agency", foreignKey: "agency_id"});
+  master_fund_agency.hasMany(offer_fund_rating, { as: "offer_fund_ratings", foreignKey: "agency_id"});
+  offer_fund_rating.belongsTo(master_fund_agency_rating, { as: "rating", foreignKey: "rating_id"});
+  master_fund_agency_rating.hasMany(offer_fund_rating, { as: "offer_fund_ratings", foreignKey: "rating_id"});
   entity_investor.belongsTo(master_investor_type, { as: "investor_type", foreignKey: "investor_type_id"});
   master_investor_type.hasMany(entity_investor, { as: "entity_investors", foreignKey: "investor_type_id"});
   user_profile.belongsTo(master_investor_type, { as: "investor_type", foreignKey: "investor_type_id"});
@@ -401,6 +417,8 @@ export function initModels(sequelize: Sequelize) {
     master_ekc_status: master_ekc_status,
     master_entity_investor_status: master_entity_investor_status,
     master_entity_type: master_entity_type,
+    master_fund_agency: master_fund_agency,
+    master_fund_agency_rating: master_fund_agency_rating,
     master_investor_type: master_investor_type,
     master_order_status: master_order_status,
     master_position: master_position,

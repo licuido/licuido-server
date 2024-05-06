@@ -21,3 +21,5 @@ export * from "./token_offering_documents";
 export * from "./token_offering_teams";
 export * from "./entity_investors";
 export * from "./offer_fund_ratings";
+export * from "./master_fund_agencies";
+export * from "./master_fund_agency_ratings";

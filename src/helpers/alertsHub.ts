@@ -34,12 +34,19 @@ class AlertsHub {
   // ----------SEND ALERT-----------------
   async sendAlert(options: sendAlertOptions) {
     try {
-      console.log({ ...options, alert_key: env.ALERTSHUB_KEY }, "options");
 
-      const response: any = await makeNetworkRequest(env.ALERTHUB_ENDPOINT, {
-        ...options,
-        alert_key: env.ALERTSHUB_KEY,
-      });
+      const response: any = await makeNetworkRequest(
+        {
+          url: env.ALERTHUB_ENDPOINT,
+          config: {
+            method: "POST",
+          },
+        },
+        {
+          ...options,
+          alert_key: env.ALERTSHUB_KEY,
+        }
+      );
 
       return response;
     } catch (error: any) {

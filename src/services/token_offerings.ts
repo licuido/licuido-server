@@ -11,6 +11,8 @@ import {
   token_offering_document,
   token_offering_team,
   offer_fund_rating,
+  master_fund_agency,
+  master_fund_agency_rating
 } from "@models";
 import { createTokenOffering, updateTokenOffering } from "@types";
 import { Op } from "sequelize";
@@ -274,7 +276,21 @@ class TokenOfferings {
           {
             model: offer_fund_rating,
             as: "offer_fund_ratings",
-            attributes: ["id", "agency", "rating"],
+            attributes: ["id"],
+            include: [
+              {
+                model: master_fund_agency,
+                as: "agency",
+                attributes: ["id", "name"],
+                required: false,
+              },
+              {
+                model: master_fund_agency_rating,
+                as: "rating",
+                attributes: ["id", "name"],
+                required: false,
+              },
+            ],
             where: {
               is_active: true,
             },

@@ -204,26 +204,33 @@ export async function FORGET_PASSWORD(
 
     if (data?.data?.token && entity_id) {
       const user: any = await findUserExisit({ entity_id, email_id });
-      await sendAlert({
+
+      const res = await sendAlert({
         reference_id: "reset_password",
         email_subject: ["test"],
         email_body: [
-          `Hi ${
-            user?.[0]?.dataValues?.user_profile?.name
-          } proceed to login by the below link  ${entityUrl?.[1] ?? ""}.`,
+          `Hi ${user?.[0]?.dataValues?.user_profile?.dataValues?.name} proceed to login by the below link  ${entityUrl?.[entity_id]}.`,
         ],
         to_emails: [email_id],
-      }).then((res) => {
-        console.log(res, "user");
+      });
+      if (res?.type === "Success") {
+        return handleResponse(request, reply, responseType?.OK, {
+          customMessage: `Email Sent Please Reset Password Using That`,
+        });
+      } else {
+        return handleResponse(request, reply, responseType?.BAD_GATEWAY, {
+          error: {
+            message: "Cannot Send Email Please Try Sometimes",
+          },
+        });
+      }
+    } else {
+      return handleResponse(request, reply, responseType?.BAD_GATEWAY, {
+        error: {
+          message: "Some Thing Went Wrong. Please Try After sometimes",
+        },
       });
     }
-
-    // -----------------------------
-    //  RESPONSE
-    // -----------------------------
-    return handleResponse(request, reply, responseType?.OK, {
-      data,
-    });
   } catch (error: any) {
     Logger.error(request, error.message, error);
     if (error?.response?.data?.statusCode === 403) {
