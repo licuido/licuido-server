@@ -141,3 +141,10 @@ export const buildCodes: { [key: string]: number } = {
   "IN-2": 2,
   "ISS-3": 3,
 };
+
+export const FUND_STATUS_FILTER = {
+  OPEN: 1,
+  CLOSE:2,
+  UPCOMING:3,
+  INVESTED:4
+}

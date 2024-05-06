@@ -1,7 +1,5 @@
-// import AlertshubClient from "@crayond_dev/alertshub-client-sdk";
-
-import { Logger } from "@helpers";
-// import { env } from "@config";
+import { Logger, makeNetworkRequest } from "@helpers";
+import { env } from "@config";
 
 interface EmailAttachment {
   content?: string;
@@ -17,76 +15,52 @@ interface PushAction {
 
 interface sendAlertOptions {
   reference_id: string;
-  // ----SMS----
-  to_mobiles?: string[];
-  sms_body?: string[];
-  // ----EMAIL----
-  to_emails: string[];
-  email_CC?: string[];
-  email_BCC?: string[];
-  from_mail?: string;
-  email_subject?: string[];
-  email_body?: string[];
-  email_attachments?: EmailAttachment[];
-  mail_provider_id?: string;
-  // ----WHATSAPP----
-  whatsapp_body?: any;
-  whatsapp_template_name?: string;
-  language_code?: string;
-  whatsapp_provider_name?: string;
-  // ----INAPP----
-  inapp_title?: any[];
-  inapp_body?: any[];
-  inapp_image?: string;
-  inapp_action1?: string;
-  inapp_action2?: string;
-  inapp_type?: string;
-  inapp_eventReferenceId?: string;
-  inapp_clientIds?: string[];
-  inapp_icon?: string;
-  alert_rule_code?: string;
-  is_user_specific_notification?: boolean;
-  // ----PUSH----
+  push_icon?: string;
   push_receivers?: string[];
   push_title?: string[];
   push_body?: string[];
-  push_data?: string;
-  push_click_action?: string;
-  push_icon?: string;
-  push_image?: string;
-  push_actions?: PushAction[];
-  push_receiver_clientIds?: string[];
-  // ----SLACK----
-  slack_to?: string;
-  slack_body?: string;
-  slack_provider_name?: string;
+  to_emails?: string[];
+  email_subject?: string[];
+  email_body: string[];
+  to_mobiles?: string[];
+  sms_body?: string[];
+  URL?: string;
+  push_click_action?: PushAction[];
+  email_attachments?: EmailAttachment[];
+  push_data?: any;
 }
 
-// class AlertsHub extends AlertshubClient {
-//   constructor() {
-//     super({ apiKey: env.ALERTSHUB_KEY });
-//   }
+class AlertsHub {
+  // ----------SEND ALERT-----------------
+  async sendAlert(options: sendAlertOptions) {
+    try {
 
-//   // ----------SEND ALERT-----------------
-//   async sendAlert(options: sendAlertOptions) {
-//     try {
-//       return super.triggerAlert({ ...options }).catch((error) => {
-//         Logger.error(error.message, error);
-//         throw new Error(error.message);
-//       });
-//     } catch (error: any) {
-//       Logger.error(error.message, error);
-//       throw new Error(error.message);
-//     }
-//   }
-// }
+      const response: any = await makeNetworkRequest(
+        {
+          url: env.ALERTHUB_ENDPOINT,
+          config: {
+            method: "POST",
+          },
+        },
+        {
+          ...options,
+          alert_key: env.ALERTSHUB_KEY,
+        }
+      );
 
-// const alertsHub = new AlertsHub();
+      return response;
+    } catch (error: any) {
+      Logger.error(error.message, error);
+      throw new Error(error.message);
+    }
+  }
+}
+
+const alertsHub = new AlertsHub();
 
 export const sendAlert = async (options: sendAlertOptions) => {
   try {
-    // return await alertsHub.sendAlert({ ...options });
-    console.log(options, "We did not configured alerts it's just function");
+    return await alertsHub.sendAlert({ ...options });
   } catch (error: any) {
     Logger.error(error.message, error);
     throw new Error(error.message);

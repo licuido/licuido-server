@@ -189,8 +189,6 @@ const createTokenOfferings = async (options: createTokenOfferingPayload) => {
       banner_asset_id = asset?.[0]?.dataValues?.id;
     }
 
-    console.log(user_profile_id, "user_profile_id");
-
     const data = await TokenOfferings.create({
       issuer_entity_id: user_entity_id,
       name,

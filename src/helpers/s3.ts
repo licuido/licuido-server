@@ -15,14 +15,14 @@ import { env } from "@config";
 const {
   AWS_BUCKET_NAME = "",
   REGION = "eu-west-1",
-  S3_END_PONIT,
+  // S3_END_PONIT,
   S3_ACCESS_KEY,
   S3_SECRET_KEY,
 }: any = env;
 
 const s3 = new S3Client({
   region: REGION,
-  endpoint: S3_END_PONIT,
+  // endpoint: S3_END_PONIT,
   credentials: {
     accessKeyId: S3_ACCESS_KEY,
     secretAccessKey: S3_SECRET_KEY,

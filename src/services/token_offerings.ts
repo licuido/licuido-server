@@ -11,6 +11,8 @@ import {
   token_offering_document,
   token_offering_team,
   offer_fund_rating,
+  master_fund_agency,
+  master_fund_agency_rating,
 } from "@models";
 import { createTokenOffering, updateTokenOffering } from "@types";
 import { Op } from "sequelize";
@@ -163,6 +165,10 @@ class TokenOfferings {
           "is_payback_period_enabled",
           "is_eligible_for_collateral_enabled",
           "is_all_countries_allowed",
+          "projected_rate_return",
+          "annual_percentage_yield",
+          "payback_period",
+          "payback_period_type",
         ],
         include: [
           {
@@ -267,6 +273,29 @@ class TokenOfferings {
               is_active: true,
             },
           },
+          {
+            model: offer_fund_rating,
+            as: "offer_fund_ratings",
+            attributes: ["id"],
+            include: [
+              {
+                model: master_fund_agency,
+                as: "agency",
+                attributes: ["id", "name"],
+                required: false,
+              },
+              {
+                model: master_fund_agency_rating,
+                as: "rating",
+                attributes: ["id", "name"],
+                required: false,
+              },
+            ],
+            where: {
+              is_active: true,
+            },
+            required: false,
+          },
         ],
       });
 
@@ -290,18 +319,48 @@ class TokenOfferings {
     offset: number;
     limit: number;
     search?: string;
+    tokenTypeId?: string;
+    currencyCode?: string;
+    fundStatus?: string;
   }): Promise<{
     rows: any[];
     count: number;
   }> {
     try {
-      const { offset, limit, search } = options;
+      const { offset, limit, search,tokenTypeId,currencyCode } = options;
+      const whereClause: any = {
+        is_active: true,
+        name: { [Op.iLike]: `%${search}%` },
+      };
+  
+      if (tokenTypeId !== undefined) {
+        const tokenTypeIds = tokenTypeId?.split(',')
+        whereClause.token_type_id = { [Op.or]: tokenTypeIds };
+      }
+
+      if(currencyCode !== undefined){
+        const currencyCodes = currencyCode?.split(',')
+        whereClause.base_currency_code = { [Op.or]: currencyCodes };
+      }
 
       const { rows, count } = await token_offering.findAndCountAll({
-        where: {
-          is_active: true,
-          name: { [Op.iLike]: `%${search}%` },
-        },
+        where:whereClause,
+        attributes: [
+          "id",
+          "name",
+          "description",
+          "isin_number",
+          "symbol",
+          "base_currency_code",
+          "base_currency",
+          "offering_price",
+          "start_date",
+          "token_type_id",
+          "end_date",
+          "is_fund_rating_enabled",
+          "projected_rate_return",
+          "annual_percentage_yield",
+        ],
         include: [
           {
             model: asset,
@@ -310,16 +369,10 @@ class TokenOfferings {
             required: false,
           },
           {
-            model: asset,
-            as: "banner_asset",
-            attributes: ["id", "url"],
-            required: false,
-          },
-          {
-           model: master_token_type,
+            model: master_token_type,
             as: "token_type",
             attributes: ["id", "name"],
-            required: false, 
+            required: false,
           },
           {
             model: master_token_status,
@@ -329,10 +382,27 @@ class TokenOfferings {
           },
           {
             model: offer_fund_rating,
-            as: "offer_fund_rating",
-            attributes: ["agency_id", "rating_id"],
+            as: "offer_fund_ratings",
+            attributes: ["id"],
+            include: [
+              {
+                model: master_fund_agency,
+                as: "agency",
+                attributes: ["id", "name"],
+                required: false,
+              },
+              {
+                model: master_fund_agency_rating,
+                as: "rating",
+                attributes: ["id", "name"],
+                required: false,
+              },
+            ],
+            where: {
+              is_active: true,
+            },
             required: false,
-          }
+          },
         ],
         order: [["id", "ASC"]],
         offset,
@@ -346,7 +416,6 @@ class TokenOfferings {
       throw error;
     }
   }
-
 
   /**
    * this function used for checking user have token access

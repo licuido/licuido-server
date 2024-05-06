@@ -9,7 +9,7 @@ CREATE TABLE "offer_fund_ratings" (
   "created_at" timestamptz DEFAULT (now() at time zone 'utc'),
   "updated_at" timestamptz DEFAULT (now() at time zone 'utc'),
 
-    CONSTRAINT "offer_fund_ratings_pkey" PRIMARY KEY ("id")
+  CONSTRAINT "offer_fund_ratings_pkey" PRIMARY KEY ("id")
 );
 
 ALTER TABLE "offer_fund_ratings" ADD FOREIGN KEY ("offer_token_id") REFERENCES "token_offerings" ("id");

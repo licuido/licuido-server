@@ -4,12 +4,15 @@ import { TokenOfferings } from "@services";
 // get all investor tyoe
 const getAllMarketPlaceList = async (options: any) => {
   try {
-    const { offset = 0, limit = 0, search = "" } = options;
+    const { offset = 0, limit = 0, search = "",tokenTypeId,currencyCode,fundStatus } = options;
 
     const { rows, count } = await TokenOfferings.getAllTokenOfferings({
       search,
       offset,
       limit,
+      tokenTypeId,
+      currencyCode,
+      fundStatus
     });
 
     return { page: rows, count: rows?.length, totalCount: count };

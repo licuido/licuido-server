@@ -6,7 +6,7 @@ const marketPlace: FastifyPluginAsync = async (
   fastify,
   opts
 ): Promise<void> => {
-  // fastify.addHook("preHandler", fastify.authenticate);
+  fastify.addHook("preHandler", fastify.authenticate);
   fastify.get(
     "/",
     // { schema: schema.GET_ALL_INVESTOR_TYPES },
