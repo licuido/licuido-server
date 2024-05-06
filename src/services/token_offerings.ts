@@ -10,6 +10,7 @@ import {
   token_offering_allowed_currency,
   token_offering_document,
   token_offering_team,
+  offer_fund_rating,
 } from "@models";
 import { createTokenOffering, updateTokenOffering } from "@types";
 import { Op } from "sequelize";
@@ -274,6 +275,78 @@ class TokenOfferings {
       throw error;
     }
   }
+
+  /**
+   * Retrieves all token offerings based on the provided options.
+   *
+   * @param {Object} options - The options for retrieving token offerings.
+   * @param {number} options.offset - The offset for pagination.
+   * @param {number} options.limit - The limit for pagination.
+   * @param {string} [options.search] - The search query for filtering token offerings.
+   * @return {Promise<Object>} - A promise that resolves to an object containing the rows and count of token offerings.
+   * @throws {Error} - If there is an error retrieving the token offerings.
+   */
+  static async getAllTokenOfferings(options: {
+    offset: number;
+    limit: number;
+    search?: string;
+  }): Promise<{
+    rows: any[];
+    count: number;
+  }> {
+    try {
+      const { offset, limit, search } = options;
+
+      const { rows, count } = await token_offering.findAndCountAll({
+        where: {
+          is_active: true,
+          name: { [Op.iLike]: `%${search}%` },
+        },
+        include: [
+          {
+            model: asset,
+            as: "logo_asset",
+            attributes: ["id", "url"],
+            required: false,
+          },
+          {
+            model: asset,
+            as: "banner_asset",
+            attributes: ["id", "url"],
+            required: false,
+          },
+          {
+           model: master_token_type,
+            as: "token_type",
+            attributes: ["id", "name"],
+            required: false, 
+          },
+          {
+            model: master_token_status,
+            as: "status",
+            attributes: ["id", "name"],
+            required: false,
+          },
+          {
+            model: offer_fund_rating,
+            as: "offer_fund_rating",
+            attributes: ["agency_id", "rating_id"],
+            required: false,
+          }
+        ],
+        order: [["id", "ASC"]],
+        offset,
+        limit,
+      });
+      return {
+        rows,
+        count,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
 
   /**
    * this function used for checking user have token access
