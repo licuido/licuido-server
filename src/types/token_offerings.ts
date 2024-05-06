@@ -122,6 +122,7 @@ export interface createTokenOfferingPayload {
   fund_rating?: {
     agency: string;
     rating: string;
+    rating_id?: string;
   }[];
   status: 1 | 2 | 3;
   projected_rate_return?: string;
@@ -250,6 +251,11 @@ export interface updateTokenOfferingSubData {
       url: string;
       type: string;
     };
+  }[];
+  fund_rating?: {
+    agency: string;
+    rating: string;
+    rating_id?: string;
   }[];
 }
 

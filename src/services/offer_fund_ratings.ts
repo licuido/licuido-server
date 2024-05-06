@@ -16,6 +16,34 @@ class TokenOfferFund {
       throw error;
     }
   }
+
+  /**
+   * this function used for update Offer Rating
+   *
+   * @throws {Error} Throws an error if there's an issue extracting parameters from the response.
+   */
+  static async update({
+    options,
+    id,
+  }: {
+    options: FundRatingPayload;
+    id?: string;
+  }): Promise<any> {
+    try {
+      return await offer_fund_rating.update(
+        {
+          ...options,
+        },
+        {
+          where: {
+            id,
+          },
+        }
+      );
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export { TokenOfferFund };

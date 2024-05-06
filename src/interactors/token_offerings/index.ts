@@ -9,6 +9,7 @@ import {
   TokenOfferFund,
 } from "@services";
 import {
+  FundRatingPayload,
   TeamsPayload,
   createTokenOfferingPayload,
   createTokenOfferingSubData,
@@ -99,7 +100,7 @@ const createOfferingSubDatas = async (
     if (fund_rating && fund_rating?.length > 0) {
       let funRatingPayload = fund_rating?.map((val) => {
         return {
-          token_offering_id,
+          offer_token_id: token_offering_id,
           ...val,
         };
       });
@@ -289,6 +290,7 @@ const updateOfferingSubDatas = async (
       new_team_members,
       removed_team_members,
       updated_team_members,
+      fund_rating,
     } = options;
 
     /* For Currencies */
@@ -444,6 +446,21 @@ const updateOfferingSubDatas = async (
         });
       }
     }
+
+    // For Fund Rating
+    if (fund_rating && fund_rating?.length > 0) {
+      for (const fund of fund_rating) {
+        let funRatingPayload: FundRatingPayload = {
+          agency: fund.agency,
+          rating: fund.rating,
+        };
+
+        await TokenOfferFund.update({
+          options: funRatingPayload,
+          id: fund.rating_id,
+        });
+      }
+    }
   } catch (error: any) {
     Logger.error(error.message, error);
     throw error;
@@ -491,6 +508,7 @@ const updateTokenOfferings = async (options: updateTokenOfferingPayload) => {
       new_team_members,
       removed_team_members,
       updated_team_members,
+      fund_rating,
     } = options;
 
     // Check if the Token Name Already Exists
@@ -575,6 +593,7 @@ const updateTokenOfferings = async (options: updateTokenOfferingPayload) => {
         new_team_members,
         removed_team_members,
         updated_team_members,
+        fund_rating,
       },
       token_id,
       user_profile_id

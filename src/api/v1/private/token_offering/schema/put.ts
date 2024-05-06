@@ -135,6 +135,17 @@ const updateTokenBody = Schema.object()
       )
       .minItems(0)
   )
+  .prop(
+    "fund_rating",
+    Schema.array()
+      .items(
+        Schema.object()
+          .prop("agency", Schema.string())
+          .prop("rating", Schema.string())
+          .prop("rating_id", Schema.string().format("uuid"))
+      )
+      .minItems(0)
+  )
   .required(["token_id"])
   .valueOf();
 
