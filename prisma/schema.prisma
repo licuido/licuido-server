@@ -596,16 +596,37 @@ model master_ekc_status {
 }
 
 model offer_fund_ratings {
-  id              String           @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  offer_token_id  String?          @db.Uuid
-  agency          String?
-  rating          String?
-  is_active       Boolean?         @default(true)
-  created_by      String?          @db.Uuid
-  updated_by      String?          @db.Uuid
-  created_at      DateTime?        @default(dbgenerated("(now() AT TIME ZONE 'utc'::text)")) @db.Timestamptz(6)
-  updated_at      DateTime?        @default(dbgenerated("(now() AT TIME ZONE 'utc'::text)")) @db.Timestamptz(6)
-  token_offerings token_offerings? @relation(fields: [offer_token_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                         String                      @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  offer_token_id             String?                     @db.Uuid
+  is_active                  Boolean?                    @default(true)
+  created_by                 String?                     @db.Uuid
+  updated_by                 String?                     @db.Uuid
+  created_at                 DateTime?                   @default(dbgenerated("(now() AT TIME ZONE 'utc'::text)")) @db.Timestamptz(6)
+  updated_at                 DateTime?                   @default(dbgenerated("(now() AT TIME ZONE 'utc'::text)")) @db.Timestamptz(6)
+  agency_id                  Int?
+  rating_id                  Int?
+  master_fund_agencies       master_fund_agencies?       @relation(fields: [agency_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  token_offerings            token_offerings?            @relation(fields: [offer_token_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_fund_agency_ratings master_fund_agency_ratings? @relation(fields: [rating_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model master_fund_agencies {
+  id                 Int                  @id @default(autoincrement())
+  name               String?
+  is_active          Boolean?
+  created_at         DateTime?            @default(now()) @db.Timestamp(6)
+  updated_at         DateTime?            @default(now()) @db.Timestamp(6)
+  offer_fund_ratings offer_fund_ratings[]
+}
+
+model master_fund_agency_ratings {
+  id                 Int                  @id @default(autoincrement())
+  name               String?
+  is_active          Boolean?
+  agency_id          Int?
+  created_at         DateTime?            @default(now()) @db.Timestamp(6)
+  updated_at         DateTime?            @default(now()) @db.Timestamp(6)
+  offer_fund_ratings offer_fund_ratings[]
 }
 
 enum investment_types {

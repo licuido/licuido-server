@@ -61,14 +61,7 @@ const preValidateResponse: JSONSchema = Schema.object()
 
 // Response Schema of Sign In
 const forgetPassWordResponse: JSONSchema = Schema.object()
-  .prop(
-    "data",
-    Schema.object()
-      .prop("token", Schema.string())
-      .prop("valid_till", Schema.string())
-  )
-  .prop("message", Schema.string())
-  .prop("success", Schema.boolean())
+  .additionalProperties(true)
   .valueOf() as JSONSchema;
 
 // Response Schema of Sign In

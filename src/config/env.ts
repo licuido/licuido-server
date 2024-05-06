@@ -18,6 +18,7 @@ const {
   S3_END_PONIT,
   S3_ACCESS_KEY,
   S3_SECRET_KEY,
+  ALERTHUB_ENDPOINT,
 }: any = process.env;
 
 export default {
@@ -37,4 +38,5 @@ export default {
   S3_END_PONIT,
   S3_ACCESS_KEY,
   S3_SECRET_KEY,
+  ALERTHUB_ENDPOINT,
 };

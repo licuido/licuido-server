@@ -120,9 +120,9 @@ export interface createTokenOfferingPayload {
     };
   }[];
   fund_rating?: {
-    agency: string;
-    rating: string;
     rating_id?: string;
+    agency: number;
+    rating: number;
   }[];
   status: 1 | 2 | 3;
   projected_rate_return?: string;
@@ -150,8 +150,8 @@ export interface createTokenOfferingSubData {
     };
   }[];
   fund_rating?: {
-    agency: string;
-    rating: string;
+    agency: number;
+    rating: number;
   }[];
 }
 
@@ -191,8 +191,8 @@ export interface updateTokenOfferingPayload
   }[];
   removed_team_members: string[];
   fund_rating?: {
-    agency: string;
-    rating: string;
+    agency: number;
+    rating: number;
   }[];
   updated_team_members: {
     member_id: string;
@@ -275,6 +275,6 @@ export interface TeamsPayload {
 }
 
 export interface FundRatingPayload {
-  agency: string;
-  rating: string;
+  agency: number;
+  rating: number;
 }
