@@ -19,3 +19,4 @@ export * from "./token_offering_allowed_countries";
 export * from "./token_offering_allowed_currencies";
 export * from "./token_offering_documents";
 export * from "./token_offering_teams";
+export * from "./entity_investors";

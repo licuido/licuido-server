@@ -2,7 +2,6 @@ import { makeResponseSchema } from "@helpers";
 import Schema, { JSONSchema } from "fluent-json-schema";
 
 /* For Get Investor Count For Qualification */
-
 const getInvestorCountResponse: JSONSchema = Schema.object()
   .prop("count", Schema.integer())
   .prop("meta", Schema.object().prop("message", Schema.string()))
@@ -49,7 +48,22 @@ const getInvestorResponse: JSONSchema = Schema.object()
 export const GET_INVESTOR_DATA_FOR_QUALIFY = {
   description:
     "The purpose of this schema is get all investor data for qualification",
-  tags: ["NVESTOR QUALIFICATION"],
+  tags: ["INVESTOR QUALIFICATION"],
   response: makeResponseSchema(getInvestorResponse),
+  query: getInvestorParams,
+};
+
+const getInvestorResponseAsCSV: JSONSchema = Schema.object()
+  .prop("data", Schema.object())
+  .additionalProperties(true)
+  .prop("meta", Schema.object().prop("message", Schema.string()))
+  .valueOf() as JSONSchema;
+
+/* For Export Investor Data into CSV File*/
+export const EXPORT_INVESTOR_DATA_AS_CSV_FILE = {
+  description:
+    "The purpose of this schema is get all investor data in CSV File",
+  tags: ["INVESTOR QUALIFICATION"],
+  response: makeResponseSchema(getInvestorResponseAsCSV),
   query: getInvestorParams,
 };

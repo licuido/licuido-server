@@ -9,6 +9,7 @@ import { handleResponse, responseType } from "./responseHandler";
 import { sendAlert } from "./alertsHub";
 import { pagination } from "./pagination";
 import { errorCustomMessage, successCustomMessage } from "./customMessage";
+import excel from "./excel";
 export * from "./s3";
 
 export {
@@ -27,4 +28,5 @@ export {
   pagination,
   errorCustomMessage,
   successCustomMessage,
+  excel,
 };

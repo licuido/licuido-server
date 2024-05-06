@@ -13,6 +13,7 @@ import MasterTokenTypes from "./master_token_type";
 import MasterBlockChainNetwork from "./master_blockchain_network";
 import TokenOfferings from "./token_offerings";
 import UserEntities from "./user_entities";
+import EntityInvestors from "./entity_investors";
 
 export {
   MasterBlockChainNetwork,
@@ -30,4 +31,5 @@ export {
   MasterTokenTypes,
   TokenOfferings,
   UserEntities,
+  EntityInvestors,
 };

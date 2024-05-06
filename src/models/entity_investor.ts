@@ -17,11 +17,12 @@ export interface entity_investorAttributes {
   updated_by?: string;
   created_at?: Date;
   updated_at?: Date;
+  issuer_profile_id?: string;
 }
 
 export type entity_investorPk = "id";
 export type entity_investorId = entity_investor[entity_investorPk];
-export type entity_investorOptionalAttributes = "id" | "investor_type_id" | "investor_entity_id" | "individual_investor_id" | "status_id" | "is_active" | "created_by" | "updated_by" | "created_at" | "updated_at";
+export type entity_investorOptionalAttributes = "id" | "investor_type_id" | "investor_entity_id" | "individual_investor_id" | "status_id" | "is_active" | "created_by" | "updated_by" | "created_at" | "updated_at" | "issuer_profile_id";
 export type entity_investorCreationAttributes = Optional<entity_investorAttributes, entity_investorOptionalAttributes>;
 
 export class entity_investor extends Model<entity_investorAttributes, entity_investorCreationAttributes> implements entity_investorAttributes {
@@ -35,6 +36,7 @@ export class entity_investor extends Model<entity_investorAttributes, entity_inv
   updated_by?: string;
   created_at?: Date;
   updated_at?: Date;
+  issuer_profile_id?: string;
 
   // entity_investor belongsTo entity via investor_entity_id
   investor_entity!: entity;
@@ -61,6 +63,11 @@ export class entity_investor extends Model<entity_investorAttributes, entity_inv
   getCreated_by_user_profile!: Sequelize.BelongsToGetAssociationMixin<user_profile>;
   setCreated_by_user_profile!: Sequelize.BelongsToSetAssociationMixin<user_profile, user_profileId>;
   createCreated_by_user_profile!: Sequelize.BelongsToCreateAssociationMixin<user_profile>;
+  // entity_investor belongsTo user_profile via issuer_profile_id
+  issuer_profile!: user_profile;
+  getIssuer_profile!: Sequelize.BelongsToGetAssociationMixin<user_profile>;
+  setIssuer_profile!: Sequelize.BelongsToSetAssociationMixin<user_profile, user_profileId>;
+  createIssuer_profile!: Sequelize.BelongsToCreateAssociationMixin<user_profile>;
   // entity_investor belongsTo user_profile via updated_by
   updated_by_user_profile!: user_profile;
   getUpdated_by_user_profile!: Sequelize.BelongsToGetAssociationMixin<user_profile>;
@@ -120,6 +127,14 @@ export class entity_investor extends Model<entity_investorAttributes, entity_inv
       }
     },
     updated_by: {
+      type: DataTypes.UUID,
+      allowNull: true,
+      references: {
+        model: 'user_profiles',
+        key: 'id'
+      }
+    },
+    issuer_profile_id: {
       type: DataTypes.UUID,
       allowNull: true,
       references: {

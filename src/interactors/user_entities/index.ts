@@ -1,5 +1,9 @@
 import { Logger } from "@helpers";
-import { getInvestorCount, getInvestorData } from "@services";
+import {
+  getAllInvestorData,
+  getInvestorCount,
+  getInvestorData,
+} from "@services";
 import { getInvestorDataForQualificationPayload } from "@types";
 
 const getInvestorCountForQualification = async ({
@@ -25,6 +29,7 @@ const getInvestorDataForQualification = async (
   try {
     const {
       entity_type_id,
+      user_profile_id,
       offset = 0,
       limit = 0,
       search = "",
@@ -72,6 +77,7 @@ const getInvestorDataForQualification = async (
       kyc_status_filters,
       investor_type_filters,
       entity_type_id,
+      user_profile_id,
     });
 
     return { page: rows, count: rows?.length, totalCount: count };
@@ -81,7 +87,29 @@ const getInvestorDataForQualification = async (
   }
 };
 
+const getInvestorDataAsCSV = async ({
+  entity_type_id, // Investor
+  user_profile_id,
+}: {
+  entity_type_id: 1 | 2 | 3;
+  user_profile_id?: string;
+}) => {
+  try {
+    // Getting All Invetsor Data
+    const data: any = await getAllInvestorData({
+      entity_type_id,
+      user_profile_id,
+    });
+
+    return data?.rows;
+  } catch (error: any) {
+    Logger.error(error.message, error);
+    throw error;
+  }
+};
+
 export default {
   getInvestorCountForQualification,
   getInvestorDataForQualification,
+  getInvestorDataAsCSV,
 };

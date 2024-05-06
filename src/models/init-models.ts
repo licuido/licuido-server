@@ -326,6 +326,8 @@ export function initModels(sequelize: Sequelize) {
   user_profile.hasMany(entity, { as: "updated_by_entities", foreignKey: "updated_by"});
   entity_investor.belongsTo(user_profile, { as: "created_by_user_profile", foreignKey: "created_by"});
   user_profile.hasMany(entity_investor, { as: "entity_investors", foreignKey: "created_by"});
+  entity_investor.belongsTo(user_profile, { as: "issuer_profile", foreignKey: "issuer_profile_id"});
+  user_profile.hasMany(entity_investor, { as: "issuer_profile_entity_investors", foreignKey: "issuer_profile_id"});
   entity_investor.belongsTo(user_profile, { as: "updated_by_user_profile", foreignKey: "updated_by"});
   user_profile.hasMany(entity_investor, { as: "updated_by_entity_investors", foreignKey: "updated_by"});
   individual_investor.belongsTo(user_profile, { as: "contact_profile", foreignKey: "contact_profile_id"});
