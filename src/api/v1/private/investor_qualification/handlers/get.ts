@@ -133,13 +133,7 @@ export async function EXPORT_INVESTOR_DATA_AS_CSV_FILE(
       }));
 
     /* Make Excel File */
-    const data = await makeExcelFile(
-      excelData,
-      `investor_qualify_data_${new Date()
-        .toISOString()
-        .replace(/[-T:]/g, "")
-        .slice(0, 14)}`
-    );
+    const data = await makeExcelFile(excelData, "investor_qualify_data");
 
     /* -----------  Response  ----------- */
     return handleResponse(request, reply, responseType?.OK, {
