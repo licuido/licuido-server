@@ -6,6 +6,7 @@ import {
   TokenOfferingsAllowedCountries,
   TokenOfferingsTeams,
   TokenOfferingsDocuments,
+  TokenOfferFund,
 } from "@services";
 import {
   TeamsPayload,
@@ -21,7 +22,13 @@ const createOfferingSubDatas = async (
   user_profile_id: string
 ) => {
   try {
-    const { teams, allowed_countries, allowed_currencies, documents } = options;
+    const {
+      teams,
+      allowed_countries,
+      allowed_currencies,
+      documents,
+      fund_rating,
+    } = options;
 
     if (allowed_currencies?.length > 0) {
       let currenciesPayload = allowed_currencies?.map((val) => {
@@ -88,6 +95,16 @@ const createOfferingSubDatas = async (
 
       await TokenOfferingsDocuments.create(documentssPayload);
     }
+
+    if (fund_rating && fund_rating?.length > 0) {
+      let funRatingPayload = fund_rating?.map((val) => {
+        return {
+          token_offering_id,
+          ...val,
+        };
+      });
+      await TokenOfferFund.create(funRatingPayload);
+    }
   } catch (error: any) {
     Logger.error(error.message, error);
     throw error;
@@ -131,6 +148,11 @@ const createTokenOfferings = async (options: createTokenOfferingPayload) => {
       iban_no,
       status,
       token_type_id,
+      projected_rate_return,
+      payback_period,
+      payback_period_type,
+      annual_percentage_yield,
+      fund_rating,
     } = options;
 
     // Check if the Token Name Already Exists
@@ -167,6 +189,8 @@ const createTokenOfferings = async (options: createTokenOfferingPayload) => {
       banner_asset_id = asset?.[0]?.dataValues?.id;
     }
 
+    console.log(user_profile_id, "user_profile_id");
+
     const data = await TokenOfferings.create({
       issuer_entity_id: user_entity_id,
       name,
@@ -199,6 +223,10 @@ const createTokenOfferings = async (options: createTokenOfferingPayload) => {
       token_type_id,
       is_active: true,
       offer_status_id: 1,
+      projected_rate_return,
+      payback_period,
+      payback_period_type,
+      annual_percentage_yield,
     });
 
     await createOfferingSubDatas(
@@ -207,6 +235,7 @@ const createTokenOfferings = async (options: createTokenOfferingPayload) => {
         allowed_countries,
         allowed_currencies,
         documents,
+        fund_rating,
       },
       data?.dataValues?.id,
       user_profile_id

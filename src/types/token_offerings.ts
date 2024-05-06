@@ -30,6 +30,10 @@ export interface createTokenOffering {
   status_id: number;
   token_type_id: number;
   is_active: boolean;
+  projected_rate_return?: string;
+  annual_percentage_yield?: string;
+  payback_period?: string;
+  payback_period_type?: string;
 }
 
 export interface createTokenOfferingCurrencies {
@@ -115,7 +119,15 @@ export interface createTokenOfferingPayload {
       type: string;
     };
   }[];
+  fund_rating?: {
+    agency: string;
+    rating: string;
+  }[];
   status: 1 | 2 | 3;
+  projected_rate_return?: string;
+  annual_percentage_yield?: string;
+  payback_period?: string;
+  payback_period_type?: string;
 }
 
 export interface createTokenOfferingSubData {
@@ -135,6 +147,10 @@ export interface createTokenOfferingSubData {
       url: string;
       type: string;
     };
+  }[];
+  fund_rating?: {
+    agency: string;
+    rating: string;
   }[];
 }
 
@@ -173,6 +189,10 @@ export interface updateTokenOfferingPayload
     };
   }[];
   removed_team_members: string[];
+  fund_rating?: {
+    agency: string;
+    rating: string;
+  }[];
   updated_team_members: {
     member_id: string;
     member_name: string;
@@ -182,6 +202,10 @@ export interface updateTokenOfferingPayload
       type: string;
     };
   }[];
+  projected_rate_return: string;
+  annual_percentage_yield: string;
+  payback_period: string;
+  payback_period_type: string;
 }
 
 export interface updateTokenOffering
@@ -242,4 +266,9 @@ export interface TeamsPayload {
   member_title: string;
   updated_by: string;
   member_picture_id?: string;
+}
+
+export interface FundRatingPayload {
+  agency: string;
+  rating: string;
 }
