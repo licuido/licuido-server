@@ -7,6 +7,7 @@ import type { master_country, master_countryId } from './master_country';
 import type { master_token_offering_status, master_token_offering_statusId } from './master_token_offering_status';
 import type { master_token_status, master_token_statusId } from './master_token_status';
 import type { master_token_type, master_token_typeId } from './master_token_type';
+import type { offer_fund_rating, offer_fund_ratingId } from './offer_fund_rating';
 import type { token_offering_allowed_country, token_offering_allowed_countryId } from './token_offering_allowed_country';
 import type { token_offering_allowed_currency, token_offering_allowed_currencyId } from './token_offering_allowed_currency';
 import type { token_offering_document, token_offering_documentId } from './token_offering_document';
@@ -51,11 +52,15 @@ export interface token_offeringAttributes {
   updated_by?: string;
   created_at?: Date;
   updated_at?: Date;
+  projected_rate_return?: string;
+  annual_percentage_yield?: string;
+  payback_period?: string;
+  payback_period_type?: string;
 }
 
 export type token_offeringPk = "id";
 export type token_offeringId = token_offering[token_offeringPk];
-export type token_offeringOptionalAttributes = "id" | "issuer_entity_id" | "name" | "description" | "isin_number" | "symbol" | "token_type_id" | "base_currency" | "base_currency_code" | "blockchain_network" | "logo_asset_id" | "banner_asset_id" | "offering_price" | "jurisdiction" | "start_date" | "end_date" | "minimum_investment_limit" | "maximum_investment_limit" | "bank_name" | "bank_account_name" | "swift_bic_no" | "iban_no" | "is_fund_rating_enabled" | "is_projected_rate_of_return_enabled" | "is_expected_annual_perc_yield_enabled" | "is_all_countries_allowed" | "is_payback_period_enabled" | "is_eligible_for_collateral_enabled" | "offer_status_id" | "status_id" | "is_active" | "created_by" | "updated_by" | "created_at" | "updated_at";
+export type token_offeringOptionalAttributes = "id" | "issuer_entity_id" | "name" | "description" | "isin_number" | "symbol" | "token_type_id" | "base_currency" | "base_currency_code" | "blockchain_network" | "logo_asset_id" | "banner_asset_id" | "offering_price" | "jurisdiction" | "start_date" | "end_date" | "minimum_investment_limit" | "maximum_investment_limit" | "bank_name" | "bank_account_name" | "swift_bic_no" | "iban_no" | "is_fund_rating_enabled" | "is_projected_rate_of_return_enabled" | "is_expected_annual_perc_yield_enabled" | "is_all_countries_allowed" | "is_payback_period_enabled" | "is_eligible_for_collateral_enabled" | "offer_status_id" | "status_id" | "is_active" | "created_by" | "updated_by" | "created_at" | "updated_at" | "projected_rate_return" | "annual_percentage_yield" | "payback_period" | "payback_period_type";
 export type token_offeringCreationAttributes = Optional<token_offeringAttributes, token_offeringOptionalAttributes>;
 
 export class token_offering extends Model<token_offeringAttributes, token_offeringCreationAttributes> implements token_offeringAttributes {
@@ -94,6 +99,10 @@ export class token_offering extends Model<token_offeringAttributes, token_offeri
   updated_by?: string;
   created_at?: Date;
   updated_at?: Date;
+  projected_rate_return?: string;
+  annual_percentage_yield?: string;
+  payback_period?: string;
+  payback_period_type?: string;
 
   // token_offering belongsTo asset via banner_asset_id
   banner_asset!: asset;
@@ -135,6 +144,18 @@ export class token_offering extends Model<token_offeringAttributes, token_offeri
   getToken_type!: Sequelize.BelongsToGetAssociationMixin<master_token_type>;
   setToken_type!: Sequelize.BelongsToSetAssociationMixin<master_token_type, master_token_typeId>;
   createToken_type!: Sequelize.BelongsToCreateAssociationMixin<master_token_type>;
+  // token_offering hasMany offer_fund_rating via offer_token_id
+  offer_fund_ratings!: offer_fund_rating[];
+  getOffer_fund_ratings!: Sequelize.HasManyGetAssociationsMixin<offer_fund_rating>;
+  setOffer_fund_ratings!: Sequelize.HasManySetAssociationsMixin<offer_fund_rating, offer_fund_ratingId>;
+  addOffer_fund_rating!: Sequelize.HasManyAddAssociationMixin<offer_fund_rating, offer_fund_ratingId>;
+  addOffer_fund_ratings!: Sequelize.HasManyAddAssociationsMixin<offer_fund_rating, offer_fund_ratingId>;
+  createOffer_fund_rating!: Sequelize.HasManyCreateAssociationMixin<offer_fund_rating>;
+  removeOffer_fund_rating!: Sequelize.HasManyRemoveAssociationMixin<offer_fund_rating, offer_fund_ratingId>;
+  removeOffer_fund_ratings!: Sequelize.HasManyRemoveAssociationsMixin<offer_fund_rating, offer_fund_ratingId>;
+  hasOffer_fund_rating!: Sequelize.HasManyHasAssociationMixin<offer_fund_rating, offer_fund_ratingId>;
+  hasOffer_fund_ratings!: Sequelize.HasManyHasAssociationsMixin<offer_fund_rating, offer_fund_ratingId>;
+  countOffer_fund_ratings!: Sequelize.HasManyCountAssociationsMixin;
   // token_offering hasMany token_offering_allowed_country via token_offering_id
   token_offering_allowed_countries!: token_offering_allowed_country[];
   getToken_offering_allowed_countries!: Sequelize.HasManyGetAssociationsMixin<token_offering_allowed_country>;
@@ -393,6 +414,22 @@ export class token_offering extends Model<token_offeringAttributes, token_offeri
         model: 'user_profiles',
         key: 'id'
       }
+    },
+    projected_rate_return: {
+      type: DataTypes.TEXT,
+      allowNull: true
+    },
+    annual_percentage_yield: {
+      type: DataTypes.TEXT,
+      allowNull: true
+    },
+    payback_period: {
+      type: DataTypes.TEXT,
+      allowNull: true
+    },
+    payback_period_type: {
+      type: DataTypes.TEXT,
+      allowNull: true
     }
   }, {
     sequelize,

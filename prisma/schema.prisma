@@ -119,22 +119,24 @@ model entities {
 }
 
 model entity_investors {
-  id                                                       String                         @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  investor_type_id                                         Int?
-  investor_entity_id                                       String?                        @db.Uuid
-  individual_investor_id                                   String?                        @db.Uuid
-  status_id                                                Int?
-  is_active                                                Boolean?
-  created_by                                               String?                        @db.Uuid
-  updated_by                                               String?                        @db.Uuid
-  created_at                                               DateTime?                      @default(now()) @db.Timestamp(6)
-  updated_at                                               DateTime?                      @default(now()) @db.Timestamp(6)
-  user_profiles_entity_investors_created_byTouser_profiles user_profiles?                 @relation("entity_investors_created_byTouser_profiles", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  individual_investors                                     individual_investors?          @relation(fields: [individual_investor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  entities                                                 entities?                      @relation(fields: [investor_entity_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  master_investor_types                                    master_investor_types?         @relation(fields: [investor_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  master_entity_investor_status                            master_entity_investor_status? @relation(fields: [status_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  user_profiles_entity_investors_updated_byTouser_profiles user_profiles?                 @relation("entity_investors_updated_byTouser_profiles", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                                                              String                         @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  investor_type_id                                                Int?
+  investor_entity_id                                              String?                        @db.Uuid
+  individual_investor_id                                          String?                        @db.Uuid
+  status_id                                                       Int?
+  is_active                                                       Boolean?
+  created_by                                                      String?                        @db.Uuid
+  updated_by                                                      String?                        @db.Uuid
+  created_at                                                      DateTime?                      @default(now()) @db.Timestamp(6)
+  updated_at                                                      DateTime?                      @default(now()) @db.Timestamp(6)
+  issuer_profile_id                                               String?                        @db.Uuid
+  user_profiles_entity_investors_created_byTouser_profiles        user_profiles?                 @relation("entity_investors_created_byTouser_profiles", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  individual_investors                                            individual_investors?          @relation(fields: [individual_investor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  entities                                                        entities?                      @relation(fields: [investor_entity_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_investor_types                                           master_investor_types?         @relation(fields: [investor_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_profiles_entity_investors_issuer_profile_idTouser_profiles user_profiles?                 @relation("entity_investors_issuer_profile_idTouser_profiles", fields: [issuer_profile_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_entity_investor_status                                   master_entity_investor_status? @relation(fields: [status_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_profiles_entity_investors_updated_byTouser_profiles        user_profiles?                 @relation("entity_investors_updated_byTouser_profiles", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model individual_investors {
@@ -390,6 +392,11 @@ model token_offerings {
   updated_by                                              String?                             @db.Uuid
   created_at                                              DateTime?                           @default(now()) @db.Timestamp(6)
   updated_at                                              DateTime?                           @default(now()) @db.Timestamp(6)
+  projected_rate_return                                   String?
+  annual_percentage_yield                                 String?
+  payback_period                                          String?
+  payback_period_type                                     String?
+  offer_fund_ratings                                      offer_fund_ratings[]
   token_offering_allowed_countries                        token_offering_allowed_countries[]
   token_offering_allowed_currencies                       token_offering_allowed_currencies[]
   token_offering_documents                                token_offering_documents[]
@@ -505,6 +512,7 @@ model user_profiles {
   entities_entities_created_byTouser_profiles                                                   entities[]                          @relation("entities_created_byTouser_profiles")
   entities_entities_updated_byTouser_profiles                                                   entities[]                          @relation("entities_updated_byTouser_profiles")
   entity_investors_entity_investors_created_byTouser_profiles                                   entity_investors[]                  @relation("entity_investors_created_byTouser_profiles")
+  entity_investors_entity_investors_issuer_profile_idTouser_profiles                            entity_investors[]                  @relation("entity_investors_issuer_profile_idTouser_profiles")
   entity_investors_entity_investors_updated_byTouser_profiles                                   entity_investors[]                  @relation("entity_investors_updated_byTouser_profiles")
   individual_investors_individual_investors_contact_profile_idTouser_profiles                   individual_investors[]              @relation("individual_investors_contact_profile_idTouser_profiles")
   individual_investors_individual_investors_created_byTouser_profiles                           individual_investors[]              @relation("individual_investors_created_byTouser_profiles")
@@ -585,6 +593,19 @@ model master_ekc_status {
   created_at DateTime? @default(now()) @db.Timestamp(6)
   updated_at DateTime? @default(now()) @db.Timestamp(6)
   ekyc       ekyc[]
+}
+
+model offer_fund_ratings {
+  id              String           @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  offer_token_id  String?          @db.Uuid
+  agency          String?
+  rating          String?
+  is_active       Boolean?         @default(true)
+  created_by      String?          @db.Uuid
+  updated_by      String?          @db.Uuid
+  created_at      DateTime?        @default(dbgenerated("(now() AT TIME ZONE 'utc'::text)")) @db.Timestamptz(6)
+  updated_at      DateTime?        @default(dbgenerated("(now() AT TIME ZONE 'utc'::text)")) @db.Timestamptz(6)
+  token_offerings token_offerings? @relation(fields: [offer_token_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 enum investment_types {
