@@ -14,6 +14,7 @@ import MasterBlockChainNetwork from "./master_blockchain_network";
 import TokenOfferings from "./token_offerings";
 import UserEntities from "./user_entities";
 import EntityInvestors from "./entity_investors";
+import TokenOrders from "./token_orders";
 import MasterFundAgency from "./master_fund_agencies";
 import MasterFundAgencyRatings from "./master_fund_agency_ratings";
 
@@ -34,6 +35,7 @@ export {
   TokenOfferings,
   UserEntities,
   EntityInvestors,
+  TokenOrders,
   MasterFundAgency,
-  MasterFundAgencyRatings
+  MasterFundAgencyRatings,
 };

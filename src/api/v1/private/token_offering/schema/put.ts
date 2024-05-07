@@ -135,6 +135,21 @@ const updateTokenBody = Schema.object()
       )
       .minItems(0)
   )
+  .prop(
+    "fund_rating",
+    Schema.array()
+      .items(
+        Schema.object()
+          .prop("agency", Schema.number())
+          .prop("rating", Schema.number())
+          .prop("rating_id", Schema.string().format("uuid"))
+      )
+      .minItems(0)
+  )
+  .prop("projected_rate_return", Schema.string())
+  .prop("annual_percentage_yield", Schema.string())
+  .prop("payback_period", Schema.string())
+  .prop("payback_period_type", Schema.string())
   .required(["token_id"])
   .valueOf();
 

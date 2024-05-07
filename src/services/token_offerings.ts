@@ -12,7 +12,7 @@ import {
   token_offering_team,
   offer_fund_rating,
   master_fund_agency,
-  master_fund_agency_rating
+  master_fund_agency_rating,
 } from "@models";
 import { createTokenOffering, updateTokenOffering } from "@types";
 import { Op } from "sequelize";

@@ -1,42 +1,38 @@
-import { master_fund_agency_ratings } from "@prisma/client";
+import { master_order_status } from "@prisma/client";
 
-export const masterFundAgencyRatings: {
+export const masterOrderStatus: {
   table: string;
-  data: master_fund_agency_ratings[];
+  data: master_order_status[];
 } = {
-  table: "master_fund_agency_ratings",
+  table: "master_order_status",
   data: [
     {
       id: 1,
-      name: "AAA",
+      name: "Pending",
       is_active: true,
       created_at: new Date(),
       updated_at: new Date(),
-      agency_id: 1,
     },
     {
       id: 2,
-      name: "AA",
+      name: "In Progress",
       is_active: true,
       created_at: new Date(),
       updated_at: new Date(),
-      agency_id: 1,
     },
     {
       id: 3,
-      name: "AAA",
+      name: "Success",
       is_active: true,
       created_at: new Date(),
       updated_at: new Date(),
-      agency_id: 2,
     },
     {
       id: 4,
-      name: "BBB",
+      name: "Reject",
       is_active: true,
       created_at: new Date(),
       updated_at: new Date(),
-      agency_id: 2,
     },
   ],
 };

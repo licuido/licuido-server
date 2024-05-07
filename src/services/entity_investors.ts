@@ -70,6 +70,35 @@ class EntityInvestor {
       throw error;
     }
   }
+
+  /**
+   * this function used for to get count of given qualified investor for given issuer
+   *
+   * @throws {Error} Throws an error if there's an issue extracting parameters from the response.
+   */
+
+  static async count({
+    issuer_profile_id,
+    investor_entity_id,
+    status_id,
+  }: {
+    issuer_profile_id: string;
+    investor_entity_id: string;
+    status_id: 1 | 2 | 3;
+  }): Promise<any> {
+    try {
+      // Get Count Of Given of data Whether the given investor is qualified for given issuer
+      return await entity_investor.count({
+        where: {
+          investor_entity_id,
+          issuer_profile_id,
+          status_id,
+        },
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export { EntityInvestor };

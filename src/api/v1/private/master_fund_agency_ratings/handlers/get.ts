@@ -24,12 +24,13 @@ export async function GET_ALL_AGENCY_RATINGS(
     // -----------------------------
     //  INTRACTOR
     // -----------------------------
-    const result = await MasterFundAgencyRatings.getAllMasterFundAgencyRatingList({
-      search,
-      offset,
-      limit,
-      ...rest,
-    });
+    const result =
+      await MasterFundAgencyRatings.getAllMasterFundAgencyRatingList({
+        search,
+        offset,
+        limit,
+        ...rest,
+      });
 
     // -----------------------------
     //  SERIALIZER

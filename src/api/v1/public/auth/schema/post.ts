@@ -60,7 +60,9 @@ const preValidateResponse: JSONSchema = Schema.object()
   .valueOf() as JSONSchema;
 
 // Response Schema of Sign In
-const forgetPassWordResponse: JSONSchema = Schema.object().additionalProperties(true).valueOf() as JSONSchema;
+const forgetPassWordResponse: JSONSchema = Schema.object()
+  .additionalProperties(true)
+  .valueOf() as JSONSchema;
 
 // Response Schema of Sign In
 const sendEmailOTPResponse: JSONSchema = Schema.object()
