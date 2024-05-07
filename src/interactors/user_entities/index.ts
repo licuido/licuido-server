@@ -29,7 +29,7 @@ const getInvestorDataForQualification = async (
   try {
     const {
       entity_type_id,
-      user_profile_id,
+      user_entity_id,
       offset = 0,
       limit = 0,
       search = "",
@@ -77,7 +77,7 @@ const getInvestorDataForQualification = async (
       kyc_status_filters,
       investor_type_filters,
       entity_type_id,
-      user_profile_id,
+      user_entity_id,
     });
 
     return { page: rows, count: rows?.length, totalCount: count };

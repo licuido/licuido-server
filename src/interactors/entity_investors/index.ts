@@ -4,6 +4,7 @@ import { UpsertInvestorQualifyStatusPayload } from "@types";
 
 const UpsertInvestorQualifyStatus = async ({
   user_profile_id,
+  user_entity_id,
   id,
   status_id,
   investor_type_id,
@@ -27,6 +28,7 @@ const UpsertInvestorQualifyStatus = async ({
         investor_type_id,
         investor_entity_id,
         user_profile_id,
+        user_entity_id,
       });
     }
 

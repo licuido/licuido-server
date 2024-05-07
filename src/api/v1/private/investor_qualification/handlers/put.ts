@@ -9,7 +9,8 @@ export async function UPSERT_INVESTOR_STATUS(
 ) {
   try {
     /* -----------  MAPPER ----------- */
-    const { entity_id, user_profile_id, ...rest } = postRequestInfo(request);
+    const { entity_id, user_profile_id, user_entity_id, ...rest } =
+      postRequestInfo(request);
 
     if (entity_id === 2) {
       return handleResponse(request, reply, responseType?.FORBIDDEN, {
@@ -22,6 +23,7 @@ export async function UPSERT_INVESTOR_STATUS(
     /* -----------  INTERACTOR ----------- */
     const result = await EntityInvestors.UpsertInvestorQualifyStatus({
       user_profile_id,
+      user_entity_id,
       ...rest,
     });
     // -----------------------------

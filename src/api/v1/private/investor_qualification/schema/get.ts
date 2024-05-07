@@ -65,5 +65,4 @@ export const EXPORT_INVESTOR_DATA_AS_CSV_FILE = {
     "The purpose of this schema is get all investor data in CSV File",
   tags: ["INVESTOR QUALIFICATION"],
   response: makeResponseSchema(getInvestorResponseAsCSV),
-  query: getInvestorParams,
 };

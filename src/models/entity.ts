@@ -95,6 +95,18 @@ export class entity extends Model<entityAttributes, entityCreationAttributes> im
   hasEntity_investor!: Sequelize.HasManyHasAssociationMixin<entity_investor, entity_investorId>;
   hasEntity_investors!: Sequelize.HasManyHasAssociationsMixin<entity_investor, entity_investorId>;
   countEntity_investors!: Sequelize.HasManyCountAssociationsMixin;
+  // entity hasMany entity_investor via issuer_entity_id
+  issuer_entity_entity_investors!: entity_investor[];
+  getIssuer_entity_entity_investors!: Sequelize.HasManyGetAssociationsMixin<entity_investor>;
+  setIssuer_entity_entity_investors!: Sequelize.HasManySetAssociationsMixin<entity_investor, entity_investorId>;
+  addIssuer_entity_entity_investor!: Sequelize.HasManyAddAssociationMixin<entity_investor, entity_investorId>;
+  addIssuer_entity_entity_investors!: Sequelize.HasManyAddAssociationsMixin<entity_investor, entity_investorId>;
+  createIssuer_entity_entity_investor!: Sequelize.HasManyCreateAssociationMixin<entity_investor>;
+  removeIssuer_entity_entity_investor!: Sequelize.HasManyRemoveAssociationMixin<entity_investor, entity_investorId>;
+  removeIssuer_entity_entity_investors!: Sequelize.HasManyRemoveAssociationsMixin<entity_investor, entity_investorId>;
+  hasIssuer_entity_entity_investor!: Sequelize.HasManyHasAssociationMixin<entity_investor, entity_investorId>;
+  hasIssuer_entity_entity_investors!: Sequelize.HasManyHasAssociationsMixin<entity_investor, entity_investorId>;
+  countIssuer_entity_entity_investors!: Sequelize.HasManyCountAssociationsMixin;
   // entity hasMany token_offering via issuer_entity_id
   token_offerings!: token_offering[];
   getToken_offerings!: Sequelize.HasManyGetAssociationsMixin<token_offering>;
