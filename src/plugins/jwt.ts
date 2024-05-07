@@ -53,7 +53,6 @@ const jwtPlugin: FastifyPluginAsync<FastifyJWTOptions> = async (
     async function (request: any, reply: FastifyReply) {
       try {
         if (!request?.headers?.build) {
-          console.log("calling");
           reply.code(500).send({
             error: {
               isError: true,

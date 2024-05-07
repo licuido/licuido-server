@@ -12,7 +12,7 @@ import {
   token_offering_team,
   offer_fund_rating,
   master_fund_agency,
-  master_fund_agency_rating
+  master_fund_agency_rating,
 } from "@models";
 import { createTokenOffering, updateTokenOffering } from "@types";
 import { Op } from "sequelize";
@@ -326,6 +326,48 @@ class TokenOfferings {
           issuer_entity_id: user_entity_id,
         },
       });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * this function used for get token offering
+   *
+   * @param {token_id:string} options - The response object containing create data.
+   * @throws {Error} Throws an error if there's an issue extracting parameters from the response.
+   */
+  static async getTokenIssuerList({
+    user_entity_id,
+    search,
+  }: {
+    user_entity_id: string;
+    search: string;
+  }): Promise<any> {
+    try {
+      const token_offer = await token_offering.findAll({
+        where: {
+          issuer_entity_id: user_entity_id,
+          name: { [Op.iLike]: `%${search}%` },
+        },
+        attributes: ["id", "name", "isin_number", "symbol"],
+        include: [
+          {
+            model: asset,
+            as: "logo_asset",
+            attributes: ["id", "url"],
+            required: false,
+          },
+          {
+            model: master_token_offering_status,
+            as: "offer_status",
+            attributes: ["id", "name"],
+            required: false,
+          },
+        ],
+      });
+
+      return JSON.parse(JSON.stringify(token_offer));
     } catch (error) {
       throw error;
     }

@@ -629,9 +629,40 @@ const findToken = async ({
   }
 };
 
+// find issuer tokens
+const getIssuerTokens = async ({
+  search,
+  user_entity_id,
+}: {
+  search?: string;
+  user_entity_id: string;
+}) => {
+  try {
+    const data = await TokenOfferings.getTokenIssuerList({
+      search: search ?? "",
+      user_entity_id,
+    });
+
+    return data?.map((val: any) => {
+      return {
+        id: val?.id,
+        name: val?.name,
+        status: val?.offer_status?.name,
+        logo: val?.logo_asset?.url,
+        isin_number: val?.isin_number,
+        symbol: val?.symbol,
+      };
+    });
+  } catch (error: any) {
+    Logger.error(error.message, error);
+    throw error;
+  }
+};
+
 export default {
   createTokenOfferings,
   updateTokenStatus,
   findToken,
   updateTokenOfferings,
+  getIssuerTokens,
 };
