@@ -86,57 +86,58 @@ model ekyc {
 }
 
 model entities {
-  id                                                       String                   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  entity_type_id                                           Int?
-  legal_name                                               String?
-  lei_number                                               String?
-  legal_address                                            String?
-  zipcode                                                  String?
-  country_id                                               Int?
-  logo_asset_id                                            String?                  @db.Uuid
-  business_sector_id                                       Int?
-  contact_profile_id                                       String?                  @db.Uuid
-  is_active                                                Boolean?
-  created_by                                               String?                  @db.Uuid
-  updated_by                                               String?                  @db.Uuid
-  created_at                                               DateTime?                @default(now()) @db.Timestamp(6)
-  updated_at                                               DateTime?                @default(now()) @db.Timestamp(6)
-  region_id                                                Int?
-  business_documents                                       business_documents[]
-  customer_wallets                                         customer_wallets[]
-  master_business_sectors                                  master_business_sectors? @relation(fields: [business_sector_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  user_profiles_entities_contact_profile_idTouser_profiles user_profiles?           @relation("entities_contact_profile_idTouser_profiles", fields: [contact_profile_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  master_countries                                         master_countries?        @relation(fields: [country_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  user_profiles_entities_created_byTouser_profiles         user_profiles?           @relation("entities_created_byTouser_profiles", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  master_entity_types                                      master_entity_types?     @relation(fields: [entity_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  assets                                                   assets?                  @relation(fields: [logo_asset_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  master_regions                                           master_regions?          @relation(fields: [region_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  user_profiles_entities_updated_byTouser_profiles         user_profiles?           @relation("entities_updated_byTouser_profiles", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  entity_investors                                         entity_investors[]
-  token_offerings                                          token_offerings[]
-  token_orders_token_orders_issuer_entity_idToentities     token_orders[]           @relation("token_orders_issuer_entity_idToentities")
-  token_orders_token_orders_receiver_entity_idToentities   token_orders[]           @relation("token_orders_receiver_entity_idToentities")
+  id                                                           String                   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  entity_type_id                                               Int?
+  legal_name                                                   String?
+  lei_number                                                   String?
+  legal_address                                                String?
+  zipcode                                                      String?
+  country_id                                                   Int?
+  logo_asset_id                                                String?                  @db.Uuid
+  business_sector_id                                           Int?
+  contact_profile_id                                           String?                  @db.Uuid
+  is_active                                                    Boolean?
+  created_by                                                   String?                  @db.Uuid
+  updated_by                                                   String?                  @db.Uuid
+  created_at                                                   DateTime?                @default(now()) @db.Timestamp(6)
+  updated_at                                                   DateTime?                @default(now()) @db.Timestamp(6)
+  region_id                                                    Int?
+  business_documents                                           business_documents[]
+  customer_wallets                                             customer_wallets[]
+  master_business_sectors                                      master_business_sectors? @relation(fields: [business_sector_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_profiles_entities_contact_profile_idTouser_profiles     user_profiles?           @relation("entities_contact_profile_idTouser_profiles", fields: [contact_profile_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_countries                                             master_countries?        @relation(fields: [country_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_profiles_entities_created_byTouser_profiles             user_profiles?           @relation("entities_created_byTouser_profiles", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_entity_types                                          master_entity_types?     @relation(fields: [entity_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  assets                                                       assets?                  @relation(fields: [logo_asset_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_regions                                               master_regions?          @relation(fields: [region_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_profiles_entities_updated_byTouser_profiles             user_profiles?           @relation("entities_updated_byTouser_profiles", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  entity_investors                                             entity_investors[]
+  entity_investors_entity_investors_issuer_entity_idToentities entity_investors[]       @relation("entity_investors_issuer_entity_idToentities")
+  token_offerings                                              token_offerings[]
+  token_orders_token_orders_issuer_entity_idToentities         token_orders[]           @relation("token_orders_issuer_entity_idToentities")
+  token_orders_token_orders_receiver_entity_idToentities       token_orders[]           @relation("token_orders_receiver_entity_idToentities")
 }
 
 model entity_investors {
-  id                                                              String                         @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  investor_type_id                                                Int?
-  investor_entity_id                                              String?                        @db.Uuid
-  individual_investor_id                                          String?                        @db.Uuid
-  status_id                                                       Int?
-  is_active                                                       Boolean?
-  created_by                                                      String?                        @db.Uuid
-  updated_by                                                      String?                        @db.Uuid
-  created_at                                                      DateTime?                      @default(now()) @db.Timestamp(6)
-  updated_at                                                      DateTime?                      @default(now()) @db.Timestamp(6)
-  issuer_profile_id                                               String?                        @db.Uuid
-  user_profiles_entity_investors_created_byTouser_profiles        user_profiles?                 @relation("entity_investors_created_byTouser_profiles", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  individual_investors                                            individual_investors?          @relation(fields: [individual_investor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  entities                                                        entities?                      @relation(fields: [investor_entity_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  master_investor_types                                           master_investor_types?         @relation(fields: [investor_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  user_profiles_entity_investors_issuer_profile_idTouser_profiles user_profiles?                 @relation("entity_investors_issuer_profile_idTouser_profiles", fields: [issuer_profile_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  master_entity_investor_status                                   master_entity_investor_status? @relation(fields: [status_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  user_profiles_entity_investors_updated_byTouser_profiles        user_profiles?                 @relation("entity_investors_updated_byTouser_profiles", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                                                       String                         @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  investor_type_id                                         Int?
+  investor_entity_id                                       String?                        @db.Uuid
+  individual_investor_id                                   String?                        @db.Uuid
+  status_id                                                Int?
+  is_active                                                Boolean?
+  created_by                                               String?                        @db.Uuid
+  updated_by                                               String?                        @db.Uuid
+  created_at                                               DateTime?                      @default(now()) @db.Timestamp(6)
+  updated_at                                               DateTime?                      @default(now()) @db.Timestamp(6)
+  issuer_entity_id                                         String?                        @db.Uuid
+  user_profiles_entity_investors_created_byTouser_profiles user_profiles?                 @relation("entity_investors_created_byTouser_profiles", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  individual_investors                                     individual_investors?          @relation(fields: [individual_investor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  entities                                                 entities?                      @relation(fields: [investor_entity_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_investor_types                                    master_investor_types?         @relation(fields: [investor_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  entities_entity_investors_issuer_entity_idToentities     entities?                      @relation("entity_investors_issuer_entity_idToentities", fields: [issuer_entity_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_entity_investor_status                            master_entity_investor_status? @relation(fields: [status_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_profiles_entity_investors_updated_byTouser_profiles user_profiles?                 @relation("entity_investors_updated_byTouser_profiles", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model individual_investors {
@@ -512,7 +513,6 @@ model user_profiles {
   entities_entities_created_byTouser_profiles                                                   entities[]                          @relation("entities_created_byTouser_profiles")
   entities_entities_updated_byTouser_profiles                                                   entities[]                          @relation("entities_updated_byTouser_profiles")
   entity_investors_entity_investors_created_byTouser_profiles                                   entity_investors[]                  @relation("entity_investors_created_byTouser_profiles")
-  entity_investors_entity_investors_issuer_profile_idTouser_profiles                            entity_investors[]                  @relation("entity_investors_issuer_profile_idTouser_profiles")
   entity_investors_entity_investors_updated_byTouser_profiles                                   entity_investors[]                  @relation("entity_investors_updated_byTouser_profiles")
   individual_investors_individual_investors_contact_profile_idTouser_profiles                   individual_investors[]              @relation("individual_investors_contact_profile_idTouser_profiles")
   individual_investors_individual_investors_created_byTouser_profiles                           individual_investors[]              @relation("individual_investors_created_byTouser_profiles")
