@@ -1,13 +1,17 @@
-import { Logger, errorCustomMessage, successCustomMessage } from "@helpers";
-import { EntityInvestor, TokenOrders } from "@services";
+import {
+  Logger,
+  errorCustomMessage,
+  qualifiedStatus,
+  successCustomMessage,
+} from "@helpers";
+import { TokenOrders } from "@services";
 import { createTokenOrderPayload } from "@types";
 
 const createTokenOrders = async (options: createTokenOrderPayload) => {
   try {
     const {
-      issuer_profile_id,
       type,
-      invesment_type,
+      investment_type,
       issuer_entity_id,
       token_offering_id,
       currency,
@@ -23,24 +27,24 @@ const createTokenOrders = async (options: createTokenOrderPayload) => {
     } = options;
 
     // Check if the Investor Already Qualified for this issuer While invest
-    const count: number = await EntityInvestor.count({
-      issuer_profile_id,
-      investor_entity_id: user_entity_id,
-      status_id: 3, // Approved | Qualified
-    });
+    const qualifiedStaus: boolean =
+      await qualifiedStatus.getInvestorQualifiedStatus({
+        issuer_entity_id,
+        investor_entity_id: user_entity_id,
+      });
 
-    // If the Given Token Name Already Exists
-    if (count <= 0) {
+    // For Invest, If the investor is not qualified for this issuer, Send Error Message
+    if (!qualifiedStaus) {
       return {
-        code: 409,
+        code: 403,
         customMessage: errorCustomMessage.notQualified,
       };
     }
 
     // For Creating Token Orders
-    const createData = TokenOrders.create({
+    const createData = await TokenOrders.create({
       type,
-      invesment_type,
+      investment_type,
       issuer_entity_id,
       receiver_entity_id: user_entity_id,
       token_offering_id,
@@ -94,7 +98,7 @@ const getTokenOrder = async ({
   return {
     success: true,
     message: successCustomMessage.getTokenOrderPaymentDetails,
-    data,
+    resData: data,
   };
 };
 

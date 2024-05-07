@@ -33,13 +33,13 @@ export async function CREATE_SUBSCRIPTION_ORDER(
         customMessage: result?.customMessage,
         data: result?.data,
       });
-    } else if (result && result?.code === 409) {
-      return handleResponse(request, reply, responseType?.CONFLICT, {
+    } else if (result && result?.code === 403) {
+      return handleResponse(request, reply, responseType?.FORBIDDEN, {
         customMessage: result?.customMessage,
       });
     } else {
       return handleResponse(request, reply, responseType?.ACCEPTED, {
-        customMessage: "Token offering Create is in progress.",
+        customMessage: "Token Order Create Subscription is in progress.",
       });
     }
   } catch (error: any) {

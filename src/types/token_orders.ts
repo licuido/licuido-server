@@ -1,7 +1,6 @@
 export interface createTokenOrderPayload {
-  issuer_profile_id: string;
   type: "subscription" | "redemption";
-  invesment_type: "by_token_volume" | "by_investment_value";
+  investment_type: "by_token_volume" | "by_investment_value";
   issuer_entity_id: string;
   token_offering_id: string;
   currency: string;

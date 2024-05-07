@@ -228,18 +228,6 @@ export class user_profile extends Model<user_profileAttributes, user_profileCrea
   hasEntity_investor!: Sequelize.HasManyHasAssociationMixin<entity_investor, entity_investorId>;
   hasEntity_investors!: Sequelize.HasManyHasAssociationsMixin<entity_investor, entity_investorId>;
   countEntity_investors!: Sequelize.HasManyCountAssociationsMixin;
-  // user_profile hasMany entity_investor via issuer_profile_id
-  issuer_profile_entity_investors!: entity_investor[];
-  getIssuer_profile_entity_investors!: Sequelize.HasManyGetAssociationsMixin<entity_investor>;
-  setIssuer_profile_entity_investors!: Sequelize.HasManySetAssociationsMixin<entity_investor, entity_investorId>;
-  addIssuer_profile_entity_investor!: Sequelize.HasManyAddAssociationMixin<entity_investor, entity_investorId>;
-  addIssuer_profile_entity_investors!: Sequelize.HasManyAddAssociationsMixin<entity_investor, entity_investorId>;
-  createIssuer_profile_entity_investor!: Sequelize.HasManyCreateAssociationMixin<entity_investor>;
-  removeIssuer_profile_entity_investor!: Sequelize.HasManyRemoveAssociationMixin<entity_investor, entity_investorId>;
-  removeIssuer_profile_entity_investors!: Sequelize.HasManyRemoveAssociationsMixin<entity_investor, entity_investorId>;
-  hasIssuer_profile_entity_investor!: Sequelize.HasManyHasAssociationMixin<entity_investor, entity_investorId>;
-  hasIssuer_profile_entity_investors!: Sequelize.HasManyHasAssociationsMixin<entity_investor, entity_investorId>;
-  countIssuer_profile_entity_investors!: Sequelize.HasManyCountAssociationsMixin;
   // user_profile hasMany entity_investor via updated_by
   updated_by_entity_investors!: entity_investor[];
   getUpdated_by_entity_investors!: Sequelize.HasManyGetAssociationsMixin<entity_investor>;

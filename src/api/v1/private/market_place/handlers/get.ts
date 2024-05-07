@@ -26,9 +26,9 @@ export async function GET_SUBSCRIPTION_PAYMENT_DETAILS(
     });
     /* ----------- RESPONSE ----------- */
     if (result?.success) {
-      return handleResponse(request, reply, responseType?.CREATED, {
+      return handleResponse(request, reply, responseType?.OK, {
+        data: result?.resData,
         customMessage: result?.message,
-        data: result,
       });
     } else {
       return handleResponse(

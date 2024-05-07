@@ -1,4 +1,4 @@
-import { master_order_status, token_order } from "@models";
+import { master_order_status, token_offering, token_order } from "@models";
 import { createTokenOrders } from "@types";
 
 class TokenOrders {
@@ -47,21 +47,36 @@ class TokenOrders {
         },
         attributes: [
           ["id", "token_order_id"],
+          "type",
+          "investment_type",
           "currency",
           "currency_code",
           "ordered_tokens",
           "price_per_token",
-          "net_invesment_value",
+          "net_investment_value",
           "fee",
           "total_paid",
           "payment_reference",
           "status_id",
+          "token_offering_id",
         ],
         include: [
           {
             model: master_order_status,
             as: "status",
             attributes: ["id", "name"],
+            required: false,
+          },
+          {
+            model: token_offering,
+            as: "token_offering",
+            attributes: [
+              "id",
+              "bank_name",
+              "bank_account_name",
+              "swift_bic_no",
+              "iban_no",
+            ],
             required: false,
           },
         ],

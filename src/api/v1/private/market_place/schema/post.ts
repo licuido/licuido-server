@@ -2,9 +2,8 @@ import { makeResponseSchema } from "@helpers";
 import Schema, { JSONSchema } from "fluent-json-schema";
 
 const createSubscriptionBody = Schema.object()
-  .prop("issuer_profile_id", Schema.string().format("uuid"))
   .prop("type", Schema.string())
-  .prop("invesment_type", Schema.string())
+  .prop("investment_type", Schema.string())
   .prop("issuer_entity_id", Schema.string().format("uuid"))
   .prop("token_offering_id", Schema.string().format("uuid"))
   .prop("currency", Schema.string())
@@ -16,9 +15,8 @@ const createSubscriptionBody = Schema.object()
   .prop("total_paid", Schema.number())
   .prop("payment_reference", Schema.string())
   .required([
-    "issuer_profile_id",
     "type",
-    "invesment_type",
+    "investment_type",
     "issuer_entity_id",
     "token_offering_id",
     "currency",

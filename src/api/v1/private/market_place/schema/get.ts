@@ -3,8 +3,8 @@ import Schema, { JSONSchema } from "fluent-json-schema";
 import { makeResponseSchema } from "@helpers";
 
 const getPaymentResponse: JSONSchema = Schema.object()
-  .prop("data", Schema.object())
   .additionalProperties(true)
+  .prop("meta", Schema.object().prop("message", Schema.string()))
   .valueOf() as JSONSchema;
 
 const getPaymentparams = Schema.object()
