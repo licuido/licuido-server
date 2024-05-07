@@ -253,8 +253,8 @@ export interface updateTokenOfferingSubData {
     };
   }[];
   fund_rating?: {
-    agency: string;
-    rating: string;
+    agency: number;
+    rating: number;
     rating_id?: string;
   }[];
 }
@@ -275,6 +275,6 @@ export interface TeamsPayload {
 }
 
 export interface FundRatingPayload {
-  agency: number;
-  rating: number;
+  agency_id: number;
+  rating_id: number;
 }

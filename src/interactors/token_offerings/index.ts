@@ -101,7 +101,8 @@ const createOfferingSubDatas = async (
       let funRatingPayload = fund_rating?.map((val) => {
         return {
           offer_token_id: token_offering_id,
-          ...val,
+          agency_id: val?.agency,
+          rating_id: val?.rating,
         };
       });
       await TokenOfferFund.create(funRatingPayload);
@@ -449,8 +450,8 @@ const updateOfferingSubDatas = async (
     if (fund_rating && fund_rating?.length > 0) {
       for (const fund of fund_rating) {
         let funRatingPayload: FundRatingPayload = {
-          agency: fund.agency,
-          rating: fund.rating,
+          agency_id: fund.agency,
+          rating_id: fund.rating,
         };
 
         await TokenOfferFund.update({
@@ -507,6 +508,10 @@ const updateTokenOfferings = async (options: updateTokenOfferingPayload) => {
       removed_team_members,
       updated_team_members,
       fund_rating,
+      projected_rate_return,
+      payback_period,
+      payback_period_type,
+      annual_percentage_yield,
     } = options;
 
     // Check if the Token Name Already Exists
@@ -576,6 +581,10 @@ const updateTokenOfferings = async (options: updateTokenOfferingPayload) => {
         banner_asset_id,
         iban_no,
         token_type_id,
+        projected_rate_return,
+        payback_period,
+        payback_period_type,
+        annual_percentage_yield,
       },
       token_id
     );

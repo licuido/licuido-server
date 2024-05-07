@@ -78,6 +78,20 @@ const createTokenBody = Schema.object()
         .required(["member_name", "member_title", "member_picture"])
     )
   )
+  .prop(
+    "fund_rating",
+    Schema.array()
+      .items(
+        Schema.object()
+          .prop("agency", Schema.number())
+          .prop("rating", Schema.number())
+      )
+      .minItems(0)
+  )
+  .prop("projected_rate_return", Schema.string())
+  .prop("annual_percentage_yield", Schema.string())
+  .prop("payback_period", Schema.string())
+  .prop("payback_period_type", Schema.string())
   .valueOf();
 
 const tokenCreateResponse: JSONSchema = Schema.object()
