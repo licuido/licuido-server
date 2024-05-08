@@ -9,3 +9,4 @@ export * from "./token_offerings";
 export * from "./user_entities";
 export * from "./entity_investors";
 export * from "./token_orders";
+export * from "./user_device_tokens";
