@@ -108,7 +108,7 @@ class Entities {
                   {
                     model: asset,
                     as: "asset",
-                    attributes: ["id", "url"],
+                    attributes: ["id", "type", "url"],
                     required: false,
                   },
                 ],
@@ -125,7 +125,7 @@ class Entities {
                   {
                     model: asset,
                     as: "captured_asset",
-                    attributes: ["id", "url"],
+                    attributes: ["id", "type", "url"],
                     required: false,
                   },
                   {
@@ -153,7 +153,7 @@ class Entities {
           {
             model: asset,
             as: "logo_asset",
-            attributes: ["id", "url"],
+            attributes: ["id", "type", "url"],
             required: false,
           },
           {
@@ -174,7 +174,7 @@ class Entities {
               {
                 model: asset,
                 as: "asset",
-                attributes: ["id", "url"],
+                attributes: ["id", "type", "url"],
                 required: false,
               },
             ],
