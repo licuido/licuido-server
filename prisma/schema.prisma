@@ -438,6 +438,10 @@ model token_orders {
   updated_by                                           String?               @db.Uuid
   created_at                                           DateTime?             @default(now()) @db.Timestamp(6)
   updated_at                                           DateTime?             @default(now()) @db.Timestamp(6)
+  bank_name                                            String?
+  bank_account_name                                    String?
+  swift_bic_no                                         String?
+  iban_no                                              String?
   user_profiles_token_orders_created_byTouser_profiles user_profiles?        @relation("token_orders_created_byTouser_profiles", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
   individual_investors                                 individual_investors? @relation(fields: [individual_receiving_investor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   entities_token_orders_issuer_entity_idToentities     entities?             @relation("token_orders_issuer_entity_idToentities", fields: [issuer_entity_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
