@@ -59,6 +59,10 @@ class TokenOrders {
           "payment_reference",
           "status_id",
           "token_offering_id",
+          "bank_name",
+          "bank_account_name",
+          "swift_bic_no",
+          "iban_no",
         ],
         include: [
           {

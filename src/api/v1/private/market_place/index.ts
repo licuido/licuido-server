@@ -9,12 +9,18 @@ const marketPlace: FastifyPluginAsync = async (
 ): Promise<void> => {
   fastify.addHook("preHandler", fastify.authenticate);
 
-  // For Invest [Create Subscription Order]
-  fastify.post(
-    "/fund/invest/subscription/create",
-    { schema: schema.CREATE_SUBSCRIPTION_ORDER },
-    handler.CREATE_SUBSCRIPTION_ORDER
-  );
+  // For Invest [Create Subscription Order & Redemption Order]
+  fastify
+    .post(
+      "/fund/order/subscription/create",
+      { schema: schema.CREATE_SUBSCRIPTION_ORDER },
+      handler.CREATE_SUBSCRIPTION_ORDER
+    )
+    .post(
+      "/fund/order/redemption/create",
+      { schema: schema.CREATE_REDEMPTION_ORDER },
+      handler.CREATE_REDEMPTION_ORDER
+    );
 
   // Get Subscription Payment Details
   fastify.get(

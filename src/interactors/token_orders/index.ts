@@ -5,9 +5,14 @@ import {
   successCustomMessage,
 } from "@helpers";
 import { TokenOrders } from "@services";
-import { createTokenOrderPayload } from "@types";
+import {
+  createTokenRedemptionOrderPayload,
+  createTokenSubscriptionOrderPayload,
+} from "@types";
 
-const createTokenOrders = async (options: createTokenOrderPayload) => {
+const createTokenSubscriptionOrders = async (
+  options: createTokenSubscriptionOrderPayload
+) => {
   try {
     const {
       type,
@@ -102,7 +107,64 @@ const getTokenOrder = async ({
   };
 };
 
+const createTokenRedemptionOrders = async (
+  options: createTokenRedemptionOrderPayload
+) => {
+  try {
+    const {
+      type,
+      investment_type,
+      issuer_entity_id,
+      token_offering_id,
+      currency,
+      currency_code,
+      ordered_tokens,
+      price_per_token,
+      total_paid,
+      user_entity_id,
+      user_profile_id,
+      bank_name,
+      bank_account_name,
+      swift_bic_no,
+      iban_no,
+    } = options;
+
+    // For Creating Token Orders
+    const createData = await TokenOrders.create({
+      type,
+      investment_type,
+      issuer_entity_id,
+      receiver_entity_id: user_entity_id,
+      token_offering_id,
+      currency,
+      currency_code,
+      ordered_tokens,
+      price_per_token,
+      total_paid,
+      created_by: user_profile_id,
+      is_active: true,
+      status_id: 1,
+      bank_name,
+      bank_account_name,
+      swift_bic_no,
+      iban_no,
+    });
+
+    return {
+      code: 200,
+      customMessage: successCustomMessage.tokenOrderCreated,
+      data: {
+        token_order_id: createData,
+      },
+    };
+  } catch (error: any) {
+    Logger.error(error.message, error);
+    throw error;
+  }
+};
+
 export default {
-  createTokenOrders,
+  createTokenSubscriptionOrders,
   getTokenOrder,
+  createTokenRedemptionOrders,
 };
