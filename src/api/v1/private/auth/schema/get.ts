@@ -21,8 +21,9 @@ const getDeviceTokenResponse: JSONSchema = Schema.object()
 
 // GET USER DEVICE TOKEN
 export const GET_USER_DEVICE_TOKEN = {
-  description: "The purpose of this schema is to get User Device Token",
-  tags: ["AUTH"],
+  description:
+    "Defines the structure and constraints for an API endpoint to get a user device token",
+  tags: ["Private Auth"],
   response: makeResponseSchema(getDeviceTokenResponse),
   query: getDeviceTokenparams,
 };

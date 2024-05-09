@@ -99,8 +99,9 @@ const tokenCreateResponse: JSONSchema = Schema.object()
   .valueOf() as JSONSchema;
 
 export const CREATE_TOKEN = {
-  description: "The purpose of this schema is to create token offering",
-  tags: ["TOKEN_OFFERING"],
+  description:
+    "Defines the structure and constraints for an API endpoint to create token offering.",
+  tags: ["Token Offering"],
   body: createTokenBody,
   response: makeResponseSchema(tokenCreateResponse),
 };

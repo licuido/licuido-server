@@ -15,8 +15,8 @@ const upsertInvestorQualifyStatusResponse: JSONSchema = Schema.object()
 
 export const UPSERT_INVESTOR_STATUS = {
   description:
-    "The purpose of this schema is to Investor Qualfication Status By Issuer",
-  tags: ["INVESTOR QUALIFICATION"],
+    "Defines the structure and constraints for an API endpoint to update investor qualfication status by issuer.",
+  tags: ["Investor Qualification"],
   body: upsertInvestorQualifyStatusBody,
   response: makeResponseSchema(upsertInvestorQualifyStatusResponse),
 };

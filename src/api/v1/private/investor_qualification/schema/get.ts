@@ -9,8 +9,8 @@ const getInvestorCountResponse: JSONSchema = Schema.object()
 
 export const GET_INVESTOR_COUNT_FOR_QUALIFY = {
   description:
-    "The purpose of this schema is to get investor count for qualification",
-  tags: ["INVESTOR QUALIFICATION"],
+    "Defines the structure and constraints for an API endpoint to get investor count for qualification.",
+  tags: ["Investor Qualification"],
   response: makeResponseSchema(getInvestorCountResponse),
 };
 
@@ -47,8 +47,8 @@ const getInvestorResponse: JSONSchema = Schema.object()
 
 export const GET_INVESTOR_DATA_FOR_QUALIFY = {
   description:
-    "The purpose of this schema is get all investor data for qualification",
-  tags: ["INVESTOR QUALIFICATION"],
+    "Defines the structure and constraints for an API endpoint to get all investor data for qualification.",
+  tags: ["Investor Qualification"],
   response: makeResponseSchema(getInvestorResponse),
   query: getInvestorParams,
 };
@@ -62,7 +62,7 @@ const getInvestorResponseAsCSV: JSONSchema = Schema.object()
 /* For Export Investor Data into CSV File*/
 export const EXPORT_INVESTOR_DATA_AS_CSV_FILE = {
   description:
-    "The purpose of this schema is get all investor data in CSV File",
-  tags: ["INVESTOR QUALIFICATION"],
+    "Defines the structure and constraints for an API endpoint to get all investor data in CSV file.",
+  tags: ["Investor Qualification"],
   response: makeResponseSchema(getInvestorResponseAsCSV),
 };

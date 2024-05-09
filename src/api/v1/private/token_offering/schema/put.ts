@@ -12,8 +12,9 @@ const updateTokenStatusResponse: JSONSchema = Schema.object()
   .valueOf() as JSONSchema;
 
 export const UPDATE_TOKEN_STATUS = {
-  description: "The purpose of this schema is to update token offering status",
-  tags: ["TOKEN_OFFERING"],
+  description:
+    "Defines the structure and constraints for an API endpoint to update token offering status.",
+  tags: ["Token Offering"],
   body: updateTokenStatusBody,
   response: makeResponseSchema(updateTokenStatusResponse),
 };
@@ -158,8 +159,9 @@ const tokenUpdateResponse: JSONSchema = Schema.object()
   .valueOf() as JSONSchema;
 
 export const UPDATE_TOKEN_OFFERINGS = {
-  description: "The purpose of this schema is to update token offering",
-  tags: ["TOKEN_OFFERING"],
+  description:
+    "Defines the structure and constraints for an API endpoint to update token offering details.",
+  tags: ["Token Offering"],
   body: updateTokenBody,
   response: makeResponseSchema(tokenUpdateResponse),
 };
