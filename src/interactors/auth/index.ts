@@ -103,6 +103,9 @@ export const signIn = async (body: signInPayload) => {
         return {
           success: false,
           message: "You did not completed your account set up",
+          token_data: {
+            user_profile: user?.[0]?.dataValues?.user_profile_id,
+          },
         };
       }
 
