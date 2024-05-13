@@ -24,7 +24,7 @@ class Countries {
       const { rows, count } = await master_country.findAndCountAll({
         where: {
           is_active: true,
-          region_id,
+          region_id: region_id ?? undefined,
           name: { [Op.iLike]: `%${search}%` },
         },
         attributes: ["id", "name", "iso3", "emoji"],
