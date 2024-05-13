@@ -330,6 +330,48 @@ class TokenOfferings {
       throw error;
     }
   }
+
+  /**
+   * this function used for get token offering
+   *
+   * @param {token_id:string} options - The response object containing create data.
+   * @throws {Error} Throws an error if there's an issue extracting parameters from the response.
+   */
+  static async getTokenIssuerList({
+    user_entity_id,
+    search,
+  }: {
+    user_entity_id: string;
+    search: string;
+  }): Promise<any> {
+    try {
+      const token_offer = await token_offering.findAll({
+        where: {
+          issuer_entity_id: user_entity_id,
+          name: { [Op.iLike]: `%${search}%` },
+        },
+        attributes: ["id", "name", "isin_number", "symbol"],
+        include: [
+          {
+            model: asset,
+            as: "logo_asset",
+            attributes: ["id", "url"],
+            required: false,
+          },
+          {
+            model: master_token_offering_status,
+            as: "offer_status",
+            attributes: ["id", "name"],
+            required: false,
+          },
+        ],
+      });
+
+      return JSON.parse(JSON.stringify(token_offer));
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export { TokenOfferings };

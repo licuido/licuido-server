@@ -65,7 +65,7 @@ function queryRequestInfo(request: any): RequestParameters {
       url,
       user_profile_id,
       user_entity_id,
-      entity_id, // Ensure entity_id is of type number
+      entity_id: request?.entity_id, // Ensure entity_id is of type number
       ...rest,
     };
   } catch (error: any) {
