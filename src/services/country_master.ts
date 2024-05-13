@@ -21,12 +21,17 @@ class Countries {
     try {
       const { offset, limit, region_id, search } = options;
 
+      let where: any = {
+        is_active: true,
+        name: { [Op.iLike]: `%${search}%` },
+      };
+
+      if (region_id) {
+        where["region_id"] = region_id;
+      }
+
       const { rows, count } = await master_country.findAndCountAll({
-        where: {
-          is_active: true,
-          region_id: region_id ?? undefined,
-          name: { [Op.iLike]: `%${search}%` },
-        },
+        where,
         attributes: ["id", "name", "iso3", "emoji"],
         order: [["id", "ASC"]],
         offset,
