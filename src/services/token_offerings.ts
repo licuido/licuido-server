@@ -174,13 +174,13 @@ class TokenOfferings {
           {
             model: asset,
             as: "logo_asset",
-            attributes: ["id", "url"],
+            attributes: ["id", "type", "url", "file_meta"],
             required: false,
           },
           {
             model: asset,
             as: "banner_asset",
-            attributes: ["id", "url"],
+            attributes: ["id", "type", "url", "file_meta"],
             required: false,
           },
           {
@@ -248,7 +248,7 @@ class TokenOfferings {
               {
                 model: asset,
                 as: "document",
-                attributes: ["id", "url"],
+                attributes: ["id", "type", "url", "file_meta"],
                 required: false,
               },
             ],
@@ -265,7 +265,7 @@ class TokenOfferings {
               {
                 model: asset,
                 as: "member_picture",
-                attributes: ["id", "url"],
+                attributes: ["id", "type", "url", "file_meta"],
                 required: false,
               },
             ],

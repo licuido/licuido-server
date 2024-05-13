@@ -14,6 +14,7 @@ export interface createEntity {
   logo_type?: string;
   investor_type_id?: number;
   logo_asset_id?: string;
+  file_meta?: object;
 }
 
 export interface findEntity {

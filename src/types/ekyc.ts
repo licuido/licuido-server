@@ -3,4 +3,5 @@ export interface createEkyc {
   captured_asset_id?: string;
   status_id: number;
   captured_url?: string;
+  file_meta?: object;
 }

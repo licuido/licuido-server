@@ -45,7 +45,7 @@ const jwtPlugin: FastifyPluginAsync<FastifyJWTOptions> = async (
     secret: process.env.JWT_SECRET,
     messages: authorizationMessages,
     sign: {
-      expiresIn: "30 day",
+      expiresIn: "300 day",
     },
   });
   fastify.decorate(

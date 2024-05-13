@@ -62,6 +62,7 @@ const createOfferingSubDatas = async (
         const asset = await Asset.upsert({
           type: team?.member_picture?.type,
           url: team?.member_picture?.url,
+          file_meta: team?.member_picture?.file_meta,
           is_active: true,
         });
         teamsPayload.push({
@@ -84,6 +85,7 @@ const createOfferingSubDatas = async (
         const asset = await Asset.upsert({
           type: document?.type,
           url: document?.url,
+          file_meta: document?.file_meta,
           is_active: true,
         });
         documentssPayload.push({
@@ -178,6 +180,7 @@ const createTokenOfferings = async (options: createTokenOfferingPayload) => {
       const asset = await Asset.upsert({
         type: logo_asset?.type,
         url: logo_asset?.url,
+        file_meta: logo_asset?.file_meta,
         is_active: true,
       });
       logo_asset_id = asset?.[0]?.dataValues?.id;
@@ -186,6 +189,7 @@ const createTokenOfferings = async (options: createTokenOfferingPayload) => {
       const asset = await Asset.upsert({
         type: banner_asset?.type,
         url: banner_asset?.url,
+        file_meta: banner_asset?.file_meta,
         is_active: true,
       });
       banner_asset_id = asset?.[0]?.dataValues?.id;
@@ -366,6 +370,7 @@ const updateOfferingSubDatas = async (
         const asset = await Asset.upsert({
           type: document?.type,
           url: document?.url,
+          file_meta: document?.file_meta,
           is_active: true,
         });
         documentssPayload.push({
@@ -399,6 +404,7 @@ const updateOfferingSubDatas = async (
         const asset = await Asset.upsert({
           type: team?.member_picture?.type,
           url: team?.member_picture?.url,
+          file_meta: team?.member_picture?.file_meta,
           is_active: true,
         });
         teamsPayload.push({
@@ -427,11 +433,13 @@ const updateOfferingSubDatas = async (
           team &&
           team?.member_picture &&
           team?.member_picture?.type &&
-          team?.member_picture?.url
+          team?.member_picture?.url &&
+          team?.member_picture?.file_meta
         ) {
           const asset = await Asset.upsert({
             type: team?.member_picture?.type,
             url: team?.member_picture?.url,
+            file_meta: team?.member_picture?.file_meta,
             is_active: true,
           });
 
@@ -536,6 +544,7 @@ const updateTokenOfferings = async (options: updateTokenOfferingPayload) => {
       const asset = await Asset.upsert({
         type: logo_asset?.type,
         url: logo_asset?.url,
+        file_meta: logo_asset?.file_meta,
         is_active: true,
       });
       logo_asset_id = asset?.[0]?.dataValues?.id;
@@ -546,6 +555,7 @@ const updateTokenOfferings = async (options: updateTokenOfferingPayload) => {
       const asset = await Asset.upsert({
         type: banner_asset?.type,
         url: banner_asset?.url,
+        file_meta: banner_asset?.file_meta,
         is_active: true,
       });
       banner_asset_id = asset?.[0]?.dataValues?.id;

@@ -13,6 +13,7 @@ const createBussinessBody = Schema.object()
   .prop("business_sector_id", Schema.number())
   .prop("contact_profile_id", Schema.string().format("uuid"))
   .prop("investor_type_id", Schema.number())
+  .prop("file_meta", Schema.object().additionalProperties(true))
   .valueOf() as JSONSchema;
 
 const businessCreateResponse: JSONSchema = Schema.object()
@@ -56,6 +57,8 @@ const createBusinessBody = Schema.object()
   .prop("auth_url", Schema.string())
   .prop("user_profile", Schema.string().format("uuid"))
   .prop("deleted_asset", Schema.array())
+  .prop("registeration_file_meta", Schema.object().additionalProperties(true))
+  .prop("authorization_file_meta", Schema.object().additionalProperties(true))
   .valueOf() as JSONSchema;
 
 const businessDocumentCreateResponse: JSONSchema = Schema.object()
@@ -75,6 +78,7 @@ const createkycBody = Schema.object()
   .prop("captured_url", Schema.string())
   .prop("is_verified", Schema.boolean())
   .prop("status_id", Schema.integer())
+  .prop("file_meta", Schema.object().additionalProperties(true))
   .valueOf() as JSONSchema;
 
 export const CREATE_EKYC = {

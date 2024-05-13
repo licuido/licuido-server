@@ -4,4 +4,5 @@ export interface createAsset {
   is_active?: boolean;
   created_by?: string;
   id?: string;
+  file_meta?: object;
 }

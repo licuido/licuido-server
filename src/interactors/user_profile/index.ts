@@ -18,6 +18,7 @@ const createPersonInfoDetails = async (options: createPersonInfo) => {
           insertData.push({
             type: item?.type,
             url: item?.url,
+            file_meta: item?.file_meta,
             is_active: true,
             created_by: id,
           });

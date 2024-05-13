@@ -31,8 +31,8 @@ const VerifyEmailOTPBody = Schema.object()
 
 // Reset Body Schema
 const ResetBody = Schema.object()
-  .prop("new_password", Schema.string())
   .additionalProperties(true)
+  .prop("new_password", Schema.string())
   .valueOf() as JSONSchema;
 
 // Reset Body Schema
