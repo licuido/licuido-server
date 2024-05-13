@@ -30,8 +30,8 @@ const customParams = Schema.object()
   .prop("search", Schema.string());
 
 export const GET_ALL_INVESTOR_TYPES = {
-  description: "The purpose of this schema is get all Investor Types",
-  tags: ["MASTER_INVESTOR_TYPES"],
+  description: "Retrieves all investor types.",
+  tags: ["Master Investor Types"],
   response: makeResponseSchema(countryResponse),
   query: customParams,
 };

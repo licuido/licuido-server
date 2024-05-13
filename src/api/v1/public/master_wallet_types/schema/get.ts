@@ -24,14 +24,14 @@ const masterWalletResponse: JSONSchema = Schema.object()
   .prop("meta", Schema.object().prop("message", Schema.string()))
   .valueOf() as JSONSchema;
 
-
-  const customParams = Schema.object().prop("offset", Schema.number()).prop("limit", Schema.number()).prop("search", Schema.string());
-
+const customParams = Schema.object()
+  .prop("offset", Schema.number())
+  .prop("limit", Schema.number())
+  .prop("search", Schema.string());
 
 export const GET_ALL_WALLETMASTER = {
-  description:
-    "The purpose of this schema is get all countries with that reigon id",
-  tags: ["MASTER_POSITION"],
+  description: "Retrieves all wallet types.",
+  tags: ["Master Wallet Types"],
   response: makeResponseSchema(masterWalletResponse),
-  query:customParams
+  query: customParams,
 };

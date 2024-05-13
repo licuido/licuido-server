@@ -20,11 +20,12 @@ export interface assetAttributes {
   updated_by?: string;
   created_at?: Date;
   updated_at?: Date;
+  file_meta?: object;
 }
 
 export type assetPk = "id";
 export type assetId = asset[assetPk];
-export type assetOptionalAttributes = "id" | "type" | "url" | "order" | "is_active" | "created_by" | "updated_by" | "created_at" | "updated_at";
+export type assetOptionalAttributes = "id" | "type" | "url" | "order" | "is_active" | "created_by" | "updated_by" | "created_at" | "updated_at" | "file_meta";
 export type assetCreationAttributes = Optional<assetAttributes, assetOptionalAttributes>;
 
 export class asset extends Model<assetAttributes, assetCreationAttributes> implements assetAttributes {
@@ -37,6 +38,7 @@ export class asset extends Model<assetAttributes, assetCreationAttributes> imple
   updated_by?: string;
   created_at?: Date;
   updated_at?: Date;
+  file_meta?: object;
 
   // asset hasMany business_document via asset_id
   business_documents!: business_document[];
@@ -196,6 +198,10 @@ export class asset extends Model<assetAttributes, assetCreationAttributes> imple
         model: 'user_profiles',
         key: 'id'
       }
+    },
+    file_meta: {
+      type: DataTypes.JSONB,
+      allowNull: true
     }
   }, {
     sequelize,

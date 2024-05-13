@@ -30,8 +30,8 @@ const customParams = Schema.object()
   .prop("search", Schema.string());
 
 export const GET_ALL_TOKEN_TYPES = {
-  description: "The purpose of this schema is get all master Token Types",
-  tags: ["MASTER_TOKEN_TYPES"],
+  description: "Retireves all token types.",
+  tags: ["Master Token Types"],
   response: makeResponseSchema(countryResponse),
   query: customParams,
 };

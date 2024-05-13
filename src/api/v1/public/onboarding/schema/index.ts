@@ -4,10 +4,10 @@ import {
   CREATE_BUSINESS_DOCUMENT,
   CREATE_EKYC,
   CREATE_CUSTOMER_WALLET,
-  SET_ACCOUNT
+  SET_ACCOUNT,
 } from "./post";
 
-import {GET_ENTITY} from "./get";
+import { GET_ENTITY } from "./get";
 export default {
   CREATE_BUSSINESS_DETAILS,
   CREATE_PERSON_INFO_DETAILS,
@@ -15,5 +15,5 @@ export default {
   CREATE_EKYC,
   CREATE_CUSTOMER_WALLET,
   SET_ACCOUNT,
-  GET_ENTITY
+  GET_ENTITY,
 };

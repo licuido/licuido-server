@@ -13,8 +13,8 @@ const getPaymentparams = Schema.object()
 
 export const GET_SUBSCRIPTION_PAYMENT_DETAILS = {
   description:
-    "The purpose of this schema is get token order subcription payment details",
-  tags: ["MARKET PLACE INVEST"],
+    "Defines the structure and constraints for an API endpoint to get token order payment details.",
+  tags: ["Token Order"],
   response: makeResponseSchema(getPaymentResponse),
   query: getPaymentparams,
 };

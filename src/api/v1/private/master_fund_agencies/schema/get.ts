@@ -30,8 +30,8 @@ const customParams = Schema.object()
   .prop("search", Schema.string());
 
 export const GET_ALL_FUND_AGENCY = {
-  description: "The purpose of this schema is get all master fund agencies",
-  tags: ["GET_ALL_FUND_AGENCY"],
+  description: "Retrieves all fund agencies.",
+  tags: ["Master Fund Agency"],
   response: makeResponseSchema(countryResponse),
   query: customParams,
 };

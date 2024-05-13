@@ -13,7 +13,8 @@ const createTokenBody = Schema.object()
     Schema.object()
       .prop("url", Schema.string().format("uri"))
       .prop("type", Schema.string())
-      .required(["url", "type"])
+      .prop("file_meta", Schema.object().additionalProperties(true))
+      .required(["url", "type", "file_meta"])
   )
   .prop("base_currency", Schema.string())
   .prop("base_currency_code", Schema.string())
@@ -22,7 +23,8 @@ const createTokenBody = Schema.object()
     Schema.object()
       .prop("url", Schema.string().format("uri"))
       .prop("type", Schema.string())
-      .required(["url", "type"])
+      .prop("file_meta", Schema.object().additionalProperties(true))
+      .required(["url", "type", "file_meta"])
   )
   .prop("blockchain_network", Schema.number())
   .prop("swift_bic_no", Schema.string())
@@ -59,7 +61,8 @@ const createTokenBody = Schema.object()
       Schema.object()
         .prop("url", Schema.string().format("uri"))
         .prop("type", Schema.string())
-        .required(["url", "type"])
+        .prop("file_meta", Schema.object().additionalProperties(true))
+        .required(["url", "type", "file_meta"])
     )
   )
   .prop(
@@ -73,7 +76,8 @@ const createTokenBody = Schema.object()
           Schema.object()
             .prop("url", Schema.string().format("uri"))
             .prop("type", Schema.string())
-            .required(["url", "type"])
+            .prop("file_meta", Schema.object().additionalProperties(true))
+            .required(["url", "type", "file_meta"])
         )
         .required(["member_name", "member_title", "member_picture"])
     )
@@ -99,8 +103,9 @@ const tokenCreateResponse: JSONSchema = Schema.object()
   .valueOf() as JSONSchema;
 
 export const CREATE_TOKEN = {
-  description: "The purpose of this schema is to create token offering",
-  tags: ["TOKEN_OFFERING"],
+  description:
+    "Defines the structure and constraints for an API endpoint to create token offering.",
+  tags: ["Token Offering"],
   body: createTokenBody,
   response: makeResponseSchema(tokenCreateResponse),
 };
