@@ -13,6 +13,7 @@ const createBussinessBody = Schema.object()
   .prop("business_sector_id", Schema.number())
   .prop("contact_profile_id", Schema.string().format("uuid"))
   .prop("investor_type_id", Schema.number())
+  .prop("file_meta", Schema.object().additionalProperties(true))
   .valueOf() as JSONSchema;
 
 const businessCreateResponse: JSONSchema = Schema.object()
@@ -21,8 +22,8 @@ const businessCreateResponse: JSONSchema = Schema.object()
 
 export const CREATE_BUSSINESS_DETAILS = {
   description:
-    "The purpose of this schema is to create and update bussiness detail of user",
-  tags: ["ONBOARDING"],
+    "Defines the structure and constraints for an API endpoint to create and update bussiness details of a user",
+  tags: ["Onboarding"],
   body: createBussinessBody,
   response: makeResponseSchema(businessCreateResponse),
 };
@@ -44,8 +45,8 @@ const personInfoCreateResponse: JSONSchema = Schema.object()
 
 export const CREATE_PERSON_INFO_DETAILS = {
   description:
-    "The purpose of this schema is to create and update person info detail of user",
-  tags: ["ONBOARDING"],
+    "Defines the structure and constraints for an API endpoint to create and update person information details of a user.",
+  tags: ["Onboarding"],
   body: createPersonBody,
   response: makeResponseSchema(personInfoCreateResponse),
 };
@@ -56,6 +57,8 @@ const createBusinessBody = Schema.object()
   .prop("auth_url", Schema.string())
   .prop("user_profile", Schema.string().format("uuid"))
   .prop("deleted_asset", Schema.array())
+  .prop("registeration_file_meta", Schema.object().additionalProperties(true))
+  .prop("authorization_file_meta", Schema.object().additionalProperties(true))
   .valueOf() as JSONSchema;
 
 const businessDocumentCreateResponse: JSONSchema = Schema.object()
@@ -64,8 +67,8 @@ const businessDocumentCreateResponse: JSONSchema = Schema.object()
 
 export const CREATE_BUSINESS_DOCUMENT = {
   description:
-    "The purpose of this schema is to create and update bussiness Document of user",
-  tags: ["ONBOARDING"],
+    "Defines the structure and constraints for an API endpoint to create and update business documents of a user.",
+  tags: ["Onboarding"],
   body: createBusinessBody,
   response: makeResponseSchema(businessDocumentCreateResponse),
 };
@@ -75,11 +78,13 @@ const createkycBody = Schema.object()
   .prop("captured_url", Schema.string())
   .prop("is_verified", Schema.boolean())
   .prop("status_id", Schema.integer())
+  .prop("file_meta", Schema.object().additionalProperties(true))
   .valueOf() as JSONSchema;
 
 export const CREATE_EKYC = {
-  description: "The purpose of this schema is to create ekyc verification",
-  tags: ["ONBOARDING"],
+  description:
+    "Defines the structure and constraints for an API endpoint to create eKYC verification.",
+  tags: ["Onboarding"],
   body: createkycBody,
   response: makeResponseSchema(businessDocumentCreateResponse),
 };
@@ -93,8 +98,9 @@ const createWalletBody = Schema.object()
   .valueOf() as JSONSchema;
 
 export const CREATE_CUSTOMER_WALLET = {
-  description: "The purpose of this schema is to create ekyc verification",
-  tags: ["ONBOARDING"],
+  description:
+    "Defines the structure and constraints for an API endpoint is to create customer wallet.",
+  tags: ["Onboarding"],
   body: createWalletBody,
   response: makeResponseSchema(businessDocumentCreateResponse),
 };
@@ -104,8 +110,9 @@ const setAccountBody = Schema.object()
   .valueOf() as JSONSchema;
 
 export const SET_ACCOUNT = {
-  description: "The purpose of this schema is set final step of setup",
-  tags: ["ONBOARDING"],
+  description:
+    "Defines the structure and constraints for an API endpoint is to set the final step of onboarding setup.",
+  tags: ["Onboarding"],
   body: setAccountBody,
   response: makeResponseSchema(businessDocumentCreateResponse),
 };

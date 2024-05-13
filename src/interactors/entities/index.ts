@@ -13,6 +13,7 @@ const createBussinessDetails = async (options: createEntity) => {
       logo,
       logo_type,
       investor_type_id,
+      file_meta,
     } = options;
 
     if (entity_type_id === entityTypeMaster?.issuer) {
@@ -44,6 +45,7 @@ const createBussinessDetails = async (options: createEntity) => {
         type: logo_type,
         url: logo,
         is_active: true,
+        file_meta: file_meta,
       });
       asset_id = asset?.[0]?.dataValues?.id;
     }

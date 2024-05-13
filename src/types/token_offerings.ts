@@ -79,10 +79,12 @@ export interface createTokenOfferingPayload {
   logo_asset: {
     url: string;
     type: string;
+    file_meta?: object;
   };
   banner_asset: {
     url: string;
     type: string;
+    file_meta?: object;
   };
   offering_price: number;
   jurisdiction: number;
@@ -110,6 +112,7 @@ export interface createTokenOfferingPayload {
   documents?: {
     url: string;
     type: string;
+    file_meta?: object;
   }[];
   teams: {
     member_name: string;
@@ -117,6 +120,7 @@ export interface createTokenOfferingPayload {
     member_picture: {
       url: string;
       type: string;
+      file_meta?: object;
     };
   }[];
   fund_rating?: {
@@ -140,6 +144,7 @@ export interface createTokenOfferingSubData {
   documents?: {
     url: string;
     type: string;
+    file_meta?: object;
   }[];
   teams: {
     member_name: string;
@@ -147,6 +152,7 @@ export interface createTokenOfferingSubData {
     member_picture: {
       url: string;
       type: string;
+      file_meta?: object;
     };
   }[];
   fund_rating?: {
@@ -179,6 +185,7 @@ export interface updateTokenOfferingPayload
   added_documents: {
     url: string;
     type: string;
+    file_meta?: object;
   }[];
   removed_documents: string[];
   new_team_members: {
@@ -187,6 +194,7 @@ export interface updateTokenOfferingPayload
     member_picture: {
       url: string;
       type: string;
+      file_meta?: object;
     };
   }[];
   removed_team_members: string[];
@@ -201,6 +209,7 @@ export interface updateTokenOfferingPayload
     member_picture: {
       url: string;
       type: string;
+      file_meta?: object;
     };
   }[];
   projected_rate_return: string;
@@ -232,6 +241,7 @@ export interface updateTokenOfferingSubData {
   added_documents?: {
     url: string;
     type: string;
+    file_meta?: object;
   }[];
   removed_documents?: string[];
   new_team_members?: {
@@ -240,6 +250,7 @@ export interface updateTokenOfferingSubData {
     member_picture: {
       url: string;
       type: string;
+      file_meta?: object;
     };
   }[];
   removed_team_members?: string[];
@@ -250,6 +261,7 @@ export interface updateTokenOfferingSubData {
     member_picture: {
       url: string;
       type: string;
+      file_meta?: object;
     };
   }[];
   fund_rating?: {

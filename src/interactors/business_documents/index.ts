@@ -13,6 +13,8 @@ const createBussinessDocuments = async (
       auth_url,
       deleted_asset,
       user_profile,
+      registeration_file_meta,
+      authorization_file_meta,
     } = options;
 
     let documentPayload = [];
@@ -21,8 +23,9 @@ const createBussinessDocuments = async (
       documentPayload.push({
         url: business_registeration_url,
         type: "pdf",
-        asset_type: "Business registraction",
+        asset_type: "Business registeration",
         is_active: true,
+        file_meta: registeration_file_meta,
       });
     }
     if (auth_url) {
@@ -31,6 +34,7 @@ const createBussinessDocuments = async (
         type: "pdf",
         asset_type: "Letter of authorization",
         is_active: true,
+        file_meta: authorization_file_meta,
       });
     }
 
@@ -41,6 +45,7 @@ const createBussinessDocuments = async (
             is_active: true,
             url: document?.url,
             type: document?.type,
+            file_meta: document?.file_meta,
             created_by: user_profile,
           },
         ]);
@@ -56,7 +61,7 @@ const createBussinessDocuments = async (
     }
 
     if (deleted_asset && deleted_asset?.length > 0) {
-        await BusinessDocument.delete(deleted_asset);
+      await BusinessDocument.delete(deleted_asset);
     }
 
     return {

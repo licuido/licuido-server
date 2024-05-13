@@ -35,16 +35,18 @@ const logOutResponse: JSONSchema = Schema.object()
 
 // ADD USER DEVICE TOKEN
 export const CREATE_USER_DEVICE_TOKEN = {
-  description: "The purpose of this schema is to create user device token",
-  tags: ["AUTH"],
+  description:
+    "Defines the structure and constraints for an API endpoint to create a user device token.",
+  tags: ["Private Auth"],
   body: createUserDeviceTokenBody,
   response: makeResponseSchema(createUserDeviceTokenResponse),
 };
 
 // LOG OUT
 export const LOG_OUT = {
-  description: "The purpose of this schema is to logout user",
-  tags: ["AUTH"],
+  description:
+    "Defines the structure and constraints for an API endpoint to log out a user.",
+  tags: ["Private Auth"],
   body: logOutBody,
   response: makeResponseSchema(logOutResponse),
 };

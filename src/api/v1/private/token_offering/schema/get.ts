@@ -3,16 +3,16 @@ import Schema, { JSONSchema } from "fluent-json-schema";
 import { makeResponseSchema } from "@helpers";
 
 const getResponse: JSONSchema = Schema.object()
-  .prop("data", Schema.object()).additionalProperties(true)
+  .prop("data", Schema.object())
+  .additionalProperties(true)
   .valueOf() as JSONSchema;
 
-  const customParams = Schema.object().prop("token_id", Schema.string())
-
+const customParams = Schema.object().prop("token_id", Schema.string());
 
 export const GET_TOKEN = {
   description:
-    "The purpose of this schema is get token detail",
-  tags: ["TOKEN_OFFERING"],
+    "Defines the structure and constraints for an API endpoint to get token offering detail",
+  tags: ["Token Offering"],
   response: makeResponseSchema(getResponse),
-  query:customParams
+  query: customParams,
 };

@@ -5,7 +5,7 @@ import { createEkyc } from "@types";
 // create and update business details
 const createKyc = async (options: createEkyc) => {
   try {
-    const { profile_id, captured_url, status_id } = options;
+    const { profile_id, captured_url, status_id, file_meta } = options;
 
     const count = await Ekyc.findAlreadyKycProcees(profile_id);
     if (count !== 0) {
@@ -29,6 +29,7 @@ const createKyc = async (options: createEkyc) => {
         type: "jpeg",
         url: captured_url,
         is_active: true,
+        file_meta,
       });
       asset_id = asset?.[0]?.dataValues?.id;
 

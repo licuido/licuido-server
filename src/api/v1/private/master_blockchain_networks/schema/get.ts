@@ -30,9 +30,8 @@ const customParams = Schema.object()
   .prop("search", Schema.string());
 
 export const GET_ALL_BLOCK_CHAIN_NETWORKS = {
-  description:
-    "The purpose of this schema is get all master block chain networks",
-  tags: ["MASTER_BLOCKCHAIN_NETWORK"],
+  description: "Retrieves all block chain networks.",
+  tags: ["Master Blockchain Networks"],
   response: makeResponseSchema(countryResponse),
   query: customParams,
 };

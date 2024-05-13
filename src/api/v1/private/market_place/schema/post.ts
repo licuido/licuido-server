@@ -36,8 +36,9 @@ const subscriptionCreateResponse: JSONSchema = Schema.object()
   .valueOf() as JSONSchema;
 
 export const CREATE_SUBSCRIPTION_ORDER = {
-  description: "The purpose of this schema is to create subscription order",
-  tags: ["MARKET PLACE INVEST"],
+  description:
+    "Defines the structure and constraints for an API endpoint to create subscription order.",
+  tags: ["Token Order"],
   body: createSubscriptionBody,
   response: makeResponseSchema(subscriptionCreateResponse),
 };
@@ -79,8 +80,9 @@ const redemptionCreateResponse: JSONSchema = Schema.object()
   .valueOf() as JSONSchema;
 
 export const CREATE_REDEMPTION_ORDER = {
-  description: "The purpose of this schema is to create Redemption order",
-  tags: ["PORTFOLIO"],
+  description:
+    "Defines the structure and constraints for an API endpoint to create redemption order.",
+  tags: ["Token Order"],
   body: createRedemptionBody,
   response: makeResponseSchema(redemptionCreateResponse),
 };
