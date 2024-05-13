@@ -12,6 +12,8 @@ interface RequestParameters {
   url: string;
   user_profile_id?: string;
   user_entity_id?: string;
+  from_date?: string;
+  to_date?: string;
 }
 
 /**
@@ -24,7 +26,16 @@ interface RequestParameters {
 function queryRequestInfo(request: any): RequestParameters {
   try {
     const {
-      query: { id, offset = 0, limit = 10, search, entity_id, ...rest },
+      query: {
+        id,
+        offset = 0,
+        limit = 10,
+        search,
+        from_date,
+        to_date,
+        entity_id,
+        ...rest
+      },
       url,
       user_profile_id,
       user_entity_id,
@@ -35,6 +46,8 @@ function queryRequestInfo(request: any): RequestParameters {
         limit: string;
         search: string;
         entity_id: number; // Include entity_id only once here
+        from_date?: string;
+        to_date?: string;
         rest: { [key: string]: string | number };
       };
       url: string;
@@ -47,6 +60,8 @@ function queryRequestInfo(request: any): RequestParameters {
       offset: Number(offset),
       limit: Number(limit),
       search,
+      from_date,
+      to_date,
       url,
       user_profile_id,
       user_entity_id,

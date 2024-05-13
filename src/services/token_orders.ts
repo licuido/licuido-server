@@ -1,5 +1,7 @@
 import { master_order_status, token_offering, token_order } from "@models";
+import queries from "@queries";
 import { createTokenOrders } from "@types";
+import { sequelize } from "@utils";
 
 class TokenOrders {
   /**
@@ -87,6 +89,51 @@ class TokenOrders {
       });
 
       return JSON.parse(JSON.stringify(token_offer));
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async getTokenOrderGraph({
+    user_entity_id,
+    offset,
+    limit,
+    from_date,
+    to_date,
+  }: {
+    user_entity_id?: string;
+    offset: number;
+    limit: number;
+    from_date?: string;
+    to_date?: string;
+  }): Promise<any> {
+    try {
+      // For Data
+      const [result]: any[] = await sequelize.query(
+        queries.getAllTokenOrderGraphQuery(
+          offset,
+          limit,
+          user_entity_id,
+          from_date,
+          to_date
+        )
+      );
+
+      // For Count
+      const [dataCount]: any[] = await sequelize.query(
+        queries.getAllTokenOrderGraphQuery(
+          null,
+          null,
+          user_entity_id,
+          from_date,
+          to_date
+        )
+      );
+
+      return {
+        rows: result,
+        count: dataCount?.length ?? 0,
+      };
     } catch (error) {
       throw error;
     }
