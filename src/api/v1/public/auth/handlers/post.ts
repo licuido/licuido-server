@@ -210,9 +210,9 @@ export async function FORGET_PASSWORD(
 
       const res = await sendAlert({
         reference_id: "reset_password",
-        email_subject: ["test"],
+        email_subject: ["Reset Your Licuido Account Password"],
         email_body: [
-          `Hi ${user?.[0]?.dataValues?.user_profile?.dataValues?.name} proceed to login by the below link  ${entityUrl?.[entity_id]}.`,
+          `Hi ${user?.[0]?.dataValues?.user_profile?.dataValues?.name} proceed to login by the below link  ${entityUrl?.[entity_id]}/reset_password?=${data?.data?.token}.`,
         ],
         to_emails: [email_id],
       });
