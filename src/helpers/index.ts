@@ -13,6 +13,7 @@ import excel from "./excel";
 export * from "./s3";
 import streamToBuffer from "./streamToBuffer";
 import qualifiedStatus from "./investorQualifiedStatus";
+import currencyConvert from "./currencyConversion";
 
 export {
   dateTime,
@@ -33,4 +34,5 @@ export {
   excel,
   streamToBuffer,
   qualifiedStatus,
+  currencyConvert,
 };
