@@ -23,6 +23,10 @@ const onBoarding: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
       "/update_status",
       { schema: schema.UPDATE_TOKEN_STATUS },
       handler.UPDATE_TOKEN_STATUS
+    ).put(
+      "/update_valuation",
+      { schema: schema.UPDATE_TOKEN_VALUATION },
+      handler.UPDATE_TOKEN_VALUATION
     );
 
   fastify

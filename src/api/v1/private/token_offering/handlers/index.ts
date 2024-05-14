@@ -1,5 +1,5 @@
 import { CREATE_TOKEN_OFFERINGS } from "./post";
-import { UPDATE_TOKEN_STATUS, UPDATE_TOKEN_OFFERINGS } from "./put";
+import { UPDATE_TOKEN_STATUS, UPDATE_TOKEN_OFFERINGS,UPDATE_TOKEN_VALUATION } from "./put";
 import { FIND_TOKEN, GET_ISSUER_TOKENS } from "./get";
 
 export default {
@@ -8,4 +8,5 @@ export default {
   FIND_TOKEN,
   UPDATE_TOKEN_OFFERINGS,
   GET_ISSUER_TOKENS,
+  UPDATE_TOKEN_VALUATION
 };

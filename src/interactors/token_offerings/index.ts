@@ -7,6 +7,7 @@ import {
   TokenOfferingsTeams,
   TokenOfferingsDocuments,
   TokenOfferFund,
+  TokenValuations,
 } from "@services";
 import {
   FundRatingPayload,
@@ -15,6 +16,7 @@ import {
   createTokenOfferingSubData,
   updateTokenOfferingPayload,
   updateTokenOfferingSubData,
+  createTokenValuation,
 } from "@types";
 
 const createOfferingSubDatas = async (
@@ -697,10 +699,51 @@ const getIssuerTokens = async ({
   }
 };
 
+//update token valuation
+
+const updateTokenValuation = async (option: createTokenValuation) => {
+  try {
+    const {
+      token_id,
+      user_entity_id,
+      user_profile_id,
+      offer_price,
+      bid_price,
+    } = option;
+
+    const count = await TokenOfferings.checkTokenHaveAccess({
+      token_id,
+      user_entity_id: user_entity_id ?? "",
+    });
+
+    if (count === 0) {
+      return {
+        success: false,
+        message: `You Don't Have a access for this token or please verify this token`,
+      };
+    }
+
+    await TokenValuations.create({
+      ...option,
+      created_by: user_profile_id,
+      valuation_price: Number(offer_price - (offer_price - bid_price) / 2),
+    });
+
+    return {
+      success: true,
+      message: "Token Valuation Updated Successfully",
+    };
+  } catch (error: any) {
+    Logger.error(error.message, error);
+    throw error;
+  }
+};
+
 export default {
   createTokenOfferings,
   updateTokenStatus,
   findToken,
   updateTokenOfferings,
   getIssuerTokens,
+  updateTokenValuation,
 };

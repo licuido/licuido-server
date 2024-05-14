@@ -170,3 +170,24 @@ export const UPDATE_TOKEN_OFFERINGS = {
   body: updateTokenBody,
   response: makeResponseSchema(tokenUpdateResponse),
 };
+
+/* For Update Token Valuation */
+const updateTokenValuationBody = Schema.object()
+  .prop("token_id", Schema.string())
+  .prop("offer_price", Schema.string())
+  .prop("bid_price", Schema.string())
+  .prop("start_date", Schema.string())
+  .prop("start_time", Schema.string())
+  .valueOf();
+
+const updateTokenValuationResponse: JSONSchema = Schema.object()
+  .prop("data", Schema.object().prop("message", Schema.string()))
+  .valueOf() as JSONSchema;
+
+export const UPDATE_TOKEN_VALUATION = {
+  description:
+    "Defines the structure and constraints for an API endpoint to update token valuation.",
+  tags: ["Token Offering"],
+  body: updateTokenValuationBody,
+  response: makeResponseSchema(updateTokenValuationResponse),
+};

@@ -96,3 +96,42 @@ export async function UPDATE_TOKEN_OFFERINGS(
     });
   }
 }
+
+export async function UPDATE_TOKEN_VALUATION(
+  request: FastifyRequest,
+  reply: FastifyReply
+) {
+  try {
+    /* -----------  MAPPER ----------- */
+    const { entity_id, user_profile_id, ...rest } = postRequestInfo(request);
+
+    if (entity_id === 2) {
+      return handleResponse(request, reply, responseType?.FORBIDDEN, {
+        error: {
+          message: "Only Issuer and admin can be update token offering data",
+        },
+      });
+    }
+
+    /* -----------  INTERACTOR ----------- */
+    const result = await TokenOfferings.updateTokenValuation({
+      ...rest,
+      user_profile_id,
+    });
+
+    /* -----------  RESPONSE ----------- */
+    
+    return handleResponse(request, reply, responseType?.CREATED, {
+      customMessage: "Token Offering Status Updated",
+      data: result,
+    });
+
+  } catch (error: any) {
+    Logger.error(request, error.message, error);
+    return handleResponse(request, reply, responseType?.INTERNAL_SERVER_ERROR, {
+      error: {
+        message: responseType?.INTERNAL_SERVER_ERROR,
+      },
+    });
+  }
+}
