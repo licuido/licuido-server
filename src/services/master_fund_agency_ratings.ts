@@ -13,19 +13,19 @@ class MasterFundAgencyRatings {
     offset: number;
     limit: number;
     search?: string;
-    agency_id:number;
+    agency_id: number;
   }): Promise<{
     rows: any[];
     count: number;
   }> {
     try {
-      const { offset, limit, search,agency_id } = options;
+      const { offset, limit, search, agency_id } = options;
 
       const { rows, count } = await master_fund_agency_rating.findAndCountAll({
         where: {
           is_active: true,
           name: { [Op.iLike]: `%${search}%` },
-          agency_id
+          agency_id,
         },
         order: [["id", "ASC"]],
         offset,

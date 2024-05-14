@@ -108,7 +108,7 @@ class Entities {
                   {
                     model: asset,
                     as: "asset",
-                    attributes: ["id", "url"],
+                    attributes: ["id", "type", "url", "file_meta"],
                     required: false,
                   },
                 ],
@@ -125,7 +125,7 @@ class Entities {
                   {
                     model: asset,
                     as: "captured_asset",
-                    attributes: ["id", "url"],
+                    attributes: ["id", "type", "url", "file_meta"],
                     required: false,
                   },
                   {
@@ -153,7 +153,7 @@ class Entities {
           {
             model: asset,
             as: "logo_asset",
-            attributes: ["id", "url"],
+            attributes: ["id", "type", "url", "file_meta"],
             required: false,
           },
           {
@@ -174,7 +174,7 @@ class Entities {
               {
                 model: asset,
                 as: "asset",
-                attributes: ["id", "url"],
+                attributes: ["id", "type", "url", "file_meta"],
                 required: false,
               },
             ],
@@ -212,6 +212,19 @@ class Entities {
           contact_profile_id,
         },
       });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async findEntityForCountry(user_entity_id?:string): Promise<any> {
+    try {
+      return await entity.findOne({
+        where: {
+          id: user_entity_id 
+        },
+        attributes:["country_id"]
+      }) 
     } catch (error) {
       throw error;
     }

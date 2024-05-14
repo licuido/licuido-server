@@ -25,7 +25,13 @@ const onBoarding: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
       handler.UPDATE_TOKEN_STATUS
     );
 
-  fastify.get("/", { schema: schema.GET_TOKEN }, handler.FIND_TOKEN);
+  fastify
+    .get("/", { schema: schema.GET_TOKEN }, handler.FIND_TOKEN)
+    .get(
+      "/issuer_tokens",
+      { schema: schema.GET_ISSUER_TOKENS },
+      handler.GET_ISSUER_TOKENS
+    );
 };
 
 export default onBoarding;

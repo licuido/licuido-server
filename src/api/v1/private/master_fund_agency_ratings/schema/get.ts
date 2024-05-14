@@ -31,9 +31,8 @@ const customParams = Schema.object()
   .prop("search", Schema.string());
 
 export const GET_ALL_AGENCY_RATINGS = {
-  description:
-    "The purpose of this schema is get all master agencies ratings",
-  tags: ["GET_ALL_AGENCY_RATINGS"],
+  description: "Retrieves all fund agencies ratings.",
+  tags: ["Master Fund Agency Ratings"],
   response: makeResponseSchema(countryResponse),
   query: customParams,
 };

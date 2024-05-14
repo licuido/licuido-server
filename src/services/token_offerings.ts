@@ -14,7 +14,10 @@ import {
   master_fund_agency,
   master_fund_agency_rating,
 } from "@models";
+import queries from "@queries";
 import { createTokenOffering, updateTokenOffering } from "@types";
+import { sequelize } from "@utils";
+// import { sequelize } from "@utils";
 import { Op } from "sequelize";
 
 class TokenOfferings {
@@ -174,13 +177,13 @@ class TokenOfferings {
           {
             model: asset,
             as: "logo_asset",
-            attributes: ["id", "url"],
+            attributes: ["id", "type", "url", "file_meta"],
             required: false,
           },
           {
             model: asset,
             as: "banner_asset",
-            attributes: ["id", "url"],
+            attributes: ["id", "type", "url", "file_meta"],
             required: false,
           },
           {
@@ -248,7 +251,7 @@ class TokenOfferings {
               {
                 model: asset,
                 as: "document",
-                attributes: ["id", "url"],
+                attributes: ["id", "type", "url", "file_meta"],
                 required: false,
               },
             ],
@@ -265,7 +268,7 @@ class TokenOfferings {
               {
                 model: asset,
                 as: "member_picture",
-                attributes: ["id", "url"],
+                attributes: ["id", "type", "url", "file_meta"],
                 required: false,
               },
             ],
@@ -319,105 +322,53 @@ class TokenOfferings {
     offset: number;
     limit: number;
     search?: string;
-    tokenTypeId?: string;
+    tokenTypeId?: [];
     currencyCode?: string;
     fundStatus?: string;
+    countryId?: number;
   }): Promise<{
     rows: any[];
     count: number;
   }> {
     try {
-      const { offset, limit, search,tokenTypeId,currencyCode,fundStatus } = options;
+      const {
+        offset,
+        limit,
+        search,
+        tokenTypeId,
+        currencyCode,
+        fundStatus,
+        countryId,
+      } = options;
       const whereClause: any = {
         is_active: true,
         name: { [Op.iLike]: `%${search}%` },
       };
-  
-      //filters
-      if (tokenTypeId !== undefined) {
-        const tokenTypeIds = tokenTypeId?.split(',')
-        whereClause.token_type_id = { [Op.or]: tokenTypeIds };
-      }
 
-      if(currencyCode !== undefined){
-        const currencyCodes = currencyCode?.split(',')
-        whereClause.base_currency_code = { [Op.or]: currencyCodes };
-      }
 
-      if(fundStatus !== undefined){
-        const fundStatuses = fundStatus?.split(',')
+      if (fundStatus !== undefined) {
+        const fundStatuses = fundStatus?.split(",");
         whereClause.is_fund_rating_enabled = { [Op.or]: fundStatuses };
       }
       //
 
-      const { rows, count } = await token_offering.findAndCountAll({
-        where:whereClause,
-        attributes: [
-          "id",
-          "name",
-          "description",
-          "isin_number",
-          "symbol",
-          "base_currency_code",
-          "base_currency",
-          "offering_price",
-          "start_date",
-          "token_type_id",
-          "end_date",
-          "is_fund_rating_enabled",
-          "projected_rate_return",
-          "annual_percentage_yield",
-        ],
-        include: [
-          {
-            model: asset,
-            as: "logo_asset",
-            attributes: ["id", "url"],
-            required: false,
-          },
-          {
-            model: master_token_type,
-            as: "token_type",
-            attributes: ["id", "name"],
-            required: false,
-          },
-          {
-            model: master_token_status,
-            as: "status",
-            attributes: ["id", "name"],
-            required: false,
-          },
-          {
-            model: offer_fund_rating,
-            as: "offer_fund_ratings",
-            attributes: ["id"],
-            include: [
-              {
-                model: master_fund_agency,
-                as: "agency",
-                attributes: ["id", "name"],
-                required: false,
-              },
-              {
-                model: master_fund_agency_rating,
-                as: "rating",
-                attributes: ["id", "name"],
-                required: false,
-              },
-            ],
-            where: {
-              is_active: true,
-            },
-            required: false,
-          },
-        ],
-        order: [["id", "ASC"]],
-        offset,
-        limit,
-      });
+      const [rows]: any[] = await sequelize.query(
+        queries.getMarketPlaceListingQuery(
+          offset,
+          limit,
+          search,
+          tokenTypeId,
+          currencyCode,
+          fundStatus,
+          countryId,
+        )
+      );
+      const [dataCount]: any[] = await sequelize.query(
+        queries.getMarketPlaceListingQueryCount()
+      );
       return {
         rows,
-        count,
+        count: dataCount?.[0]?.count ?? 0,
       };
     } catch (error) {
       throw error;
@@ -445,6 +396,48 @@ class TokenOfferings {
           issuer_entity_id: user_entity_id,
         },
       });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * this function used for get token offering
+   *
+   * @param {token_id:string} options - The response object containing create data.
+   * @throws {Error} Throws an error if there's an issue extracting parameters from the response.
+   */
+  static async getTokenIssuerList({
+    user_entity_id,
+    search,
+  }: {
+    user_entity_id: string;
+    search: string;
+  }): Promise<any> {
+    try {
+      const token_offer = await token_offering.findAll({
+        where: {
+          issuer_entity_id: user_entity_id,
+          name: { [Op.iLike]: `%${search}%` },
+        },
+        attributes: ["id", "name", "isin_number", "symbol"],
+        include: [
+          {
+            model: asset,
+            as: "logo_asset",
+            attributes: ["id", "url"],
+            required: false,
+          },
+          {
+            model: master_token_offering_status,
+            as: "offer_status",
+            attributes: ["id", "name"],
+            required: false,
+          },
+        ],
+      });
+
+      return JSON.parse(JSON.stringify(token_offer));
     } catch (error) {
       throw error;
     }

@@ -65,6 +65,9 @@ export async function SIGN_IN(request: FastifyRequest, reply: FastifyReply) {
         customMessage: result?.message,
         error: {
           message: result?.message,
+          data: {
+            user_profile: result?.token_data?.user_profile,
+          },
         },
       }
     );

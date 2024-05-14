@@ -4,13 +4,13 @@ import { MasterFundAgencyRatings } from "@services";
 // get all master fund list
 const getAllMasterFundAgencyRatingList = async (options: any) => {
   try {
-    const { offset = 0, limit = 0, search = "",agency_id } = options;
+    const { offset = 0, limit = 0, search = "", agency_id } = options;
 
     const { rows, count } = await MasterFundAgencyRatings.findAll({
       search,
       offset,
       limit,
-      agency_id
+      agency_id,
     });
 
     return { page: rows, count: rows?.length, totalCount: count };
@@ -21,5 +21,5 @@ const getAllMasterFundAgencyRatingList = async (options: any) => {
 };
 
 export default {
-    getAllMasterFundAgencyRatingList,
+  getAllMasterFundAgencyRatingList,
 };

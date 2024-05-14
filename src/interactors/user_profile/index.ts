@@ -1,6 +1,6 @@
 import { Logger } from "@helpers";
 import { UserProfile, Asset, UserIdentities } from "@services";
-import { createAsset, createPersonInfo } from "@types";
+import { createPersonInfo } from "@types";
 
 // create and update person info details
 const createPersonInfoDetails = async (options: createPersonInfo) => {
@@ -12,25 +12,30 @@ const createPersonInfoDetails = async (options: createPersonInfo) => {
     });
 
     if (identity && identity?.length > 0) {
-      const insertData: any = identity?.map((val: createAsset) => {
-        return {
-          ...val,
-          is_active: true,
-          created_by: id,
-        };
-      });
+      for (const item of identity) {
+        if (!item?.id) {
+          const insertData = [];
+          insertData.push({
+            type: item?.type,
+            url: item?.url,
+            file_meta: item?.file_meta,
+            is_active: true,
+            created_by: id,
+          });
 
-      const assetData = await Asset.bulkInsert(insertData);
+          const assetData = await Asset.bulkInsert(insertData);
 
-      let userIdentities = assetData?.map((val: any) => {
-        return {
-          asset_id: val?.dataValues?.id,
-          created_by: id,
-          is_active: true,
-        };
-      });
+          let userIdentities = assetData?.map((val: any) => {
+            return {
+              asset_id: val?.dataValues?.id,
+              created_by: id,
+              is_active: true,
+            };
+          });
 
-      await UserIdentities.createBulkIdentity(userIdentities);
+          await UserIdentities.createBulkIdentity(userIdentities);
+        }
+      }
     }
 
     if (deletedIdentity && deletedIdentity?.length > 0) {

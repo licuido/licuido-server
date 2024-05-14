@@ -1,6 +1,7 @@
 import { Logger, handleResponse, responseType } from "@helpers";
 import { MarketPlaceList } from "@interactors";
 import { queryRequestInfo } from "@mappers";
+import { Entities } from "@services";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { preparePagination } from "serializers/getResponse";
 
@@ -9,15 +10,21 @@ export async function GET_MARKETPLACE_LISTING(
   reply: FastifyReply
 ) {
   try {
-    const { entity_id, url, search, offset, limit, ...rest } =
+    const { entity_id, url, search, offset, limit,user_entity_id, ...rest } =
       queryRequestInfo(request);
     // -----------------------------
     //  INTRACTOR
     // -----------------------------
+    let countryId = await Entities.findEntityForCountry(user_entity_id);
+    countryId = JSON.stringify(countryId);
+    countryId = JSON.parse(countryId)?.country_id;
+
     const result = await MarketPlaceList.getAllMarketPlaceList({
       search,
       offset,
       limit,
+      user_entity_id,
+      countryId,
       ...rest,
     });
 

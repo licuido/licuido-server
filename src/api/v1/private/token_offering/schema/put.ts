@@ -12,8 +12,9 @@ const updateTokenStatusResponse: JSONSchema = Schema.object()
   .valueOf() as JSONSchema;
 
 export const UPDATE_TOKEN_STATUS = {
-  description: "The purpose of this schema is to update token offering status",
-  tags: ["TOKEN_OFFERING"],
+  description:
+    "Defines the structure and constraints for an API endpoint to update token offering status.",
+  tags: ["Token Offering"],
   body: updateTokenStatusBody,
   response: makeResponseSchema(updateTokenStatusResponse),
 };
@@ -33,7 +34,8 @@ const updateTokenBody = Schema.object()
     Schema.object()
       .prop("url", Schema.string().format("uri"))
       .prop("type", Schema.string())
-      .required(["url", "type"])
+      .prop("file_meta", Schema.object().additionalProperties(true))
+      .required(["url", "type", "file_meta"])
   )
   .prop("description", Schema.string())
   .prop(
@@ -41,7 +43,8 @@ const updateTokenBody = Schema.object()
     Schema.object()
       .prop("url", Schema.string().format("uri"))
       .prop("type", Schema.string())
-      .required(["url", "type"])
+      .prop("file_meta", Schema.object().additionalProperties(true))
+      .required(["url", "type", "file_meta"])
   )
   .prop("offering_price", Schema.number())
   .prop("jurisdiction", Schema.number())
@@ -86,7 +89,8 @@ const updateTokenBody = Schema.object()
         Schema.object()
           .prop("url", Schema.string().format("uri"))
           .prop("type", Schema.string())
-          .required(["url", "type"])
+          .prop("file_meta", Schema.object().additionalProperties(true))
+          .required(["url", "type", "file_meta"])
       )
       .minItems(0)
   )
@@ -106,7 +110,8 @@ const updateTokenBody = Schema.object()
             Schema.object()
               .prop("url", Schema.string().format("uri"))
               .prop("type", Schema.string())
-              .required(["url", "type"])
+              .prop("file_meta", Schema.object().additionalProperties(true))
+              .required(["url", "type", "file_meta"])
           )
           .required(["member_name", "member_title", "member_picture"])
       )
@@ -129,12 +134,28 @@ const updateTokenBody = Schema.object()
             Schema.object()
               .prop("url", Schema.string().format("uri"))
               .prop("type", Schema.string())
-              .required(["url", "type"])
+              .prop("file_meta", Schema.object().additionalProperties(true))
+              .required(["url", "type", "file_meta"])
           )
-          .required(["member_name", "member_title"])
+          .required(["member_id", "member_name", "member_title"])
       )
       .minItems(0)
   )
+  .prop(
+    "fund_rating",
+    Schema.array()
+      .items(
+        Schema.object()
+          .prop("agency", Schema.number())
+          .prop("rating", Schema.number())
+          .prop("rating_id", Schema.string().format("uuid"))
+      )
+      .minItems(0)
+  )
+  .prop("projected_rate_return", Schema.string())
+  .prop("annual_percentage_yield", Schema.string())
+  .prop("payback_period", Schema.string())
+  .prop("payback_period_type", Schema.string())
   .required(["token_id"])
   .valueOf();
 
@@ -143,8 +164,9 @@ const tokenUpdateResponse: JSONSchema = Schema.object()
   .valueOf() as JSONSchema;
 
 export const UPDATE_TOKEN_OFFERINGS = {
-  description: "The purpose of this schema is to update token offering",
-  tags: ["TOKEN_OFFERING"],
+  description:
+    "Defines the structure and constraints for an API endpoint to update token offering details.",
+  tags: ["Token Offering"],
   body: updateTokenBody,
   response: makeResponseSchema(tokenUpdateResponse),
 };

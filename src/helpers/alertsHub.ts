@@ -34,7 +34,6 @@ class AlertsHub {
   // ----------SEND ALERT-----------------
   async sendAlert(options: sendAlertOptions) {
     try {
-
       const response: any = await makeNetworkRequest(
         {
           url: env.ALERTHUB_ENDPOINT,

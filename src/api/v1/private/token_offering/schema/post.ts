@@ -13,7 +13,8 @@ const createTokenBody = Schema.object()
     Schema.object()
       .prop("url", Schema.string().format("uri"))
       .prop("type", Schema.string())
-      .required(["url", "type"])
+      .prop("file_meta", Schema.object().additionalProperties(true))
+      .required(["url", "type", "file_meta"])
   )
   .prop("base_currency", Schema.string())
   .prop("base_currency_code", Schema.string())
@@ -22,7 +23,8 @@ const createTokenBody = Schema.object()
     Schema.object()
       .prop("url", Schema.string().format("uri"))
       .prop("type", Schema.string())
-      .required(["url", "type"])
+      .prop("file_meta", Schema.object().additionalProperties(true))
+      .required(["url", "type", "file_meta"])
   )
   .prop("blockchain_network", Schema.number())
   .prop("swift_bic_no", Schema.string())
@@ -59,7 +61,8 @@ const createTokenBody = Schema.object()
       Schema.object()
         .prop("url", Schema.string().format("uri"))
         .prop("type", Schema.string())
-        .required(["url", "type"])
+        .prop("file_meta", Schema.object().additionalProperties(true))
+        .required(["url", "type", "file_meta"])
     )
   )
   .prop(
@@ -73,11 +76,26 @@ const createTokenBody = Schema.object()
           Schema.object()
             .prop("url", Schema.string().format("uri"))
             .prop("type", Schema.string())
-            .required(["url", "type"])
+            .prop("file_meta", Schema.object().additionalProperties(true))
+            .required(["url", "type", "file_meta"])
         )
         .required(["member_name", "member_title", "member_picture"])
     )
   )
+  .prop(
+    "fund_rating",
+    Schema.array()
+      .items(
+        Schema.object()
+          .prop("agency", Schema.number())
+          .prop("rating", Schema.number())
+      )
+      .minItems(0)
+  )
+  .prop("projected_rate_return", Schema.string())
+  .prop("annual_percentage_yield", Schema.string())
+  .prop("payback_period", Schema.string())
+  .prop("payback_period_type", Schema.string())
   .valueOf();
 
 const tokenCreateResponse: JSONSchema = Schema.object()
@@ -85,8 +103,9 @@ const tokenCreateResponse: JSONSchema = Schema.object()
   .valueOf() as JSONSchema;
 
 export const CREATE_TOKEN = {
-  description: "The purpose of this schema is to create token offering",
-  tags: ["TOKEN_OFFERING"],
+  description:
+    "Defines the structure and constraints for an API endpoint to create token offering.",
+  tags: ["Token Offering"],
   body: createTokenBody,
   response: makeResponseSchema(tokenCreateResponse),
 };

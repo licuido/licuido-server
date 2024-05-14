@@ -22,7 +22,7 @@ const swaggerPlugin: FastifyPluginCallback<SwaggerOptions> = async (
     exposeRoute: true,
   });
   fastify.register(fastifySwaggerUi, {
-    routePrefix: "/",
+    routePrefix: "/swagger-docs",
     uiConfig: {
       // docExpansion: "full",
       deepLinking: false,

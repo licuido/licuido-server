@@ -1,6 +1,6 @@
 export interface getInvestorDataForQualificationPayload {
   entity_type_id: 1 | 2 | 3;
-  user_profile_id?: string;
+  user_entity_id?: string;
   offset: number;
   limit: number;
   search?: string;

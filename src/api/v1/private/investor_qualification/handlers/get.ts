@@ -49,8 +49,16 @@ export async function GET_INVESTOR_DATA_FOR_QUALIFY(
 ) {
   try {
     /* -----------  MAPPER ----------- */
-    const { entity_id, user_profile_id, url, search, offset, limit, ...rest } =
-      queryRequestInfo(request);
+    const {
+      entity_id,
+      user_profile_id,
+      user_entity_id,
+      url,
+      search,
+      offset,
+      limit,
+      ...rest
+    } = queryRequestInfo(request);
 
     if (entity_id === 2) {
       return handleResponse(request, reply, responseType?.FORBIDDEN, {
@@ -65,7 +73,7 @@ export async function GET_INVESTOR_DATA_FOR_QUALIFY(
       offset,
       limit,
       entity_type_id: 2, // Investor
-      user_profile_id,
+      user_entity_id,
       ...rest,
     });
 

@@ -31,8 +31,8 @@ const VerifyEmailOTPBody = Schema.object()
 
 // Reset Body Schema
 const ResetBody = Schema.object()
-  .prop("new_password", Schema.string())
   .additionalProperties(true)
+  .prop("new_password", Schema.string())
   .valueOf() as JSONSchema;
 
 // Reset Body Schema
@@ -60,7 +60,9 @@ const preValidateResponse: JSONSchema = Schema.object()
   .valueOf() as JSONSchema;
 
 // Response Schema of Sign In
-const forgetPassWordResponse: JSONSchema = Schema.object().additionalProperties(true).valueOf() as JSONSchema;
+const forgetPassWordResponse: JSONSchema = Schema.object()
+  .additionalProperties(true)
+  .valueOf() as JSONSchema;
 
 // Response Schema of Sign In
 const sendEmailOTPResponse: JSONSchema = Schema.object()
@@ -83,8 +85,8 @@ const verifyOTPResponse: JSONSchema = Schema.object()
 // SIGN IN
 export const SIGN_IN = {
   description:
-    "The purpose of this schema is to define the structure and constraints for an API endpoint that logs in a user.",
-  tags: ["AUTH"],
+    "Defines the structure and constraints for an API endpoint that allows logging in a user with the given email and password.",
+  tags: ["Auth"],
   body: signInBodyPayload,
   response: makeResponseSchema(signInResponse),
 };
@@ -92,8 +94,8 @@ export const SIGN_IN = {
 // PREVALIDATE
 export const PRE_VALIDATE_SIGNIN = {
   description:
-    "The purpose of this schema is to define the structure and constraints for an API endpoint that prevalidates a user.",
-  tags: ["AUTH"],
+    "Defines the structure and constraints for an API endpoint that allows prevalidating a user by checking their email and phone number before they sign in.",
+  tags: ["Auth"],
   body: signInBody,
   response: makeResponseSchema(preValidateResponse),
 };
@@ -101,8 +103,8 @@ export const PRE_VALIDATE_SIGNIN = {
 // FORGET PASSWORD
 export const FORGET_PASSWORD = {
   description:
-    "The purpose of this schema is to define the structure and constraints for an API endpoint that gets a password reset token.",
-  tags: ["AUTH"],
+    "Defines structure and constraints for an API endpoint that requests a password reset token for a user.",
+  tags: ["Auth"],
   body: forgetBody,
   response: makeResponseSchema(forgetPassWordResponse),
 };
@@ -110,8 +112,8 @@ export const FORGET_PASSWORD = {
 // RESET PASSWORD
 export const RESET_PASSWORD = {
   description:
-    "The purpose of this schema is to define the structure and constraints for an API endpoint that resets the password of a user if forgotten.",
-  tags: ["AUTH"],
+    "Defines the structure and constraints for an API endpoint that allows resetting the password of a user if it has been forgotten.",
+  tags: ["Auth"],
   body: ResetBody,
   response: makeResponseSchema(resetPassWordResponse),
 };
@@ -119,8 +121,8 @@ export const RESET_PASSWORD = {
 // RESET PASSWORD BY USER
 export const RESET_PASSWORD_BY_USER = {
   description:
-    "The purpose of this schema is to define the structure and constraints for an API endpoint that resets the password of a user if he wanst to change.",
-  tags: ["AUTH"],
+    "Defines the structure and constraints for an API endpoint that allows resetting the user's password upon request for a change.",
+  tags: ["Auth"],
   body: ResetBodyByUser,
   response: makeResponseSchema(resetPassWordResponse),
 };
@@ -128,8 +130,8 @@ export const RESET_PASSWORD_BY_USER = {
 // SEND EMAIL OTP
 export const SEND_EMAIL_OTP = {
   description:
-    "The purpose of this schema is to define the structure and constraints for an API endpoint that sends an OTP to an email.",
-  tags: ["AUTH"],
+    "Defines structure and constraints for an API endpoint that sends an OTP (One-Time Password) to an email address for password reset or account verification.",
+  tags: ["Auth"],
   body: forgetBody,
   response: makeResponseSchema(sendEmailOTPResponse),
 };
@@ -137,8 +139,8 @@ export const SEND_EMAIL_OTP = {
 // VALIDATE EMAIL OTP
 export const VERIFY_EMAIL_OTP = {
   description:
-    "The purpose of this schema is to define the structure and constraints for an API endpoint that validates an OTP sent to an email.",
-  tags: ["AUTH"],
+    "Defines structure and constraints for an API endpoint that validates the OTP sent to an email address for user verification.",
+  tags: ["Auth"],
   body: VerifyEmailOTPBody,
   response: makeResponseSchema(verifyOTPResponse),
 };
@@ -146,8 +148,8 @@ export const VERIFY_EMAIL_OTP = {
 // RESEND EMAIL OTP
 export const RESEND_EMAIL_OTP = {
   description:
-    "The purpose of this schema is to define the structure and constraints for an API endpoint that resends an OTP to an email.",
-  tags: ["AUTH"],
+    "Defines the structure and constraints for an API endpoint that resends the OTP (One-Time Password) to an email address if the OTP was not received or expired.",
+  tags: ["Auth"],
   body: forgetBody,
   response: makeResponseSchema(resetPassWordResponse),
 };

@@ -12,6 +12,7 @@ import { errorCustomMessage, successCustomMessage } from "./customMessage";
 import excel from "./excel";
 export * from "./s3";
 import streamToBuffer from "./streamToBuffer";
+import qualifiedStatus from "./investorQualifiedStatus";
 
 export {
   dateTime,
@@ -31,4 +32,5 @@ export {
   successCustomMessage,
   excel,
   streamToBuffer,
+  qualifiedStatus,
 };

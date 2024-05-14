@@ -24,13 +24,14 @@ const countryResponse: JSONSchema = Schema.object()
   .prop("meta", Schema.object().prop("message", Schema.string()))
   .valueOf() as JSONSchema;
 
-  const customParams = Schema.object().prop("offset", Schema.number()).prop("limit", Schema.number()).prop("search", Schema.string());
-
+const customParams = Schema.object()
+  .prop("offset", Schema.number())
+  .prop("limit", Schema.number())
+  .prop("search", Schema.string());
 
 export const GET_ALL_REGIONS = {
-  description:
-    "The purpose of this schema is get all countries with that reigon id",
-  tags: ["MASTER_REGIONS"],
+  description: "Retrieves all regions.",
+  tags: ["Master Regions"],
   response: makeResponseSchema(countryResponse),
-  query:customParams
+  query: customParams,
 };

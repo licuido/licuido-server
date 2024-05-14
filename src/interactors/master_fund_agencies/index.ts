@@ -20,5 +20,5 @@ const getAllMasterFundAgencyList = async (options: any) => {
 };
 
 export default {
-    getAllMasterFundAgencyList,
+  getAllMasterFundAgencyList,
 };

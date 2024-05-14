@@ -46,7 +46,7 @@ export async function CREATE_TOKEN_OFFERINGS(
     } else if (result && result?.code === 409) {
       return handleResponse(request, reply, responseType?.BAD_GATEWAY, {
         error: {
-          message: result?.customMessage
+          message: result?.customMessage,
         },
       });
     } else {

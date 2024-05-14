@@ -31,9 +31,8 @@ const customParams = Schema.object()
   .prop("search", Schema.string());
 
 export const GET_ALL_COUNTRIES = {
-  description:
-    "The purpose of this schema is get all countries with that reigon id",
-  tags: ["MASTER_COUNTRIES"],
+  description: "Retrieves all countries with the specified region ID.",
+  tags: ["Master Countries"],
   response: makeResponseSchema(countryResponse),
   query: customParams,
 };
@@ -45,8 +44,8 @@ const customCurrencyParams = Schema.object()
   .prop("search", Schema.string());
 
 export const GET_ALL_CURRENCIES = {
-  description: "The purpose of this schema is get all currencies",
-  tags: ["MASTER_COUNTRIES"],
+  description: "Retrieves all currencies.",
+  tags: ["Master Countries"],
   response: makeResponseSchema(countryResponse),
   query: customCurrencyParams,
 };
@@ -57,8 +56,8 @@ const customRegionCountryParams = Schema.object().prop(
 );
 
 export const GET_ALL_COUNTRY_WITH_REGIONS = {
-  description: "The purpose of this schema is get all countries with regions",
-  tags: ["MASTER_COUNTRIES"],
+  description: "Retrieves all countries with their regions.",
+  tags: ["Master Countries"],
   response: makeResponseSchema(
     Schema.object().prop("page", Schema.object().additionalProperties(true))
   ),

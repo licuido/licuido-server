@@ -62,3 +62,50 @@ export async function FIND_TOKEN(request: FastifyRequest, reply: FastifyReply) {
     });
   }
 }
+
+export async function GET_ISSUER_TOKENS(
+  request: FastifyRequest,
+  reply: FastifyReply
+) {
+  try {
+    // -----------------------------
+    //  MAPPER
+    // -----------------------------
+    const { entity_id, user_entity_id, search } = queryRequestInfo(request);
+
+    if (entity_id !== 3) {
+      return handleResponse(
+        request,
+        reply,
+        responseType?.INTERNAL_SERVER_ERROR,
+        {
+          error: {
+            message: "Only Issuer view issuer tikens",
+          },
+        }
+      );
+    }
+
+    // -----------------------------
+    //  INTERACTOR
+    // -----------------------------
+    const result = await TokenOfferings.getIssuerTokens({
+      user_entity_id: user_entity_id ?? "",
+      search,
+    });
+    // -----------------------------
+    //  RESPONSE
+    // -----------------------------
+    return handleResponse(request, reply, responseType?.CREATED, {
+      customMessage: result?.message,
+      data: result,
+    });
+  } catch (error: any) {
+    Logger.error(request, error.message, error);
+    return handleResponse(request, reply, responseType?.INTERNAL_SERVER_ERROR, {
+      error: {
+        message: responseType?.INTERNAL_SERVER_ERROR,
+      },
+    });
+  }
+}

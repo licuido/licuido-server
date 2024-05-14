@@ -11,6 +11,7 @@ class EntityInvestor {
     investor_type_id: number;
     investor_entity_id: string;
     user_profile_id?: string;
+    user_entity_id?: string;
   }): Promise<any> {
     try {
       const {
@@ -18,6 +19,7 @@ class EntityInvestor {
         investor_type_id,
         investor_entity_id,
         user_profile_id,
+        user_entity_id,
       } = options;
 
       // Create Entity Investor Data
@@ -27,7 +29,7 @@ class EntityInvestor {
         status_id,
         is_active: true,
         created_by: user_profile_id,
-        issuer_profile_id: user_profile_id,
+        issuer_entity_id: user_entity_id,
       });
 
       let entityInvestorData: any = entityInvestor
@@ -66,6 +68,35 @@ class EntityInvestor {
       );
 
       return id;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * this function used for to get count of given qualified investor for given issuer
+   *
+   * @throws {Error} Throws an error if there's an issue extracting parameters from the response.
+   */
+
+  static async count({
+    issuer_entity_id,
+    investor_entity_id,
+    status_id,
+  }: {
+    issuer_entity_id: string;
+    investor_entity_id: string;
+    status_id: 1 | 2 | 3;
+  }): Promise<any> {
+    try {
+      // Get Count Of Given of data Whether the given investor is qualified for given issuer
+      return await entity_investor.count({
+        where: {
+          investor_entity_id,
+          issuer_entity_id,
+          status_id,
+        },
+      });
     } catch (error) {
       throw error;
     }

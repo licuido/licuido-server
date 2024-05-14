@@ -1,4 +1,3 @@
-
 import { master_fund_agencies } from "@prisma/client";
 
 export const masterFundAgencies: {
@@ -20,6 +19,6 @@ export const masterFundAgencies: {
       is_active: true,
       created_at: new Date(),
       updated_at: new Date(),
-    }
+    },
   ],
 };

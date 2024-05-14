@@ -16,6 +16,7 @@ import type { token_offering_team, token_offering_teamId } from './token_offerin
 import type { token_offering, token_offeringId } from './token_offering';
 import type { token_order, token_orderId } from './token_order';
 import type { token_transaction, token_transactionId } from './token_transaction';
+import type { user_device_token, user_device_tokenId } from './user_device_token';
 import type { user_entity, user_entityId } from './user_entity';
 import type { user_identity, user_identityId } from './user_identity';
 import type { wallet_token, wallet_tokenId } from './wallet_token';
@@ -228,18 +229,6 @@ export class user_profile extends Model<user_profileAttributes, user_profileCrea
   hasEntity_investor!: Sequelize.HasManyHasAssociationMixin<entity_investor, entity_investorId>;
   hasEntity_investors!: Sequelize.HasManyHasAssociationsMixin<entity_investor, entity_investorId>;
   countEntity_investors!: Sequelize.HasManyCountAssociationsMixin;
-  // user_profile hasMany entity_investor via issuer_profile_id
-  issuer_profile_entity_investors!: entity_investor[];
-  getIssuer_profile_entity_investors!: Sequelize.HasManyGetAssociationsMixin<entity_investor>;
-  setIssuer_profile_entity_investors!: Sequelize.HasManySetAssociationsMixin<entity_investor, entity_investorId>;
-  addIssuer_profile_entity_investor!: Sequelize.HasManyAddAssociationMixin<entity_investor, entity_investorId>;
-  addIssuer_profile_entity_investors!: Sequelize.HasManyAddAssociationsMixin<entity_investor, entity_investorId>;
-  createIssuer_profile_entity_investor!: Sequelize.HasManyCreateAssociationMixin<entity_investor>;
-  removeIssuer_profile_entity_investor!: Sequelize.HasManyRemoveAssociationMixin<entity_investor, entity_investorId>;
-  removeIssuer_profile_entity_investors!: Sequelize.HasManyRemoveAssociationsMixin<entity_investor, entity_investorId>;
-  hasIssuer_profile_entity_investor!: Sequelize.HasManyHasAssociationMixin<entity_investor, entity_investorId>;
-  hasIssuer_profile_entity_investors!: Sequelize.HasManyHasAssociationsMixin<entity_investor, entity_investorId>;
-  countIssuer_profile_entity_investors!: Sequelize.HasManyCountAssociationsMixin;
   // user_profile hasMany entity_investor via updated_by
   updated_by_entity_investors!: entity_investor[];
   getUpdated_by_entity_investors!: Sequelize.HasManyGetAssociationsMixin<entity_investor>;
@@ -456,6 +445,42 @@ export class user_profile extends Model<user_profileAttributes, user_profileCrea
   hasUpdated_by_token_transaction!: Sequelize.HasManyHasAssociationMixin<token_transaction, token_transactionId>;
   hasUpdated_by_token_transactions!: Sequelize.HasManyHasAssociationsMixin<token_transaction, token_transactionId>;
   countUpdated_by_token_transactions!: Sequelize.HasManyCountAssociationsMixin;
+  // user_profile hasMany user_device_token via created_by
+  user_device_tokens!: user_device_token[];
+  getUser_device_tokens!: Sequelize.HasManyGetAssociationsMixin<user_device_token>;
+  setUser_device_tokens!: Sequelize.HasManySetAssociationsMixin<user_device_token, user_device_tokenId>;
+  addUser_device_token!: Sequelize.HasManyAddAssociationMixin<user_device_token, user_device_tokenId>;
+  addUser_device_tokens!: Sequelize.HasManyAddAssociationsMixin<user_device_token, user_device_tokenId>;
+  createUser_device_token!: Sequelize.HasManyCreateAssociationMixin<user_device_token>;
+  removeUser_device_token!: Sequelize.HasManyRemoveAssociationMixin<user_device_token, user_device_tokenId>;
+  removeUser_device_tokens!: Sequelize.HasManyRemoveAssociationsMixin<user_device_token, user_device_tokenId>;
+  hasUser_device_token!: Sequelize.HasManyHasAssociationMixin<user_device_token, user_device_tokenId>;
+  hasUser_device_tokens!: Sequelize.HasManyHasAssociationsMixin<user_device_token, user_device_tokenId>;
+  countUser_device_tokens!: Sequelize.HasManyCountAssociationsMixin;
+  // user_profile hasMany user_device_token via updated_by
+  updated_by_user_device_tokens!: user_device_token[];
+  getUpdated_by_user_device_tokens!: Sequelize.HasManyGetAssociationsMixin<user_device_token>;
+  setUpdated_by_user_device_tokens!: Sequelize.HasManySetAssociationsMixin<user_device_token, user_device_tokenId>;
+  addUpdated_by_user_device_token!: Sequelize.HasManyAddAssociationMixin<user_device_token, user_device_tokenId>;
+  addUpdated_by_user_device_tokens!: Sequelize.HasManyAddAssociationsMixin<user_device_token, user_device_tokenId>;
+  createUpdated_by_user_device_token!: Sequelize.HasManyCreateAssociationMixin<user_device_token>;
+  removeUpdated_by_user_device_token!: Sequelize.HasManyRemoveAssociationMixin<user_device_token, user_device_tokenId>;
+  removeUpdated_by_user_device_tokens!: Sequelize.HasManyRemoveAssociationsMixin<user_device_token, user_device_tokenId>;
+  hasUpdated_by_user_device_token!: Sequelize.HasManyHasAssociationMixin<user_device_token, user_device_tokenId>;
+  hasUpdated_by_user_device_tokens!: Sequelize.HasManyHasAssociationsMixin<user_device_token, user_device_tokenId>;
+  countUpdated_by_user_device_tokens!: Sequelize.HasManyCountAssociationsMixin;
+  // user_profile hasMany user_device_token via user_profile_id
+  user_profile_user_device_tokens!: user_device_token[];
+  getUser_profile_user_device_tokens!: Sequelize.HasManyGetAssociationsMixin<user_device_token>;
+  setUser_profile_user_device_tokens!: Sequelize.HasManySetAssociationsMixin<user_device_token, user_device_tokenId>;
+  addUser_profile_user_device_token!: Sequelize.HasManyAddAssociationMixin<user_device_token, user_device_tokenId>;
+  addUser_profile_user_device_tokens!: Sequelize.HasManyAddAssociationsMixin<user_device_token, user_device_tokenId>;
+  createUser_profile_user_device_token!: Sequelize.HasManyCreateAssociationMixin<user_device_token>;
+  removeUser_profile_user_device_token!: Sequelize.HasManyRemoveAssociationMixin<user_device_token, user_device_tokenId>;
+  removeUser_profile_user_device_tokens!: Sequelize.HasManyRemoveAssociationsMixin<user_device_token, user_device_tokenId>;
+  hasUser_profile_user_device_token!: Sequelize.HasManyHasAssociationMixin<user_device_token, user_device_tokenId>;
+  hasUser_profile_user_device_tokens!: Sequelize.HasManyHasAssociationsMixin<user_device_token, user_device_tokenId>;
+  countUser_profile_user_device_tokens!: Sequelize.HasManyCountAssociationsMixin;
   // user_profile hasMany user_entity via created_by
   user_entities!: user_entity[];
   getUser_entities!: Sequelize.HasManyGetAssociationsMixin<user_entity>;

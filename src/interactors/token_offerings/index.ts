@@ -9,6 +9,7 @@ import {
   TokenOfferFund,
 } from "@services";
 import {
+  FundRatingPayload,
   TeamsPayload,
   createTokenOfferingPayload,
   createTokenOfferingSubData,
@@ -61,6 +62,7 @@ const createOfferingSubDatas = async (
         const asset = await Asset.upsert({
           type: team?.member_picture?.type,
           url: team?.member_picture?.url,
+          file_meta: team?.member_picture?.file_meta,
           is_active: true,
         });
         teamsPayload.push({
@@ -83,6 +85,7 @@ const createOfferingSubDatas = async (
         const asset = await Asset.upsert({
           type: document?.type,
           url: document?.url,
+          file_meta: document?.file_meta,
           is_active: true,
         });
         documentssPayload.push({
@@ -99,8 +102,9 @@ const createOfferingSubDatas = async (
     if (fund_rating && fund_rating?.length > 0) {
       let funRatingPayload = fund_rating?.map((val) => {
         return {
-          token_offering_id,
-          ...val,
+          offer_token_id: token_offering_id,
+          agency_id: val?.agency,
+          rating_id: val?.rating,
         };
       });
       await TokenOfferFund.create(funRatingPayload);
@@ -176,6 +180,7 @@ const createTokenOfferings = async (options: createTokenOfferingPayload) => {
       const asset = await Asset.upsert({
         type: logo_asset?.type,
         url: logo_asset?.url,
+        file_meta: logo_asset?.file_meta,
         is_active: true,
       });
       logo_asset_id = asset?.[0]?.dataValues?.id;
@@ -184,6 +189,7 @@ const createTokenOfferings = async (options: createTokenOfferingPayload) => {
       const asset = await Asset.upsert({
         type: banner_asset?.type,
         url: banner_asset?.url,
+        file_meta: banner_asset?.file_meta,
         is_active: true,
       });
       banner_asset_id = asset?.[0]?.dataValues?.id;
@@ -287,6 +293,7 @@ const updateOfferingSubDatas = async (
       new_team_members,
       removed_team_members,
       updated_team_members,
+      fund_rating,
     } = options;
 
     /* For Currencies */
@@ -363,6 +370,7 @@ const updateOfferingSubDatas = async (
         const asset = await Asset.upsert({
           type: document?.type,
           url: document?.url,
+          file_meta: document?.file_meta,
           is_active: true,
         });
         documentssPayload.push({
@@ -396,6 +404,7 @@ const updateOfferingSubDatas = async (
         const asset = await Asset.upsert({
           type: team?.member_picture?.type,
           url: team?.member_picture?.url,
+          file_meta: team?.member_picture?.file_meta,
           is_active: true,
         });
         teamsPayload.push({
@@ -424,11 +433,13 @@ const updateOfferingSubDatas = async (
           team &&
           team?.member_picture &&
           team?.member_picture?.type &&
-          team?.member_picture?.url
+          team?.member_picture?.url &&
+          team?.member_picture?.file_meta
         ) {
           const asset = await Asset.upsert({
             type: team?.member_picture?.type,
             url: team?.member_picture?.url,
+            file_meta: team?.member_picture?.file_meta,
             is_active: true,
           });
 
@@ -439,6 +450,21 @@ const updateOfferingSubDatas = async (
         await TokenOfferingsTeams.update({
           options: teamsPayload,
           id: team?.member_id,
+        });
+      }
+    }
+
+    // For Fund Rating
+    if (fund_rating && fund_rating?.length > 0) {
+      for (const fund of fund_rating) {
+        let funRatingPayload: FundRatingPayload = {
+          agency_id: fund.agency,
+          rating_id: fund.rating,
+        };
+
+        await TokenOfferFund.update({
+          options: funRatingPayload,
+          id: fund.rating_id,
         });
       }
     }
@@ -489,6 +515,11 @@ const updateTokenOfferings = async (options: updateTokenOfferingPayload) => {
       new_team_members,
       removed_team_members,
       updated_team_members,
+      fund_rating,
+      projected_rate_return,
+      payback_period,
+      payback_period_type,
+      annual_percentage_yield,
     } = options;
 
     // Check if the Token Name Already Exists
@@ -513,6 +544,7 @@ const updateTokenOfferings = async (options: updateTokenOfferingPayload) => {
       const asset = await Asset.upsert({
         type: logo_asset?.type,
         url: logo_asset?.url,
+        file_meta: logo_asset?.file_meta,
         is_active: true,
       });
       logo_asset_id = asset?.[0]?.dataValues?.id;
@@ -523,6 +555,7 @@ const updateTokenOfferings = async (options: updateTokenOfferingPayload) => {
       const asset = await Asset.upsert({
         type: banner_asset?.type,
         url: banner_asset?.url,
+        file_meta: banner_asset?.file_meta,
         is_active: true,
       });
       banner_asset_id = asset?.[0]?.dataValues?.id;
@@ -558,6 +591,10 @@ const updateTokenOfferings = async (options: updateTokenOfferingPayload) => {
         banner_asset_id,
         iban_no,
         token_type_id,
+        projected_rate_return,
+        payback_period,
+        payback_period_type,
+        annual_percentage_yield,
       },
       token_id
     );
@@ -573,6 +610,7 @@ const updateTokenOfferings = async (options: updateTokenOfferingPayload) => {
         new_team_members,
         removed_team_members,
         updated_team_members,
+        fund_rating,
       },
       token_id,
       user_profile_id
@@ -629,9 +667,40 @@ const findToken = async ({
   }
 };
 
+// find issuer tokens
+const getIssuerTokens = async ({
+  search,
+  user_entity_id,
+}: {
+  search?: string;
+  user_entity_id: string;
+}) => {
+  try {
+    const data = await TokenOfferings.getTokenIssuerList({
+      search: search ?? "",
+      user_entity_id,
+    });
+
+    return data?.map((val: any) => {
+      return {
+        id: val?.id,
+        name: val?.name,
+        status: val?.offer_status?.name,
+        logo: val?.logo_asset?.url,
+        isin_number: val?.isin_number,
+        symbol: val?.symbol,
+      };
+    });
+  } catch (error: any) {
+    Logger.error(error.message, error);
+    throw error;
+  }
+};
+
 export default {
   createTokenOfferings,
   updateTokenStatus,
   findToken,
   updateTokenOfferings,
+  getIssuerTokens,
 };
