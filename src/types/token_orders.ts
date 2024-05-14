@@ -9,7 +9,7 @@ export interface createTokenSubscriptionOrderPayload {
   price_per_token: number;
   net_investment_value: number;
   fee?: number;
-  total_paid: number;
+  total_paid?: number;
   payment_reference?: string;
   user_entity_id: string;
   user_profile_id: string;
@@ -36,7 +36,7 @@ export interface createTokenOrders
 export interface createTokenRedemptionOrderPayload
   extends Omit<
     createTokenSubscriptionOrderPayload,
-    "net_investment_value" | "fee" | "payment_reference"
+    "fee" | "payment_reference"
   > {
   bank_name: string;
   bank_account_name: string;

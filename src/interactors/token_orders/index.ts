@@ -163,7 +163,7 @@ const createTokenRedemptionOrders = async (
       currency_code,
       ordered_tokens,
       price_per_token,
-      total_paid,
+      net_investment_value,
       user_entity_id,
       user_profile_id,
       bank_name,
@@ -177,7 +177,7 @@ const createTokenRedemptionOrders = async (
     const conversionResponse = await currencyConvert({
       from_currency_code: currency_code,
       to_currency_code: default_currency_code,
-      amount: total_paid,
+      amount: net_investment_value,
     });
 
     const result: any = await sequelize.transaction(async (transaction) => {
@@ -193,8 +193,7 @@ const createTokenRedemptionOrders = async (
           currency_code,
           ordered_tokens,
           price_per_token,
-          net_investment_value: total_paid,
-          total_paid,
+          net_investment_value,
           created_by: user_profile_id,
           is_active: true,
           status_id: 1,
