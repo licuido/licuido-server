@@ -13,6 +13,7 @@ import type { token_offering_allowed_currency, token_offering_allowed_currencyId
 import type { token_offering_document, token_offering_documentId } from './token_offering_document';
 import type { token_offering_team, token_offering_teamId } from './token_offering_team';
 import type { token_order, token_orderId } from './token_order';
+import type { token_valuation, token_valuationId } from './token_valuation';
 import type { user_profile, user_profileId } from './user_profile';
 import type { wallet_token, wallet_tokenId } from './wallet_token';
 
@@ -56,11 +57,13 @@ export interface token_offeringAttributes {
   annual_percentage_yield?: string;
   payback_period?: string;
   payback_period_type?: string;
+  is_deployed?: boolean;
+  valuation_price?: number;
 }
 
 export type token_offeringPk = "id";
 export type token_offeringId = token_offering[token_offeringPk];
-export type token_offeringOptionalAttributes = "id" | "issuer_entity_id" | "name" | "description" | "isin_number" | "symbol" | "token_type_id" | "base_currency" | "base_currency_code" | "blockchain_network" | "logo_asset_id" | "banner_asset_id" | "offering_price" | "jurisdiction" | "start_date" | "end_date" | "minimum_investment_limit" | "maximum_investment_limit" | "bank_name" | "bank_account_name" | "swift_bic_no" | "iban_no" | "is_fund_rating_enabled" | "is_projected_rate_of_return_enabled" | "is_expected_annual_perc_yield_enabled" | "is_all_countries_allowed" | "is_payback_period_enabled" | "is_eligible_for_collateral_enabled" | "offer_status_id" | "status_id" | "is_active" | "created_by" | "updated_by" | "created_at" | "updated_at" | "projected_rate_return" | "annual_percentage_yield" | "payback_period" | "payback_period_type";
+export type token_offeringOptionalAttributes = "id" | "issuer_entity_id" | "name" | "description" | "isin_number" | "symbol" | "token_type_id" | "base_currency" | "base_currency_code" | "blockchain_network" | "logo_asset_id" | "banner_asset_id" | "offering_price" | "jurisdiction" | "start_date" | "end_date" | "minimum_investment_limit" | "maximum_investment_limit" | "bank_name" | "bank_account_name" | "swift_bic_no" | "iban_no" | "is_fund_rating_enabled" | "is_projected_rate_of_return_enabled" | "is_expected_annual_perc_yield_enabled" | "is_all_countries_allowed" | "is_payback_period_enabled" | "is_eligible_for_collateral_enabled" | "offer_status_id" | "status_id" | "is_active" | "created_by" | "updated_by" | "created_at" | "updated_at" | "projected_rate_return" | "annual_percentage_yield" | "payback_period" | "payback_period_type" | "is_deployed" | "valuation_price";
 export type token_offeringCreationAttributes = Optional<token_offeringAttributes, token_offeringOptionalAttributes>;
 
 export class token_offering extends Model<token_offeringAttributes, token_offeringCreationAttributes> implements token_offeringAttributes {
@@ -103,6 +106,8 @@ export class token_offering extends Model<token_offeringAttributes, token_offeri
   annual_percentage_yield?: string;
   payback_period?: string;
   payback_period_type?: string;
+  is_deployed?: boolean;
+  valuation_price?: number;
 
   // token_offering belongsTo asset via banner_asset_id
   banner_asset!: asset;
@@ -216,6 +221,18 @@ export class token_offering extends Model<token_offeringAttributes, token_offeri
   hasToken_order!: Sequelize.HasManyHasAssociationMixin<token_order, token_orderId>;
   hasToken_orders!: Sequelize.HasManyHasAssociationsMixin<token_order, token_orderId>;
   countToken_orders!: Sequelize.HasManyCountAssociationsMixin;
+  // token_offering hasMany token_valuation via token_offering_id
+  token_valuations!: token_valuation[];
+  getToken_valuations!: Sequelize.HasManyGetAssociationsMixin<token_valuation>;
+  setToken_valuations!: Sequelize.HasManySetAssociationsMixin<token_valuation, token_valuationId>;
+  addToken_valuation!: Sequelize.HasManyAddAssociationMixin<token_valuation, token_valuationId>;
+  addToken_valuations!: Sequelize.HasManyAddAssociationsMixin<token_valuation, token_valuationId>;
+  createToken_valuation!: Sequelize.HasManyCreateAssociationMixin<token_valuation>;
+  removeToken_valuation!: Sequelize.HasManyRemoveAssociationMixin<token_valuation, token_valuationId>;
+  removeToken_valuations!: Sequelize.HasManyRemoveAssociationsMixin<token_valuation, token_valuationId>;
+  hasToken_valuation!: Sequelize.HasManyHasAssociationMixin<token_valuation, token_valuationId>;
+  hasToken_valuations!: Sequelize.HasManyHasAssociationsMixin<token_valuation, token_valuationId>;
+  countToken_valuations!: Sequelize.HasManyCountAssociationsMixin;
   // token_offering hasMany wallet_token via token_offering_id
   wallet_tokens!: wallet_token[];
   getWallet_tokens!: Sequelize.HasManyGetAssociationsMixin<wallet_token>;
@@ -429,6 +446,14 @@ export class token_offering extends Model<token_offeringAttributes, token_offeri
     },
     payback_period_type: {
       type: DataTypes.TEXT,
+      allowNull: true
+    },
+    is_deployed: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true
+    },
+    valuation_price: {
+      type: DataTypes.DECIMAL,
       allowNull: true
     }
   }, {

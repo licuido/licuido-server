@@ -16,6 +16,8 @@ import type { token_offering_team, token_offering_teamId } from './token_offerin
 import type { token_offering, token_offeringId } from './token_offering';
 import type { token_order, token_orderId } from './token_order';
 import type { token_transaction, token_transactionId } from './token_transaction';
+import type { token_valuation, token_valuationId } from './token_valuation';
+import type { track_token_order_action, track_token_order_actionId } from './track_token_order_action';
 import type { user_device_token, user_device_tokenId } from './user_device_token';
 import type { user_entity, user_entityId } from './user_entity';
 import type { user_identity, user_identityId } from './user_identity';
@@ -445,6 +447,66 @@ export class user_profile extends Model<user_profileAttributes, user_profileCrea
   hasUpdated_by_token_transaction!: Sequelize.HasManyHasAssociationMixin<token_transaction, token_transactionId>;
   hasUpdated_by_token_transactions!: Sequelize.HasManyHasAssociationsMixin<token_transaction, token_transactionId>;
   countUpdated_by_token_transactions!: Sequelize.HasManyCountAssociationsMixin;
+  // user_profile hasMany token_valuation via created_by
+  token_valuations!: token_valuation[];
+  getToken_valuations!: Sequelize.HasManyGetAssociationsMixin<token_valuation>;
+  setToken_valuations!: Sequelize.HasManySetAssociationsMixin<token_valuation, token_valuationId>;
+  addToken_valuation!: Sequelize.HasManyAddAssociationMixin<token_valuation, token_valuationId>;
+  addToken_valuations!: Sequelize.HasManyAddAssociationsMixin<token_valuation, token_valuationId>;
+  createToken_valuation!: Sequelize.HasManyCreateAssociationMixin<token_valuation>;
+  removeToken_valuation!: Sequelize.HasManyRemoveAssociationMixin<token_valuation, token_valuationId>;
+  removeToken_valuations!: Sequelize.HasManyRemoveAssociationsMixin<token_valuation, token_valuationId>;
+  hasToken_valuation!: Sequelize.HasManyHasAssociationMixin<token_valuation, token_valuationId>;
+  hasToken_valuations!: Sequelize.HasManyHasAssociationsMixin<token_valuation, token_valuationId>;
+  countToken_valuations!: Sequelize.HasManyCountAssociationsMixin;
+  // user_profile hasMany token_valuation via updated_by
+  updated_by_token_valuations!: token_valuation[];
+  getUpdated_by_token_valuations!: Sequelize.HasManyGetAssociationsMixin<token_valuation>;
+  setUpdated_by_token_valuations!: Sequelize.HasManySetAssociationsMixin<token_valuation, token_valuationId>;
+  addUpdated_by_token_valuation!: Sequelize.HasManyAddAssociationMixin<token_valuation, token_valuationId>;
+  addUpdated_by_token_valuations!: Sequelize.HasManyAddAssociationsMixin<token_valuation, token_valuationId>;
+  createUpdated_by_token_valuation!: Sequelize.HasManyCreateAssociationMixin<token_valuation>;
+  removeUpdated_by_token_valuation!: Sequelize.HasManyRemoveAssociationMixin<token_valuation, token_valuationId>;
+  removeUpdated_by_token_valuations!: Sequelize.HasManyRemoveAssociationsMixin<token_valuation, token_valuationId>;
+  hasUpdated_by_token_valuation!: Sequelize.HasManyHasAssociationMixin<token_valuation, token_valuationId>;
+  hasUpdated_by_token_valuations!: Sequelize.HasManyHasAssociationsMixin<token_valuation, token_valuationId>;
+  countUpdated_by_token_valuations!: Sequelize.HasManyCountAssociationsMixin;
+  // user_profile hasMany track_token_order_action via created_by
+  track_token_order_actions!: track_token_order_action[];
+  getTrack_token_order_actions!: Sequelize.HasManyGetAssociationsMixin<track_token_order_action>;
+  setTrack_token_order_actions!: Sequelize.HasManySetAssociationsMixin<track_token_order_action, track_token_order_actionId>;
+  addTrack_token_order_action!: Sequelize.HasManyAddAssociationMixin<track_token_order_action, track_token_order_actionId>;
+  addTrack_token_order_actions!: Sequelize.HasManyAddAssociationsMixin<track_token_order_action, track_token_order_actionId>;
+  createTrack_token_order_action!: Sequelize.HasManyCreateAssociationMixin<track_token_order_action>;
+  removeTrack_token_order_action!: Sequelize.HasManyRemoveAssociationMixin<track_token_order_action, track_token_order_actionId>;
+  removeTrack_token_order_actions!: Sequelize.HasManyRemoveAssociationsMixin<track_token_order_action, track_token_order_actionId>;
+  hasTrack_token_order_action!: Sequelize.HasManyHasAssociationMixin<track_token_order_action, track_token_order_actionId>;
+  hasTrack_token_order_actions!: Sequelize.HasManyHasAssociationsMixin<track_token_order_action, track_token_order_actionId>;
+  countTrack_token_order_actions!: Sequelize.HasManyCountAssociationsMixin;
+  // user_profile hasMany track_token_order_action via updated_by
+  updated_by_track_token_order_actions!: track_token_order_action[];
+  getUpdated_by_track_token_order_actions!: Sequelize.HasManyGetAssociationsMixin<track_token_order_action>;
+  setUpdated_by_track_token_order_actions!: Sequelize.HasManySetAssociationsMixin<track_token_order_action, track_token_order_actionId>;
+  addUpdated_by_track_token_order_action!: Sequelize.HasManyAddAssociationMixin<track_token_order_action, track_token_order_actionId>;
+  addUpdated_by_track_token_order_actions!: Sequelize.HasManyAddAssociationsMixin<track_token_order_action, track_token_order_actionId>;
+  createUpdated_by_track_token_order_action!: Sequelize.HasManyCreateAssociationMixin<track_token_order_action>;
+  removeUpdated_by_track_token_order_action!: Sequelize.HasManyRemoveAssociationMixin<track_token_order_action, track_token_order_actionId>;
+  removeUpdated_by_track_token_order_actions!: Sequelize.HasManyRemoveAssociationsMixin<track_token_order_action, track_token_order_actionId>;
+  hasUpdated_by_track_token_order_action!: Sequelize.HasManyHasAssociationMixin<track_token_order_action, track_token_order_actionId>;
+  hasUpdated_by_track_token_order_actions!: Sequelize.HasManyHasAssociationsMixin<track_token_order_action, track_token_order_actionId>;
+  countUpdated_by_track_token_order_actions!: Sequelize.HasManyCountAssociationsMixin;
+  // user_profile hasMany track_token_order_action via user_profile_id
+  user_profile_track_token_order_actions!: track_token_order_action[];
+  getUser_profile_track_token_order_actions!: Sequelize.HasManyGetAssociationsMixin<track_token_order_action>;
+  setUser_profile_track_token_order_actions!: Sequelize.HasManySetAssociationsMixin<track_token_order_action, track_token_order_actionId>;
+  addUser_profile_track_token_order_action!: Sequelize.HasManyAddAssociationMixin<track_token_order_action, track_token_order_actionId>;
+  addUser_profile_track_token_order_actions!: Sequelize.HasManyAddAssociationsMixin<track_token_order_action, track_token_order_actionId>;
+  createUser_profile_track_token_order_action!: Sequelize.HasManyCreateAssociationMixin<track_token_order_action>;
+  removeUser_profile_track_token_order_action!: Sequelize.HasManyRemoveAssociationMixin<track_token_order_action, track_token_order_actionId>;
+  removeUser_profile_track_token_order_actions!: Sequelize.HasManyRemoveAssociationsMixin<track_token_order_action, track_token_order_actionId>;
+  hasUser_profile_track_token_order_action!: Sequelize.HasManyHasAssociationMixin<track_token_order_action, track_token_order_actionId>;
+  hasUser_profile_track_token_order_actions!: Sequelize.HasManyHasAssociationsMixin<track_token_order_action, track_token_order_actionId>;
+  countUser_profile_track_token_order_actions!: Sequelize.HasManyCountAssociationsMixin;
   // user_profile hasMany user_device_token via created_by
   user_device_tokens!: user_device_token[];
   getUser_device_tokens!: Sequelize.HasManyGetAssociationsMixin<user_device_token>;

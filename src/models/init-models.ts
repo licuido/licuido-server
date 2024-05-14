@@ -63,6 +63,10 @@ import { token_order as _token_order } from "./token_order";
 import type { token_orderAttributes, token_orderCreationAttributes } from "./token_order";
 import { token_transaction as _token_transaction } from "./token_transaction";
 import type { token_transactionAttributes, token_transactionCreationAttributes } from "./token_transaction";
+import { token_valuation as _token_valuation } from "./token_valuation";
+import type { token_valuationAttributes, token_valuationCreationAttributes } from "./token_valuation";
+import { track_token_order_action as _track_token_order_action } from "./track_token_order_action";
+import type { track_token_order_actionAttributes, track_token_order_actionCreationAttributes } from "./track_token_order_action";
 import { user_device_token as _user_device_token } from "./user_device_token";
 import type { user_device_tokenAttributes, user_device_tokenCreationAttributes } from "./user_device_token";
 import { user_entity as _user_entity } from "./user_entity";
@@ -107,6 +111,8 @@ export {
   _token_offering as token_offering,
   _token_order as token_order,
   _token_transaction as token_transaction,
+  _token_valuation as token_valuation,
+  _track_token_order_action as track_token_order_action,
   _user_device_token as user_device_token,
   _user_entity as user_entity,
   _user_identity as user_identity,
@@ -179,6 +185,10 @@ export type {
   token_orderCreationAttributes,
   token_transactionAttributes,
   token_transactionCreationAttributes,
+  token_valuationAttributes,
+  token_valuationCreationAttributes,
+  track_token_order_actionAttributes,
+  track_token_order_actionCreationAttributes,
   user_device_tokenAttributes,
   user_device_tokenCreationAttributes,
   user_entityAttributes,
@@ -224,6 +234,8 @@ export function initModels(sequelize: Sequelize) {
   const token_offering = _token_offering.initModel(sequelize);
   const token_order = _token_order.initModel(sequelize);
   const token_transaction = _token_transaction.initModel(sequelize);
+  const token_valuation = _token_valuation.initModel(sequelize);
+  const track_token_order_action = _track_token_order_action.initModel(sequelize);
   const user_device_token = _user_device_token.initModel(sequelize);
   const user_entity = _user_entity.initModel(sequelize);
   const user_identity = _user_identity.initModel(sequelize);
@@ -264,6 +276,8 @@ export function initModels(sequelize: Sequelize) {
   entity.hasMany(token_order, { as: "token_orders", foreignKey: "issuer_entity_id"});
   token_order.belongsTo(entity, { as: "receiver_entity", foreignKey: "receiver_entity_id"});
   entity.hasMany(token_order, { as: "receiver_entity_token_orders", foreignKey: "receiver_entity_id"});
+  track_token_order_action.belongsTo(entity, { as: "user_entity", foreignKey: "user_entity_id"});
+  entity.hasMany(track_token_order_action, { as: "track_token_order_actions", foreignKey: "user_entity_id"});
   customer_wallet.belongsTo(individual_investor, { as: "individual_investor", foreignKey: "individual_investor_id"});
   individual_investor.hasMany(customer_wallet, { as: "customer_wallets", foreignKey: "individual_investor_id"});
   entity_investor.belongsTo(individual_investor, { as: "individual_investor", foreignKey: "individual_investor_id"});
@@ -300,6 +314,8 @@ export function initModels(sequelize: Sequelize) {
   master_investor_type.hasMany(user_profile, { as: "user_profiles", foreignKey: "investor_type_id"});
   token_order.belongsTo(master_order_status, { as: "status", foreignKey: "status_id"});
   master_order_status.hasMany(token_order, { as: "token_orders", foreignKey: "status_id"});
+  track_token_order_action.belongsTo(master_order_status, { as: "action_status", foreignKey: "action_status_id"});
+  master_order_status.hasMany(track_token_order_action, { as: "track_token_order_actions", foreignKey: "action_status_id"});
   user_profile.belongsTo(master_position, { as: "position", foreignKey: "position_id"});
   master_position.hasMany(user_profile, { as: "user_profiles", foreignKey: "position_id"});
   entity.belongsTo(master_region, { as: "region", foreignKey: "region_id"});
@@ -328,10 +344,14 @@ export function initModels(sequelize: Sequelize) {
   token_offering.hasMany(token_offering_team, { as: "token_offering_teams", foreignKey: "token_offering_id"});
   token_order.belongsTo(token_offering, { as: "token_offering", foreignKey: "token_offering_id"});
   token_offering.hasMany(token_order, { as: "token_orders", foreignKey: "token_offering_id"});
+  token_valuation.belongsTo(token_offering, { as: "token_offering", foreignKey: "token_offering_id"});
+  token_offering.hasMany(token_valuation, { as: "token_valuations", foreignKey: "token_offering_id"});
   wallet_token.belongsTo(token_offering, { as: "token_offering", foreignKey: "token_offering_id"});
   token_offering.hasMany(wallet_token, { as: "wallet_tokens", foreignKey: "token_offering_id"});
   token_transaction.belongsTo(token_order, { as: "order", foreignKey: "order_id"});
   token_order.hasMany(token_transaction, { as: "token_transactions", foreignKey: "order_id"});
+  token_order.belongsTo(track_token_order_action, { as: "last_action_track", foreignKey: "last_action_track_id"});
+  track_token_order_action.hasMany(token_order, { as: "token_orders", foreignKey: "last_action_track_id"});
   asset.belongsTo(user_profile, { as: "created_by_user_profile", foreignKey: "created_by"});
   user_profile.hasMany(asset, { as: "assets", foreignKey: "created_by"});
   asset.belongsTo(user_profile, { as: "updated_by_user_profile", foreignKey: "updated_by"});
@@ -394,6 +414,16 @@ export function initModels(sequelize: Sequelize) {
   user_profile.hasMany(token_transaction, { as: "token_transactions", foreignKey: "created_by"});
   token_transaction.belongsTo(user_profile, { as: "updated_by_user_profile", foreignKey: "updated_by"});
   user_profile.hasMany(token_transaction, { as: "updated_by_token_transactions", foreignKey: "updated_by"});
+  token_valuation.belongsTo(user_profile, { as: "created_by_user_profile", foreignKey: "created_by"});
+  user_profile.hasMany(token_valuation, { as: "token_valuations", foreignKey: "created_by"});
+  token_valuation.belongsTo(user_profile, { as: "updated_by_user_profile", foreignKey: "updated_by"});
+  user_profile.hasMany(token_valuation, { as: "updated_by_token_valuations", foreignKey: "updated_by"});
+  track_token_order_action.belongsTo(user_profile, { as: "created_by_user_profile", foreignKey: "created_by"});
+  user_profile.hasMany(track_token_order_action, { as: "track_token_order_actions", foreignKey: "created_by"});
+  track_token_order_action.belongsTo(user_profile, { as: "updated_by_user_profile", foreignKey: "updated_by"});
+  user_profile.hasMany(track_token_order_action, { as: "updated_by_track_token_order_actions", foreignKey: "updated_by"});
+  track_token_order_action.belongsTo(user_profile, { as: "user_profile", foreignKey: "user_profile_id"});
+  user_profile.hasMany(track_token_order_action, { as: "user_profile_track_token_order_actions", foreignKey: "user_profile_id"});
   user_device_token.belongsTo(user_profile, { as: "created_by_user_profile", foreignKey: "created_by"});
   user_profile.hasMany(user_device_token, { as: "user_device_tokens", foreignKey: "created_by"});
   user_device_token.belongsTo(user_profile, { as: "updated_by_user_profile", foreignKey: "updated_by"});
@@ -448,6 +478,8 @@ export function initModels(sequelize: Sequelize) {
     token_offering: token_offering,
     token_order: token_order,
     token_transaction: token_transaction,
+    token_valuation: token_valuation,
+    track_token_order_action: track_token_order_action,
     user_device_token: user_device_token,
     user_entity: user_entity,
     user_identity: user_identity,
