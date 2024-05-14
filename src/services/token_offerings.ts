@@ -327,12 +327,13 @@ class TokenOfferings {
     count: number;
   }> {
     try {
-      const { offset, limit, search,tokenTypeId,currencyCode } = options;
+      const { offset, limit, search,tokenTypeId,currencyCode,fundStatus } = options;
       const whereClause: any = {
         is_active: true,
         name: { [Op.iLike]: `%${search}%` },
       };
   
+      //filters
       if (tokenTypeId !== undefined) {
         const tokenTypeIds = tokenTypeId?.split(',')
         whereClause.token_type_id = { [Op.or]: tokenTypeIds };
@@ -342,6 +343,12 @@ class TokenOfferings {
         const currencyCodes = currencyCode?.split(',')
         whereClause.base_currency_code = { [Op.or]: currencyCodes };
       }
+
+      if(fundStatus !== undefined){
+        const fundStatuses = fundStatus?.split(',')
+        whereClause.is_fund_rating_enabled = { [Op.or]: fundStatuses };
+      }
+      //
 
       const { rows, count } = await token_offering.findAndCountAll({
         where:whereClause,
