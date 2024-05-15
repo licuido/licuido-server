@@ -10,6 +10,7 @@ import type { master_entity_type, master_entity_typeId } from './master_entity_t
 import type { master_region, master_regionId } from './master_region';
 import type { token_offering, token_offeringId } from './token_offering';
 import type { token_order, token_orderId } from './token_order';
+import type { track_token_order_action, track_token_order_actionId } from './track_token_order_action';
 import type { user_profile, user_profileId } from './user_profile';
 
 export interface entityAttributes {
@@ -143,6 +144,18 @@ export class entity extends Model<entityAttributes, entityCreationAttributes> im
   hasReceiver_entity_token_order!: Sequelize.HasManyHasAssociationMixin<token_order, token_orderId>;
   hasReceiver_entity_token_orders!: Sequelize.HasManyHasAssociationsMixin<token_order, token_orderId>;
   countReceiver_entity_token_orders!: Sequelize.HasManyCountAssociationsMixin;
+  // entity hasMany track_token_order_action via user_entity_id
+  track_token_order_actions!: track_token_order_action[];
+  getTrack_token_order_actions!: Sequelize.HasManyGetAssociationsMixin<track_token_order_action>;
+  setTrack_token_order_actions!: Sequelize.HasManySetAssociationsMixin<track_token_order_action, track_token_order_actionId>;
+  addTrack_token_order_action!: Sequelize.HasManyAddAssociationMixin<track_token_order_action, track_token_order_actionId>;
+  addTrack_token_order_actions!: Sequelize.HasManyAddAssociationsMixin<track_token_order_action, track_token_order_actionId>;
+  createTrack_token_order_action!: Sequelize.HasManyCreateAssociationMixin<track_token_order_action>;
+  removeTrack_token_order_action!: Sequelize.HasManyRemoveAssociationMixin<track_token_order_action, track_token_order_actionId>;
+  removeTrack_token_order_actions!: Sequelize.HasManyRemoveAssociationsMixin<track_token_order_action, track_token_order_actionId>;
+  hasTrack_token_order_action!: Sequelize.HasManyHasAssociationMixin<track_token_order_action, track_token_order_actionId>;
+  hasTrack_token_order_actions!: Sequelize.HasManyHasAssociationsMixin<track_token_order_action, track_token_order_actionId>;
+  countTrack_token_order_actions!: Sequelize.HasManyCountAssociationsMixin;
   // entity belongsTo master_business_sector via business_sector_id
   business_sector!: master_business_sector;
   getBusiness_sector!: Sequelize.BelongsToGetAssociationMixin<master_business_sector>;

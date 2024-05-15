@@ -30,6 +30,10 @@ const app: FastifyPluginAsync<AppOptions> = async (
     options: opts,
   });
 
+  void fastify.get("/", async (request, reply) => {
+    return { message: "Server Running...." };
+  });
+
   // This loads all plugins defined in routes
   // define your routes in one of these
   void fastify.register(v1);

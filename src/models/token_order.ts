@@ -5,6 +5,7 @@ import type { individual_investor, individual_investorId } from './individual_in
 import type { master_order_status, master_order_statusId } from './master_order_status';
 import type { token_offering, token_offeringId } from './token_offering';
 import type { token_transaction, token_transactionId } from './token_transaction';
+import type { track_token_order_action, track_token_order_actionId } from './track_token_order_action';
 import type { user_profile, user_profileId } from './user_profile';
 
 export interface token_orderAttributes {
@@ -33,11 +34,17 @@ export interface token_orderAttributes {
   bank_account_name?: string;
   swift_bic_no?: string;
   iban_no?: string;
+  default_currency?: string;
+  default_currency_code?: string;
+  net_investment_value_in_euro?: number;
+  last_action_track_id?: string;
+  recived_amount_in_euro?: number;
+  fulfilled_by?: "admin" | "issuer";
 }
 
 export type token_orderPk = "id";
 export type token_orderId = token_order[token_orderPk];
-export type token_orderOptionalAttributes = "id" | "type" | "investment_type" | "issuer_entity_id" | "receiver_entity_id" | "individual_receiving_investor_id" | "token_offering_id" | "currency" | "currency_code" | "ordered_tokens" | "price_per_token" | "net_investment_value" | "fee" | "total_paid" | "payment_reference" | "status_id" | "is_active" | "created_by" | "updated_by" | "created_at" | "updated_at" | "bank_name" | "bank_account_name" | "swift_bic_no" | "iban_no";
+export type token_orderOptionalAttributes = "id" | "type" | "investment_type" | "issuer_entity_id" | "receiver_entity_id" | "individual_receiving_investor_id" | "token_offering_id" | "currency" | "currency_code" | "ordered_tokens" | "price_per_token" | "net_investment_value" | "fee" | "total_paid" | "payment_reference" | "status_id" | "is_active" | "created_by" | "updated_by" | "created_at" | "updated_at" | "bank_name" | "bank_account_name" | "swift_bic_no" | "iban_no" | "default_currency" | "default_currency_code" | "net_investment_value_in_euro" | "last_action_track_id" | "recived_amount_in_euro" | "fulfilled_by";
 export type token_orderCreationAttributes = Optional<token_orderAttributes, token_orderOptionalAttributes>;
 
 export class token_order extends Model<token_orderAttributes, token_orderCreationAttributes> implements token_orderAttributes {
@@ -66,6 +73,12 @@ export class token_order extends Model<token_orderAttributes, token_orderCreatio
   bank_account_name?: string;
   swift_bic_no?: string;
   iban_no?: string;
+  default_currency?: string;
+  default_currency_code?: string;
+  net_investment_value_in_euro?: number;
+  last_action_track_id?: string;
+  recived_amount_in_euro?: number;
+  fulfilled_by?: "admin" | "issuer";
 
   // token_order belongsTo entity via issuer_entity_id
   issuer_entity!: entity;
@@ -104,6 +117,11 @@ export class token_order extends Model<token_orderAttributes, token_orderCreatio
   hasToken_transaction!: Sequelize.HasManyHasAssociationMixin<token_transaction, token_transactionId>;
   hasToken_transactions!: Sequelize.HasManyHasAssociationsMixin<token_transaction, token_transactionId>;
   countToken_transactions!: Sequelize.HasManyCountAssociationsMixin;
+  // token_order belongsTo track_token_order_action via last_action_track_id
+  last_action_track!: track_token_order_action;
+  getLast_action_track!: Sequelize.BelongsToGetAssociationMixin<track_token_order_action>;
+  setLast_action_track!: Sequelize.BelongsToSetAssociationMixin<track_token_order_action, track_token_order_actionId>;
+  createLast_action_track!: Sequelize.BelongsToCreateAssociationMixin<track_token_order_action>;
   // token_order belongsTo user_profile via created_by
   created_by_user_profile!: user_profile;
   getCreated_by_user_profile!: Sequelize.BelongsToGetAssociationMixin<user_profile>;
@@ -237,6 +255,34 @@ export class token_order extends Model<token_orderAttributes, token_orderCreatio
     },
     iban_no: {
       type: DataTypes.TEXT,
+      allowNull: true
+    },
+    default_currency: {
+      type: DataTypes.TEXT,
+      allowNull: true
+    },
+    default_currency_code: {
+      type: DataTypes.TEXT,
+      allowNull: true
+    },
+    net_investment_value_in_euro: {
+      type: DataTypes.DECIMAL,
+      allowNull: true
+    },
+    last_action_track_id: {
+      type: DataTypes.UUID,
+      allowNull: true,
+      references: {
+        model: 'track_token_order_actions',
+        key: 'id'
+      }
+    },
+    recived_amount_in_euro: {
+      type: DataTypes.DECIMAL,
+      allowNull: true
+    },
+    fulfilled_by: {
+      type: DataTypes.ENUM("admin","issuer"),
       allowNull: true
     }
   }, {

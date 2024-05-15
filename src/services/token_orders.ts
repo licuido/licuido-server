@@ -1,5 +1,6 @@
 import { master_order_status, token_offering, token_order } from "@models";
-import { createTokenOrders } from "@types";
+import { createTokenOrders, updateTokenOrders } from "@types";
+import { Transaction } from "sequelize";
 
 class TokenOrders {
   /**
@@ -9,11 +10,15 @@ class TokenOrders {
    * @throws {Error} Throws an error if there's an issue extracting parameters from the response.
    */
 
-  static async create(options: createTokenOrders): Promise<any> {
+  static async create(
+    options: createTokenOrders,
+    transaction: Transaction
+  ): Promise<any> {
     try {
       const tokenOrder = await token_order.create(options, {
         raw: false,
         returning: true,
+        transaction,
       });
 
       let tokenOrderData: any = tokenOrder
@@ -87,6 +92,33 @@ class TokenOrders {
       });
 
       return JSON.parse(JSON.stringify(token_offer));
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async update(
+    {
+      options,
+      id,
+    }: {
+      options: updateTokenOrders;
+      id: string;
+    },
+    transaction: Transaction
+  ): Promise<any> {
+    try {
+      return await token_order.update(
+        {
+          ...options,
+        },
+        {
+          where: {
+            id,
+          },
+          transaction,
+        }
+      );
     } catch (error) {
       throw error;
     }
