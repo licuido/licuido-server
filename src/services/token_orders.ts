@@ -1,5 +1,7 @@
 import { master_order_status, token_offering, token_order } from "@models";
+import queries from "@queries";
 import { createTokenOrders, updateTokenOrders } from "@types";
+import { sequelize } from "@utils";
 import { Transaction } from "sequelize";
 
 class TokenOrders {
@@ -121,6 +123,79 @@ class TokenOrders {
       );
     } catch (error) {
       throw error;
+    }
+  }
+
+  static async getSubscriptionOrderData(options: {
+    entity_type_id: number;
+    offset: number;
+    limit: number;
+    user_entity_id?: string;
+    search?: string;
+    status_filters?: number[] | [];
+    investment_currency_filters?: string[] | [];
+    order_fulfillment_filters?: string[] | [];
+    start_date?: string;
+    end_date?: string;
+  }): Promise<{
+    rows: any[];
+    count: number;
+  }> {
+    try {
+      const {
+        entity_type_id,
+        offset,
+        limit,
+        user_entity_id,
+        search,
+        status_filters,
+        investment_currency_filters,
+        order_fulfillment_filters,
+        start_date,
+        end_date,
+      } = options;
+
+      // For Data
+      const [result]: any[] = await sequelize.query(
+        await queries.getAllSubscriptionOrderQuery(
+          entity_type_id,
+          "subscription",
+          offset,
+          limit,
+          user_entity_id,
+          search,
+          status_filters,
+          investment_currency_filters,
+          order_fulfillment_filters,
+          start_date,
+          end_date
+        )
+      );
+
+      // For Count
+      const [dataCount]: any[] = await sequelize.query(
+        await queries.getAllSubscriptionOrderQuery(
+          entity_type_id,
+          "subscription",
+          null,
+          null,
+          user_entity_id,
+          search,
+          status_filters,
+          investment_currency_filters,
+          order_fulfillment_filters,
+          start_date,
+          end_date
+        )
+      );
+
+      return {
+        rows: result,
+        count: dataCount?.[0]?.count ?? 0,
+      };
+    } catch (error: any) {
+      console.log(error);
+      throw new Error(error.message);
     }
   }
 }

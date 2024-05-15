@@ -31,7 +31,7 @@ const getInvestorDataForQualification = async (
       entity_type_id,
       user_entity_id,
       offset = 0,
-      limit = 0,
+      limit = 10,
       search = "",
       status_filter,
       kyc_status_filter,

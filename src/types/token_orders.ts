@@ -49,3 +49,16 @@ export interface updateTokenOrders {
   last_action_track_id: string;
   updated_by: string;
 }
+
+export interface getSubscriptionOrderPayload {
+  entity_type_id: number;
+  offset: number;
+  limit: number;
+  user_entity_id?: string;
+  search?: string;
+  status_filter?: string;
+  investment_currency_filter?: string;
+  start_date?: string;
+  end_date?: string;
+  order_fulfillment_filter?: string;
+}

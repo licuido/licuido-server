@@ -10,6 +10,7 @@ import { TokenOrders, TrackTokenOrderActions } from "@services";
 import {
   createTokenRedemptionOrderPayload,
   createTokenSubscriptionOrderPayload,
+  getSubscriptionOrderPayload,
 } from "@types";
 import { sequelize } from "@utils";
 
@@ -263,8 +264,72 @@ const createTokenRedemptionOrders = async (
   }
 };
 
+const getTokenSubscriptionOrder = async (
+  options: getSubscriptionOrderPayload
+) => {
+  const {
+    entity_type_id,
+    user_entity_id,
+    offset = 0,
+    limit = 0,
+    search = "",
+    status_filter,
+    investment_currency_filter,
+    start_date,
+    end_date,
+    order_fulfillment_filter,
+  } = options;
+
+  // For Token Order Status Filters
+  const status_filters: any[] =
+    status_filter && typeof status_filter === "string"
+      ? status_filter === ""
+        ? []
+        : status_filter.split(",")
+      : Array.isArray(status_filter)
+      ? status_filter
+      : [];
+
+  // For Investment Currency Filters
+  const investment_currency_filters: any[] =
+    investment_currency_filter && typeof investment_currency_filter === "string"
+      ? investment_currency_filter === ""
+        ? []
+        : investment_currency_filter.split(",")
+      : Array.isArray(investment_currency_filter)
+      ? investment_currency_filter
+      : [];
+
+  // For Order Fulfillment Filter
+  const order_fulfillment_filters: any[] =
+    order_fulfillment_filter && typeof order_fulfillment_filter === "string"
+      ? order_fulfillment_filter === ""
+        ? []
+        : order_fulfillment_filter.split(",")
+      : Array.isArray(order_fulfillment_filter)
+      ? order_fulfillment_filter
+      : [];
+
+  // Getting Rows & Count Data of Subscription Orders
+  const { rows, count } = await TokenOrders.getSubscriptionOrderData({
+    entity_type_id,
+    user_entity_id,
+    offset,
+    limit,
+    search,
+    status_filters,
+    investment_currency_filters,
+    order_fulfillment_filters,
+    start_date,
+    end_date,
+  });
+
+  return { page: rows, count: rows?.length, totalCount: count };
+};
+
 export default {
   createTokenSubscriptionOrders,
   getTokenOrder,
   createTokenRedemptionOrders,
+  getTokenSubscriptionOrder,
 };
