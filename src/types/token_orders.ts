@@ -7,9 +7,9 @@ export interface createTokenSubscriptionOrderPayload {
   currency_code: string;
   ordered_tokens: number;
   price_per_token: number;
-  net_investment_value?: number;
+  net_investment_value: number;
   fee?: number;
-  total_paid: number;
+  total_paid?: number;
   payment_reference?: string;
   user_entity_id: string;
   user_profile_id: string;
@@ -28,15 +28,24 @@ export interface createTokenOrders
   bank_account_name?: string;
   swift_bic_no?: string;
   iban_no?: string;
+  default_currency: string;
+  default_currency_code: string;
+  net_investment_value_in_euro: number;
+  fulfilled_by: "admin" | "issuer";
 }
 
 export interface createTokenRedemptionOrderPayload
   extends Omit<
     createTokenSubscriptionOrderPayload,
-    "net_investment_value" | "fee" | "payment_reference"
+    "fee" | "payment_reference"
   > {
   bank_name: string;
   bank_account_name: string;
   swift_bic_no: string;
   iban_no: string;
+}
+
+export interface updateTokenOrders {
+  last_action_track_id: string;
+  updated_by: string;
 }

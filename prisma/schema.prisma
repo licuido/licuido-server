@@ -452,6 +452,8 @@ model token_orders {
   default_currency_code                                String?
   net_investment_value_in_euro                         Decimal?                   @db.Decimal
   last_action_track_id                                 String?                    @db.Uuid
+  recived_amount_in_euro                               Decimal?                   @db.Decimal
+  fulfilled_by                                         fulfilled_by_types?
   user_profiles_token_orders_created_byTouser_profiles user_profiles?             @relation("token_orders_created_byTouser_profiles", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
   individual_investors                                 individual_investors?      @relation(fields: [individual_receiving_investor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   entities_token_orders_issuer_entity_idToentities     entities?                  @relation("token_orders_issuer_entity_idToentities", fields: [issuer_entity_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -691,12 +693,12 @@ model token_valuations {
   bid_price                                                Decimal?         @db.Decimal
   valuation_price                                          Decimal?         @db.Decimal
   start_date                                               DateTime?        @db.Date
-  start_time                                               DateTime?        @db.Date
   is_active                                                Boolean?         @default(true)
   created_by                                               String?          @db.Uuid
   updated_by                                               String?          @db.Uuid
   created_at                                               DateTime?        @default(dbgenerated("(now() AT TIME ZONE 'utc'::text)")) @db.Timestamptz(6)
   updated_at                                               DateTime?        @default(dbgenerated("(now() AT TIME ZONE 'utc'::text)")) @db.Timestamptz(6)
+  start_time                                               DateTime?        @db.Time(6)
   user_profiles_token_valuations_created_byTouser_profiles user_profiles?   @relation("token_valuations_created_byTouser_profiles", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
   token_offerings                                          token_offerings? @relation(fields: [token_offering_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   user_profiles_token_valuations_updated_byTouser_profiles user_profiles?   @relation("token_valuations_updated_byTouser_profiles", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -715,4 +717,9 @@ enum order_types {
 enum transaction_types {
   mint
   burn
+}
+
+enum fulfilled_by_types {
+  admin
+  issuer
 }
