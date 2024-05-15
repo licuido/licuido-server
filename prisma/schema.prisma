@@ -452,6 +452,8 @@ model token_orders {
   default_currency_code                                String?
   net_investment_value_in_euro                         Decimal?                   @db.Decimal
   last_action_track_id                                 String?                    @db.Uuid
+  recived_amount_in_euro                               Decimal?                   @db.Decimal
+  fulfilled_by                                         fulfilled_by_types?
   user_profiles_token_orders_created_byTouser_profiles user_profiles?             @relation("token_orders_created_byTouser_profiles", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
   individual_investors                                 individual_investors?      @relation(fields: [individual_receiving_investor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   entities_token_orders_issuer_entity_idToentities     entities?                  @relation("token_orders_issuer_entity_idToentities", fields: [issuer_entity_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -715,4 +717,9 @@ enum order_types {
 enum transaction_types {
   mint
   burn
+}
+
+enum fulfilled_by_types {
+  admin
+  issuer
 }

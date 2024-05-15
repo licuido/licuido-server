@@ -2,6 +2,7 @@ import {
   Logger,
   currencyConvert,
   errorCustomMessage,
+  fulfilledStatus,
   qualifiedStatus,
   successCustomMessage,
 } from "@helpers";
@@ -56,6 +57,12 @@ const createTokenSubscriptionOrders = async (
       amount: net_investment_value,
     });
 
+    // To check order fulfilled by licuido or issuer
+    const isFulfilledBylicuido: boolean =
+      await fulfilledStatus.getOrderFulfilledStatus({
+        issuer_entity_id,
+      });
+
     const result: any = await sequelize.transaction(async (transaction) => {
       // For Creating Token Orders
       const tokenOrderId = await TokenOrders.create(
@@ -79,6 +86,7 @@ const createTokenSubscriptionOrders = async (
           default_currency: default_currency,
           default_currency_code: default_currency_code,
           net_investment_value_in_euro: conversionResponse,
+          fulfilled_by: isFulfilledBylicuido ? "admin" : "issuer",
         },
         transaction
       );
@@ -180,6 +188,12 @@ const createTokenRedemptionOrders = async (
       amount: net_investment_value,
     });
 
+    // To check order fulfilled by licuido or issuer
+    const isFulfilledBylicuido: boolean =
+      await fulfilledStatus.getOrderFulfilledStatus({
+        issuer_entity_id,
+      });
+
     const result: any = await sequelize.transaction(async (transaction) => {
       // For Creating Token Orders Redemption
       const tokenOrderId = await TokenOrders.create(
@@ -204,6 +218,7 @@ const createTokenRedemptionOrders = async (
           default_currency: default_currency,
           default_currency_code: default_currency_code,
           net_investment_value_in_euro: conversionResponse,
+          fulfilled_by: isFulfilledBylicuido ? "admin" : "issuer",
         },
         transaction
       );
