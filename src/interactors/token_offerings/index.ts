@@ -17,6 +17,7 @@ import {
   updateTokenOfferingPayload,
   updateTokenOfferingSubData,
   createTokenValuation,
+  getAllTokenAdmin,
 } from "@types";
 
 const createOfferingSubDatas = async (
@@ -228,7 +229,7 @@ const createTokenOfferings = async (options: createTokenOfferingPayload) => {
       iban_no,
       token_type_id,
       is_active: true,
-      offer_status_id: 1,
+      offer_status_id: 3,
       projected_rate_return,
       payback_period,
       payback_period_type,
@@ -739,6 +740,124 @@ const updateTokenValuation = async (option: createTokenValuation) => {
   }
 };
 
+//get all tokens
+const getAllTokens = async (options: getAllTokenAdmin) => {
+  try {
+    const {
+      offset = 0,
+      limit = 0,
+      search = "",
+      status,
+      issuer,
+      created_by,
+      currency,
+      block_chain,
+      token_type,
+    } = options;
+
+    // For Status Filters
+    const status_filters: any[] =
+      status && typeof status === "string"
+        ? status === ""
+          ? []
+          : status.split(",")
+        : Array.isArray(status)
+        ? status
+        : [];
+
+    // For issuer filter
+    const issuer_filters: any[] =
+      issuer && typeof issuer === "string"
+        ? issuer === ""
+          ? []
+          : issuer.split(",")
+        : Array.isArray(issuer)
+        ? issuer
+        : [];
+
+    // For Created by Filters
+    const created_by_filters: any[] =
+      created_by && typeof created_by === "string"
+        ? created_by === ""
+          ? []
+          : created_by.split(",")
+        : Array.isArray(created_by)
+        ? created_by
+        : [];
+
+    // For Block chain network Filters
+    const block_chain_filters: any[] =
+      block_chain && typeof block_chain === "string"
+        ? block_chain === ""
+          ? []
+          : block_chain.split(",")
+        : Array.isArray(block_chain)
+        ? block_chain
+        : [];
+
+    // For Block chain network Filters
+    const currency_filter: any[] =
+      currency && typeof currency === "string"
+        ? currency === ""
+          ? []
+          : currency.split(",")
+        : Array.isArray(currency)
+        ? currency
+        : [];
+
+    // For Token Type Filters
+    const token_type_filters: any[] =
+      token_type && typeof token_type === "string"
+        ? token_type === ""
+          ? []
+          : token_type.split(",")
+        : Array.isArray(token_type)
+        ? token_type
+        : [];
+
+    // Getting Rows & Count Data of Investor
+    const { rows, count } = await TokenOfferings.getAllTokens({
+      search,
+      offset,
+      limit,
+      status_filters,
+      issuer_filters,
+      created_by_filters,
+      block_chain_filters,
+      currency_filter,
+      token_type_filters,
+    });
+
+    return { page: rows, count: rows?.length, totalCount: count };
+  } catch (error: any) {
+    Logger.error(error.message, error);
+    throw error;
+  }
+};
+
+//update token offering status
+
+const updateTokenOfferingStatus = async ({
+  token_id,
+  offer_status_id,
+  user_profile_id,
+}: {
+  token_id: string;
+  offer_status_id: number;
+  user_profile_id: string;
+}) => {
+  try {
+    return TokenOfferings.updateTokenOfferingStatus({
+      token_id,
+      offer_status_id,
+      updated_by: user_profile_id,
+    });
+  } catch (error: any) {
+    Logger.error(error.message, error);
+    throw error;
+  }
+};
+
 export default {
   createTokenOfferings,
   updateTokenStatus,
@@ -746,4 +865,6 @@ export default {
   updateTokenOfferings,
   getIssuerTokens,
   updateTokenValuation,
+  getAllTokens,
+  updateTokenOfferingStatus
 };

@@ -10,17 +10,17 @@ export interface token_valuationAttributes {
   bid_price?: number;
   valuation_price?: number;
   start_date?: string;
-  start_time?: string;
   is_active?: boolean;
   created_by?: string;
   updated_by?: string;
   created_at?: Date;
   updated_at?: Date;
+  start_time?: string;
 }
 
 export type token_valuationPk = "id";
 export type token_valuationId = token_valuation[token_valuationPk];
-export type token_valuationOptionalAttributes = "id" | "token_offering_id" | "offer_price" | "bid_price" | "valuation_price" | "start_date" | "start_time" | "is_active" | "created_by" | "updated_by" | "created_at" | "updated_at";
+export type token_valuationOptionalAttributes = "id" | "token_offering_id" | "offer_price" | "bid_price" | "valuation_price" | "start_date" | "is_active" | "created_by" | "updated_by" | "created_at" | "updated_at" | "start_time";
 export type token_valuationCreationAttributes = Optional<token_valuationAttributes, token_valuationOptionalAttributes>;
 
 export class token_valuation extends Model<token_valuationAttributes, token_valuationCreationAttributes> implements token_valuationAttributes {
@@ -30,12 +30,12 @@ export class token_valuation extends Model<token_valuationAttributes, token_valu
   bid_price?: number;
   valuation_price?: number;
   start_date?: string;
-  start_time?: string;
   is_active?: boolean;
   created_by?: string;
   updated_by?: string;
   created_at?: Date;
   updated_at?: Date;
+  start_time?: string;
 
   // token_valuation belongsTo token_offering via token_offering_id
   token_offering!: token_offering;
@@ -85,10 +85,6 @@ export class token_valuation extends Model<token_valuationAttributes, token_valu
       type: DataTypes.DATEONLY,
       allowNull: true
     },
-    start_time: {
-      type: DataTypes.DATEONLY,
-      allowNull: true
-    },
     is_active: {
       type: DataTypes.BOOLEAN,
       allowNull: true,
@@ -109,6 +105,10 @@ export class token_valuation extends Model<token_valuationAttributes, token_valu
         model: 'user_profiles',
         key: 'id'
       }
+    },
+    start_time: {
+      type: DataTypes.TIME,
+      allowNull: true
     }
   }, {
     sequelize,

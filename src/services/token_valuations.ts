@@ -1,6 +1,5 @@
 import { token_valuation, token_offering } from "@models";
 import { createTokenValuation } from "@types";
-// import cron from "node-cron";
 
 class TokenValuations {
   /**
@@ -63,13 +62,6 @@ class TokenValuations {
         valuation_price,
       } = options;
 
-      const cronSchedule = `${start_time.split(":")[1]} ${
-        start_time.split(":")[0]
-      } ${start_date.split("-")[1]} ${start_date.split("-")[2]} *`; // Example cron schedule
-
-      console.log(cronSchedule,"cronSchedule")
-
-      return cronSchedule
 
       token_valuation
         .create({
@@ -81,24 +73,9 @@ class TokenValuations {
           start_time,
           valuation_price,
           is_active: false,
+          created_at:new Date()
         })
         .then((res) => {
-          // let data: any = JSON.parse(JSON.stringify(res));
-
-          const cronSchedule = `${start_time.split(":")[1]} ${
-            start_time.split(":")[0]
-          } ${start_date.split("-")[0]} ${start_date.split("-")[1]} *`; // Example cron schedule
-
-          console.log(cronSchedule,"cronSchedule")
-          // cron.schedule(cronSchedule, () => {
-          //   TokenValuations.updateTokenVaulation({
-          //     token_id,
-          //     id: data?.[0]?.id,
-          //     offer_price,
-          //     valuation_price,
-          //   });
-          // });
-
           return true;
         })
         .catch(() => {

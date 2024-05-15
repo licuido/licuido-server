@@ -16,6 +16,8 @@ import {
 } from "@models";
 import { createTokenOffering, updateTokenOffering } from "@types";
 import { Op } from "sequelize";
+import queries from "@queries";
+import { sequelize } from "@utils";
 
 class TokenOfferings {
   /**
@@ -368,6 +370,107 @@ class TokenOfferings {
       });
 
       return JSON.parse(JSON.stringify(token_offer));
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * this function used for get all tokens for admin
+   *
+   * @param {token_id:string} options - The response object containing create data.
+   * @throws {Error} Throws an error if there's an issue extracting parameters from the response.
+   */
+  static async getAllTokens(options: {
+    offset: number;
+    limit: number;
+    search?: string;
+    status_filters?: number[] | [];
+    currency_filter?: string[] | [];
+    token_type_filters?: number[] | [];
+    block_chain_filters?: number[] | [];
+    created_by_filters?: number[] | [];
+    issuer_filters?: string[] | [];
+  }): Promise<{
+    rows: any[];
+    count: number;
+  }> {
+    try {
+      const {
+        offset,
+        limit,
+        search,
+        status_filters,
+        created_by_filters,
+        currency_filter,
+        block_chain_filters,
+        issuer_filters,
+        token_type_filters,
+      } = options;
+
+      // For Data
+      const [result]: any[] = await sequelize.query(
+        queries.getAllTokensQuery(
+          offset,
+          limit,
+          search,
+          status_filters,
+          currency_filter,
+          token_type_filters,
+          block_chain_filters,
+          created_by_filters,
+          issuer_filters
+        )
+      );
+
+      // For Count
+      const [dataCount]: any[] = await sequelize.query(
+        queries.getAllTokensCountQuery(
+          search,
+          status_filters,
+          currency_filter,
+          token_type_filters,
+          block_chain_filters,
+          created_by_filters,
+          issuer_filters
+        )
+      );
+
+      return {
+        rows: result,
+        count: dataCount?.[0]?.count ?? 0,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * this function used for update token offering status
+   *
+   * @throws {Error} Throws an error if there's an issue extracting parameters from the response.
+   */
+  static async updateTokenOfferingStatus({
+    offer_status_id,
+    token_id,
+    updated_by,
+  }: {
+    offer_status_id: number;
+    token_id: string;
+    updated_by: string;
+  }): Promise<any> {
+    try {
+      return await token_offering.update(
+        {
+          offer_status_id,
+          updated_by,
+        },
+        {
+          where: {
+            id: token_id,
+          },
+        }
+      );
     } catch (error) {
       throw error;
     }

@@ -26,7 +26,20 @@ const customIssuerParams = Schema.object().prop("token_id", Schema.string());
 
 export const GET_ISSUER_TOKENS = {
   description: "The purpose of this schema is get issuer tokens",
-  tags: ["TOKEN_OFFERING"],
+  tags: ["Token Offering"],
   response: makeResponseSchema(getIssuerTokenResponse),
   query: customIssuerParams,
+};
+
+const getAllTokenResponse: JSONSchema = Schema.object()
+  .additionalProperties(true)
+  .valueOf() as JSONSchema;
+
+const customAlltokemParams = Schema.object().prop("token_id", Schema.string());
+
+export const GET_ALL_TOKENS = {
+  description: "The purpose of this schema is get all tokens for admin",
+  tags: ["Token Offering"],
+  response: makeResponseSchema(getAllTokenResponse),
+  query: customAlltokemParams,
 };

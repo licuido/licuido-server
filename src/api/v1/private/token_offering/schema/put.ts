@@ -13,7 +13,7 @@ const updateTokenStatusResponse: JSONSchema = Schema.object()
 
 export const UPDATE_TOKEN_STATUS = {
   description:
-    "Defines the structure and constraints for an API endpoint to update token offering status.",
+    "Defines the structure and constraints for an API endpoint to update token  status.",
   tags: ["Token Offering"],
   body: updateTokenStatusBody,
   response: makeResponseSchema(updateTokenStatusResponse),
@@ -190,4 +190,23 @@ export const UPDATE_TOKEN_VALUATION = {
   tags: ["Token Offering"],
   body: updateTokenValuationBody,
   response: makeResponseSchema(updateTokenValuationResponse),
+};
+
+
+/* For Update Token offering Status */
+const updateTokenOfferingStatusBody = Schema.object()
+  .prop("status_id", Schema.number())
+  .prop("token_id", Schema.string())
+  .valueOf();
+
+const updateTokenOfferingStatusResponse: JSONSchema = Schema.object()
+  .prop("data", Schema.object().prop("message", Schema.string()))
+  .valueOf() as JSONSchema;
+
+export const UPDATE_TOKEN_OFFERING_STATUS = {
+  description:
+    "Defines the structure and constraints for an API endpoint to update token offering status.",
+  tags: ["Token Offering"],
+  body: updateTokenOfferingStatusBody,
+  response: makeResponseSchema(updateTokenOfferingStatusResponse),
 };
