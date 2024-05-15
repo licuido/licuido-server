@@ -14,6 +14,8 @@ export * from "./s3";
 import streamToBuffer from "./streamToBuffer";
 import qualifiedStatus from "./investorQualifiedStatus";
 import currencyConvert from "./currencyConversion";
+import commentFunction from "./functions";
+
 
 export {
   dateTime,
@@ -35,4 +37,5 @@ export {
   streamToBuffer,
   qualifiedStatus,
   currencyConvert,
+  commentFunction
 };

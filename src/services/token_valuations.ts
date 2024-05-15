@@ -1,5 +1,7 @@
+import { commentFunction } from "@helpers";
 import { token_valuation, token_offering } from "@models";
 import { createTokenValuation } from "@types";
+import moment from "moment";
 
 class TokenValuations {
   /**
@@ -62,7 +64,6 @@ class TokenValuations {
         valuation_price,
       } = options;
 
-
       token_valuation
         .create({
           token_offering_id: token_id,
@@ -72,8 +73,8 @@ class TokenValuations {
           start_date,
           start_time,
           valuation_price,
-          is_active: false,
-          created_at:new Date()
+          is_active: commentFunction.checkCurrenctData(start_date) ? true : false,
+          created_at: new Date(),
         })
         .then((res) => {
           return true;
@@ -81,6 +82,25 @@ class TokenValuations {
         .catch(() => {
           return false;
         });
+
+      return true;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async UpdateTodayValuationToken(date: Date): Promise<any> {
+    try {
+      token_valuation.update(
+        {
+          is_active: true,
+        },
+        {
+          where: {
+            start_date: moment(date).format("YYYY-MM-DD"),
+          },
+        }
+      );
 
       return true;
     } catch (error) {

@@ -19,6 +19,7 @@ import {
   createTokenValuation,
   getAllTokenAdmin,
 } from "@types";
+import { commentFunction } from "@helpers";
 
 const createOfferingSubDatas = async (
   options: createTokenOfferingSubData,
@@ -658,11 +659,20 @@ const findToken = async ({
     }
 
     const data = await TokenOfferings.getTokenOffering({ token_id });
+    const parseData = JSON.parse(JSON.stringify(data));
+
+    const finalData = {
+      ...parseData,
+      token_valuation_staus: commentFunction.returnValuationPrice(
+        parseData?.token_valuations?.[0]?.offer_price,
+        parseData?.token_valuations?.[0]?.valuation_price
+      ),
+    };
 
     return {
       success: true,
       message: "Token Fetched Successfully",
-      data,
+      data: finalData,
     };
   } catch (error: any) {
     Logger.error(error.message, error);
@@ -708,8 +718,6 @@ const updateTokenValuation = async (option: createTokenValuation) => {
       token_id,
       user_entity_id,
       user_profile_id,
-      offer_price,
-      bid_price,
     } = option;
 
     const count = await TokenOfferings.checkTokenHaveAccess({
@@ -727,12 +735,12 @@ const updateTokenValuation = async (option: createTokenValuation) => {
     await TokenValuations.create({
       ...option,
       created_by: user_profile_id,
-      valuation_price: Number(offer_price - (offer_price - bid_price) / 2),
     });
 
     return {
       success: true,
-      message: "Token Valuation Updated Successfully",
+      message:
+        "Token Valuation Added Successfully. It Will Reflected After your start date",
     };
   } catch (error: any) {
     Logger.error(error.message, error);
@@ -858,6 +866,21 @@ const updateTokenOfferingStatus = async ({
   }
 };
 
+//update token valuation in cron
+const updateTokenValuationUsingCron = async () => {
+  try {
+    await TokenValuations.UpdateTodayValuationToken(new Date());
+
+    return {
+      success: true,
+      message: "Token Valuation Updated Successfully",
+    };
+  } catch (error: any) {
+    Logger.error(error.message, error);
+    throw error;
+  }
+};
+
 export default {
   createTokenOfferings,
   updateTokenStatus,
@@ -866,5 +889,6 @@ export default {
   getIssuerTokens,
   updateTokenValuation,
   getAllTokens,
-  updateTokenOfferingStatus
+  updateTokenOfferingStatus,
+  updateTokenValuationUsingCron,
 };

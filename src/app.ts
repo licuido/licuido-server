@@ -4,7 +4,8 @@ import { FastifyPluginAsync } from "fastify";
 import v1 from "./api/v1";
 import { cpus } from "os";
 // import { buildCodes } from "helpers/constants";
-
+import cron from "node-cron";
+import {TokenOfferings} from "./interactors"
 process.env.UV_THREADPOOL_SIZE = String(cpus().length);
 
 export type AppOptions = {
@@ -33,6 +34,17 @@ const app: FastifyPluginAsync<AppOptions> = async (
   // This loads all plugins defined in routes
   // define your routes in one of these
   void fastify.register(v1);
+
+  cron.schedule('0 1 * * *', async () => {
+    try {
+      TokenOfferings.updateTokenValuationUsingCron()
+      // Your task logic goes here
+      console.log('Task scheduled to run at 1 o\'clock every day');
+    } catch (error) {
+      console.error('Error executing cron job:', error);
+    }
+  });
+
 };
 
 export default app;

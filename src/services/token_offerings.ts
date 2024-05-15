@@ -13,11 +13,13 @@ import {
   offer_fund_rating,
   master_fund_agency,
   master_fund_agency_rating,
+  token_valuation,
 } from "@models";
 import { createTokenOffering, updateTokenOffering } from "@types";
 import { Op } from "sequelize";
 import queries from "@queries";
 import { sequelize } from "@utils";
+// import moment from "moment";
 
 class TokenOfferings {
   /**
@@ -173,6 +175,32 @@ class TokenOfferings {
           "payback_period_type",
         ],
         include: [
+          {
+            model: token_valuation,
+            as: "token_valuations",
+            attributes: [
+              "id",
+              "offer_price",
+              "bid_price",
+              "valuation_price",
+              "start_date",
+              "start_time",
+            ],
+            required: false,
+            where: {
+              is_active: true,
+              start_time: {
+                [Op.lte]:new Date(), // Less than the specific time
+              },
+              start_date: {
+                [Op.lte]: new Date(), // Less than the specific time
+              },
+            },
+            order: [
+              ["start_date", "DESC"], // Order by start_date in descending order
+              ["start_time", "ASC"], // Then order by start_time in ascending order
+            ],
+          },
           {
             model: asset,
             as: "logo_asset",

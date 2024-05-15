@@ -120,8 +120,7 @@ export async function UPDATE_TOKEN_VALUATION(
     /* -----------  RESPONSE ----------- */
     
     return handleResponse(request, reply, responseType?.CREATED, {
-      customMessage: "Token Offering Status Updated",
-      data: result,
+      customMessage: result?.message,
     });
 
   } catch (error: any) {
@@ -159,7 +158,7 @@ export async function UPDATE_TOKEN_OFFERING_STATUS(
     // -----------------------------
     //  INTERACTOR
     // -----------------------------
-    const result = await TokenOfferings.updateTokenOfferingStatus({
+    await TokenOfferings.updateTokenOfferingStatus({
       ...rest,
       user_profile_id,
     });
@@ -169,7 +168,6 @@ export async function UPDATE_TOKEN_OFFERING_STATUS(
 
     return handleResponse(request, reply, responseType?.CREATED, {
       customMessage: "Token Offering Status Updated",
-      data: result?.data,
     });
   } catch (error: any) {
     Logger.error(request, error.message, error);
