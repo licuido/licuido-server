@@ -190,7 +190,7 @@ class TokenOfferings {
             where: {
               is_active: true,
               start_time: {
-                [Op.lte]:new Date(), // Less than the specific time
+                [Op.lte]: new Date(), // Less than the specific time
               },
               start_date: {
                 [Op.lte]: new Date(), // Less than the specific time
@@ -480,11 +480,11 @@ class TokenOfferings {
    */
   static async updateTokenOfferingStatus({
     offer_status_id,
-    token_id,
+    token_ids,
     updated_by,
   }: {
     offer_status_id: number;
-    token_id: string;
+    token_ids: string[];
     updated_by: string;
   }): Promise<any> {
     try {
@@ -492,10 +492,13 @@ class TokenOfferings {
         {
           offer_status_id,
           updated_by,
+          updated_at:new Date()
         },
         {
           where: {
-            id: token_id,
+            id: {
+              [Op.in]: token_ids, // Assuming Sequelize is being used and token_id is an array of IDs
+            },
           },
         }
       );

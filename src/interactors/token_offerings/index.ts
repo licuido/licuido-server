@@ -846,17 +846,17 @@ const getAllTokens = async (options: getAllTokenAdmin) => {
 //update token offering status
 
 const updateTokenOfferingStatus = async ({
-  token_id,
+  token_ids,
   offer_status_id,
   user_profile_id,
 }: {
-  token_id: string;
+  token_ids: string[];
   offer_status_id: number;
   user_profile_id: string;
 }) => {
   try {
     return TokenOfferings.updateTokenOfferingStatus({
-      token_id,
+      token_ids,
       offer_status_id,
       updated_by: user_profile_id,
     });
