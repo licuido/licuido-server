@@ -12,6 +12,9 @@ const getAllMarketPlaceList = async (options: any) => {
       currencyCode,
       fundStatus,
       countryId,
+      user_entity_id,
+      isQualified,
+      countryFilterId
     } = options;
 
     if (
@@ -22,7 +25,6 @@ const getAllMarketPlaceList = async (options: any) => {
     ) {
       tokenTypeId = tokenTypeId?.split(",");
     }
-    console?.log(currencyCode, "currencyCodecurrencyCodecurrencyCode");
     if (
       currencyCode !== undefined &&
       currencyCode !== "" &&
@@ -31,16 +33,16 @@ const getAllMarketPlaceList = async (options: any) => {
     ) {
       currencyCode = currencyCode?.split(",");
     }
-
-    currencyCode =
-      currencyCode && typeof currencyCode === "string"
-        ? currencyCode === ""
-          ? []
-          : currencyCode.split(",")
-        : Array.isArray(currencyCode)
-        ? currencyCode
-        : [];
     
+    if (
+      fundStatus !== undefined &&
+      fundStatus !== "" &&
+      fundStatus !== null &&
+      fundStatus?.length > 0
+    ) {
+      fundStatus = fundStatus?.split(",");
+    }
+
     const { rows, count } = await TokenOfferings.getAllTokenOfferings({
       search,
       offset,
@@ -49,6 +51,9 @@ const getAllMarketPlaceList = async (options: any) => {
       currencyCode,
       fundStatus,
       countryId,
+      user_entity_id,
+      isQualified,
+      countryFilterId
     });
 
     return { page: rows, count: rows?.length, totalCount: count };

@@ -17,6 +17,7 @@ import {
 import queries from "@queries";
 import { createTokenOffering, updateTokenOffering } from "@types";
 import { sequelize } from "@utils";
+import { ENTITY_INVESTOR_STATUS } from "helpers/constants";
 // import { sequelize } from "@utils";
 import { Op } from "sequelize";
 
@@ -323,9 +324,12 @@ class TokenOfferings {
     limit: number;
     search?: string;
     tokenTypeId?: [];
-    currencyCode?: string;
-    fundStatus?: string;
+    currencyCode?: string[] | [];
+    fundStatus?: string[] | [];
     countryId?: number;
+    user_entity_id?: string;
+    isQualified?: boolean;
+    countryFilterId?: number
   }): Promise<{
     rows: any[];
     count: number;
@@ -339,18 +343,17 @@ class TokenOfferings {
         currencyCode,
         fundStatus,
         countryId,
+        user_entity_id,
+        isQualified,
+        countryFilterId
       } = options;
-      const whereClause: any = {
-        is_active: true,
-        name: { [Op.iLike]: `%${search}%` },
-      };
 
-
-      if (fundStatus !== undefined) {
-        const fundStatuses = fundStatus?.split(",");
-        whereClause.is_fund_rating_enabled = { [Op.or]: fundStatuses };
+      let investorStatus = null;
+      if(isQualified){
+        investorStatus = ENTITY_INVESTOR_STATUS.APPROVED
+      }else if(isQualified !== undefined && isQualified === false){
+        investorStatus = ENTITY_INVESTOR_STATUS.NOT_APPROVED
       }
-      //
 
       const [rows]: any[] = await sequelize.query(
         queries.getMarketPlaceListingQuery(
@@ -361,6 +364,9 @@ class TokenOfferings {
           currencyCode,
           fundStatus,
           countryId,
+          user_entity_id,
+          investorStatus,
+          countryFilterId
         )
       );
       const [dataCount]: any[] = await sequelize.query(

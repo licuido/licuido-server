@@ -1,6 +1,6 @@
 import { FastifyPluginAsync } from "fastify";
-// import schema from "./schema";
-import handlers from './handlers';
+import schema from "./schema";
+import handlers from "./handlers";
 
 const marketPlace: FastifyPluginAsync = async (
   fastify,
@@ -9,7 +9,7 @@ const marketPlace: FastifyPluginAsync = async (
   fastify.addHook("preHandler", fastify.authenticate);
   fastify.get(
     "/",
-    // { schema: schema.GET_ALL_INVESTOR_TYPES },
+    { schema: schema.GET_MARKETPLACE_LISTING },
     handlers.GET_MARKETPLACE_LISTING
   );
 };
