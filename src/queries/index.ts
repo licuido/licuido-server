@@ -5,11 +5,8 @@ import {
 import { getAllSubscriptionOrderQuery } from "./getAllSubscriptionOrderQuery";
 import { getAllCurrenciesQuery } from "./getAllCurrencyQuery";
 
-
-import {
-  getAllTokensQuery,
-  getAllTokensCountQuery,
-} from "./tokensQuery";
+import { getAllTokensQuery, getAllTokensCountQuery } from "./tokensQuery";
+import { getAllRedemptionOrderQuery } from "./getAllRedemptionOrderQuery";
 
 const queries = {
   getAllInvestorsQuery,
@@ -18,6 +15,7 @@ const queries = {
   getAllCurrenciesQuery,
   getAllTokensQuery,
   getAllTokensCountQuery,
+  getAllRedemptionOrderQuery,
 };
 
 export default queries;

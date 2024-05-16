@@ -63,3 +63,16 @@ export interface getSubscriptionOrderPayload {
   order_fulfillment_filter?: string;
   token_id?: string;
 }
+
+export interface getRedemptionOrderPayload {
+  entity_type_id: number;
+  offset: number;
+  limit: number;
+  user_entity_id?: string;
+  search?: string;
+  status_filter?: string;
+  start_date?: string;
+  end_date?: string;
+  order_fulfillment_filter?: string;
+  token_id?: string;
+}

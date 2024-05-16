@@ -8,11 +8,17 @@ const orderRoute: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
 
   /* Get Subscription Order Details */
 
-  fastify.get(
-    "/subscription/get",
-    { schema: schema.GET_ALL_SUBSCRIPTION_ORDER },
-    handler.GET_ALL_SUBSCRIPTION_ORDER
-  );
+  fastify
+    .get(
+      "/subscription/get",
+      { schema: schema.GET_ALL_SUBSCRIPTION_ORDER },
+      handler.GET_ALL_SUBSCRIPTION_ORDER
+    )
+    .get(
+      "/redemption/get",
+      { schema: schema.GET_ALL_REDEMPTION_ORDER },
+      handler.GET_ALL_REDEMPTION_ORDER
+    );
 };
 
 export default orderRoute;

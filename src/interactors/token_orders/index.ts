@@ -10,6 +10,7 @@ import { TokenOrders, TrackTokenOrderActions } from "@services";
 import {
   createTokenRedemptionOrderPayload,
   createTokenSubscriptionOrderPayload,
+  getRedemptionOrderPayload,
   getSubscriptionOrderPayload,
 } from "@types";
 import { sequelize } from "@utils";
@@ -329,9 +330,61 @@ const getTokenSubscriptionOrder = async (
   return { page: rows, count: rows?.length, totalCount: count };
 };
 
+const getTokenRedemptionOrder = async (options: getRedemptionOrderPayload) => {
+  const {
+    entity_type_id,
+    user_entity_id,
+    offset = 0,
+    limit = 0,
+    search = "",
+    status_filter,
+    start_date,
+    end_date,
+    order_fulfillment_filter,
+    token_id,
+  } = options;
+
+  // For Token Order Status Filters
+  const status_filters: any[] =
+    status_filter && typeof status_filter === "string"
+      ? status_filter === ""
+        ? []
+        : status_filter.split(",")
+      : Array.isArray(status_filter)
+      ? status_filter
+      : [];
+
+  // For Order Fulfillment Filter
+  const order_fulfillment_filters: any[] =
+    order_fulfillment_filter && typeof order_fulfillment_filter === "string"
+      ? order_fulfillment_filter === ""
+        ? []
+        : order_fulfillment_filter.split(",")
+      : Array.isArray(order_fulfillment_filter)
+      ? order_fulfillment_filter
+      : [];
+
+  // Getting Rows & Count Data of Redemption Orders
+  const { rows, count } = await TokenOrders.getRedmptionOrderData({
+    entity_type_id,
+    user_entity_id,
+    offset,
+    limit,
+    search,
+    status_filters,
+    order_fulfillment_filters,
+    start_date,
+    end_date,
+    token_id,
+  });
+
+  return { page: rows, count: rows?.length, totalCount: count };
+};
+
 export default {
   createTokenSubscriptionOrders,
   getTokenOrder,
   createTokenRedemptionOrders,
   getTokenSubscriptionOrder,
+  getTokenRedemptionOrder,
 };
