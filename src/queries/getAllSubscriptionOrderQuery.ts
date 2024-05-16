@@ -11,7 +11,8 @@ export const getAllSubscriptionOrderQuery = async (
   investment_currency_filters?: string[] | [],
   order_fulfillment_filters?: string[] | [],
   start_date?: string,
-  end_date?: string
+  end_date?: string,
+  token_id?: string
 ) => {
   // Construct Base Query
   let baseQuery = await constructBaseQuery(
@@ -25,7 +26,8 @@ export const getAllSubscriptionOrderQuery = async (
     investment_currency_filters,
     order_fulfillment_filters,
     start_date,
-    end_date
+    end_date,
+    token_id
   );
 
   return baseQuery;
@@ -42,7 +44,8 @@ const constructBaseQuery = async (
   investment_currency_filters?: string[] | [],
   order_fulfillment_filters?: string[] | [],
   start_date?: string,
-  end_date?: string
+  end_date?: string,
+  token_id?: string
 ) => {
   try {
     let Query = ``;
@@ -53,6 +56,7 @@ const constructBaseQuery = async (
     let limitStatment = ``;
     let fulfilledByCheck = "";
     let orderFulfillmentFilter = ``;
+    let tokenFilterForIssuer = ``;
 
     /* ------------------  For Issuer  ------------------ */
     if (entity_type_id === 3) {
@@ -93,6 +97,11 @@ const constructBaseQuery = async (
         limitStatment = ` LIMIT '${limit}' OFFSET '${offset * limit}'`;
       }
 
+      // For Token Offering Filter
+      if (token_id) {
+        tokenFilterForIssuer = ` AND tor.token_offering_id = '${token_id}'`;
+      }
+
       /* Construct Base Query */
       Query = `WITH
       vas AS (
@@ -121,6 +130,10 @@ const constructBaseQuery = async (
         totr.transaction_hash AS transaction_hash,
         tor.is_active AS is_active,
         tor.currency_code AS investment_currency_code,
+        tor.token_offering_id AS token_offering_id,
+        ast.url AS asset_url,
+        ast.type AS asset_type,
+        ast.file_meta AS asset_file_meta,
         CASE
           WHEN tor.fulfilled_by = '${fulfilledByCheck}' THEN true
           ELSE false
@@ -130,12 +143,14 @@ const constructBaseQuery = async (
           INNER JOIN entities AS entis ON tor.issuer_entity_id = entis.id
           INNER JOIN entities AS entrec ON tor.receiver_entity_id = entrec.id
           INNER JOIN token_offerings AS tof ON tor.token_offering_id = tof.id
+          INNER JOIN assets AS ast ON tof.logo_asset_id = ast.id
           INNER JOIN master_order_status AS mos ON tor.status_id = mos.id
           INNER JOIN user_profiles AS up ON entrec.contact_profile_id = up.id
           LEFT JOIN token_transactions AS totr ON tor.id = totr.order_id
         WHERE
           tor.type = '${order_type}'
-          AND tor.issuer_entity_id = '${user_entity_id}'
+          AND tor.issuer_entity_id = '${user_entity_id}' 
+          ${tokenFilterForIssuer}
       )
     SELECT
       *
@@ -219,6 +234,10 @@ const constructBaseQuery = async (
           totr.transaction_hash AS transaction_hash,
           tor.is_active AS is_active,
           tor.currency_code AS investment_currency_code,
+          tor.token_offering_id AS token_offering_id,
+          ast.url AS asset_url,
+          ast.type AS asset_type,
+          ast.file_meta AS asset_file_meta,
           CASE
             WHEN tor.fulfilled_by = '${fulfilledByCheck}' THEN true
             ELSE false
@@ -228,6 +247,7 @@ const constructBaseQuery = async (
             INNER JOIN entities AS entis ON tor.issuer_entity_id = entis.id
             INNER JOIN entities AS entrec ON tor.receiver_entity_id = entrec.id
             INNER JOIN token_offerings AS tof ON tor.token_offering_id = tof.id
+            INNER JOIN assets AS ast ON tof.logo_asset_id = ast.id
             INNER JOIN master_order_status AS mos ON tor.status_id = mos.id
             INNER JOIN user_profiles AS up ON entrec.contact_profile_id = up.id
             LEFT JOIN token_transactions AS totr ON tor.id = totr.order_id
@@ -327,6 +347,10 @@ const constructBaseQuery = async (
             totr.transaction_hash AS transaction_hash,
             tor.is_active AS is_active,
             tor.currency_code AS investment_currency_code,
+            tor.token_offering_id AS token_offering_id,
+            ast.url AS asset_url,
+            ast.type AS asset_type,
+            ast.file_meta AS asset_file_meta,
             tor.fulfilled_by AS fulfilled_by,
             CASE
               WHEN tor.fulfilled_by = '${fulfilledByCheck}' THEN true
@@ -337,6 +361,7 @@ const constructBaseQuery = async (
               INNER JOIN entities AS entis ON tor.issuer_entity_id = entis.id
               INNER JOIN entities AS entrec ON tor.receiver_entity_id = entrec.id
               INNER JOIN token_offerings AS tof ON tor.token_offering_id = tof.id
+              INNER JOIN assets AS ast ON tof.logo_asset_id = ast.id
               INNER JOIN master_order_status AS mos ON tor.status_id = mos.id
               INNER JOIN user_profiles AS up ON entrec.contact_profile_id = up.id
               LEFT JOIN token_transactions AS totr ON tor.id = totr.order_id

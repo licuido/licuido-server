@@ -278,6 +278,7 @@ const getTokenSubscriptionOrder = async (
     start_date,
     end_date,
     order_fulfillment_filter,
+    token_id,
   } = options;
 
   // For Token Order Status Filters
@@ -322,6 +323,7 @@ const getTokenSubscriptionOrder = async (
     order_fulfillment_filters,
     start_date,
     end_date,
+    token_id,
   });
 
   return { page: rows, count: rows?.length, totalCount: count };

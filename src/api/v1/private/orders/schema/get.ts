@@ -31,7 +31,8 @@ const getAllSubscriptionparams = Schema.object()
   .prop("investment_currency_filter", Schema.string())
   .prop("start_date", Schema.string())
   .prop("end_date", Schema.string())
-  .prop("order_fulfillment_filter", Schema.string());
+  .prop("order_fulfillment_filter", Schema.string())
+  .prop("token_id", Schema.string().format("uuid"));
 
 export const GET_ALL_SUBSCRIPTION_ORDER = {
   description:

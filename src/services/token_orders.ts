@@ -137,6 +137,7 @@ class TokenOrders {
     order_fulfillment_filters?: string[] | [];
     start_date?: string;
     end_date?: string;
+    token_id?: string;
   }): Promise<{
     rows: any[];
     count: number;
@@ -153,6 +154,7 @@ class TokenOrders {
         order_fulfillment_filters,
         start_date,
         end_date,
+        token_id,
       } = options;
 
       // For Data
@@ -168,12 +170,13 @@ class TokenOrders {
           investment_currency_filters,
           order_fulfillment_filters,
           start_date,
-          end_date
+          end_date,
+          token_id
         )
       );
 
       // For Count
-      const [dataCount]: any[] = await sequelize.query(
+      const [dataWithoutOffsetLimit]: any[] = await sequelize.query(
         await queries.getAllSubscriptionOrderQuery(
           entity_type_id,
           "subscription",
@@ -185,13 +188,14 @@ class TokenOrders {
           investment_currency_filters,
           order_fulfillment_filters,
           start_date,
-          end_date
+          end_date,
+          token_id
         )
       );
 
       return {
         rows: result,
-        count: dataCount?.[0]?.count ?? 0,
+        count: dataWithoutOffsetLimit?.length ?? 0,
       };
     } catch (error: any) {
       console.log(error);
