@@ -1,4 +1,6 @@
 import { master_country, master_region } from "@models";
+import queries from "@queries";
+import { sequelize } from "@utils";
 import { Op } from "sequelize";
 
 class Countries {
@@ -94,17 +96,43 @@ class Countries {
     try {
       const { offset, limit, search } = options;
 
-      const { rows, count } = await master_country.findAndCountAll({
-        where: {
-          is_active: true,
-          currency: { [Op.iLike]: `%${search}%` },
-        },
-        offset,
-        limit,
-      });
+      // const { rows ,count} = await master_country.findAndCountAll({
+      //   attributes: [
+      //     // [sequelize.fn('DISTINCT', sequelize.col('currency')) ,'currency'],
+      //     // [sequelize.fn('DISTINCT', sequelize.col('currency_symbol')) ,'currency_symbol'],
+      //     // [sequelize.fn('DISTINCT', sequelize.col('currency_code')) ,'currency_code'],
+      // ],
+      //   where: {
+      //     is_active: true,
+      //     [Op.or]: [
+      //       { currency: { [Op.iLike]: `%${search}%` } },
+      //       { currency_symbol: { [Op.iLike]: `%${search}%` } },
+      //       { currency_code: { [Op.iLike]: `%${search}%` } },
+      //   ],
+      //   },
+      //   offset,
+      //   limit,
+      // });
+
+      const [result]: any = await sequelize.query(
+        queries.getAllCurrenciesQuery(
+          offset,
+          limit,
+          search,
+        )
+      );
+
+      const [resultCount]: any = await sequelize.query(
+        queries.getAllCurrenciesQuery(
+          null,
+          null,
+          search,
+        )
+      );
+
       return {
-        rows,
-        count,
+        rows:result,
+        count:resultCount?.length ?? 0,
       };
     } catch (error) {
       throw error;
