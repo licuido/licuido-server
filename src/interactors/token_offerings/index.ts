@@ -7,6 +7,7 @@ import {
   TokenOfferingsTeams,
   TokenOfferingsDocuments,
   TokenOfferFund,
+  TokenValuations,
 } from "@services";
 import {
   FundRatingPayload,
@@ -15,7 +16,10 @@ import {
   createTokenOfferingSubData,
   updateTokenOfferingPayload,
   updateTokenOfferingSubData,
+  createTokenValuation,
+  getAllTokenAdmin,
 } from "@types";
+import { commentFunction } from "@helpers";
 
 const createOfferingSubDatas = async (
   options: createTokenOfferingSubData,
@@ -226,7 +230,7 @@ const createTokenOfferings = async (options: createTokenOfferingPayload) => {
       iban_no,
       token_type_id,
       is_active: true,
-      offer_status_id: 1,
+      offer_status_id: 3,
       projected_rate_return,
       payback_period,
       payback_period_type,
@@ -655,11 +659,20 @@ const findToken = async ({
     }
 
     const data = await TokenOfferings.getTokenOffering({ token_id });
+    const parseData = JSON.parse(JSON.stringify(data));
+
+    const finalData = {
+      ...parseData,
+      token_valuation_staus: commentFunction.returnValuationPrice(
+        parseData?.token_valuations?.[0]?.offer_price,
+        parseData?.token_valuations?.[0]?.valuation_price
+      ),
+    };
 
     return {
       success: true,
       message: "Token Fetched Successfully",
-      data,
+      data: finalData,
     };
   } catch (error: any) {
     Logger.error(error.message, error);
@@ -697,10 +710,169 @@ const getIssuerTokens = async ({
   }
 };
 
+//update token valuation
+
+const updateTokenValuation = async (option: createTokenValuation) => {
+  try {
+    const {
+      token_id,
+      user_entity_id,
+      user_profile_id,
+    } = option;
+
+    const count = await TokenOfferings.checkTokenHaveAccess({
+      token_id,
+      user_entity_id: user_entity_id ?? "",
+    });
+
+    if (count === 0) {
+      return {
+        success: false,
+        message: `You Don't Have a access for this token or please verify this token`,
+      };
+    }
+
+    await TokenValuations.create({
+      ...option,
+      created_by: user_profile_id,
+    });
+
+    return {
+      success: true,
+      message:
+        "Token Valuation Added Successfully. It Will Reflected After your start date",
+    };
+  } catch (error: any) {
+    Logger.error(error.message, error);
+    throw error;
+  }
+};
+
+//get all tokens
+const getAllTokens = async (options: getAllTokenAdmin) => {
+  try {
+    const {
+      offset = 0,
+      limit = 0,
+      search = "",
+      status,
+      issuer,
+      created_by,
+      currency,
+      block_chain,
+      token_type,
+    } = options;
+
+    // For Status Filters
+    const status_filters: any[] =
+      status && typeof status === "string"
+        ? status === ""
+          ? []
+          : status.split(",")
+        : Array.isArray(status)
+        ? status
+        : [];
+
+    // For issuer filter
+    const issuer_filters: any[] =
+      issuer && typeof issuer === "string"
+        ? issuer === ""
+          ? []
+          : issuer.split(",")
+        : Array.isArray(issuer)
+        ? issuer
+        : [];
+
+    // For Created by Filters
+    const created_by_filters: any[] =
+      created_by && typeof created_by === "string"
+        ? created_by === ""
+          ? []
+          : created_by.split(",")
+        : Array.isArray(created_by)
+        ? created_by
+        : [];
+
+    // For Block chain network Filters
+    const block_chain_filters: any[] =
+      block_chain && typeof block_chain === "string"
+        ? block_chain === ""
+          ? []
+          : block_chain.split(",")
+        : Array.isArray(block_chain)
+        ? block_chain
+        : [];
+
+    // For Block chain network Filters
+    const currency_filter: any[] =
+      currency && typeof currency === "string"
+        ? currency === ""
+          ? []
+          : currency.split(",")
+        : Array.isArray(currency)
+        ? currency
+        : [];
+
+    // For Token Type Filters
+    const token_type_filters: any[] =
+      token_type && typeof token_type === "string"
+        ? token_type === ""
+          ? []
+          : token_type.split(",")
+        : Array.isArray(token_type)
+        ? token_type
+        : [];
+
+    // Getting Rows & Count Data of Investor
+    const { rows, count } = await TokenOfferings.getAllTokens({
+      search,
+      offset,
+      limit,
+      status_filters,
+      issuer_filters,
+      created_by_filters,
+      block_chain_filters,
+      currency_filter,
+      token_type_filters,
+    });
+
+    return { page: rows, count: rows?.length, totalCount: count };
+  } catch (error: any) {
+    Logger.error(error.message, error);
+    throw error;
+  }
+};
+
+//update token offering status
+
+const updateTokenOfferingStatus = async ({
+  token_id,
+  offer_status_id,
+  user_profile_id,
+}: {
+  token_id: string;
+  offer_status_id: number;
+  user_profile_id: string;
+}) => {
+  try {
+    return TokenOfferings.updateTokenOfferingStatus({
+      token_id,
+      offer_status_id,
+      updated_by: user_profile_id,
+    });
+  } catch (error: any) {
+    Logger.error(error.message, error);
+    throw error;
+  }
+};
+
 export default {
   createTokenOfferings,
   updateTokenStatus,
   findToken,
   updateTokenOfferings,
   getIssuerTokens,
+  updateTokenValuation,
+  getAllTokens,
+  updateTokenOfferingStatus,
 };

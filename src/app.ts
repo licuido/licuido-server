@@ -3,7 +3,6 @@ import AutoLoad, { AutoloadPluginOptions } from "@fastify/autoload";
 import { FastifyPluginAsync } from "fastify";
 import v1 from "./api/v1";
 import { cpus } from "os";
-// import { buildCodes } from "helpers/constants";
 
 process.env.UV_THREADPOOL_SIZE = String(cpus().length);
 
@@ -33,7 +32,6 @@ const app: FastifyPluginAsync<AppOptions> = async (
   void fastify.get("/", async (request, reply) => {
     return { message: "Server Running...." };
   });
-
   // This loads all plugins defined in routes
   // define your routes in one of these
   void fastify.register(v1);

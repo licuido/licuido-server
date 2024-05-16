@@ -109,3 +109,48 @@ export async function GET_ISSUER_TOKENS(
     });
   }
 }
+
+export async function GET_ALL_TOKENS(
+  request: FastifyRequest,
+  reply: FastifyReply
+) {
+  try {
+    // -----------------------------
+    //  MAPPER
+    // -----------------------------
+    const { entity_id, ...rest } = queryRequestInfo(request);
+
+    if (entity_id !== 1) {
+      return handleResponse(
+        request,
+        reply,
+        responseType?.INTERNAL_SERVER_ERROR,
+        {
+          error: {
+            message: "Only Admin Can view All tikens",
+          },
+        }
+      );
+    }
+
+    // -----------------------------
+    //  INTERACTOR
+    // -----------------------------
+    const result = await TokenOfferings.getAllTokens({
+      ...rest,
+    });
+    // -----------------------------
+    //  RESPONSE
+    // -----------------------------
+    return handleResponse(request, reply, responseType?.OK, {
+      data: result,
+    });
+  } catch (error: any) {
+    Logger.error(request, error.message, error);
+    return handleResponse(request, reply, responseType?.INTERNAL_SERVER_ERROR, {
+      error: {
+        message: responseType?.INTERNAL_SERVER_ERROR,
+      },
+    });
+  }
+}
