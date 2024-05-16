@@ -15,6 +15,8 @@ import streamToBuffer from "./streamToBuffer";
 import qualifiedStatus from "./investorQualifiedStatus";
 import currencyConvert from "./currencyConversion";
 import fulfilledStatus from "./orderFulfilledStatus";
+import commentFunction from "./functions";
+
 
 export {
   dateTime,
@@ -37,4 +39,5 @@ export {
   qualifiedStatus,
   currencyConvert,
   fulfilledStatus,
+  commentFunction
 };

@@ -290,3 +290,27 @@ export interface FundRatingPayload {
   agency_id: number;
   rating_id: number;
 }
+
+export interface createTokenValuation {
+  token_id: string;
+  offer_price: number;
+  bid_price: number;
+  start_date: string;
+  start_time: string;
+  created_by?: string;
+  valuation_price: number;
+  user_entity_id?: string;
+  user_profile_id?: string;
+}
+
+export interface getAllTokenAdmin {
+  offset: number;
+  limit: number;
+  search?: string;
+  status?: string;
+  currency?: string;
+  token_type?: string;
+  block_chain?: string;
+  created_by?: string;
+  issuer?: string;
+}
