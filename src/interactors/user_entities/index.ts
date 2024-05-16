@@ -4,7 +4,10 @@ import {
   getInvestorCount,
   getInvestorData,
 } from "@services";
-import { getInvestorDataForQualificationPayload } from "@types";
+import {
+  getInvestorDataForQualificationCSVPayload,
+  getInvestorDataForQualificationPayload,
+} from "@types";
 
 const getInvestorCountForQualification = async ({
   entity_type_id, // Investor
@@ -87,18 +90,56 @@ const getInvestorDataForQualification = async (
   }
 };
 
-const getInvestorDataAsCSV = async ({
-  entity_type_id, // Investor
-  user_profile_id,
-}: {
-  entity_type_id: 1 | 2 | 3;
-  user_profile_id?: string;
-}) => {
+const getInvestorDataAsCSV = async (
+  options: getInvestorDataForQualificationCSVPayload
+) => {
   try {
+    const {
+      entity_type_id,
+      user_entity_id,
+      search = "",
+      status_filter,
+      kyc_status_filter,
+      investor_type_filter,
+    } = options;
+
+    // For Investor Status Filters
+    const status_filters: any[] =
+      status_filter && typeof status_filter === "string"
+        ? status_filter === ""
+          ? []
+          : status_filter.split(",")
+        : Array.isArray(status_filter)
+        ? status_filter
+        : [];
+
+    // For KYC Status Filter Filters
+    const kyc_status_filters: any[] =
+      kyc_status_filter && typeof kyc_status_filter === "string"
+        ? kyc_status_filter === ""
+          ? []
+          : kyc_status_filter.split(",")
+        : Array.isArray(kyc_status_filter)
+        ? kyc_status_filter
+        : [];
+
+    // For Investor Type Filters
+    const investor_type_filters: any[] =
+      investor_type_filter && typeof investor_type_filter === "string"
+        ? investor_type_filter === ""
+          ? []
+          : investor_type_filter.split(",")
+        : Array.isArray(investor_type_filter)
+        ? investor_type_filter
+        : [];
     // Getting All Invetsor Data
     const data: any = await getAllInvestorData({
+      search,
+      status_filters,
+      kyc_status_filters,
+      investor_type_filters,
       entity_type_id,
-      user_profile_id,
+      user_entity_id,
     });
 
     return data?.rows;

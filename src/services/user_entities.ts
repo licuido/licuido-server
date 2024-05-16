@@ -143,17 +143,37 @@ export async function getInvestorData(options: {
 }
 
 export async function getAllInvestorData(options: {
+  search?: string;
+  status_filters?: number[] | [];
+  kyc_status_filters?: number[] | [];
+  investor_type_filters?: number[] | [];
   entity_type_id: 1 | 2 | 3;
-  user_profile_id?: string;
+  user_entity_id?: string;
 }): Promise<{
   rows: any[];
 }> {
   try {
-    const { entity_type_id, user_profile_id } = options;
+    const {
+      entity_type_id,
+      user_entity_id,
+      search,
+      status_filters,
+      kyc_status_filters,
+      investor_type_filters,
+    } = options;
 
     // For All Data
     const [result]: any[] = await sequelize.query(
-      queries.getAllInvestorsQuery(null, null, entity_type_id, user_profile_id)
+      queries.getAllInvestorsQuery(
+        null,
+        null,
+        entity_type_id,
+        user_entity_id,
+        search,
+        status_filters,
+        kyc_status_filters,
+        investor_type_filters
+      )
     );
 
     return {
