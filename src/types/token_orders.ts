@@ -79,3 +79,6 @@ export interface getRedemptionOrderPayload {
 
 export interface getTokenSubscriptionOrderAsCSVPayload
   extends Omit<getSubscriptionOrderPayload, "offset" | "limit"> {}
+
+export interface getTokenRedemptionOrderAsCSVPayload
+  extends Omit<getRedemptionOrderPayload, "offset" | "limit"> {}

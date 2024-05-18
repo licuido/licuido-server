@@ -133,3 +133,48 @@ export async function EXPORT_SUBSCRIPTION_ORDER_AS_CSV(
     });
   }
 }
+
+/* EXPORT_REDEMPTION_ORDER_AS_CSV */
+
+export async function EXPORT_REDEMPTION_ORDER_AS_CSV(
+  request: FastifyRequest,
+  reply: FastifyReply
+) {
+  try {
+    /* -----------  MAPPER ----------- */
+    const { entity_id, user_entity_id, ...rest } = queryRequestInfo(request);
+
+    /* -----------  INTERACTOR ----------- */
+    const result = await TokenOrders.getTokenRedemptionOrderAsCSV({
+      entity_type_id: entity_id,
+      user_entity_id,
+      ...rest,
+    });
+
+    if (result?.code === 200) {
+      /* Make Excel File */
+      const data = await makeExcelFile(result?.data, "redemption_order_data");
+
+      /* -----------  Response  ----------- */
+      return handleResponse(request, reply, responseType?.OK, {
+        data,
+      });
+    } else if (result?.code === 204) {
+      /* -----------  Response  ----------- */
+      return handleResponse(request, reply, responseType?.NO_CONTENT, {
+        customMessage: result?.message,
+      });
+    } else {
+      return handleResponse(request, reply, responseType?.ACCEPTED, {
+        customMessage: "in progress.",
+      });
+    }
+  } catch (error: any) {
+    Logger.error(request, error.message, error);
+    return handleResponse(request, reply, responseType?.INTERNAL_SERVER_ERROR, {
+      error: {
+        message: responseType?.INTERNAL_SERVER_ERROR,
+      },
+    });
+  }
+}

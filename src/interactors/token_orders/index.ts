@@ -13,6 +13,7 @@ import {
   createTokenSubscriptionOrderPayload,
   getRedemptionOrderPayload,
   getSubscriptionOrderPayload,
+  getTokenRedemptionOrderAsCSVPayload,
   getTokenSubscriptionOrderAsCSVPayload,
 } from "@types";
 import { sequelize } from "@utils";
@@ -531,6 +532,130 @@ const getTokenSubscriptionOrderAsCSV = async (
   }
 };
 
+const getTokenRedemptionOrderAsCSV = async (
+  options: getTokenRedemptionOrderAsCSVPayload
+) => {
+  try {
+    const {
+      entity_type_id,
+      user_entity_id,
+      search = "",
+      status_filter,
+      start_date,
+      end_date,
+      order_fulfillment_filter,
+      token_id,
+    } = options;
+
+    // For Token Order Status Filters
+    const status_filters: any[] =
+      status_filter && typeof status_filter === "string"
+        ? status_filter === ""
+          ? []
+          : status_filter.split(",")
+        : Array.isArray(status_filter)
+        ? status_filter
+        : [];
+
+    // For Order Fulfillment Filter
+    const order_fulfillment_filters: any[] =
+      order_fulfillment_filter && typeof order_fulfillment_filter === "string"
+        ? order_fulfillment_filter === ""
+          ? []
+          : order_fulfillment_filter.split(",")
+        : Array.isArray(order_fulfillment_filter)
+        ? order_fulfillment_filter
+        : [];
+
+    // Getting All Redemption Order Data
+    const data: any = await TokenOrders.getRedemptionOrderDataAsCSV({
+      entity_type_id,
+      user_entity_id,
+      search,
+      status_filters,
+      order_fulfillment_filters,
+      start_date,
+      end_date,
+      token_id,
+    });
+
+    if (!data || !data?.rows || data?.rows?.length <= 0) {
+      return {
+        code: 204,
+        message: "No Data found",
+      };
+    }
+
+    // Construct Json Data For CSV/Excel Export File
+    let excelData: any;
+
+    /* For Admin */
+    if (entity_type_id === 1) {
+      excelData =
+        data?.rows?.length > 0 &&
+        data?.rows?.map((item: any) => ({
+          Investor: item?.investor_name ?? "",
+          Issuer: item?.issuer_name ?? "",
+          Status: item?.status_name ?? "",
+          "Creation Date": item?.creation_date
+            ? dateTime.formatDate(item?.creation_date)
+            : "",
+          "Tokens ordered": item?.token_ordered ?? "",
+          "Token price": item?.token_price ?? "",
+          "Token price time": item?.token_price_time ?? "",
+          "Amount to pay": item?.amount_to_pay ?? "",
+          "Order fulfillment":
+            item?.fulfilled_by === "issuer"
+              ? "Fulfilled by Issuer"
+              : item?.fulfilled_by === "admin"
+              ? "Forwarded To Admin"
+              : "",
+        }));
+    }
+    /* For Issuer */
+    if (entity_type_id === 3) {
+      excelData =
+        data?.rows?.length > 0 &&
+        data?.rows?.map((item: any) => ({
+          Investor: item?.investor_name ?? "",
+          Status: item?.status_name ?? "",
+          "Creation Date": item?.creation_date
+            ? dateTime.formatDate(item?.creation_date)
+            : "",
+          "Tokens ordered": item?.token_ordered ?? "",
+          "Token Price": item?.token_price ?? "",
+          "Token price time": item?.token_price_time ?? "",
+          "Amount to pay": item?.amount_to_pay ?? "",
+        }));
+    }
+    /* For Investor */
+    if (entity_type_id === 2) {
+      excelData =
+        data?.rows?.length > 0 &&
+        data?.rows?.map((item: any) => ({
+          "Token Name": item?.token_name ?? "",
+          ISIN: item?.token_isin ?? "",
+          Status: item?.status_name ?? "",
+          "Creation Date": item?.creation_date
+            ? dateTime.formatDate(item?.creation_date)
+            : "",
+          "Tokens ordered": item?.token_ordered ?? "",
+          "Token Price": item?.token_price ?? "",
+          "Token price time": item?.token_price_time ?? "",
+          "Amount to receive": item?.amount_to_pay ?? "",
+        }));
+    }
+
+    return {
+      code: 200,
+      data: excelData,
+    };
+  } catch (error: any) {
+    Logger.error(error.message, error);
+    throw error;
+  }
+};
+
 export default {
   createTokenSubscriptionOrders,
   getTokenOrder,
@@ -538,4 +663,5 @@ export default {
   getTokenSubscriptionOrder,
   getTokenRedemptionOrder,
   getTokenSubscriptionOrderAsCSV,
+  getTokenRedemptionOrderAsCSV,
 };

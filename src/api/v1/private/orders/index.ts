@@ -23,6 +23,11 @@ const orderRoute: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
       "/subscription/export/file",
       { schema: schema.EXPORT_SUBSCRIPTION_ORDER_AS_CSV },
       handler.EXPORT_SUBSCRIPTION_ORDER_AS_CSV
+    )
+    .get(
+      "/redemption/export/file",
+      { schema: schema.EXPORT_REDEMPTION_ORDER_AS_CSV },
+      handler.EXPORT_REDEMPTION_ORDER_AS_CSV
     );
 };
 

@@ -70,7 +70,6 @@ const getAllRedemptionparams = Schema.object()
   .prop("offset", Schema.number())
   .prop("limit", Schema.number())
   .prop("status_filter", Schema.string())
-  .prop("investment_currency_filter", Schema.string())
   .prop("start_date", Schema.string())
   .prop("end_date", Schema.string())
   .prop("order_fulfillment_filter", Schema.string())
@@ -85,7 +84,6 @@ export const GET_ALL_REDEMPTION_ORDER = {
 };
 
 /* Get All Subscription Order As Csv */
-
 const getSubscriptionOrderCSVParams = Schema.object()
   .prop("search", Schema.string())
   .prop("status_filter", Schema.string())
@@ -101,11 +99,33 @@ const getSubscriptionOrderAsCSV: JSONSchema = Schema.object()
   .prop("meta", Schema.object().prop("message", Schema.string()))
   .valueOf() as JSONSchema;
 
-/* For Export Investor Data into CSV File*/
 export const EXPORT_SUBSCRIPTION_ORDER_AS_CSV = {
   description:
     "Defines the structure and constraints for an API endpoint to get all Subscription order data in CSV file.",
-  tags: ["Investor Qualification"],
+  tags: ["Token Order"],
   response: makeResponseSchema(getSubscriptionOrderAsCSV),
   query: getSubscriptionOrderCSVParams,
+};
+
+/* Get All Redemption Order As Csv */
+const getRedemptionOrderCSVParams = Schema.object()
+  .prop("search", Schema.string())
+  .prop("status_filter", Schema.string())
+  .prop("start_date", Schema.string())
+  .prop("end_date", Schema.string())
+  .prop("order_fulfillment_filter", Schema.string())
+  .prop("token_id", Schema.string().format("uuid"));
+
+const getRedemptionOrderAsCSV: JSONSchema = Schema.object()
+  .prop("data", Schema.object())
+  .additionalProperties(true)
+  .prop("meta", Schema.object().prop("message", Schema.string()))
+  .valueOf() as JSONSchema;
+
+export const EXPORT_REDEMPTION_ORDER_AS_CSV = {
+  description:
+    "Defines the structure and constraints for an API endpoint to get all Redemption order data in CSV file.",
+  tags: ["Token Order"],
+  response: makeResponseSchema(getRedemptionOrderAsCSV),
+  query: getRedemptionOrderCSVParams,
 };
