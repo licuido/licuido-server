@@ -6,7 +6,7 @@ import schema from "./schema";
 const orderRoute: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
   fastify.addHook("preHandler", fastify.authenticate);
 
-  /* Get Subscription Order Details */
+  /* Get Subscription Order & Redemption Order Details */
 
   fastify
     .get(
@@ -18,6 +18,11 @@ const orderRoute: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
       "/redemption/get",
       { schema: schema.GET_ALL_REDEMPTION_ORDER },
       handler.GET_ALL_REDEMPTION_ORDER
+    )
+    .get(
+      "/subscription/export/file",
+      { schema: schema.EXPORT_SUBSCRIPTION_ORDER_AS_CSV },
+      handler.EXPORT_SUBSCRIPTION_ORDER_AS_CSV
     );
 };
 

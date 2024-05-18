@@ -33,6 +33,7 @@ export const commonQuerys = Schema.object()
 export const makeResponseSchema = (response: JSONSchema) => {
   const responseType: Record<string, JSONSchema> = {
     "200": response,
+    "204": response,
     "400": Schema.object()
       .description("Bad Request")
       .prop("error", Schema.boolean())
@@ -60,7 +61,7 @@ export const makeResponseSchema = (response: JSONSchema) => {
       .prop(
         "error",
         Schema.object()
-           .prop("data", Schema.object())
+          .prop("data", Schema.object())
           .prop("isError", Schema.boolean())
           .prop("message", Schema.string())
           .prop("origin", Schema.string())

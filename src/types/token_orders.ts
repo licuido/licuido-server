@@ -76,3 +76,6 @@ export interface getRedemptionOrderPayload {
   order_fulfillment_filter?: string;
   token_id?: string;
 }
+
+export interface getTokenSubscriptionOrderAsCSVPayload
+  extends Omit<getSubscriptionOrderPayload, "offset" | "limit"> {}

@@ -169,7 +169,6 @@ const constructBaseQuery = async (
 
     /* ------------------  For Investor  ------------------ */
     if (entity_type_id === 2) {
-      fulfilledByCheck = "investor";
       // For Search By [ Token Name | Payment Reference | Transaction Hash ] Filter
       if (search) {
         searchFilter = ` AND (
@@ -236,10 +235,7 @@ const constructBaseQuery = async (
           tor.currency_code AS investment_currency_code,
           tor.token_offering_id AS token_offering_id,
           ast.url AS token_logo_url,
-          CASE
-            WHEN tor.fulfilled_by = '${fulfilledByCheck}' THEN true
-            ELSE false
-          END AS is_mint_enabled
+          false AS is_mint_enabled
           FROM
             token_orders AS tor
             INNER JOIN entities AS entis ON tor.issuer_entity_id = entis.id
@@ -343,6 +339,7 @@ const constructBaseQuery = async (
               ELSE null
             END AS confirmed_tokens,
             tor.price_per_token AS token_price,
+            up.email_id AS email_id,
             tor.payment_reference AS payment_reference,
             totr.transaction_hash AS transaction_hash,
             tor.is_active AS is_active,

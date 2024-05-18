@@ -311,6 +311,59 @@ class TokenOrders {
       throw new Error(error.message);
     }
   }
+
+  static async getSubscriptionOrderDataAsCSV(options: {
+    entity_type_id: number;
+    user_entity_id?: string;
+    search?: string;
+    status_filters?: number[] | [];
+    investment_currency_filters?: string[] | [];
+    order_fulfillment_filters?: string[] | [];
+    start_date?: string;
+    end_date?: string;
+    token_id?: string;
+  }): Promise<{
+    rows: any[];
+  }> {
+    try {
+      const {
+        entity_type_id,
+        user_entity_id,
+        search,
+        status_filters,
+        investment_currency_filters,
+        order_fulfillment_filters,
+        start_date,
+        end_date,
+        token_id,
+      } = options;
+
+      // For Data
+      const [result]: any[] = await sequelize.query(
+        await queries.getAllSubscriptionOrderQuery(
+          entity_type_id,
+          "subscription",
+          null,
+          null,
+          user_entity_id,
+          search,
+          status_filters,
+          investment_currency_filters,
+          order_fulfillment_filters,
+          start_date,
+          end_date,
+          token_id
+        )
+      );
+
+      return {
+        rows: result,
+      };
+    } catch (error: any) {
+      console.log(error);
+      throw new Error(error.message);
+    }
+  }
 }
 
 export { TokenOrders };

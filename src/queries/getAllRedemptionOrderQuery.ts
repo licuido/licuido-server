@@ -137,7 +137,6 @@ const constructBaseQuery = async (
 
     /* ------------------  For Investor  ------------------ */
     if (entity_type_id === 2) {
-      fulfilledByCheck = "investor";
       // For Search By [ Token Name ] Filter
       if (search) {
         searchFilter = ` AND token_name ILIKE '${search}%'`;
@@ -178,10 +177,7 @@ const constructBaseQuery = async (
           tor.is_active AS is_active,
           tor.token_offering_id AS token_offering_id,
           ast.url AS token_logo_url,
-          CASE
-            WHEN tor.fulfilled_by = '${fulfilledByCheck}' THEN true
-            ELSE false
-          END AS is_burn_enabled
+          false AS is_burn_enabled
           FROM
             token_orders AS tor
             INNER JOIN entities AS entis ON tor.issuer_entity_id = entis.id
