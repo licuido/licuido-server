@@ -178,3 +178,31 @@ export async function EXPORT_REDEMPTION_ORDER_AS_CSV(
     });
   }
 }
+
+/* VIEW_ORDER_DETAILS */
+export async function VIEW_ORDER_DETAILS(
+  request: FastifyRequest,
+  reply: FastifyReply
+) {
+  try {
+    /* -----------  MAPPER ----------- */
+    const { ...rest } = queryRequestInfo(request);
+
+    /* -----------  INTERACTOR ----------- */
+    const result = await TokenOrders.viewOrderDetails({
+      ...rest,
+    });
+
+    /* -----------  Response  ----------- */
+    return handleResponse(request, reply, responseType?.OK, {
+      data: result?.resData,
+    });
+  } catch (error: any) {
+    Logger.error(request, error.message, error);
+    return handleResponse(request, reply, responseType?.INTERNAL_SERVER_ERROR, {
+      error: {
+        message: responseType?.INTERNAL_SERVER_ERROR,
+      },
+    });
+  }
+}

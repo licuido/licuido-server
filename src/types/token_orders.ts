@@ -46,7 +46,11 @@ export interface createTokenRedemptionOrderPayload
 }
 
 export interface updateTokenOrders {
-  last_action_track_id: string;
+  status_id?: number;
+  last_action_track_id?: string;
+  recived_amount_in_euro?: number;
+  is_payment_confirmed?: boolean;
+  payment_reference?: string;
   updated_by: string;
 }
 

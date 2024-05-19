@@ -656,6 +656,230 @@ const getTokenRedemptionOrderAsCSV = async (
   }
 };
 
+const viewOrderDetails = async ({ id }: { id: string }) => {
+  // Get Token Order Details
+  const data = await TokenOrders.viewOrderDetails({
+    token_order_id: id,
+  });
+
+  return {
+    resData: data,
+  };
+};
+
+const cancelOrder = async ({
+  user_profile_id,
+  user_entity_id,
+  id,
+}: {
+  user_profile_id: string;
+  user_entity_id: string;
+  id: string;
+}) => {
+  // Update Cancel Order Details
+  const result: any = await sequelize.transaction(async (transaction) => {
+    // Update Token Order Status With Track Id
+    await TokenOrders.update(
+      {
+        options: {
+          status_id: 7, // 7--> Canceled By Invstor
+          updated_by: user_profile_id,
+        },
+        id: id,
+      },
+      transaction
+    );
+
+    // Track Actions Of Order Cancel
+    const track_id = await TrackTokenOrderActions.create(
+      {
+        user_profile_id,
+        user_entity_id,
+        action_status_id: 7,
+        is_active: true,
+        created_by: user_profile_id,
+      },
+      transaction
+    );
+
+    // Update Token Order With Track Id
+    await TokenOrders.update(
+      {
+        options: {
+          last_action_track_id: track_id,
+          updated_by: user_profile_id,
+        },
+        id: id,
+      },
+      transaction
+    );
+
+    return { message: successCustomMessage.orderCancelled };
+  });
+
+  return result;
+};
+
+const confirmPayment = async ({
+  user_profile_id,
+  user_entity_id,
+  id,
+  received_payment,
+  status_id,
+  is_mint_enabled,
+}: {
+  user_profile_id: string;
+  user_entity_id: string;
+  id: string;
+  received_payment: number;
+  status_id: number;
+  is_mint_enabled: boolean;
+}) => {
+  // Update Confrim Payment / Reject Order Details
+  const result: any = await sequelize.transaction(async (transaction) => {
+    // Update Token Order Status With Track Id
+    await TokenOrders.update(
+      {
+        options: {
+          status_id:
+            is_mint_enabled === true && status_id === 3
+              ? status_id
+              : status_id === 8
+              ? status_id
+              : 9, // 3 --> Payment Confirmed | 8 --> Rejected By Issuer | 9 --> Request to mint
+          recived_amount_in_euro:
+            status_id === 3 ? received_payment : undefined,
+          is_payment_confirmed: status_id === 3 ? true : false,
+          updated_by: user_profile_id,
+        },
+        id: id,
+      },
+      transaction
+    );
+
+    // Track Actions Of Order Payment Confirm / Reject
+    const track_id = await TrackTokenOrderActions.create(
+      {
+        user_profile_id,
+        user_entity_id,
+        action_status_id:
+          is_mint_enabled === true && status_id === 3
+            ? status_id
+            : status_id === 8
+            ? status_id
+            : 9,
+        is_active: true,
+        created_by: user_profile_id,
+      },
+      transaction
+    );
+
+    // Update Token Order With Track Id
+    await TokenOrders.update(
+      {
+        options: {
+          last_action_track_id: track_id,
+          updated_by: user_profile_id,
+        },
+        id: id,
+      },
+      transaction
+    );
+
+    return {
+      message:
+        status_id === 3
+          ? successCustomMessage.paymentConfirmed
+          : status_id === 8
+          ? successCustomMessage.paymentRejected
+          : "",
+    };
+  });
+
+  return result;
+};
+
+const sendPayment = async ({
+  user_profile_id,
+  user_entity_id,
+  id,
+  status_id,
+  is_burn_enabled,
+  amount_to_pay,
+  payment_reference,
+}: {
+  user_profile_id: string;
+  user_entity_id: string;
+  id: string;
+  status_id: number;
+  is_burn_enabled: boolean;
+  amount_to_pay?: number;
+  payment_reference?: string;
+}) => {
+  // Update Send Payment / Reject Order Payment Status
+  const result: any = await sequelize.transaction(async (transaction) => {
+    // Update Token Order Status With Track Id
+    await TokenOrders.update(
+      {
+        options: {
+          status_id:
+            is_burn_enabled === true && status_id === 4
+              ? status_id
+              : status_id === 8
+              ? status_id
+              : 10, // 3 --> Payment Sent | 8 --> Rejected By Issuer | 10 --> Request to burn
+          recived_amount_in_euro: status_id === 4 ? amount_to_pay : undefined,
+          payment_reference: status_id === 4 ? payment_reference : undefined,
+          is_payment_confirmed: status_id === 4 ? true : false,
+          updated_by: user_profile_id,
+        },
+        id: id,
+      },
+      transaction
+    );
+
+    // Track Actions Of Order Payment Send / Reject
+    const track_id = await TrackTokenOrderActions.create(
+      {
+        user_profile_id,
+        user_entity_id,
+        action_status_id:
+          is_burn_enabled === true && status_id === 4
+            ? status_id
+            : status_id === 8
+            ? status_id
+            : 10,
+        is_active: true,
+        created_by: user_profile_id,
+      },
+      transaction
+    );
+
+    // Update Token Order With Track Id
+    await TokenOrders.update(
+      {
+        options: {
+          last_action_track_id: track_id,
+          updated_by: user_profile_id,
+        },
+        id: id,
+      },
+      transaction
+    );
+
+    return {
+      message:
+        status_id === 4
+          ? successCustomMessage.paymentSend
+          : status_id === 8
+          ? successCustomMessage.paymentRejected
+          : "",
+    };
+  });
+
+  return result;
+};
+
 export default {
   createTokenSubscriptionOrders,
   getTokenOrder,
@@ -664,4 +888,8 @@ export default {
   getTokenRedemptionOrder,
   getTokenSubscriptionOrderAsCSV,
   getTokenRedemptionOrderAsCSV,
+  viewOrderDetails,
+  cancelOrder,
+  confirmPayment,
+  sendPayment,
 };

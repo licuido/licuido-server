@@ -129,3 +129,21 @@ export const EXPORT_REDEMPTION_ORDER_AS_CSV = {
   response: makeResponseSchema(getRedemptionOrderAsCSV),
   query: getRedemptionOrderCSVParams,
 };
+
+/* VIEW_ORDER_DETAILS */
+const getOrderDetailsParams = Schema.object()
+  .prop("id", Schema.string().format("uuid"))
+  .required(["id"]);
+
+const getOrderDetails: JSONSchema = Schema.object()
+  .additionalProperties(true)
+  .prop("meta", Schema.object().prop("message", Schema.string()))
+  .valueOf() as JSONSchema;
+
+export const VIEW_ORDER_DETAILS = {
+  description:
+    "Defines the structure and constraints for an API endpoint to get order details",
+  tags: ["Token Order"],
+  response: makeResponseSchema(getOrderDetails),
+  query: getOrderDetailsParams,
+};

@@ -28,6 +28,24 @@ const orderRoute: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
       "/redemption/export/file",
       { schema: schema.EXPORT_REDEMPTION_ORDER_AS_CSV },
       handler.EXPORT_REDEMPTION_ORDER_AS_CSV
+    )
+    .get(
+      "/details/get",
+      { schema: schema.VIEW_ORDER_DETAILS },
+      handler.VIEW_ORDER_DETAILS
+    );
+
+  fastify
+    .put("/cancel", { schema: schema.CANCEL_ORDER }, handler.CANCEL_ORDER)
+    .put(
+      "/payment/confirm",
+      { schema: schema.CONFRIM_PAYMENT },
+      handler.CONFRIM_PAYMENT
+    )
+    .put(
+      "/payment/send",
+      { schema: schema.SEND_PAYMENT },
+      handler.SEND_PAYMENT
     );
 };
 

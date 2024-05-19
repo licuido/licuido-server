@@ -1,4 +1,10 @@
-import { master_order_status, token_offering, token_order } from "@models";
+import {
+  customer_wallet,
+  entity,
+  master_order_status,
+  token_offering,
+  token_order,
+} from "@models";
 import queries from "@queries";
 import { createTokenOrders, updateTokenOrders } from "@types";
 import { sequelize } from "@utils";
@@ -412,6 +418,55 @@ class TokenOrders {
     } catch (error: any) {
       console.log(error);
       throw new Error(error.message);
+    }
+  }
+
+  static async viewOrderDetails({
+    token_order_id,
+  }: {
+    token_order_id?: string;
+  }): Promise<any> {
+    try {
+      const token_order_details = await token_order.findOne({
+        where: {
+          id: token_order_id,
+        },
+        include: [
+          {
+            model: master_order_status,
+            as: "status",
+            attributes: ["id", "name"],
+            required: false,
+          },
+          {
+            model: token_offering,
+            as: "token_offering",
+            required: false,
+          },
+          {
+            model: entity,
+            as: "issuer_entity",
+            required: false,
+          },
+          {
+            model: entity,
+            as: "receiver_entity",
+            required: false,
+            include: [
+              {
+                model: customer_wallet,
+                as: "customer_wallets",
+                where: { is_authenticated: true },
+                required: false,
+              },
+            ],
+          },
+        ],
+      });
+
+      return JSON.parse(JSON.stringify(token_order_details));
+    } catch (error) {
+      throw error;
     }
   }
 }
