@@ -7,7 +7,7 @@ export const getAllCurrenciesQuery = (
      // For Limit & Offset
   let limitStatment = ``;
   if (offset !== null && limit !== null) {
-    limitStatment = ` LIMIT '${limit}' OFFSET '${offset * limit}'`;
+    limitStatment = ` LIMIT '${limit}' OFFSET '${offset}'`;
   }
 
   let searchFilter = ``;
