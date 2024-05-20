@@ -1,5 +1,13 @@
-import { master_order_status, token_offering, token_order } from "@models";
+import {
+  customer_wallet,
+  entity,
+  master_order_status,
+  token_offering,
+  token_order,
+} from "@models";
+import queries from "@queries";
 import { createTokenOrders, updateTokenOrders } from "@types";
+import { sequelize } from "@utils";
 import { Transaction } from "sequelize";
 
 class TokenOrders {
@@ -119,6 +127,344 @@ class TokenOrders {
           transaction,
         }
       );
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * A function to get subscription order data.
+   *
+   * @param {Object} options - The options object containing parameters for fetching subscription order data.
+   * @param {number} options.entity_type_id - The entity type ID.
+   * @param {number} options.offset - The offset for pagination.
+   * @param {number} options.limit - The limit for pagination.
+   * @param {string} [options.user_entity_id] - The user entity ID (optional).
+   * @param {string} [options.search] - The search query (optional).
+   * @param {number[] | []} [options.status_filters] - The status filters (optional).
+   * @param {string[]} [options.investment_currency_filters] - The investment currency filters (optional).
+   * @param {string[]} [options.order_fulfillment_filters] - The order fulfillment filters (optional).
+   * @param {string} [options.start_date] - The start date (optional).
+   * @param {string} [options.end_date] - The end date (optional).
+   * @param {string} [options.token_id] - The token ID (optional).
+   * @return {Promise<{ rows: any[]; count: number; }>} The promise with rows array and count of subscription order data.
+   */
+
+  static async getSubscriptionOrderData(options: {
+    entity_type_id: number;
+    offset: number;
+    limit: number;
+    user_entity_id?: string;
+    search?: string;
+    status_filters?: number[] | [];
+    investment_currency_filters?: string[] | [];
+    order_fulfillment_filters?: string[] | [];
+    start_date?: string;
+    end_date?: string;
+    token_id?: string;
+  }): Promise<{
+    rows: any[];
+    count: number;
+  }> {
+    try {
+      const {
+        entity_type_id,
+        offset,
+        limit,
+        user_entity_id,
+        search,
+        status_filters,
+        investment_currency_filters,
+        order_fulfillment_filters,
+        start_date,
+        end_date,
+        token_id,
+      } = options;
+
+      // For Data
+      const [result]: any[] = await sequelize.query(
+        await queries.getAllSubscriptionOrderQuery(
+          entity_type_id,
+          "subscription",
+          offset,
+          limit,
+          user_entity_id,
+          search,
+          status_filters,
+          investment_currency_filters,
+          order_fulfillment_filters,
+          start_date,
+          end_date,
+          token_id
+        )
+      );
+
+      // For Count
+      const [dataWithoutOffsetLimit]: any[] = await sequelize.query(
+        await queries.getAllSubscriptionOrderQuery(
+          entity_type_id,
+          "subscription",
+          null,
+          null,
+          user_entity_id,
+          search,
+          status_filters,
+          investment_currency_filters,
+          order_fulfillment_filters,
+          start_date,
+          end_date,
+          token_id
+        )
+      );
+
+      return {
+        rows: result,
+        count: dataWithoutOffsetLimit?.length ?? 0,
+      };
+    } catch (error: any) {
+      console.log(error);
+      throw new Error(error.message);
+    }
+  }
+
+  /**
+   * A function to retrieve redemption order data.
+   *
+   * @param {Object} options - The options for retrieving data.
+   * @param {number} options.entity_type_id - The entity type ID.
+   * @param {number} options.offset - The offset for data retrieval.
+   * @param {number} options.limit - The limit of data to retrieve.
+   * @param {string} [options.user_entity_id] - The user entity ID (optional).
+   * @param {string} [options.search] - The search query (optional).
+   * @param {number[] | []} [options.status_filters] - The status filters (optional).
+   * @param {string[] | []} [options.investment_currency_filters] - The investment currency filters (optional).
+   * @param {string[] | []} [options.order_fulfillment_filters] - The order fulfillment filters (optional).
+   * @param {string} [options.start_date] - The start date for data retrieval (optional).
+   * @param {string} [options.end_date] - The end date for data retrieval (optional).
+   * @param {string} [options.token_id] - The token ID for retrieval (optional).
+   * @return {Promise<{ rows: any[]; count: number; }>} The retrieved data rows and count.
+   */
+
+  static async getRedmptionOrderData(options: {
+    entity_type_id: number;
+    offset: number;
+    limit: number;
+    user_entity_id?: string;
+    search?: string;
+    status_filters?: number[] | [];
+    order_fulfillment_filters?: string[] | [];
+    start_date?: string;
+    end_date?: string;
+    token_id?: string;
+  }): Promise<{
+    rows: any[];
+    count: number;
+  }> {
+    try {
+      const {
+        entity_type_id,
+        offset,
+        limit,
+        user_entity_id,
+        search,
+        status_filters,
+        order_fulfillment_filters,
+        start_date,
+        end_date,
+        token_id,
+      } = options;
+
+      // For Data
+      const [result]: any[] = await sequelize.query(
+        await queries.getAllRedemptionOrderQuery(
+          entity_type_id,
+          "redemption",
+          offset,
+          limit,
+          user_entity_id,
+          search,
+          status_filters,
+          order_fulfillment_filters,
+          start_date,
+          end_date,
+          token_id
+        )
+      );
+
+      // For Count
+      const [dataWithoutOffsetLimit]: any[] = await sequelize.query(
+        await queries.getAllRedemptionOrderQuery(
+          entity_type_id,
+          "redemption",
+          null,
+          null,
+          user_entity_id,
+          search,
+          status_filters,
+          order_fulfillment_filters,
+          start_date,
+          end_date,
+          token_id
+        )
+      );
+
+      return {
+        rows: result,
+        count: dataWithoutOffsetLimit?.length ?? 0,
+      };
+    } catch (error: any) {
+      console.log(error);
+      throw new Error(error.message);
+    }
+  }
+
+  static async getSubscriptionOrderDataAsCSV(options: {
+    entity_type_id: number;
+    user_entity_id?: string;
+    search?: string;
+    status_filters?: number[] | [];
+    investment_currency_filters?: string[] | [];
+    order_fulfillment_filters?: string[] | [];
+    start_date?: string;
+    end_date?: string;
+    token_id?: string;
+  }): Promise<{
+    rows: any[];
+  }> {
+    try {
+      const {
+        entity_type_id,
+        user_entity_id,
+        search,
+        status_filters,
+        investment_currency_filters,
+        order_fulfillment_filters,
+        start_date,
+        end_date,
+        token_id,
+      } = options;
+
+      // For Data
+      const [result]: any[] = await sequelize.query(
+        await queries.getAllSubscriptionOrderQuery(
+          entity_type_id,
+          "subscription",
+          null,
+          null,
+          user_entity_id,
+          search,
+          status_filters,
+          investment_currency_filters,
+          order_fulfillment_filters,
+          start_date,
+          end_date,
+          token_id
+        )
+      );
+
+      return {
+        rows: result,
+      };
+    } catch (error: any) {
+      console.log(error);
+      throw new Error(error.message);
+    }
+  }
+
+  static async getRedemptionOrderDataAsCSV(options: {
+    entity_type_id: number;
+    user_entity_id?: string;
+    search?: string;
+    status_filters?: number[] | [];
+    order_fulfillment_filters?: string[] | [];
+    start_date?: string;
+    end_date?: string;
+    token_id?: string;
+  }): Promise<{
+    rows: any[];
+  }> {
+    try {
+      const {
+        entity_type_id,
+        user_entity_id,
+        search,
+        status_filters,
+        order_fulfillment_filters,
+        start_date,
+        end_date,
+        token_id,
+      } = options;
+
+      // For Data
+      const [result]: any[] = await sequelize.query(
+        await queries.getAllRedemptionOrderQuery(
+          entity_type_id,
+          "redemption",
+          null,
+          null,
+          user_entity_id,
+          search,
+          status_filters,
+          order_fulfillment_filters,
+          start_date,
+          end_date,
+          token_id
+        )
+      );
+
+      return {
+        rows: result,
+      };
+    } catch (error: any) {
+      console.log(error);
+      throw new Error(error.message);
+    }
+  }
+
+  static async viewOrderDetails({
+    token_order_id,
+  }: {
+    token_order_id?: string;
+  }): Promise<any> {
+    try {
+      const token_order_details = await token_order.findOne({
+        where: {
+          id: token_order_id,
+        },
+        include: [
+          {
+            model: master_order_status,
+            as: "status",
+            attributes: ["id", "name"],
+            required: false,
+          },
+          {
+            model: token_offering,
+            as: "token_offering",
+            required: false,
+          },
+          {
+            model: entity,
+            as: "issuer_entity",
+            required: false,
+          },
+          {
+            model: entity,
+            as: "receiver_entity",
+            required: false,
+            include: [
+              {
+                model: customer_wallet,
+                as: "customer_wallets",
+                where: { is_authenticated: true },
+                required: false,
+              },
+            ],
+          },
+        ],
+      });
+
+      return JSON.parse(JSON.stringify(token_order_details));
     } catch (error) {
       throw error;
     }

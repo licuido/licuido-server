@@ -115,24 +115,16 @@ class Countries {
       // });
 
       const [result]: any = await sequelize.query(
-        queries.getAllCurrenciesQuery(
-          offset,
-          limit,
-          search,
-        )
+        queries.getAllCurrenciesQuery(offset, limit, search)
       );
 
       const [resultCount]: any = await sequelize.query(
-        queries.getAllCurrenciesQuery(
-          null,
-          null,
-          search,
-        )
+        queries.getAllCurrenciesQuery(null, null, search)
       );
 
       return {
-        rows:result,
-        count:resultCount?.length ?? 0,
+        rows: result,
+        count: resultCount?.length ?? 0,
       };
     } catch (error) {
       throw error;
