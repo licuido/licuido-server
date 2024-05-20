@@ -1,10 +1,9 @@
 export const getAllCurrenciesQuery = (
-    offset: number | null,
-    limit: number | null,
-    search?: string,
-  ) => {
-
-     // For Limit & Offset
+  offset: number | null,
+  limit: number | null,
+  search?: string
+) => {
+  // For Limit & Offset
   let limitStatment = ``;
   if (offset !== null && limit !== null) {
     limitStatment = ` LIMIT '${limit}' OFFSET '${offset}'`;
@@ -18,8 +17,8 @@ export const getAllCurrenciesQuery = (
       )`;
   }
 
-    /* For Data */
-    let baseQuery = `SELECT DISTINCT
+  /* For Data */
+  let baseQuery = `SELECT DISTINCT
     currency_code,
     currency_symbol
   FROM
@@ -29,6 +28,6 @@ export const getAllCurrenciesQuery = (
     ${searchFilter}
     ${limitStatment}
     `;
-  
-    return baseQuery;
-  };
+
+  return baseQuery;
+};

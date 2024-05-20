@@ -53,6 +53,12 @@ export const GET_INVESTOR_DATA_FOR_QUALIFY = {
   query: getInvestorParams,
 };
 
+const getInvestorCSVParams = Schema.object()
+  .prop("search", Schema.string())
+  .prop("status_filter", Schema.string())
+  .prop("kyc_status_filter", Schema.string())
+  .prop("investor_type_filter", Schema.string());
+
 const getInvestorResponseAsCSV: JSONSchema = Schema.object()
   .prop("data", Schema.object())
   .additionalProperties(true)
@@ -65,4 +71,5 @@ export const EXPORT_INVESTOR_DATA_AS_CSV_FILE = {
     "Defines the structure and constraints for an API endpoint to get all investor data in CSV file.",
   tags: ["Investor Qualification"],
   response: makeResponseSchema(getInvestorResponseAsCSV),
+  query: getInvestorCSVParams,
 };
