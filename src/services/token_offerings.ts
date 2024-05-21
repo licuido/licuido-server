@@ -329,7 +329,7 @@ class TokenOfferings {
     countryId?: number;
     user_entity_id?: string;
     isQualified?: boolean;
-    countryFilterId?: number
+    countryFilterId?: string[] | [];
   }): Promise<{
     rows: any[];
     count: number;

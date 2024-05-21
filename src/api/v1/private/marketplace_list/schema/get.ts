@@ -31,7 +31,7 @@ const customParams = Schema.object()
   .prop("isQualified",Schema.boolean())
   .prop("currencyCode",Schema.string())
   .prop("tokenTypeId",Schema.string())
-  .prop("countryFilterId",Schema.number())
+  .prop("countryFilterId",Schema.string())
   .prop("fundStatus",Schema.string())
 
 export const GET_MARKETPLACE_LISTING = {

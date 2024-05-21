@@ -16,7 +16,6 @@ const getAllMarketPlaceList = async (options: any) => {
       isQualified,
       countryFilterId
     } = options;
-
     if (
       tokenTypeId !== undefined &&
       tokenTypeId !== "" &&
@@ -33,7 +32,15 @@ const getAllMarketPlaceList = async (options: any) => {
     ) {
       currencyCode = currencyCode?.split(",");
     }
-    
+
+    if (
+      countryFilterId !== undefined &&
+      countryFilterId !== "" &&
+      countryFilterId !== null &&
+      countryFilterId?.length > 0
+    ) {
+      countryFilterId = countryFilterId?.split(",");
+    }
     if (
       fundStatus !== undefined &&
       fundStatus !== "" &&
