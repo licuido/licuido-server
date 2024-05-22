@@ -17,7 +17,6 @@ import currencyConvert from "./currencyConversion";
 import fulfilledStatus from "./orderFulfilledStatus";
 import commentFunction from "./functions";
 
-
 export {
   dateTime,
   makeNetworkRequest,
@@ -39,5 +38,5 @@ export {
   qualifiedStatus,
   currencyConvert,
   fulfilledStatus,
-  commentFunction
+  commentFunction,
 };

@@ -192,7 +192,6 @@ export const UPDATE_TOKEN_VALUATION = {
   response: makeResponseSchema(updateTokenValuationResponse),
 };
 
-
 /* For Update Token offering Status */
 const updateTokenOfferingStatusBody = Schema.object()
   .prop("status_id", Schema.number())

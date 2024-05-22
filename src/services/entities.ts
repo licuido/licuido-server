@@ -216,6 +216,19 @@ class Entities {
       throw error;
     }
   }
+
+  static async findEntityForCountry(user_entity_id?:string): Promise<any> {
+    try {
+      return await entity.findOne({
+        where: {
+          id: user_entity_id 
+        },
+        attributes:["country_id"]
+      }) 
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export { Entities };

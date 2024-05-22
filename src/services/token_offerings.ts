@@ -15,10 +15,12 @@ import {
   master_fund_agency_rating,
   token_valuation,
 } from "@models";
-import { createTokenOffering, updateTokenOffering } from "@types";
-import { Op } from "sequelize";
 import queries from "@queries";
+import { createTokenOffering, updateTokenOffering } from "@types";
 import { sequelize } from "@utils";
+import { ENTITY_INVESTOR_STATUS } from "helpers/constants";
+// import { sequelize } from "@utils";
+import { Op } from "sequelize";
 // import moment from "moment";
 
 class TokenOfferings {
@@ -336,6 +338,78 @@ class TokenOfferings {
   }
 
   /**
+   * Retrieves all token offerings based on the provided options.
+   *
+   * @param {Object} options - The options for retrieving token offerings.
+   * @param {number} options.offset - The offset for pagination.
+   * @param {number} options.limit - The limit for pagination.
+   * @param {string} [options.search] - The search query for filtering token offerings.
+   * @return {Promise<Object>} - A promise that resolves to an object containing the rows and count of token offerings.
+   * @throws {Error} - If there is an error retrieving the token offerings.
+   */
+  static async getAllTokenOfferings(options: {
+    offset: number;
+    limit: number;
+    search?: string;
+    tokenTypeId?: [];
+    currencyCode?: string[] | [];
+    fundStatus?: string[] | [];
+    countryId?: number;
+    user_entity_id?: string;
+    isQualified?: boolean;
+    countryFilterId?: string[] | [];
+  }): Promise<{
+    rows: any[];
+    count: number;
+  }> {
+    try {
+      const {
+        offset,
+        limit,
+        search,
+        tokenTypeId,
+        currencyCode,
+        fundStatus,
+        countryId,
+        user_entity_id,
+        isQualified,
+        countryFilterId,
+      } = options;
+
+      let investorStatus = null;
+      if (isQualified) {
+        investorStatus = ENTITY_INVESTOR_STATUS.APPROVED;
+      } else if (isQualified !== undefined && isQualified === false) {
+        investorStatus = ENTITY_INVESTOR_STATUS.NOT_APPROVED;
+      }
+
+      const [rows]: any[] = await sequelize.query(
+        queries.getMarketPlaceListingQuery(
+          offset,
+          limit,
+          search,
+          tokenTypeId,
+          currencyCode,
+          fundStatus,
+          countryId,
+          user_entity_id,
+          investorStatus,
+          countryFilterId
+        )
+      );
+      const [dataCount]: any[] = await sequelize.query(
+        queries.getMarketPlaceListingQueryCount()
+      );
+      return {
+        rows,
+        count: dataCount?.[0]?.count ?? 0,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
    * this function used for checking user have token access
    *
    * @param {token_id:string, user_entity_id:string} options - The response object containing create data.
@@ -492,7 +566,7 @@ class TokenOfferings {
         {
           offer_status_id,
           updated_by,
-          updated_at:new Date()
+          updated_at: new Date(),
         },
         {
           where: {

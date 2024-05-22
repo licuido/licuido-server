@@ -714,11 +714,7 @@ const getIssuerTokens = async ({
 
 const updateTokenValuation = async (option: createTokenValuation) => {
   try {
-    const {
-      token_id,
-      user_entity_id,
-      user_profile_id,
-    } = option;
+    const { token_id, user_entity_id, user_profile_id } = option;
 
     const count = await TokenOfferings.checkTokenHaveAccess({
       token_id,

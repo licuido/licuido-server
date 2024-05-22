@@ -118,11 +118,10 @@ export async function UPDATE_TOKEN_VALUATION(
     });
 
     /* -----------  RESPONSE ----------- */
-    
+
     return handleResponse(request, reply, responseType?.CREATED, {
       customMessage: result?.message,
     });
-
   } catch (error: any) {
     Logger.error(request, error.message, error);
     return handleResponse(request, reply, responseType?.INTERNAL_SERVER_ERROR, {
