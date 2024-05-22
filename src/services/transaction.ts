@@ -27,10 +27,10 @@ class TokenTransactions {
 
   static async getLatestTransactionAgainstInvestor(
     token_offering_id: string,
-    receiver_entity_id:string
+    receiver_entity_id: string
   ): Promise<any> {
     try {
-      token_transaction.findAll({
+      const last_transaction = await token_transaction.findAll({
         attributes: ["id", "created_at"],
         include: [
           {
@@ -41,16 +41,16 @@ class TokenTransactions {
             where: {
               is_active: true,
               token_offering_id,
-              receiver_entity_id
+              receiver_entity_id,
             },
           },
         ],
         order: [
           ["created_at", "DESC"], // Order by start_date in descending order
         ],
-        limit:1
+        limit: 1,
       });
-      return true;
+      return JSON.parse(JSON.stringify(last_transaction));
     } catch (error) {
       throw error;
     }

@@ -4,7 +4,7 @@ import {
   master_order_status,
   token_offering,
   token_order,
-  user_profile
+  user_profile,
 } from "@models";
 import queries from "@queries";
 import { createTokenOrders, updateTokenOrders } from "@types";
@@ -480,25 +480,41 @@ class TokenOrders {
       const token_order_details = await token_order.findOne({
         where: {
           id: token_order_id,
-          is_active:true
+          is_active: true,
         },
-       attributes:["id","issuer_entity_id","receiver_entity_id","token_offering_id"],
-       include: [
-        {
-          model: token_offering,
-          as: "token_offering",
-          required: true,
-          attributes:["id"],
-          include:[
-            {
-              model: user_profile,
-              as: "created_by_user_profile",
-              required: true,
-              attributes:["is_fund_offered_by_licuido"],
-            },
-          ]
-        },
-       ]
+        attributes: [
+          "id",
+          "issuer_entity_id",
+          "receiver_entity_id",
+          "token_offering_id",
+          "type",
+          "ordered_tokens",
+          "total_paid",
+        ],
+        include: [
+          {
+            model: token_offering,
+            as: "token_offering",
+            required: true,
+            attributes: ["id"],
+            include: [
+              {
+                model: entity,
+                as: "issuer_entity",
+                required: false,
+                attributes: ["id"],
+                include: [
+                  {
+                    model: user_profile,
+                    as: "contact_profile",
+                    required: false,
+                    attributes: ["id", "name", "is_fund_offered_by_licuido"],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
       });
 
       return JSON.parse(JSON.stringify(token_order_details));
