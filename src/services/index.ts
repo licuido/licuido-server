@@ -25,4 +25,6 @@ export * from "./token_orders";
 export * from "./master_fund_agencies";
 export * from "./master_fund_agency_ratings";
 export * from "./user_device_tokens";
+export * from "./token_valuations";
+
 export * from "./track_token_order_actions";

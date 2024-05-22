@@ -54,6 +54,7 @@ export const getMarketPlaceListingQuery = (
       .join(",")})`;
   }
 
+  //For fundStatus
   let fundStatusFilter = ``;
   if (fundStatus && fundStatus?.length > 0) {
     fundStatusFilter = ` AND mts.name IN (${fundStatus

@@ -49,16 +49,8 @@ export async function GET_INVESTOR_DATA_FOR_QUALIFY(
 ) {
   try {
     /* -----------  MAPPER ----------- */
-    const {
-      entity_id,
-      user_profile_id,
-      user_entity_id,
-      url,
-      search,
-      offset,
-      limit,
-      ...rest
-    } = queryRequestInfo(request);
+    const { entity_id, user_entity_id, url, search, offset, limit, ...rest } =
+      queryRequestInfo(request);
 
     if (entity_id === 2) {
       return handleResponse(request, reply, responseType?.FORBIDDEN, {
@@ -107,7 +99,7 @@ export async function EXPORT_INVESTOR_DATA_AS_CSV_FILE(
 ) {
   try {
     /* -----------  MAPPER ----------- */
-    const { entity_id, user_profile_id } = queryRequestInfo(request);
+    const { entity_id, user_entity_id, ...rest } = queryRequestInfo(request);
 
     if (entity_id === 2) {
       return handleResponse(request, reply, responseType?.FORBIDDEN, {
@@ -119,10 +111,16 @@ export async function EXPORT_INVESTOR_DATA_AS_CSV_FILE(
     /* -----------  INTERACTOR ----------- */
     const result = await UserEntities.getInvestorDataAsCSV({
       entity_type_id: 2, // Investor
-      user_profile_id,
+      user_entity_id,
+      ...rest,
     });
 
-    /* -----------  SERIALIZER ----------- */
+    if (result?.length <= 0) {
+      return handleResponse(request, reply, responseType?.NO_CONTENT, {
+        customMessage: "No Data Found",
+      });
+    }
+
     const excelData =
       result?.length > 0 &&
       result.map((item: any) => ({

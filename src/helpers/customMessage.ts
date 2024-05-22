@@ -14,4 +14,8 @@ export const successCustomMessage = {
   deviceTokenCreated: "Device Token Created Successfully",
   getDeviceToken: "Getting Device Token Successfully",
   logout: "Logout Successfully",
+  orderCancelled: "Token Order Cancelled Successfully",
+  paymentConfirmed: "Token Order Payment Confirmed Successfully",
+  paymentRejected: "Token Order Payment Rejected Successflly",
+  paymentSend: "Token Order Payment Send Successfully",
 };
