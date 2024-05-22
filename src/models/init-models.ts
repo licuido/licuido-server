@@ -49,6 +49,10 @@ import { master_wallet_type as _master_wallet_type } from "./master_wallet_type"
 import type { master_wallet_typeAttributes, master_wallet_typeCreationAttributes } from "./master_wallet_type";
 import { offer_fund_rating as _offer_fund_rating } from "./offer_fund_rating";
 import type { offer_fund_ratingAttributes, offer_fund_ratingCreationAttributes } from "./offer_fund_rating";
+import { position_report_investor as _position_report_investor } from "./position_report_investor";
+import type { position_report_investorAttributes, position_report_investorCreationAttributes } from "./position_report_investor";
+import { position_report as _position_report } from "./position_report";
+import type { position_reportAttributes, position_reportCreationAttributes } from "./position_report";
 import { token_offering_allowed_country as _token_offering_allowed_country } from "./token_offering_allowed_country";
 import type { token_offering_allowed_countryAttributes, token_offering_allowed_countryCreationAttributes } from "./token_offering_allowed_country";
 import { token_offering_allowed_currency as _token_offering_allowed_currency } from "./token_offering_allowed_currency";
@@ -104,6 +108,8 @@ export {
   _master_transaction_status as master_transaction_status,
   _master_wallet_type as master_wallet_type,
   _offer_fund_rating as offer_fund_rating,
+  _position_report_investor as position_report_investor,
+  _position_report as position_report,
   _token_offering_allowed_country as token_offering_allowed_country,
   _token_offering_allowed_currency as token_offering_allowed_currency,
   _token_offering_document as token_offering_document,
@@ -171,6 +177,10 @@ export type {
   master_wallet_typeCreationAttributes,
   offer_fund_ratingAttributes,
   offer_fund_ratingCreationAttributes,
+  position_report_investorAttributes,
+  position_report_investorCreationAttributes,
+  position_reportAttributes,
+  position_reportCreationAttributes,
   token_offering_allowed_countryAttributes,
   token_offering_allowed_countryCreationAttributes,
   token_offering_allowed_currencyAttributes,
@@ -227,6 +237,8 @@ export function initModels(sequelize: Sequelize) {
   const master_transaction_status = _master_transaction_status.initModel(sequelize);
   const master_wallet_type = _master_wallet_type.initModel(sequelize);
   const offer_fund_rating = _offer_fund_rating.initModel(sequelize);
+  const position_report_investor = _position_report_investor.initModel(sequelize);
+  const position_report = _position_report.initModel(sequelize);
   const token_offering_allowed_country = _token_offering_allowed_country.initModel(sequelize);
   const token_offering_allowed_currency = _token_offering_allowed_currency.initModel(sequelize);
   const token_offering_document = _token_offering_document.initModel(sequelize);
@@ -270,6 +282,8 @@ export function initModels(sequelize: Sequelize) {
   entity.hasMany(entity_investor, { as: "entity_investors", foreignKey: "investor_entity_id"});
   entity_investor.belongsTo(entity, { as: "issuer_entity", foreignKey: "issuer_entity_id"});
   entity.hasMany(entity_investor, { as: "issuer_entity_entity_investors", foreignKey: "issuer_entity_id"});
+  position_report_investor.belongsTo(entity, { as: "investor", foreignKey: "investor_id"});
+  entity.hasMany(position_report_investor, { as: "position_report_investors", foreignKey: "investor_id"});
   token_offering.belongsTo(entity, { as: "issuer_entity", foreignKey: "issuer_entity_id"});
   entity.hasMany(token_offering, { as: "token_offerings", foreignKey: "issuer_entity_id"});
   token_order.belongsTo(entity, { as: "issuer_entity", foreignKey: "issuer_entity_id"});
@@ -386,6 +400,10 @@ export function initModels(sequelize: Sequelize) {
   user_profile.hasMany(individual_investor, { as: "created_by_individual_investors", foreignKey: "created_by"});
   individual_investor.belongsTo(user_profile, { as: "updated_by_user_profile", foreignKey: "updated_by"});
   user_profile.hasMany(individual_investor, { as: "updated_by_individual_investors", foreignKey: "updated_by"});
+  position_report.belongsTo(user_profile, { as: "created_by_user_profile", foreignKey: "created_by"});
+  user_profile.hasMany(position_report, { as: "position_reports", foreignKey: "created_by"});
+  position_report.belongsTo(user_profile, { as: "updated_by_user_profile", foreignKey: "updated_by"});
+  user_profile.hasMany(position_report, { as: "updated_by_position_reports", foreignKey: "updated_by"});
   token_offering_allowed_country.belongsTo(user_profile, { as: "created_by_user_profile", foreignKey: "created_by"});
   user_profile.hasMany(token_offering_allowed_country, { as: "token_offering_allowed_countries", foreignKey: "created_by"});
   token_offering_allowed_country.belongsTo(user_profile, { as: "updated_by_user_profile", foreignKey: "updated_by"});
@@ -471,6 +489,8 @@ export function initModels(sequelize: Sequelize) {
     master_transaction_status: master_transaction_status,
     master_wallet_type: master_wallet_type,
     offer_fund_rating: offer_fund_rating,
+    position_report_investor: position_report_investor,
+    position_report: position_report,
     token_offering_allowed_country: token_offering_allowed_country,
     token_offering_allowed_currency: token_offering_allowed_currency,
     token_offering_document: token_offering_document,

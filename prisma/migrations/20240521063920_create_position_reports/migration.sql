@@ -22,7 +22,7 @@ ALTER TABLE "position_reports" ADD FOREIGN KEY ("updated_by") REFERENCES "user_p
 
 CREATE TABLE "position_report_investors" (
   "id" UUID NOT NULL DEFAULT uuid_generate_v4(),
-  "investor_id" uuid 
+  "investor_id" uuid,
   "is_active" boolean DEFAULT true,
   "created_by" uuid,
   "updated_by" uuid,
@@ -33,3 +33,8 @@ CREATE TABLE "position_report_investors" (
 );
 
 ALTER TABLE "position_report_investors" ADD FOREIGN KEY ("investor_id") REFERENCES "entities" ("id");
+
+
+ALTER TABLE "public"."token_transactions"
+ADD COLUMN block_token INTEGER,
+ADD COLUMN unblock_token INTEGER;

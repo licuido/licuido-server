@@ -115,6 +115,7 @@ model entities {
   user_profiles_entities_updated_byTouser_profiles             user_profiles?              @relation("entities_updated_byTouser_profiles", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
   entity_investors                                             entity_investors[]
   entity_investors_entity_investors_issuer_entity_idToentities entity_investors[]          @relation("entity_investors_issuer_entity_idToentities")
+  position_report_investors                                    position_report_investors[]
   token_offerings                                              token_offerings[]
   token_orders_token_orders_issuer_entity_idToentities         token_orders[]              @relation("token_orders_issuer_entity_idToentities")
   token_orders_token_orders_receiver_entity_idToentities       token_orders[]              @relation("token_orders_receiver_entity_idToentities")
@@ -481,6 +482,8 @@ model token_transactions {
   updated_by                                                 String?                    @db.Uuid
   created_at                                                 DateTime?                  @default(now()) @db.Timestamp(6)
   updated_at                                                 DateTime?                  @default(now()) @db.Timestamp(6)
+  block_token                                                Int?
+  unblock_token                                              Int?
   user_profiles_token_transactions_created_byTouser_profiles user_profiles?             @relation("token_transactions_created_byTouser_profiles", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
   token_orders                                               token_orders?              @relation(fields: [order_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   master_transaction_status                                  master_transaction_status? @relation(fields: [status_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -535,6 +538,8 @@ model user_profiles {
   individual_investors_individual_investors_contact_profile_idTouser_profiles                   individual_investors[]              @relation("individual_investors_contact_profile_idTouser_profiles")
   individual_investors_individual_investors_created_byTouser_profiles                           individual_investors[]              @relation("individual_investors_created_byTouser_profiles")
   individual_investors_individual_investors_updated_byTouser_profiles                           individual_investors[]              @relation("individual_investors_updated_byTouser_profiles")
+  position_reports_position_reports_created_byTouser_profiles                                   position_reports[]                  @relation("position_reports_created_byTouser_profiles")
+  position_reports_position_reports_updated_byTouser_profiles                                   position_reports[]                  @relation("position_reports_updated_byTouser_profiles")
   token_offering_allowed_countries_token_offering_allowed_countries_created_byTouser_profiles   token_offering_allowed_countries[]  @relation("token_offering_allowed_countries_created_byTouser_profiles")
   token_offering_allowed_countries_token_offering_allowed_countries_updated_byTouser_profiles   token_offering_allowed_countries[]  @relation("token_offering_allowed_countries_updated_byTouser_profiles")
   token_offering_allowed_currencies_token_offering_allowed_currencies_created_byTouser_profiles token_offering_allowed_currencies[] @relation("token_offering_allowed_currencies_created_byTouser_profiles")
@@ -703,6 +708,34 @@ model token_valuations {
   user_profiles_token_valuations_created_byTouser_profiles user_profiles?   @relation("token_valuations_created_byTouser_profiles", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
   token_offerings                                          token_offerings? @relation(fields: [token_offering_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   user_profiles_token_valuations_updated_byTouser_profiles user_profiles?   @relation("token_valuations_updated_byTouser_profiles", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model position_report_investors {
+  id          String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  investor_id String?   @db.Uuid
+  is_active   Boolean?  @default(true)
+  created_by  String?   @db.Uuid
+  updated_by  String?   @db.Uuid
+  created_at  DateTime? @default(dbgenerated("(now() AT TIME ZONE 'utc'::text)")) @db.Timestamptz(6)
+  updated_at  DateTime? @default(dbgenerated("(now() AT TIME ZONE 'utc'::text)")) @db.Timestamptz(6)
+  entities    entities? @relation(fields: [investor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model position_reports {
+  id                                                       String         @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  title                                                    String?
+  start_date                                               DateTime?      @db.Date
+  end_date                                                 DateTime?      @db.Date
+  start_time                                               DateTime?      @db.Time(6)
+  end_time                                                 DateTime?      @db.Time(6)
+  is_all_investors                                         Boolean?       @default(false)
+  is_active                                                Boolean?       @default(true)
+  created_by                                               String?        @db.Uuid
+  updated_by                                               String?        @db.Uuid
+  created_at                                               DateTime?      @default(dbgenerated("(now() AT TIME ZONE 'utc'::text)")) @db.Timestamptz(6)
+  updated_at                                               DateTime?      @default(dbgenerated("(now() AT TIME ZONE 'utc'::text)")) @db.Timestamptz(6)
+  user_profiles_position_reports_created_byTouser_profiles user_profiles? @relation("position_reports_created_byTouser_profiles", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_profiles_position_reports_updated_byTouser_profiles user_profiles? @relation("position_reports_updated_byTouser_profiles", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 enum investment_types {
