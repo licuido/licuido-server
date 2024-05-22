@@ -2,6 +2,7 @@ import fp from "fastify-plugin";
 import { FastifyPluginAsync, FastifyReply } from "fastify";
 import fastifyJwt, { FastifyJWTOptions } from "@fastify/jwt";
 import { buildCodes } from "helpers/constants";
+import { UserProfile } from "@services";
 
 const authorizationMessages: any = {
   badRequestErrorMessage: `Format must be Authorization: Bearer <token>`,
@@ -65,6 +66,17 @@ const jwtPlugin: FastifyPluginAsync<FastifyJWTOptions> = async (
 
         request.entity_id = buildCodes[request?.headers?.build];
         const data = await request.jwtVerify();
+        const user: any = await UserProfile.findUser(data?.user_profile);
+        if (!user?.id) {
+          reply.code(500).send({
+            error: {
+              isError: true,
+              origin: request.url,
+              timestamp: new Date(),
+              message: "User Does not exisit",
+            },
+          });
+        }
         request.user_profile_id = data?.user_profile;
         request.user_entity_id = data?.user_entity_id;
       } catch (err) {
