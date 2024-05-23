@@ -53,6 +53,7 @@ const createRedemptionBody = Schema.object()
   .prop("currency_code", Schema.string())
   .prop("ordered_tokens", Schema.number())
   .prop("price_per_token", Schema.number())
+  .prop("net_investment_value", Schema.number())
   .prop("bank_account_name", Schema.string())
   .prop("bank_name", Schema.string())
   .prop("swift_bic_no", Schema.string())
@@ -66,6 +67,10 @@ const createRedemptionBody = Schema.object()
     "currency_code",
     "ordered_tokens",
     "price_per_token",
+<<<<<<< HEAD
+=======
+    "net_investment_value",
+>>>>>>> d9adc270dca4d40682604d67ebf1c6280819ac75
     "bank_name",
     "bank_account_name",
     "swift_bic_no",

@@ -2,6 +2,10 @@ import {
   getAllInvestorsQuery,
   getAllInvestorsCountQuery,
 } from "./getInvestorsQuery";
+import {
+  getMarketPlaceListingQuery,
+  getMarketPlaceListingQueryCount,
+} from "./getMarketPlaceQuery";
 import { getAllSubscriptionOrderQuery } from "./getAllSubscriptionOrderQuery";
 import { getAllCurrenciesQuery } from "./getAllCurrencyQuery";
 
@@ -13,6 +17,8 @@ import { getAllTransactionQuery, getAllTransactionCountQuery } from "./getTransa
 const queries = {
   getAllInvestorsQuery,
   getAllInvestorsCountQuery,
+  getMarketPlaceListingQuery,
+  getMarketPlaceListingQueryCount,
   getAllSubscriptionOrderQuery,
   getAllCurrenciesQuery,
   getAllTokensQuery,

@@ -646,17 +646,6 @@ const findToken = async ({
       };
     }
 
-    const count = await TokenOfferings.checkTokenHaveAccess({
-      token_id,
-      user_entity_id,
-    });
-
-    if (count === 0) {
-      return {
-        success: false,
-        message: `You Don't Have a access for this token or please verify this token`,
-      };
-    }
 
     const data = await TokenOfferings.getTokenOffering({ token_id });
     const parseData = JSON.parse(JSON.stringify(data));
@@ -714,11 +703,7 @@ const getIssuerTokens = async ({
 
 const updateTokenValuation = async (option: createTokenValuation) => {
   try {
-    const {
-      token_id,
-      user_entity_id,
-      user_profile_id,
-    } = option;
+    const { token_id, user_entity_id, user_profile_id } = option;
 
     const count = await TokenOfferings.checkTokenHaveAccess({
       token_id,
