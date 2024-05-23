@@ -305,6 +305,7 @@ const getAllTransactions = async (options: any) => {
         receiver_name: isMint ? val?.investor_name : null,
         issuer_name:val?.issuer_name,
         issuer_logo:val?.issuer_logo,
+        status:val?.status
       };
     });
 

@@ -1,5 +1,6 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
+import type { position_report_investor, position_report_investorId } from './position_report_investor';
 import type { user_profile, user_profileId } from './user_profile';
 
 export interface position_reportAttributes {
@@ -36,6 +37,18 @@ export class position_report extends Model<position_reportAttributes, position_r
   created_at?: Date;
   updated_at?: Date;
 
+  // position_report hasMany position_report_investor via report_id
+  position_report_investors!: position_report_investor[];
+  getPosition_report_investors!: Sequelize.HasManyGetAssociationsMixin<position_report_investor>;
+  setPosition_report_investors!: Sequelize.HasManySetAssociationsMixin<position_report_investor, position_report_investorId>;
+  addPosition_report_investor!: Sequelize.HasManyAddAssociationMixin<position_report_investor, position_report_investorId>;
+  addPosition_report_investors!: Sequelize.HasManyAddAssociationsMixin<position_report_investor, position_report_investorId>;
+  createPosition_report_investor!: Sequelize.HasManyCreateAssociationMixin<position_report_investor>;
+  removePosition_report_investor!: Sequelize.HasManyRemoveAssociationMixin<position_report_investor, position_report_investorId>;
+  removePosition_report_investors!: Sequelize.HasManyRemoveAssociationsMixin<position_report_investor, position_report_investorId>;
+  hasPosition_report_investor!: Sequelize.HasManyHasAssociationMixin<position_report_investor, position_report_investorId>;
+  hasPosition_report_investors!: Sequelize.HasManyHasAssociationsMixin<position_report_investor, position_report_investorId>;
+  countPosition_report_investors!: Sequelize.HasManyCountAssociationsMixin;
   // position_report belongsTo user_profile via created_by
   created_by_user_profile!: user_profile;
   getCreated_by_user_profile!: Sequelize.BelongsToGetAssociationMixin<user_profile>;

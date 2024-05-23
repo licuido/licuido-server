@@ -1,6 +1,6 @@
-import { position_report } from "@models";
+import { position_report_investor } from "@models";
 
-class PositionReports {
+class PositionReportInvestors {
   /**
    * this function used for create position reports
    *
@@ -9,10 +9,7 @@ class PositionReports {
 
   static async create(options: any): Promise<any> {
     try {
-      const result= await position_report.create(options,{
-        raw: false,
-        returning: true,
-      });
+      const result= await position_report_investor.bulkCreate(options);
       return JSON.parse(JSON.stringify(result));
     } catch (error) {
       throw error;
@@ -21,4 +18,4 @@ class PositionReports {
 
 }
 
-export { PositionReports };
+export { PositionReportInvestors };

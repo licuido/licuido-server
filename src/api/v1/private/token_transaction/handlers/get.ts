@@ -88,7 +88,8 @@ export async function EXPORT_ALL_TRANSACTION_AS_CSV_FILE(
         "Recipient balance": item?.receiver_balance ?? "",
         "Recipient block / unblock": `${item?.receiver_block??0} / ${item?.receiver_unblock??0}`,
         "Total supply":item?.total_supply,
-        "Txhash":item?.transaction_hash ?? ""
+        "Txhash":item?.transaction_hash ?? "",
+        "Status":item?.status??""
        
       }));
 

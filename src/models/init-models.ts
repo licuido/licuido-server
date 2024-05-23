@@ -346,6 +346,8 @@ export function initModels(sequelize: Sequelize) {
   master_transaction_status.hasMany(token_transaction, { as: "token_transactions", foreignKey: "status_id"});
   customer_wallet.belongsTo(master_wallet_type, { as: "wallet_type", foreignKey: "wallet_type_id"});
   master_wallet_type.hasMany(customer_wallet, { as: "customer_wallets", foreignKey: "wallet_type_id"});
+  position_report_investor.belongsTo(position_report, { as: "report", foreignKey: "report_id"});
+  position_report.hasMany(position_report_investor, { as: "position_report_investors", foreignKey: "report_id"});
   offer_fund_rating.belongsTo(token_offering, { as: "offer_token", foreignKey: "offer_token_id"});
   token_offering.hasMany(offer_fund_rating, { as: "offer_fund_ratings", foreignKey: "offer_token_id"});
   token_offering_allowed_country.belongsTo(token_offering, { as: "token_offering", foreignKey: "token_offering_id"});

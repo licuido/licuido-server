@@ -711,31 +711,34 @@ model token_valuations {
 }
 
 model position_report_investors {
-  id          String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  investor_id String?   @db.Uuid
-  is_active   Boolean?  @default(true)
-  created_by  String?   @db.Uuid
-  updated_by  String?   @db.Uuid
-  created_at  DateTime? @default(dbgenerated("(now() AT TIME ZONE 'utc'::text)")) @db.Timestamptz(6)
-  updated_at  DateTime? @default(dbgenerated("(now() AT TIME ZONE 'utc'::text)")) @db.Timestamptz(6)
-  entities    entities? @relation(fields: [investor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id               String            @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  investor_id      String?           @db.Uuid
+  is_active        Boolean?          @default(true)
+  created_by       String?           @db.Uuid
+  updated_by       String?           @db.Uuid
+  created_at       DateTime?         @default(dbgenerated("(now() AT TIME ZONE 'utc'::text)")) @db.Timestamptz(6)
+  updated_at       DateTime?         @default(dbgenerated("(now() AT TIME ZONE 'utc'::text)")) @db.Timestamptz(6)
+  report_id        String?           @db.Uuid
+  entities         entities?         @relation(fields: [investor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  position_reports position_reports? @relation(fields: [report_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model position_reports {
-  id                                                       String         @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id                                                       String                      @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   title                                                    String?
-  start_date                                               DateTime?      @db.Date
-  end_date                                                 DateTime?      @db.Date
-  start_time                                               DateTime?      @db.Time(6)
-  end_time                                                 DateTime?      @db.Time(6)
-  is_all_investors                                         Boolean?       @default(false)
-  is_active                                                Boolean?       @default(true)
-  created_by                                               String?        @db.Uuid
-  updated_by                                               String?        @db.Uuid
-  created_at                                               DateTime?      @default(dbgenerated("(now() AT TIME ZONE 'utc'::text)")) @db.Timestamptz(6)
-  updated_at                                               DateTime?      @default(dbgenerated("(now() AT TIME ZONE 'utc'::text)")) @db.Timestamptz(6)
-  user_profiles_position_reports_created_byTouser_profiles user_profiles? @relation("position_reports_created_byTouser_profiles", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  user_profiles_position_reports_updated_byTouser_profiles user_profiles? @relation("position_reports_updated_byTouser_profiles", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  start_date                                               DateTime?                   @db.Date
+  end_date                                                 DateTime?                   @db.Date
+  start_time                                               DateTime?                   @db.Time(6)
+  end_time                                                 DateTime?                   @db.Time(6)
+  is_all_investors                                         Boolean?                    @default(false)
+  is_active                                                Boolean?                    @default(true)
+  created_by                                               String?                     @db.Uuid
+  updated_by                                               String?                     @db.Uuid
+  created_at                                               DateTime?                   @default(dbgenerated("(now() AT TIME ZONE 'utc'::text)")) @db.Timestamptz(6)
+  updated_at                                               DateTime?                   @default(dbgenerated("(now() AT TIME ZONE 'utc'::text)")) @db.Timestamptz(6)
+  position_report_investors                                position_report_investors[]
+  user_profiles_position_reports_created_byTouser_profiles user_profiles?              @relation("position_reports_created_byTouser_profiles", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_profiles_position_reports_updated_byTouser_profiles user_profiles?              @relation("position_reports_updated_byTouser_profiles", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 enum investment_types {

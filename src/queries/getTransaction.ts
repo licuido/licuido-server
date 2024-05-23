@@ -84,7 +84,8 @@ export const getAllTransactionQuery = (
         ra.url as investor_logo,
         tof.name as token_name,
         tla.url as token_logo,
-        tt.transaction_hash
+        tt.transaction_hash,
+        mts.name as status
       from
         token_transactions as tt
         INNER JOIN token_orders AS too ON tt.order_id = too.id
@@ -94,6 +95,7 @@ export const getAllTransactionQuery = (
         INNER JOIN assets AS ra ON ra.id = enr.logo_asset_id
         INNER JOIN token_offerings AS tof ON tof.id = too.token_offering_id
         INNER JOIN assets AS tla ON tla.id = tof.logo_asset_id
+        INNER JOIN master_transaction_status AS mts ON mts.id = tt.status_id
         WHERE tt.is_active = true
         ${searchFilter} 
         ${statusFilter} 
