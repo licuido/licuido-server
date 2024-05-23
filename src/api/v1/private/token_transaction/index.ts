@@ -9,7 +9,7 @@ const onBoarding: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
   fastify.post("/mint", {}, handler.MINT_TOKEN)
   .post("/burn", {}, handler.BURN_TOKEN);
 
-  fastify.get("/", {}, handler.GET_ALL_TRANSACTION)
+  fastify.get("/", {}, handler.GET_ALL_TRANSACTION).get("/export", {}, handler.EXPORT_ALL_TRANSACTION_AS_CSV_FILE)
 };
 
 export default onBoarding;

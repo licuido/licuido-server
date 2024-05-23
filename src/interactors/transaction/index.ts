@@ -236,8 +236,8 @@ const burnToken = async (params: any) => {
 const getAllTransactions = async (options: any) => {
   try {
     const {
-      offset = 0,
-      limit = 0,
+      offset,
+      limit,
       search = "",
       type,
       token_offering_id,
@@ -295,7 +295,7 @@ const getAllTransactions = async (options: any) => {
         creation_date: val?.creation_date,
         receiver_block: isMint ? val?.block_token : null,
         receiver_unblock: isMint ? val?.unblock_token : null,
-        sender_block: isMint ? null : val?.unblock_token,
+        sender_block: isMint ? null : val?.block_token,
         sender_unblock: isMint ? null : val?.unblock_token,
         receiver_balance: isMint ? val?.sender_balance : null,
         sender_balance: isMint ? null : val?.sender_balance,
