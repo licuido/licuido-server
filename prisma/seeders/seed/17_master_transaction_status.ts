@@ -20,5 +20,12 @@ export const masterTransactionStatus: {
       created_at: new Date(),
       updated_at: new Date(),
     },
+    {
+      id: 3,
+      name: "Failed",
+      is_active: true,
+      created_at: new Date(),
+      updated_at: new Date(),
+    },
   ],
 };

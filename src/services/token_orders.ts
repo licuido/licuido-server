@@ -114,7 +114,7 @@ class TokenOrders {
       options: updateTokenOrders;
       id: string;
     },
-    transaction: Transaction
+    transaction?: Transaction
   ): Promise<any> {
     try {
       return await token_order.update(
@@ -490,6 +490,9 @@ class TokenOrders {
           "type",
           "ordered_tokens",
           "total_paid",
+          "type",
+          "status_id",
+          "net_investment_value"
         ],
         include: [
           {

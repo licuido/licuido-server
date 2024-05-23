@@ -76,5 +76,12 @@ export const masterOrderStatus: {
       created_at: new Date(),
       updated_at: new Date(),
     },
+    {
+      id: 11,
+      name: "Burn",
+      is_active: true,
+      created_at: new Date(),
+      updated_at: new Date(),
+    },
   ],
 };
