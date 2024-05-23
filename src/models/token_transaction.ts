@@ -19,11 +19,13 @@ export interface token_transactionAttributes {
   updated_by?: string;
   created_at?: Date;
   updated_at?: Date;
+  block_token?: number;
+  unblock_token?: number;
 }
 
 export type token_transactionPk = "id";
 export type token_transactionId = token_transaction[token_transactionPk];
-export type token_transactionOptionalAttributes = "id" | "type" | "order_id" | "amount" | "sender_balance" | "receiver_balance" | "total_supply" | "transaction_hash" | "status_id" | "is_active" | "created_by" | "updated_by" | "created_at" | "updated_at";
+export type token_transactionOptionalAttributes = "id" | "type" | "order_id" | "amount" | "sender_balance" | "receiver_balance" | "total_supply" | "transaction_hash" | "status_id" | "is_active" | "created_by" | "updated_by" | "created_at" | "updated_at" | "block_token" | "unblock_token";
 export type token_transactionCreationAttributes = Optional<token_transactionAttributes, token_transactionOptionalAttributes>;
 
 export class token_transaction extends Model<token_transactionAttributes, token_transactionCreationAttributes> implements token_transactionAttributes {
@@ -41,6 +43,8 @@ export class token_transaction extends Model<token_transactionAttributes, token_
   updated_by?: string;
   created_at?: Date;
   updated_at?: Date;
+  block_token?: number;
+  unblock_token?: number;
 
   // token_transaction belongsTo master_transaction_status via status_id
   status!: master_transaction_status;
@@ -130,6 +134,14 @@ export class token_transaction extends Model<token_transactionAttributes, token_
         model: 'user_profiles',
         key: 'id'
       }
+    },
+    block_token: {
+      type: DataTypes.INTEGER,
+      allowNull: true
+    },
+    unblock_token: {
+      type: DataTypes.INTEGER,
+      allowNull: true
     }
   }, {
     sequelize,

@@ -9,6 +9,7 @@ import type { entity_investor, entity_investorId } from './entity_investor';
 import type { individual_investor, individual_investorId } from './individual_investor';
 import type { master_investor_type, master_investor_typeId } from './master_investor_type';
 import type { master_position, master_positionId } from './master_position';
+import type { position_report, position_reportId } from './position_report';
 import type { token_offering_allowed_country, token_offering_allowed_countryId } from './token_offering_allowed_country';
 import type { token_offering_allowed_currency, token_offering_allowed_currencyId } from './token_offering_allowed_currency';
 import type { token_offering_document, token_offering_documentId } from './token_offering_document';
@@ -279,6 +280,30 @@ export class user_profile extends Model<user_profileAttributes, user_profileCrea
   hasUpdated_by_individual_investor!: Sequelize.HasManyHasAssociationMixin<individual_investor, individual_investorId>;
   hasUpdated_by_individual_investors!: Sequelize.HasManyHasAssociationsMixin<individual_investor, individual_investorId>;
   countUpdated_by_individual_investors!: Sequelize.HasManyCountAssociationsMixin;
+  // user_profile hasMany position_report via created_by
+  position_reports!: position_report[];
+  getPosition_reports!: Sequelize.HasManyGetAssociationsMixin<position_report>;
+  setPosition_reports!: Sequelize.HasManySetAssociationsMixin<position_report, position_reportId>;
+  addPosition_report!: Sequelize.HasManyAddAssociationMixin<position_report, position_reportId>;
+  addPosition_reports!: Sequelize.HasManyAddAssociationsMixin<position_report, position_reportId>;
+  createPosition_report!: Sequelize.HasManyCreateAssociationMixin<position_report>;
+  removePosition_report!: Sequelize.HasManyRemoveAssociationMixin<position_report, position_reportId>;
+  removePosition_reports!: Sequelize.HasManyRemoveAssociationsMixin<position_report, position_reportId>;
+  hasPosition_report!: Sequelize.HasManyHasAssociationMixin<position_report, position_reportId>;
+  hasPosition_reports!: Sequelize.HasManyHasAssociationsMixin<position_report, position_reportId>;
+  countPosition_reports!: Sequelize.HasManyCountAssociationsMixin;
+  // user_profile hasMany position_report via updated_by
+  updated_by_position_reports!: position_report[];
+  getUpdated_by_position_reports!: Sequelize.HasManyGetAssociationsMixin<position_report>;
+  setUpdated_by_position_reports!: Sequelize.HasManySetAssociationsMixin<position_report, position_reportId>;
+  addUpdated_by_position_report!: Sequelize.HasManyAddAssociationMixin<position_report, position_reportId>;
+  addUpdated_by_position_reports!: Sequelize.HasManyAddAssociationsMixin<position_report, position_reportId>;
+  createUpdated_by_position_report!: Sequelize.HasManyCreateAssociationMixin<position_report>;
+  removeUpdated_by_position_report!: Sequelize.HasManyRemoveAssociationMixin<position_report, position_reportId>;
+  removeUpdated_by_position_reports!: Sequelize.HasManyRemoveAssociationsMixin<position_report, position_reportId>;
+  hasUpdated_by_position_report!: Sequelize.HasManyHasAssociationMixin<position_report, position_reportId>;
+  hasUpdated_by_position_reports!: Sequelize.HasManyHasAssociationsMixin<position_report, position_reportId>;
+  countUpdated_by_position_reports!: Sequelize.HasManyCountAssociationsMixin;
   // user_profile hasMany token_offering_allowed_country via created_by
   token_offering_allowed_countries!: token_offering_allowed_country[];
   getToken_offering_allowed_countries!: Sequelize.HasManyGetAssociationsMixin<token_offering_allowed_country>;

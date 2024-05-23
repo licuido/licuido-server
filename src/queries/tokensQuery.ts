@@ -222,7 +222,7 @@ export const getAllTokensCountQuery = (
         INNER JOIN master_blockchain_networks AS mbn ON mbn.id = t.blockchain_network
         INNER JOIN user_entities AS ue ON ue.user_profile_id = t.created_by
         INNER JOIN master_entity_types AS met ON met.id = ue.entity_id
-        WHERE status_id = 1
+        WHERE t.status_id = 1
         ${searchFilter} 
         ${currencyFilter} 
         ${tokenTypeFilter} 

@@ -11,6 +11,8 @@ import { getAllCurrenciesQuery } from "./getAllCurrencyQuery";
 
 import { getAllTokensQuery, getAllTokensCountQuery } from "./tokensQuery";
 import { getAllRedemptionOrderQuery } from "./getAllRedemptionOrderQuery";
+import { getAllTransactionQuery, getAllTransactionCountQuery } from "./getTransaction";
+
 
 const queries = {
   getAllInvestorsQuery,
@@ -22,6 +24,8 @@ const queries = {
   getAllTokensQuery,
   getAllTokensCountQuery,
   getAllRedemptionOrderQuery,
+  getAllTransactionQuery, 
+  getAllTransactionCountQuery
 };
 
 export default queries;

@@ -13,7 +13,7 @@ class TrackTokenOrderActions {
 
   static async create(
     options: createTrackTokenOrderActions,
-    transaction: Transaction
+    transaction?: Transaction
   ): Promise<any> {
     try {
       const trackTokenOrderActions = await track_token_order_action.create(

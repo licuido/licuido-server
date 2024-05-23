@@ -4,6 +4,7 @@ import {
   master_order_status,
   token_offering,
   token_order,
+  user_profile,
 } from "@models";
 import queries from "@queries";
 import { createTokenOrders, updateTokenOrders } from "@types";
@@ -113,7 +114,7 @@ class TokenOrders {
       options: updateTokenOrders;
       id: string;
     },
-    transaction: Transaction
+    transaction?: Transaction
   ): Promise<any> {
     try {
       return await token_order.update(
@@ -458,6 +459,61 @@ class TokenOrders {
                 as: "customer_wallets",
                 where: { is_authenticated: true },
                 required: false,
+              },
+            ],
+          },
+        ],
+      });
+
+      return JSON.parse(JSON.stringify(token_order_details));
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async getOrderToken({
+    token_order_id,
+  }: {
+    token_order_id?: string;
+  }): Promise<any> {
+    try {
+      const token_order_details = await token_order.findOne({
+        where: {
+          id: token_order_id,
+          is_active: true,
+        },
+        attributes: [
+          "id",
+          "issuer_entity_id",
+          "receiver_entity_id",
+          "token_offering_id",
+          "type",
+          "ordered_tokens",
+          "total_paid",
+          "type",
+          "status_id",
+          "net_investment_value"
+        ],
+        include: [
+          {
+            model: token_offering,
+            as: "token_offering",
+            required: true,
+            attributes: ["id"],
+            include: [
+              {
+                model: entity,
+                as: "issuer_entity",
+                required: false,
+                attributes: ["id"],
+                include: [
+                  {
+                    model: user_profile,
+                    as: "contact_profile",
+                    required: false,
+                    attributes: ["id", "name", "is_fund_offered_by_licuido"],
+                  },
+                ],
               },
             ],
           },
