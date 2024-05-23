@@ -19,6 +19,8 @@ import MasterFundAgency from "./master_fund_agencies";
 import MasterFundAgencyRatings from "./master_fund_agency_ratings";
 import UserDeviceToken from "./user_device_token";
 import TokenTransaction from "./transaction";
+import PositionReports from "./position_reports";
+
 
 export {
   MasterBlockChainNetwork,
@@ -42,4 +44,5 @@ export {
   MasterFundAgencyRatings,
   UserDeviceToken,
   TokenTransaction,
+  PositionReports
 };

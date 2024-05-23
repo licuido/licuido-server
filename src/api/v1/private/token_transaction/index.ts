@@ -3,7 +3,7 @@ import { FastifyPluginAsync } from "fastify";
 import handler from "./handlers";
 import schema from "./schema";
 
-const onBoarding: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
+const tokenTransaction: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
   fastify.addHook("preHandler", fastify.authenticate);
 
   fastify.post("/mint", {schema:schema.MINT_TOKEN}, handler.MINT_TOKEN)
@@ -12,4 +12,4 @@ const onBoarding: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
   fastify.get("/", {schema:schema.GET_TRANSACTION}, handler.GET_ALL_TRANSACTION).get("/export", {}, handler.EXPORT_ALL_TRANSACTION_AS_CSV_FILE)
 };
 
-export default onBoarding;
+export default tokenTransaction;

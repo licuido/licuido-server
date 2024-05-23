@@ -2,7 +2,7 @@ import { Logger } from "@helpers";
 import { createPositionReport } from "@types";
 import { PositionReports, PositionReportInvestors } from "@services";
 
-const createPositionReport = async (options: createPositionReport) => {
+const createPositionReports = async (options: createPositionReport) => {
   try {
     const {
       title,
@@ -14,6 +14,7 @@ const createPositionReport = async (options: createPositionReport) => {
       investors,
       user_profile_id,
     } = options;
+
     PositionReports.create({
       title,
       start_date,
@@ -29,13 +30,13 @@ const createPositionReport = async (options: createPositionReport) => {
             investor_id: val,
             is_active: true,
             created_by: user_profile_id,
-            report_id:res?.id
+            report_id: res?.id,
           };
         });
         await PositionReportInvestors.create(insertParams);
-      } else {
-        return;
+        return true;
       }
+      return true;
     });
   } catch (error: any) {
     Logger.error(error.message, error);
@@ -44,5 +45,5 @@ const createPositionReport = async (options: createPositionReport) => {
 };
 
 export default {
-  createPositionReport,
+  createPositionReports,
 };
