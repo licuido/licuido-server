@@ -398,11 +398,22 @@ class TokenOfferings {
         )
       );
       const [dataCount]: any[] = await sequelize.query(
-        queries.getMarketPlaceListingQueryCount()
+        queries.getMarketPlaceListingQuery(
+          null,
+          null,
+          search,
+          tokenTypeId,
+          currencyCode,
+          fundStatus,
+          countryId,
+          user_entity_id,
+          investorStatus,
+          countryFilterId
+        )
       );
       return {
         rows,
-        count: dataCount?.[0]?.count ?? 0,
+        count: dataCount?.length ?? 0,
       };
     } catch (error) {
       throw error;
