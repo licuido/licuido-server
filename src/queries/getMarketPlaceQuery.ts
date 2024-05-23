@@ -15,9 +15,9 @@ export const getMarketPlaceListingQuery = (
   // For countryFilterId
   let countryFilter = ``;
   if (countryFilterId && countryFilterId?.length > 0) {
-    countryFilter = ` AND toac.allowed_country_id IN ('${countryFilterId?.join(
+    countryFilter = ` AND toac.allowed_country_id IN (${countryFilterId?.join(
       ","
-    )}')`;
+    )})`;
   }
 
   // For Limit & Offset
