@@ -67,10 +67,7 @@ const createRedemptionBody = Schema.object()
     "currency_code",
     "ordered_tokens",
     "price_per_token",
-<<<<<<< HEAD
-=======
     "net_investment_value",
->>>>>>> d9adc270dca4d40682604d67ebf1c6280819ac75
     "bank_name",
     "bank_account_name",
     "swift_bic_no",
