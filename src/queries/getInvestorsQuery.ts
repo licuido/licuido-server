@@ -95,7 +95,7 @@ export const getAllInvestorsQuery = (
       ) AS investor_status_id,
       CAST(
         CASE
-          WHEN eni.status_id IS NOT NULL AND eni.issuer_entity_id = '${user_entity_id}' THEN mes.name
+          WHEN eni.status_id IS NOT NULL AND eni.issuer_entity_id = '${user_entity_id}' THEN meis.name
           ELSE 'Pending'
         END AS VARCHAR
       ) AS investor_status_name
@@ -220,7 +220,7 @@ export const getAllInvestorsCountQuery = (
       ) AS investor_status_id,
       CAST(
         CASE
-          WHEN eni.status_id IS NOT NULL AND eni.issuer_entity_id = '${user_entity_id}' THEN mes.name
+          WHEN eni.status_id IS NOT NULL AND eni.issuer_entity_id = '${user_entity_id}' THEN meis.name
           ELSE 'Pending'
         END AS VARCHAR
       ) AS investor_status_name
@@ -253,6 +253,3 @@ FROM
 
   return countQuery;
 };
-
-
-
