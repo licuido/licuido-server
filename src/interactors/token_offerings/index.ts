@@ -109,6 +109,7 @@ const createOfferingSubDatas = async (
           offer_token_id: token_offering_id,
           agency_id: val?.agency,
           rating_id: val?.rating,
+          created_by: user_profile_id,
         };
       });
       await TokenOfferFund.create(funRatingPayload);
@@ -459,17 +460,35 @@ const updateOfferingSubDatas = async (
     }
 
     // For Fund Rating
-    if (fund_rating && fund_rating?.length > 0) {
-      for (const fund of fund_rating) {
-        let funRatingPayload: FundRatingPayload = {
-          agency_id: fund.agency,
-          rating_id: fund.rating,
-        };
+    if (fund_rating && fund_rating.length > 0) {
+      let createfundRatingPayload: FundRatingPayload[] = [];
 
-        await TokenOfferFund.update({
-          options: funRatingPayload,
-          id: fund.rating_id,
-        });
+      for (const fund of fund_rating) {
+        let updatefundRatingPayload: FundRatingPayload;
+
+        if (fund.rating_id) {
+          updatefundRatingPayload = {
+            agency_id: fund.agency,
+            rating_id: fund.rating,
+            updated_by: user_profile_id,
+          };
+
+          await TokenOfferFund.update({
+            options: updatefundRatingPayload,
+            id: fund.rating_id,
+          });
+        } else {
+          createfundRatingPayload.push({
+            agency_id: fund.agency,
+            rating_id: fund.rating,
+            offer_token_id: token_offering_id,
+            created_by: user_profile_id,
+          });
+        }
+      }
+
+      if (createfundRatingPayload.length > 0) {
+        await TokenOfferFund.create(createfundRatingPayload);
       }
     }
   } catch (error: any) {
@@ -645,7 +664,6 @@ const findToken = async ({
         message: `Please Pass Token ID`,
       };
     }
-
 
     const data = await TokenOfferings.getTokenOffering({ token_id });
     const parseData = JSON.parse(JSON.stringify(data));

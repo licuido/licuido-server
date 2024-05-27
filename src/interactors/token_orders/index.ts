@@ -880,6 +880,31 @@ const sendPayment = async ({
   return result;
 };
 
+const getOrderGraph = async ({
+  user_entity_id,
+  offset = 0,
+  limit = 10,
+  from_date,
+  to_date,
+}: {
+  user_entity_id?: string;
+  offset?: number;
+  limit?: number;
+  from_date?: string;
+  to_date?: string;
+}) => {
+  // Get Token Order Graph Data
+  const { rows, count } = await TokenOrders.getTokenOrderGraph({
+    user_entity_id,
+    offset,
+    limit,
+    from_date,
+    to_date,
+  });
+
+  return { page: rows, count: rows?.length, totalCount: count };
+};
+
 export default {
   createTokenSubscriptionOrders,
   getTokenOrder,
@@ -892,4 +917,5 @@ export default {
   cancelOrder,
   confirmPayment,
   sendPayment,
+  getOrderGraph,
 };

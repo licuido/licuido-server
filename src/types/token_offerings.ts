@@ -289,6 +289,9 @@ export interface TeamsPayload {
 export interface FundRatingPayload {
   agency_id: number;
   rating_id: number;
+  offer_token_id?: string;
+  created_by?: string;
+  updated_by?: string;
 }
 
 export interface createTokenValuation {
