@@ -191,12 +191,19 @@ class TokenOfferings {
             required: false,
             where: {
               is_active: true,
-              start_time: {
-                [Op.lte]: new Date(), // Less than the specific time
-              },
-              start_date: {
-                [Op.lte]: new Date(), // Less than the specific time
-              },
+              [Op.or]: [
+                {
+                  start_date: {
+                    [Op.lt]: new Date(), // Less than the current date
+                  },
+                },
+                {
+                  start_date: new Date(), // Equal to the current date
+                  start_time: {
+                    [Op.lte]: new Date(), // Less than or equal to the current time
+                  },
+                },
+              ],
             },
             order: [
               ["start_date", "DESC"], // Order by start_date in descending order
