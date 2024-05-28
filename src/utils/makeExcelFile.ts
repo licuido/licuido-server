@@ -1,12 +1,16 @@
 import { Logger, excel, streamToBuffer } from "@helpers";
 import * as fs from "fs";
+const path = require("path");
 
 async function makeExcelFile(
   data: any,
   file_path_name: string
 ): Promise<{ buffer: Buffer; fileName: string }> {
   try {
-    const filePath = `./uploads/${file_path_name}.xlsx`;
+    const filePath = path.resolve(
+      __dirname,
+      `./../uploads/${file_path_name}.xlsx`
+    );
 
     const { WorkBook } = await excel.makeExcel(filePath, "Sheet1");
 
