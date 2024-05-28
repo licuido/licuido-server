@@ -13,7 +13,7 @@
 	"scripts": {
 		"test": "npm run build:ts && tsc -p test/tsconfig.json && tap --ts \"test/**/*.test.ts\"",
 		"start": "fastify start -a '0.0.0.0' -l info dist/app.js",
-		"build": "rm -rf dist && tsc && tsc-alias -p tsconfig.json",
+		"build": "rm -rf dist && tsc && tsc-alias -p tsconfig.json && mkdirp dist/uploads",
 		"watch:ts": "tsc -w",
 		"dev": "nodemon",
 		"dev:start": "fastify start  -a '0.0.0.0' --ignore-watch=.ts$ -w -l info -P dist/app.js",
