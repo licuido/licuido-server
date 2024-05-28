@@ -12,7 +12,7 @@ const swaggerPlugin: FastifyPluginCallback<SwaggerOptions> = async (
       info: {
         title: "Licuido API Service",
         description: "Licuido API Swagger Collection",
-        version: "0.0.1",
+        version: "0.0.2",
       },
       externalDocs: {
         url: "https://swagger.io",
