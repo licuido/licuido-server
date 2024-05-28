@@ -1,5 +1,6 @@
-import { GET_ORDERS_GRAPH } from "./get";
+import { GET_ORDERS_GRAPH, GET_TOKEN_BY_INVESTOR_GRAPH } from "./get";
 
 export default {
   GET_ORDERS_GRAPH,
+  GET_TOKEN_BY_INVESTOR_GRAPH,
 };

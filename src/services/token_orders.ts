@@ -570,6 +570,34 @@ class TokenOrders {
       throw error;
     }
   }
+
+  static async getTokensByInvestorGraph({
+    user_entity_id,
+    from_date,
+    to_date,
+  }: {
+    user_entity_id?: string;
+    from_date?: string;
+    to_date?: string;
+  }): Promise<any> {
+    try {
+      // For Data
+      const [result]: any[] = await sequelize.query(
+        queries.getTokensByInvestorGraphQuery(
+          from_date,
+          to_date,
+          user_entity_id
+        )
+      );
+
+      return {
+        rows: result,
+        count: result?.length ?? 0,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export { TokenOrders };
