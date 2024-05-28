@@ -1,9 +1,11 @@
 import { Logger } from "@helpers";
 import {
+  TokenOfferings,
   TokenOrders,
   TokenTransactions,
   TrackTokenOrderActions,
 } from "@services";
+import { updateTokenOffering } from "@types";
 
 const mintToken = async (params: any) => {
   try {
@@ -93,6 +95,15 @@ const mintToken = async (params: any) => {
 
     //create transaction
     await TokenTransactions.createTransactions(inserParams).then(async () => {
+      // Update Circulating Supply count
+      await TokenOfferings.update(
+        {
+          circulating_supply_count: inserParams?.total_supply ?? 0,
+          updated_by: user_profile_id,
+        } as updateTokenOffering,
+        token_offering_id
+      );
+
       //update order status
       await TokenOrders.update({
         options: {
@@ -204,6 +215,14 @@ const burnToken = async (params: any) => {
 
     //create transaction
     await TokenTransactions.createTransactions(inserParams).then(async () => {
+      // Update Circulating Supply count
+      await TokenOfferings.update(
+        {
+          circulating_supply_count: inserParams?.total_supply ?? 0,
+          updated_by: user_profile_id,
+        } as updateTokenOffering,
+        token_offering_id
+      );
       //update order status
       await TokenOrders.update({
         options: {
@@ -303,9 +322,9 @@ const getAllTransactions = async (options: any) => {
         sender_image: isMint ? null : val?.investor_logo,
         receiver_image: isMint ? val?.investor_logo : null,
         receiver_name: isMint ? val?.investor_name : null,
-        issuer_name:val?.issuer_name,
-        issuer_logo:val?.issuer_logo,
-        status:val?.status
+        issuer_name: val?.issuer_name,
+        issuer_logo: val?.issuer_logo,
+        status: val?.status,
       };
     });
 

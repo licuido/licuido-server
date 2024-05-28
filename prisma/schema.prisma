@@ -404,6 +404,7 @@ model token_offerings {
   payback_period_type                                     String?
   is_deployed                                             Boolean?
   valuation_price                                         Decimal?                            @db.Decimal
+  circulating_supply_count                                Decimal?                            @db.Decimal
   offer_fund_ratings                                      offer_fund_ratings[]
   token_offering_allowed_countries                        token_offering_allowed_countries[]
   token_offering_allowed_currencies                       token_offering_allowed_currencies[]

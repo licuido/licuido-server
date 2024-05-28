@@ -1,5 +1,6 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
+import type { entity, entityId } from './entity';
 import type { position_report_investor, position_report_investorId } from './position_report_investor';
 import type { user_profile, user_profileId } from './user_profile';
 
@@ -16,11 +17,12 @@ export interface position_reportAttributes {
   updated_by?: string;
   created_at?: Date;
   updated_at?: Date;
+  issuer_entity_id?: string;
 }
 
 export type position_reportPk = "id";
 export type position_reportId = position_report[position_reportPk];
-export type position_reportOptionalAttributes = "id" | "title" | "start_date" | "end_date" | "start_time" | "end_time" | "is_all_investors" | "is_active" | "created_by" | "updated_by" | "created_at" | "updated_at";
+export type position_reportOptionalAttributes = "id" | "title" | "start_date" | "end_date" | "start_time" | "end_time" | "is_all_investors" | "is_active" | "created_by" | "updated_by" | "created_at" | "updated_at" | "issuer_entity_id";
 export type position_reportCreationAttributes = Optional<position_reportAttributes, position_reportOptionalAttributes>;
 
 export class position_report extends Model<position_reportAttributes, position_reportCreationAttributes> implements position_reportAttributes {
@@ -36,7 +38,13 @@ export class position_report extends Model<position_reportAttributes, position_r
   updated_by?: string;
   created_at?: Date;
   updated_at?: Date;
+  issuer_entity_id?: string;
 
+  // position_report belongsTo entity via issuer_entity_id
+  issuer_entity!: entity;
+  getIssuer_entity!: Sequelize.BelongsToGetAssociationMixin<entity>;
+  setIssuer_entity!: Sequelize.BelongsToSetAssociationMixin<entity, entityId>;
+  createIssuer_entity!: Sequelize.BelongsToCreateAssociationMixin<entity>;
   // position_report hasMany position_report_investor via report_id
   position_report_investors!: position_report_investor[];
   getPosition_report_investors!: Sequelize.HasManyGetAssociationsMixin<position_report_investor>;
@@ -111,6 +119,14 @@ export class position_report extends Model<position_reportAttributes, position_r
       allowNull: true,
       references: {
         model: 'user_profiles',
+        key: 'id'
+      }
+    },
+    issuer_entity_id: {
+      type: DataTypes.UUID,
+      allowNull: true,
+      references: {
+        model: 'entities',
         key: 'id'
       }
     }
