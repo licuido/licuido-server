@@ -598,6 +598,71 @@ class TokenOrders {
       throw error;
     }
   }
+
+  static async getDashboard({
+    user_entity_id,
+  }: {
+    user_entity_id?: string;
+  }): Promise<any> {
+    try {
+      // For Total Investment Data
+      const [total_investment_result]: any[] = await sequelize.query(
+        queries.getTotalInvestmentQuery(user_entity_id)
+      );
+      // For Circulating Supply Data
+      const [circulating_supply_result]: any[] = await sequelize.query(
+        queries.getCirculatingSupplyQuery(user_entity_id)
+      );
+      // For Pending Redemption Data
+      const [pending_redemption_result]: any[] = await sequelize.query(
+        queries.getPendingRedemptionQuery(user_entity_id)
+      );
+
+      const obj: any = {};
+
+      obj["total_investment"] =
+        total_investment_result &&
+        total_investment_result[0]?.overall_investment
+          ? total_investment_result[0]?.overall_investment.toString()
+          : "0.00";
+      obj["percentage_change_from_yesterday"] =
+        total_investment_result &&
+        total_investment_result[0]?.percentage_change_till_today
+          ? total_investment_result[0]?.percentage_change_till_today.toString()
+          : "0";
+      obj["circulating_supply"] =
+        circulating_supply_result &&
+        circulating_supply_result[0]?.circulating_supply
+          ? circulating_supply_result[0]?.circulating_supply.toString()
+          : "0";
+      obj["circulating_supply_amount"] =
+        circulating_supply_result &&
+        circulating_supply_result[0]?.circulating_supply_amount
+          ? circulating_supply_result[0]?.circulating_supply_amount.toString()
+          : "0.00";
+      obj["pending_redemption"] =
+        pending_redemption_result &&
+        pending_redemption_result[0]?.pending_redemption
+          ? pending_redemption_result[0]?.pending_redemption.toString()
+          : "0";
+      obj["pending_redemption_amount"] =
+        pending_redemption_result &&
+        pending_redemption_result[0]?.pending_redemption_amount
+          ? pending_redemption_result[0]?.pending_redemption_amount.toString()
+          : "0.00";
+      obj["available_tokens"] = (
+        parseInt(obj["circulating_supply"]) -
+        parseInt(obj["pending_redemption"])
+      ).toString();
+      obj["pending_redemption_amount"] = (
+        parseInt(obj["circulating_supply_amount"]) -
+        parseInt(obj["pending_redemption_amount"])
+      ).toString();
+      return obj;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export { TokenOrders };

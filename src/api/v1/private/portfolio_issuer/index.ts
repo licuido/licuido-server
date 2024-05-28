@@ -23,6 +23,13 @@ const issuerPortFolioRoute: FastifyPluginAsync = async (
     { schema: schema.GET_TOKEN_BY_INVESTOR_GRAPH },
     handler.GET_TOKEN_BY_INVESTOR_GRAPH
   );
+
+  /* Get Dashboard */
+  fastify.get(
+    "/dashboard",
+    // { schema: schema.GET_DASHBOARD },
+    handler.GET_DASHBOARD
+  );
 };
 
 export default issuerPortFolioRoute;

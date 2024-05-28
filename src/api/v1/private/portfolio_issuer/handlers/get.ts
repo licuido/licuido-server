@@ -89,3 +89,39 @@ export async function GET_TOKEN_BY_INVESTOR_GRAPH(
     });
   }
 }
+
+// Get Dashboard
+export async function GET_DASHBOARD(
+  request: FastifyRequest,
+  reply: FastifyReply
+) {
+  try {
+    /* -----------  MAPPER ----------- */
+    const { entity_id, user_entity_id } = queryRequestInfo(request);
+
+    if (entity_id === 2) {
+      return handleResponse(request, reply, responseType?.FORBIDDEN, {
+        error: {
+          message: "Only Issuer can be get portfolio dashboard",
+        },
+      });
+    }
+    /* -----------  INTERACTOR ----------- */
+    const result = await TokenOrders.getDashboard({
+      user_entity_id,
+    });
+
+    /* -----------  RESPONSE ----------- */
+
+    return handleResponse(request, reply, responseType?.OK, {
+      data: result,
+    });
+  } catch (error: any) {
+    Logger.error(request, error.message, error);
+    return handleResponse(request, reply, responseType?.INTERNAL_SERVER_ERROR, {
+      error: {
+        message: responseType?.INTERNAL_SERVER_ERROR,
+      },
+    });
+  }
+}

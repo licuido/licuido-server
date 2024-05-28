@@ -924,6 +924,19 @@ const getTokensByInvestorGraph = async ({
   return { page: result?.rows, count: result?.count };
 };
 
+const getDashboard = async ({
+  user_entity_id,
+}: {
+  user_entity_id?: string;
+}) => {
+  // Get Dashboard
+  const result: any = await TokenOrders.getDashboard({
+    user_entity_id,
+  });
+
+  return result;
+};
+
 export default {
   createTokenSubscriptionOrders,
   getTokenOrder,
@@ -938,4 +951,5 @@ export default {
   sendPayment,
   getOrderGraph,
   getTokensByInvestorGraph,
+  getDashboard,
 };

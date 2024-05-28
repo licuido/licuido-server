@@ -57,3 +57,18 @@ export const GET_TOKEN_BY_INVESTOR_GRAPH = {
   response: makeResponseSchema(getTokenByInvestorGraphResponse),
   query: getTokenByInvestorGraphParams,
 };
+
+/* GET_DASHBOARD */
+
+const getDashboardResponse: JSONSchema = Schema.object()
+  .prop("data", Schema.object())
+  .additionalProperties(true)
+  .prop("meta", Schema.object().prop("message", Schema.string()))
+  .valueOf() as JSONSchema;
+
+export const GET_DASHBOARD = {
+  description:
+    "Defines the structure and constraints for an API endpoint to get Issuer Portfolio Dashboard",
+  tags: ["Issuer Portfolio"],
+  response: makeResponseSchema(getDashboardResponse),
+};

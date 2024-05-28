@@ -17,6 +17,11 @@ import {
 } from "./getTransaction";
 import { getAllTokenOrderGraphQuery } from "./getAllTokenOrderGraphQuery";
 import { getTokensByInvestorGraphQuery } from "./getTokensByInvestorGraphQuery";
+import {
+  getTotalInvestmentQuery,
+  getCirculatingSupplyQuery,
+  getPendingRedemptionQuery,
+} from "./portfolioIssuerQuery";
 
 const queries = {
   getAllInvestorsQuery,
@@ -32,6 +37,9 @@ const queries = {
   getAllTransactionCountQuery,
   getAllTokenOrderGraphQuery,
   getTokensByInvestorGraphQuery,
+  getTotalInvestmentQuery,
+  getCirculatingSupplyQuery,
+  getPendingRedemptionQuery,
 };
 
 export default queries;
