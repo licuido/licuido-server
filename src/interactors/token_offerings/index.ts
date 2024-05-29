@@ -692,26 +692,33 @@ const findToken = async ({
 const getIssuerTokens = async ({
   search,
   user_entity_id,
+  offset,
+  limit,
 }: {
   search?: string;
   user_entity_id: string;
+  offset?: number;
+  limit?: number;
 }) => {
   try {
-    const data = await TokenOfferings.getTokenIssuerList({
+    const { rows, count } = await TokenOfferings.getTokenIssuerList({
       search: search ?? "",
       user_entity_id,
+      offset: 0,
+      limit: 10,
     });
 
-    return data?.map((val: any) => {
-      return {
-        id: val?.id,
-        name: val?.name,
-        status: val?.offer_status?.name,
-        logo: val?.logo_asset?.url,
-        isin_number: val?.isin_number,
-        symbol: val?.symbol,
-      };
-    });
+    // return data?.map((val: any) => {
+    //   return {
+    //     id: val?.id,
+    //     name: val?.name,
+    //     status: val?.offer_status?.name,
+    //     logo: val?.logo_asset?.url,
+    //     isin_number: val?.isin_number,
+    //     symbol: val?.symbol,
+    //   };
+    // });
+    return { page: rows, count: rows?.length, totalCount: count };
   } catch (error: any) {
     Logger.error(error.message, error);
     throw error;

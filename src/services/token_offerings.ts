@@ -462,12 +462,16 @@ class TokenOfferings {
   static async getTokenIssuerList({
     user_entity_id,
     search,
+    offset,
+    limit,
   }: {
     user_entity_id: string;
     search: string;
+    offset: number;
+    limit: number;
   }): Promise<any> {
     try {
-      const token_offer = await token_offering.findAll({
+      const { rows, count } = await token_offering.findAndCountAll({
         where: {
           issuer_entity_id: user_entity_id,
           name: { [Op.iLike]: `%${search}%` },
@@ -487,9 +491,11 @@ class TokenOfferings {
             required: false,
           },
         ],
+        offset,
+        limit,
       });
 
-      return JSON.parse(JSON.stringify(token_offer));
+      return { rows, count };
     } catch (error) {
       throw error;
     }
