@@ -194,8 +194,11 @@ export const UPDATE_TOKEN_VALUATION = {
 
 /* For Update Token offering Status */
 const updateTokenOfferingStatusBody = Schema.object()
-  .prop("status_id", Schema.number())
-  .prop("token_id", Schema.string())
+  .prop("offer_status_id", Schema.number())
+  .prop(
+    "token_ids",
+    Schema.array().items(Schema.string().format("uuid")).minItems(0)
+  )
   .valueOf();
 
 const updateTokenOfferingStatusResponse: JSONSchema = Schema.object()
