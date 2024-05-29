@@ -69,7 +69,10 @@ const updateTokenBody = Schema.object()
   .prop("minimum_investment_limit", Schema.number())
   .prop("is_all_countries_allowed", Schema.boolean())
   .prop("added_countries", Schema.array().items(Schema.number()).minItems(0))
-  .prop("removed_countries", Schema.array().items(Schema.number()).minItems(0))
+  .prop(
+    "removed_countries",
+    Schema.array().items(Schema.string().format("uuid")).minItems(0)
+  )
   .prop("bank_account_name", Schema.string())
   .prop("bank_name", Schema.string())
   .prop("swift_bic_no", Schema.string())
