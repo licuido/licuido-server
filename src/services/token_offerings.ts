@@ -598,6 +598,40 @@ class TokenOfferings {
       throw error;
     }
   }
+
+  static async getAllFundOfferingsByIssuer(options: {
+    offset: number;
+    limit: number;
+    user_entity_id?: string;
+  }): Promise<{
+    rows: any[];
+    count: number;
+  }> {
+    try {
+      const { offset, limit, user_entity_id } = options;
+
+      // For Data
+      const [result]: any[] = await sequelize.query(
+        queries.getAllFundOfferingsForPortfolioQuery(
+          offset,
+          limit,
+          user_entity_id
+        )
+      );
+
+      // For Count
+      const [dataCount]: any[] = await sequelize.query(
+        queries.getAllFundOfferingsForPortfolioQuery(null, null, user_entity_id)
+      );
+
+      return {
+        rows: result,
+        count: dataCount?.length ?? 0,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export { TokenOfferings };

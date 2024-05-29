@@ -318,3 +318,9 @@ export interface getAllTokenAdmin {
   created_by?: string;
   issuer?: string;
 }
+
+export interface getAllFundOfferings {
+  offset?: number;
+  limit?: number;
+  user_entity_id?: string;
+}

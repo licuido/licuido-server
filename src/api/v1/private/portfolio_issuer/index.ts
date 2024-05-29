@@ -27,8 +27,15 @@ const issuerPortFolioRoute: FastifyPluginAsync = async (
   /* Get Dashboard */
   fastify.get(
     "/dashboard",
-    // { schema: schema.GET_DASHBOARD },
+    { schema: schema.GET_DASHBOARD },
     handler.GET_DASHBOARD
+  );
+
+  /* List Fund Offeings */
+  fastify.get(
+    "/fund_offerings",
+    { schema: schema.GET_FUND_OFFERINGS },
+    handler.GET_FUND_OFFERINGS
   );
 };
 
