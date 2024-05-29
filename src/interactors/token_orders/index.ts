@@ -937,6 +937,25 @@ const getDashboard = async ({
   return result;
 };
 
+const getTokensHoldingsGraph = async ({
+  user_entity_id,
+  from_date,
+  to_date,
+}: {
+  user_entity_id?: string;
+  from_date?: string;
+  to_date?: string;
+}) => {
+  // Get Token Holdings Graph Data
+  const result: any = await TokenOrders.getTokensHoldingsGraph({
+    user_entity_id,
+    from_date,
+    to_date,
+  });
+
+  return { page: result?.rows, count: result?.count };
+};
+
 export default {
   createTokenSubscriptionOrders,
   getTokenOrder,
@@ -952,4 +971,5 @@ export default {
   getOrderGraph,
   getTokensByInvestorGraph,
   getDashboard,
+  getTokensHoldingsGraph,
 };

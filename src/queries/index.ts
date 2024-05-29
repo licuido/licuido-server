@@ -25,6 +25,8 @@ import {
   getInvestorListQuery,
 } from "./portfolioIssuerQuery";
 
+import { getTokensHoldingsGraphQuery } from "./portfolioInvestorQuery";
+
 const queries = {
   getAllInvestorsQuery,
   getAllInvestorsCountQuery,
@@ -44,6 +46,7 @@ const queries = {
   getPendingRedemptionQuery,
   getAllFundOfferingsForPortfolioQuery,
   getInvestorListQuery,
+  getTokensHoldingsGraphQuery,
 };
 
 export default queries;

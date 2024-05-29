@@ -9,7 +9,7 @@ export const getTokensByInvestorGraphQuery = (
          ---- issuer_entity_id = ""
          ---- status_id 1 [ Active ]
          ---- offer_status_id 1 [ Active ]
-         ---- created_at BETWEEN '' AND '' [ For Date Filters ]  
+         ---- updated_at BETWEEN '' AND '' [ For Date Filters ]  
          */
 
   // For Date Filters
