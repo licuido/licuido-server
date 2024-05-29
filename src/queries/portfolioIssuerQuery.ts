@@ -198,3 +198,151 @@ FROM
 
   return baseQuery;
 };
+
+export const getInvestorListQuery = (
+  offset: number | null,
+  limit: number | null,
+  search?: string,
+  status_filters?: number[] | [],
+  investor_type_filters?: number[] | [],
+  country_filters?: number[] | [],
+  user_entity_id?: string,
+  minimum_investment_value?: string,
+  maximum_investment_value?: string
+) => {
+  /* Get All Investors Query on Search , Limit & Offset */
+
+  /* In Where Condition
+  
+   */
+
+  // For Limit & Offset
+  let limitStatment = ``;
+  if (offset !== null && limit !== null) {
+    limitStatment = ` LIMIT '${limit}' OFFSET '${offset * limit}'`;
+  }
+
+  // For Search By Investor Name & Wallet Id Filter
+  let searchFilter = ``;
+  if (search && search.length > 0) {
+    searchFilter = ` AND (
+      investor_name ILIKE '${search}%'
+      OR wallet_address ILIKE '${search}%'
+    )`;
+  }
+
+  // For Country Filter
+  let countryFilter = ``;
+  if (country_filters && country_filters?.length > 0) {
+    countryFilter = ` AND country_id IN (${country_filters?.join(",")})`;
+  }
+
+  // For Investor Type Filter [Corporate | Individual]
+  let investorTypeFilter = ``;
+  if (investor_type_filters && investor_type_filters?.length > 0) {
+    investorTypeFilter = ` AND investor_type_id IN (${investor_type_filters?.join(
+      ","
+    )})`;
+  }
+
+  // Entity Investor Status Filter [Qualify | Tokenholder]
+  let statusFilter = ``;
+  if (status_filters && status_filters?.length > 0) {
+    statusFilter = `  AND status_id IN (${status_filters?.join(",")})
+      `;
+  }
+
+  // Investment Value Filter
+  let invetementValueFilter = ``;
+  if (
+    minimum_investment_value &&
+    minimum_investment_value?.length > 0 &&
+    maximum_investment_value &&
+    maximum_investment_value?.length > 0
+  ) {
+    invetementValueFilter = `  AND investment BETWEEN ${minimum_investment_value} AND ${maximum_investment_value}
+      `;
+  }
+
+  /* For Data */
+  let baseQuery = `WITH
+  vas_inv AS (
+    SELECT
+      ei.investor_entity_id AS investor_entity_id,
+      ei.is_active AS is_active,
+      ei.created_at AS created_at,
+      en.legal_name AS investor_name,
+      inv_ast.url AS investor_logo_url,
+      cw.wallet_address AS wallet_address,
+      mwt.name AS wallet_type_name,
+      ei.investor_type_id AS investor_type_id,
+      mit.name AS investor_type_name,
+      CAST(
+        CASE
+          WHEN token_status.is_tokenholder = 1 THEN 4
+          ELSE ei.status_id
+        END AS INT
+      ) AS status_id,
+      CAST(
+        CASE
+          WHEN token_status.is_tokenholder = 1 THEN 'Tokenholder'
+          ELSE meis.name
+        END AS VARCHAR
+      ) AS status_name,
+      COALESCE(token_status.net_investment, 0) AS investment,
+      COALESCE(token_status.tokens, 0) AS tokens,
+      en.country_id AS country_id,
+      mco.name AS country_name,
+      mco.emoji AS country_emoji,
+      mco.emoji_unicode AS country_emoji_unicode,
+      en.business_sector_id AS sector_id,
+      mbs.name AS sector
+    FROM
+      entity_investors AS ei
+      INNER JOIN master_investor_types AS mit ON ei.investor_type_id = mit.id
+      INNER JOIN entities AS en ON ei.investor_entity_id = en.id
+      INNER JOIN master_entity_investor_status AS meis ON ei.status_id = meis.id
+      INNER JOIN assets AS inv_ast ON en.logo_asset_id = inv_ast.id
+      LEFT JOIN master_countries AS mco ON en.country_id = mco.id
+      LEFT JOIN master_business_sectors AS mbs ON en.business_sector_id = mbs.id
+      LEFT JOIN customer_wallets AS cw ON en.id = cw.investor_entity_id
+      LEFT JOIN master_wallet_types AS mwt ON cw.wallet_type_id = mwt.id
+      LEFT JOIN (
+        SELECT
+          receiver_entity_id,
+          MAX(
+            CASE
+              WHEN status_id = 5 THEN 1
+              ELSE 0
+            END
+          ) AS is_tokenholder,
+          SUM(net_investment_value_in_euro) AS net_investment,
+          SUM(ordered_tokens) AS tokens
+        FROM
+          token_orders
+        WHERE
+          status_id = 5
+        GROUP BY
+          receiver_entity_id
+      ) AS token_status ON ei.investor_entity_id = token_status.receiver_entity_id
+    WHERE
+      ei.issuer_entity_id = '${user_entity_id}'
+      AND ei.status_id = 3
+  )
+SELECT
+  *
+FROM
+  vas_inv
+WHERE
+  is_active = true 
+  ${searchFilter} 
+  ${statusFilter} 
+  ${investorTypeFilter} 
+  ${countryFilter} 
+  ${invetementValueFilter}
+ORDER BY
+  created_at ASC
+  ${limitStatment}`;
+
+  return baseQuery;
+};

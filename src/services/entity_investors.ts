@@ -1,4 +1,6 @@
 import { entity_investor } from "@models";
+import queries from "@queries";
+import { sequelize } from "@utils";
 
 class EntityInvestor {
   /**
@@ -99,6 +101,119 @@ class EntityInvestor {
       });
     } catch (error) {
       throw error;
+    }
+  }
+
+  static async getInvestorListData(options: {
+    offset: number;
+    limit: number;
+    search?: string;
+    status_filters?: number[] | [];
+    investor_type_filters?: number[] | [];
+    country_filters?: number[] | [];
+    user_entity_id?: string;
+    minimum_investment_value?: string;
+    maximum_investment_value?: string;
+  }): Promise<{
+    rows: any[];
+    count: number;
+  }> {
+    try {
+      const {
+        offset,
+        limit,
+        search,
+        status_filters,
+        investor_type_filters,
+        country_filters,
+        user_entity_id,
+        minimum_investment_value,
+        maximum_investment_value,
+      } = options;
+
+      // For Data
+      const [result]: any[] = await sequelize.query(
+        queries.getInvestorListQuery(
+          offset,
+          limit,
+          search,
+          status_filters,
+          investor_type_filters,
+          country_filters,
+          user_entity_id,
+          minimum_investment_value,
+          maximum_investment_value
+        )
+      );
+
+      // For Count
+      const [allData]: any[] = await sequelize.query(
+        queries.getInvestorListQuery(
+          null,
+          null,
+          search,
+          status_filters,
+          investor_type_filters,
+          country_filters,
+          user_entity_id,
+          minimum_investment_value,
+          maximum_investment_value
+        )
+      );
+
+      return {
+        rows: result,
+        count: allData?.length ?? 0,
+      };
+    } catch (error: any) {
+      console.log(error);
+      throw new Error(error.message);
+    }
+  }
+
+  static async getInvestorListAsCSV(options: {
+    search?: string;
+    status_filters?: number[] | [];
+    investor_type_filters?: number[] | [];
+    country_filters?: number[] | [];
+    user_entity_id?: string;
+    minimum_investment_value?: string;
+    maximum_investment_value?: string;
+  }): Promise<{
+    rows: any[];
+  }> {
+    try {
+      const {
+        search,
+        status_filters,
+        investor_type_filters,
+        country_filters,
+        user_entity_id,
+        minimum_investment_value,
+        maximum_investment_value,
+      } = options;
+
+      // For All Data
+      const [allData]: any[] = await sequelize.query(
+        queries.getInvestorListQuery(
+          null,
+          null,
+          search,
+          status_filters,
+          investor_type_filters,
+          country_filters,
+          user_entity_id,
+          minimum_investment_value,
+          maximum_investment_value
+        )
+      );
+
+      return {
+        rows: allData,
+      };
+    } catch (error: any) {
+      console.log(error);
+      throw new Error(error.message);
     }
   }
 }

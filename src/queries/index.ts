@@ -22,6 +22,7 @@ import {
   getCirculatingSupplyQuery,
   getPendingRedemptionQuery,
   getAllFundOfferingsForPortfolioQuery,
+  getInvestorListQuery,
 } from "./portfolioIssuerQuery";
 
 const queries = {
@@ -42,6 +43,7 @@ const queries = {
   getCirculatingSupplyQuery,
   getPendingRedemptionQuery,
   getAllFundOfferingsForPortfolioQuery,
+  getInvestorListQuery,
 };
 
 export default queries;
