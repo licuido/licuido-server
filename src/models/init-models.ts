@@ -284,6 +284,8 @@ export function initModels(sequelize: Sequelize) {
   entity.hasMany(entity_investor, { as: "issuer_entity_entity_investors", foreignKey: "issuer_entity_id"});
   position_report_investor.belongsTo(entity, { as: "investor", foreignKey: "investor_id"});
   entity.hasMany(position_report_investor, { as: "position_report_investors", foreignKey: "investor_id"});
+  position_report.belongsTo(entity, { as: "issuer_entity", foreignKey: "issuer_entity_id"});
+  entity.hasMany(position_report, { as: "position_reports", foreignKey: "issuer_entity_id"});
   token_offering.belongsTo(entity, { as: "issuer_entity", foreignKey: "issuer_entity_id"});
   entity.hasMany(token_offering, { as: "token_offerings", foreignKey: "issuer_entity_id"});
   token_order.belongsTo(entity, { as: "issuer_entity", foreignKey: "issuer_entity_id"});

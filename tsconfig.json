@@ -23,7 +23,7 @@
       "@utils": ["utils/index"],
       "@queries": ["queries/index"]
     },
-    "sourceMap": false,
+    "sourceMap": true,
     "types": ["dotenv"]
   },
   "include": ["src"],

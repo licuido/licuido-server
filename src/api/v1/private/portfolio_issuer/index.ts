@@ -16,6 +16,20 @@ const issuerPortFolioRoute: FastifyPluginAsync = async (
     { schema: schema.GET_ORDERS_GRAPH },
     handler.GET_ORDERS_GRAPH
   );
+
+  /* Get Token By Investors Graph */
+  fastify.get(
+    "/token_by_investor/graph",
+    { schema: schema.GET_TOKEN_BY_INVESTOR_GRAPH },
+    handler.GET_TOKEN_BY_INVESTOR_GRAPH
+  );
+
+  /* Get Dashboard */
+  fastify.get(
+    "/dashboard",
+    // { schema: schema.GET_DASHBOARD },
+    handler.GET_DASHBOARD
+  );
 };
 
 export default issuerPortFolioRoute;

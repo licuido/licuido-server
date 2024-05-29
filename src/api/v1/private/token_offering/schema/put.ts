@@ -48,8 +48,8 @@ const updateTokenBody = Schema.object()
   )
   .prop("offering_price", Schema.number())
   .prop("jurisdiction", Schema.number())
-  .prop("start_date", Schema.string().format("date-time"))
-  .prop("end_date", Schema.string().format("date-time"))
+  .prop("start_date", Schema.string().format("date"))
+  .prop("end_date", Schema.string().format("date"))
   .prop(
     "added_currencies",
     Schema.array()

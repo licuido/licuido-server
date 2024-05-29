@@ -228,6 +228,7 @@ export interface updateTokenOffering
     | "offer_status_id"
   > {
   updated_by: string;
+  circulating_supply_count?: number;
 }
 
 export interface updateTokenOfferingSubData {

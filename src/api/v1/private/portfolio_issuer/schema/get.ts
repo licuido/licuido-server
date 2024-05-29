@@ -35,3 +35,40 @@ export const GET_ORDERS_GRAPH = {
   response: makeResponseSchema(getOrdersGraphResponse),
   query: getOrdersGraphParams,
 };
+
+/* GET_TOKEN_BY_INVESTOR_GRAPH */
+const getTokenByInvestorGraphParams = Schema.object()
+  .prop("from_date", Schema.string())
+  .prop("to_date", Schema.string());
+
+const getTokenByInvestorGraphResponse: JSONSchema = Schema.object()
+  .prop(
+    "page",
+    Schema.array().items(Schema.object().additionalProperties(true))
+  )
+  .prop("count", Schema.integer())
+  .prop("meta", Schema.object().prop("message", Schema.string()))
+  .valueOf() as JSONSchema;
+
+export const GET_TOKEN_BY_INVESTOR_GRAPH = {
+  description:
+    "Defines the structure and constraints for an API endpoint to get all token by investors graph data",
+  tags: ["Issuer Portfolio"],
+  response: makeResponseSchema(getTokenByInvestorGraphResponse),
+  query: getTokenByInvestorGraphParams,
+};
+
+/* GET_DASHBOARD */
+
+const getDashboardResponse: JSONSchema = Schema.object()
+  .prop("data", Schema.object())
+  .additionalProperties(true)
+  .prop("meta", Schema.object().prop("message", Schema.string()))
+  .valueOf() as JSONSchema;
+
+export const GET_DASHBOARD = {
+  description:
+    "Defines the structure and constraints for an API endpoint to get Issuer Portfolio Dashboard",
+  tags: ["Issuer Portfolio"],
+  response: makeResponseSchema(getDashboardResponse),
+};
