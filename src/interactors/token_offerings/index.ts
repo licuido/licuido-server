@@ -18,6 +18,7 @@ import {
   updateTokenOfferingSubData,
   createTokenValuation,
   getAllTokenAdmin,
+  getAllFundOfferings,
 } from "@types";
 import { commentFunction } from "@helpers";
 
@@ -869,6 +870,24 @@ const updateTokenOfferingStatus = async ({
   }
 };
 
+const getAllFundOfferings = async (options: getAllFundOfferings) => {
+  try {
+    const { offset = 0, limit = 5, user_entity_id } = options;
+
+    // Getting Rows & Count Data of Fund Offerings
+    const { rows, count } = await TokenOfferings.getAllFundOfferingsByIssuer({
+      offset,
+      limit,
+      user_entity_id,
+    });
+
+    return { page: rows, count: rows?.length, totalCount: count };
+  } catch (error: any) {
+    Logger.error(error.message, error);
+    throw error;
+  }
+};
+
 export default {
   createTokenOfferings,
   updateTokenStatus,
@@ -878,4 +897,5 @@ export default {
   updateTokenValuation,
   getAllTokens,
   updateTokenOfferingStatus,
+  getAllFundOfferings,
 };
