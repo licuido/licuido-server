@@ -37,6 +37,20 @@ const issuerPortFolioRoute: FastifyPluginAsync = async (
     { schema: schema.GET_FUND_OFFERINGS },
     handler.GET_FUND_OFFERINGS
   );
+
+  /* Investors List */
+  fastify.get(
+    "/investor/list",
+    { schema: schema.GET_INVESTOR_LIST },
+    handler.GET_INVESTOR_LIST
+  );
+
+  /* Investors List CSV */
+  fastify.get(
+    "/investor/list/export/file",
+    { schema: schema.GET_INVESTOR_LIST_AS_CSV },
+    handler.GET_INVESTOR_LIST_AS_CSV
+  );
 };
 
 export default issuerPortFolioRoute;
