@@ -654,7 +654,7 @@ class TokenOrders {
         parseInt(obj["circulating_supply"]) -
         parseInt(obj["pending_redemption"])
       ).toString();
-      obj["pending_redemption_amount"] = (
+      obj["available_tokens_amount"] = (
         parseInt(obj["circulating_supply_amount"]) -
         parseInt(obj["pending_redemption_amount"])
       ).toString();
