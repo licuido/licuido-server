@@ -54,32 +54,38 @@ class TokenValuations {
     try {
       const {
         token_id,
+        offer_price,
+        bid_price,
+        start_date,
+        start_time,
+        valuation_price,
+        created_by,
+      } = options;
+
+      await token_valuation.create({
+        token_offering_id: token_id,
         created_by,
         offer_price,
         bid_price,
         start_date,
         start_time,
         valuation_price,
-      } = options;
+        is_active: true,
+        created_at: new Date(),
+      });
 
-      token_valuation
-        .create({
-          token_offering_id: token_id,
-          created_by,
-          offer_price,
-          bid_price,
-          start_date,
-          start_time,
+      token_offering.update(
+        {
+          offering_price: offer_price,
           valuation_price,
-          is_active: true,
-          created_at: new Date(),
-        })
-        .then((res) => {
-          return true;
-        })
-        .catch(() => {
-          return false;
-        });
+          updated_by: created_by,
+        },
+        {
+          where: {
+            id: token_id,
+          },
+        }
+      );
 
       return true;
     } catch (error) {
