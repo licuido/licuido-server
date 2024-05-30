@@ -25,7 +25,11 @@ import {
   getInvestorListQuery,
 } from "./portfolioIssuerQuery";
 
-import { getTokensHoldingsGraphQuery } from "./portfolioInvestorQuery";
+import {
+  getTokensHoldingsGraphQuery,
+  getCurrentTokenInvestmentQuery,
+  getInvestorDashboardQuery,
+} from "./portfolioInvestorQuery";
 
 const queries = {
   getAllInvestorsQuery,
@@ -47,6 +51,8 @@ const queries = {
   getAllFundOfferingsForPortfolioQuery,
   getInvestorListQuery,
   getTokensHoldingsGraphQuery,
+  getCurrentTokenInvestmentQuery,
+  getInvestorDashboardQuery,
 };
 
 export default queries;

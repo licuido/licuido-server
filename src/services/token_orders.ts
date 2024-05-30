@@ -687,6 +687,54 @@ class TokenOrders {
       throw error;
     }
   }
+
+  static async getCurrentTokenInvestment({
+    user_entity_id,
+    offset,
+    limit,
+  }: {
+    user_entity_id?: string;
+    offset: number;
+    limit: number;
+  }): Promise<any> {
+    try {
+      // For Data
+      const [result]: any[] = await sequelize.query(
+        queries.getCurrentTokenInvestmentQuery(offset, limit, user_entity_id)
+      );
+
+      // For Count
+      const [resultCount]: any[] = await sequelize.query(
+        queries.getCurrentTokenInvestmentQuery(null, null, user_entity_id)
+      );
+
+      return {
+        rows: result,
+        count: resultCount?.length ?? 0,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async getInvestorDashboard({
+    user_entity_id,
+  }: {
+    user_entity_id?: string;
+  }): Promise<any> {
+    try {
+      // For Investor Dashboard
+      const [investor_data]: any[] = await sequelize.query(
+        queries.getInvestorDashboardQuery(user_entity_id)
+      );
+
+      let obj: any = investor_data && investor_data?.[0];
+
+      return obj;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export { TokenOrders };
