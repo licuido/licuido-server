@@ -175,6 +175,7 @@ class TokenOfferings {
           "annual_percentage_yield",
           "payback_period",
           "payback_period_type",
+          "valuation_price",
         ],
         include: [
           {
