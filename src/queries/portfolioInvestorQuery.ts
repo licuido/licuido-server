@@ -14,26 +14,161 @@ export const getTokensHoldingsGraphQuery = (
   // For Date Filters
   let dateFilter = ``;
   if (from_date && to_date) {
-    dateFilter = ` AND tor.updated_at BETWEEN '${from_date}' AND '{to_date}'`;
+    dateFilter = ` AND tor.updated_at BETWEEN '${from_date}' AND '${to_date}'`;
   }
 
   /* For Data */
   let baseQuery = `SELECT
   tor.token_offering_id AS token_offering_id,
-  tof.name AS token_name,
-  SUM(COALESCE(tor.net_investment_value_in_euro, 0)) AS investment
+  MIN(tof.name) AS token_name,
+  SUM(
+    CASE
+      WHEN tor.type = 'subscription'
+      AND tor.status_id = 5 THEN COALESCE(tor.net_investment_value_in_euro, 0)
+      ELSE 0
+    END
+  ) - SUM(
+    CASE
+      WHEN tor.type = 'redemption'
+      AND tor.status_id = 11 THEN COALESCE(tor.net_investment_value_in_euro, 0)
+      ELSE 0
+    END
+  ) AS investment
 FROM
   token_orders AS tor
   INNER JOIN token_offerings AS tof ON tor.token_offering_id = tof.id
 WHERE
   tor.receiver_entity_id = '${user_entity_id}'
-  AND tor.status_id = 5 
   ${dateFilter}
 GROUP BY
-  tor.token_offering_id,
-  tof.name
+  tor.token_offering_id
 ORDER BY
   investment ASC`;
+
+  return baseQuery;
+};
+
+export const getCurrentTokenInvestmentQuery = (
+  offset: number | null,
+  limit: number | null,
+  user_entity_id?: string
+) => {
+  /* Get CurrentTokenInvestment Query  */
+
+  /* In Where Condition
+           ---- receiver_entity_id = "" 
+            tor.status_id = 5 | 11 [ Minted | Burned ]
+           */
+
+  // For Limit & Offset
+  let limitStatment = ``;
+  if (offset !== null && limit !== null) {
+    limitStatment = ` LIMIT '${limit}' OFFSET '${offset * limit}'`;
+  }
+  /* For Data */
+  let baseQuery = `SELECT
+  tor.receiver_entity_id AS investor_entity_id,
+  iss_ent.legal_name AS issuer_name,
+  tor.token_offering_id AS token_offering_id,
+  tof.name AS token_name,
+  tof.isin_number AS token_isin,
+  tof.start_date AS token_start_date,
+  tof.end_date AS token_end_date,
+  tof.status_id AS status_id,
+  mts.name AS status,
+  SUM(
+    CASE
+      WHEN tor.type = 'subscription'
+      AND tor.status_id = 5 THEN COALESCE(tor.net_investment_value_in_euro, 0)
+      ELSE 0
+    END
+  ) - SUM(
+    CASE
+      WHEN tor.type = 'redemption'
+      AND tor.status_id = 11 THEN COALESCE(tor.net_investment_value_in_euro, 0)
+      ELSE 0
+    END
+  ) AS total_holdings
+FROM
+  token_orders AS tor
+  INNER JOIN token_offerings AS tof ON tor.token_offering_id = tof.id
+  INNER JOIN entities AS iss_ent ON tor.issuer_entity_id = iss_ent.id
+  INNER JOIN master_token_status AS mts ON tof.status_id = mts.id
+WHERE
+  tor.receiver_entity_id = '${user_entity_id}'
+GROUP BY
+  tor.receiver_entity_id,
+  tor.token_offering_id,
+  iss_ent.legal_name,
+  tof.name,
+  tof.isin_number,
+  tof.start_date,
+  tof.end_date,
+  tof.status_id,
+  mts.name
+ORDER BY
+  total_holdings ASC 
+  ${limitStatment};`;
+
+  return baseQuery;
+};
+
+export const getInvestorDashboardQuery = (user_entity_id?: string) => {
+  /* Get Investor DashBoard  */
+
+  /* In Where Condition
+          
+           */
+
+  /* For Data */
+  let baseQuery = `WITH
+  vas_pd AS (
+    SELECT
+      tor.token_offering_id,
+      SUM(
+        CASE
+          WHEN tor.type = 'subscription'
+          AND tor.status_id = 5 THEN COALESCE(tor.net_investment_value_in_euro, 0)
+          ELSE 0
+        END
+      ) - SUM(
+        CASE
+          WHEN tor.type = 'redemption'
+          AND tor.status_id = 11 THEN COALESCE(tor.net_investment_value_in_euro, 0)
+          ELSE 0
+        END
+      ) AS investment,
+      SUM(
+        CASE
+          WHEN tor.type = 'subscription'
+          AND tor.status_id = 5 THEN COALESCE(tor.ordered_tokens, 0)
+          ELSE 0
+        END
+      ) - SUM(
+        CASE
+          WHEN tor.type = 'redemption'
+          AND tor.status_id = 11 THEN COALESCE(tor.ordered_tokens, 0)
+          ELSE 0
+        END
+      ) AS token_count,
+      tof.valuation_price AS valuation_price
+    FROM
+      token_orders AS tor
+      INNER JOIN token_offerings AS tof ON tor.token_offering_id = tof.id
+    WHERE
+      tor.receiver_entity_id = '${user_entity_id}'
+    GROUP BY
+      tor.token_offering_id,
+      tof.valuation_price
+  )
+SELECT
+  SUM(COALESCE(investment, 0)) AS investment,
+  SUM(COALESCE(token_count * valuation_price, 0)) AS current_value,
+  (
+    SUM(COALESCE(token_count * valuation_price, 0)) - SUM(COALESCE(investment, 0))
+  ) / ABS(SUM(COALESCE(investment, 0))) * 100 AS percentage_change
+FROM
+  vas_pd`;
 
   return baseQuery;
 };

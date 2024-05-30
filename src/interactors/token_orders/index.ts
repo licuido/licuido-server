@@ -956,6 +956,42 @@ const getTokensHoldingsGraph = async ({
   return { page: result?.rows, count: result?.count };
 };
 
+const getCurrentTokenListing = async ({
+  user_entity_id,
+  offset,
+  limit,
+}: {
+  user_entity_id?: string;
+  offset: number;
+  limit: number;
+}) => {
+  // Get Current Token Investment for Investor
+  const result: any = await TokenOrders.getCurrentTokenInvestment({
+    user_entity_id,
+    offset,
+    limit,
+  });
+
+  return {
+    page: result?.rows,
+    count: result?.length,
+    totalCount: result?.count,
+  };
+};
+
+const getInvestorDashboard = async ({
+  user_entity_id,
+}: {
+  user_entity_id?: string;
+}) => {
+  // Get Investor Dashboard
+  const result: any = await TokenOrders.getInvestorDashboard({
+    user_entity_id,
+  });
+
+  return result;
+};
+
 export default {
   createTokenSubscriptionOrders,
   getTokenOrder,
@@ -972,4 +1008,6 @@ export default {
   getTokensByInvestorGraph,
   getDashboard,
   getTokensHoldingsGraph,
+  getCurrentTokenListing,
+  getInvestorDashboard,
 };
