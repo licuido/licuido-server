@@ -729,7 +729,16 @@ const getIssuerTokens = async ({
 
 const updateTokenValuation = async (option: createTokenValuation) => {
   try {
-    const { token_id, user_entity_id, user_profile_id } = option;
+    const {
+      token_id,
+      user_entity_id,
+      user_profile_id,
+      offer_price,
+      bid_price,
+      start_date,
+      start_time,
+      valuation_price,
+    } = option;
 
     const count = await TokenOfferings.checkTokenHaveAccess({
       token_id,
@@ -744,7 +753,12 @@ const updateTokenValuation = async (option: createTokenValuation) => {
     }
 
     await TokenValuations.create({
-      ...option,
+      token_id,
+      offer_price,
+      bid_price,
+      start_date,
+      start_time,
+      valuation_price,
       created_by: user_profile_id,
     });
 
