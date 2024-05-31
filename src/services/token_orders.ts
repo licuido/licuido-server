@@ -735,6 +735,32 @@ class TokenOrders {
       throw error;
     }
   }
+
+  static async getTokenOrdersGraph({
+    user_entity_id,
+    from_date,
+    to_date,
+    token_offering_id,
+  }: {
+    user_entity_id?: string;
+    from_date?: string;
+    to_date?: string;
+    token_offering_id?: string;
+  }): Promise<any> {
+    try {
+      // For Data
+      const [result]: any[] = await sequelize.query(
+        queries.getTokenOrdersGraphQuery(from_date, to_date, token_offering_id)
+      );
+
+      return {
+        rows: result,
+        count: result?.length ?? 0,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export { TokenOrders };

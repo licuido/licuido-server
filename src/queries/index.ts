@@ -31,6 +31,12 @@ import {
   getInvestorDashboardQuery,
 } from "./portfolioInvestorQuery";
 
+import {
+  getTokenValuationGraphQuery,
+  getTodayTokenValuationPriceQuery,
+  getTokenOrdersGraphQuery,
+} from "./tokenDashboardQuery";
+
 const queries = {
   getAllInvestorsQuery,
   getAllInvestorsCountQuery,
@@ -53,6 +59,9 @@ const queries = {
   getTokensHoldingsGraphQuery,
   getCurrentTokenInvestmentQuery,
   getInvestorDashboardQuery,
+  getTokenValuationGraphQuery,
+  getTodayTokenValuationPriceQuery,
+  getTokenOrdersGraphQuery,
 };
 
 export default queries;

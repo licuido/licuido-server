@@ -909,6 +909,28 @@ const getAllFundOfferings = async (options: getAllFundOfferings) => {
   }
 };
 
+const getValuationGraph = async ({
+  user_entity_id,
+  from_date,
+  to_date,
+  token_offering_id,
+}: {
+  user_entity_id?: string;
+  from_date?: string;
+  to_date?: string;
+  token_offering_id?: string;
+}) => {
+  // Get Token Valuation graph Data
+  const result: any = await TokenValuations.getTokenValuationGraph({
+    user_entity_id,
+    from_date,
+    to_date,
+    token_offering_id,
+  });
+
+  return result;
+};
+
 export default {
   createTokenOfferings,
   updateTokenStatus,
@@ -919,4 +941,5 @@ export default {
   getAllTokens,
   updateTokenOfferingStatus,
   getAllFundOfferings,
+  getValuationGraph,
 };
