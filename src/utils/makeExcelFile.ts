@@ -7,10 +7,15 @@ async function makeExcelFile(
   file_path_name: string
 ): Promise<{ buffer: Buffer; fileName: string }> {
   try {
+    console.log("========================================================");
+    console.log(__dirname);
+    console.log(file_path_name);
+    console.log("========================================================");
     const filePath = path.resolve(
       __dirname,
       `./../uploads/${file_path_name}.xlsx`
     );
+    console.log(filePath);
 
     const { WorkBook } = await excel.makeExcel(filePath, "Sheet1");
 
@@ -26,7 +31,9 @@ async function makeExcelFile(
     const buffer = await streamToBuffer.streamToBufferAsync(
       fs.createReadStream(filePath)
     );
-
+    console.log("========================================================");
+    console.log(filePath);
+    console.log("========================================================");
     fs.unlinkSync(filePath);
     const fileName = `${new Date().toISOString().replace(/:/g, "-")}.xlsx`;
 
