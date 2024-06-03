@@ -30,6 +30,13 @@ const tokenDashboardRoute: FastifyPluginAsync = async (
     { schema: schema.GET_SUMMARY_RECENT_ACTIVITIES },
     handler.GET_SUMMARY_RECENT_ACTIVITIES
   );
+
+  // Investor Distribution
+  fastify.get(
+    "/investor_distribution",
+    { schema: schema.GET_INVESTOR_DISTRIBUTION },
+    handler.GET_INVESTOR_DISTRIBUTION
+  );
 };
 
 export default tokenDashboardRoute;

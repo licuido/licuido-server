@@ -1031,6 +1031,26 @@ const getTokenSummaryRecentActivities = async ({
   return result;
 };
 
+const getInvestorDistribution = async ({
+  user_entity_id,
+  token_offering_id,
+  investor_distribution_by,
+}: {
+  user_entity_id?: string;
+  token_offering_id?: string;
+  investor_distribution_by?: string;
+}) => {
+  token_offering_id;
+  // Get Token Distribution Data
+  const result: any = await TokenOrders.getInvestorDistribution({
+    user_entity_id,
+    token_offering_id,
+    investor_distribution_by,
+  });
+
+  return result;
+};
+
 export default {
   createTokenSubscriptionOrders,
   getTokenOrder,
@@ -1051,4 +1071,5 @@ export default {
   getInvestorDashboard,
   getTokenOrdersGraph,
   getTokenSummaryRecentActivities,
+  getInvestorDistribution,
 };

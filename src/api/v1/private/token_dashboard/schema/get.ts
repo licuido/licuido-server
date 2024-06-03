@@ -63,3 +63,22 @@ export const GET_SUMMARY_RECENT_ACTIVITIES = {
   response: makeResponseSchema(getSummayRecentActivitiesResponse),
   query: getSummayRecentActivitiesParams,
 };
+
+// Get Investor Distribution
+const getInvestorDirtributionParams = Schema.object()
+  .prop("token_offering_id", Schema.string().format("uuid"))
+  .prop("investor_distribution_by", Schema.string())
+  .required(["token_offering_id", "investor_distribution_by"]);
+
+const getInvestorDirtributionResponse: JSONSchema = Schema.object()
+  .additionalProperties(true)
+  .prop("meta", Schema.object().prop("message", Schema.string()))
+  .valueOf() as JSONSchema;
+
+export const GET_INVESTOR_DISTRIBUTION = {
+  description:
+    "Defines the structure and constraints for an API endpoint to get Investor Dirstribution",
+  tags: ["Token Dashboard"],
+  response: makeResponseSchema(getInvestorDirtributionResponse),
+  query: getInvestorDirtributionParams,
+};

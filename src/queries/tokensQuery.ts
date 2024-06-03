@@ -150,7 +150,7 @@ export const getAllTokensCountQuery = (
   // For Search By Token name, Issuer name , symbol Filter
   let searchFilter = ``;
   if (search) {
-    searchFilter = `ent.legal_name ILIKE '${search}%' OR t.name ILIKE '${search}%' OR t.symbol ILIKE '${search}%'`;
+    searchFilter = ` AND (ent.legal_name ILIKE '${search}%' OR t.name ILIKE '${search}%' OR t.symbol ILIKE '${search}%')`;
   }
 
   // For currenc Filter

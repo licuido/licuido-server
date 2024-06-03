@@ -39,6 +39,8 @@ import {
   getTokenCirculatingSupplyQuery,
   getTokenPendingRedemptionQuery,
   getTokenRecentActivitiesQuery,
+  getByNoOfInvestorsQuery,
+  getByInvestmentAmountQuery,
 } from "./tokenDashboardQuery";
 
 const queries = {
@@ -70,6 +72,8 @@ const queries = {
   getTokenCirculatingSupplyQuery,
   getTokenPendingRedemptionQuery,
   getTokenRecentActivitiesQuery,
+  getByNoOfInvestorsQuery,
+  getByInvestmentAmountQuery,
 };
 
 export default queries;

@@ -9,6 +9,7 @@ import {
 import queries from "@queries";
 import { createTokenOrders, updateTokenOrders } from "@types";
 import { sequelize } from "@utils";
+import moment from "moment";
 import { Transaction } from "sequelize";
 
 class TokenOrders {
@@ -828,6 +829,142 @@ class TokenOrders {
         recent_activities_result && recent_activities_result
           ? recent_activities_result
           : [];
+      return obj;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async getInvestorDistribution({
+    user_entity_id,
+    token_offering_id,
+    investor_distribution_by,
+  }: {
+    user_entity_id?: string;
+    token_offering_id?: string;
+    investor_distribution_by?: string;
+  }): Promise<any> {
+    try {
+      const obj: any = {};
+
+      // For Last 7 days
+      let start_date = moment()
+        .subtract(6, "days")
+        .startOf("day")
+        .toISOString();
+      let end_date = moment().endOf("day").toISOString();
+
+      // For Total Investors
+      const calculateTotalInvestors: any = (period: any) => {
+        return period.reduce((acc: any, investor: any) => {
+          return acc + parseFloat(investor.investor_count);
+        }, 0);
+      };
+
+      // For Total Investment
+      const calculateTotalInvestment: any = (period: any) => {
+        return period.reduce((acc: any, investment: any) => {
+          return acc + parseFloat(investment.net_investment);
+        }, 0);
+      };
+
+      // By No Of Invetors --------------------
+      if (investor_distribution_by === "noi") {
+        // Investors List in last 7 days
+        const [investors_result_in_last_seven_days]: any[] =
+          await sequelize.query(
+            queries.getByNoOfInvestorsQuery(
+              token_offering_id,
+              start_date,
+              end_date
+            )
+          );
+        // Investors List Before 7 days
+        const [investors_result_before_seven_days]: any[] =
+          await sequelize.query(
+            queries.getByNoOfInvestorsQuery(token_offering_id, start_date, null)
+          );
+        obj["investor_country_data"] =
+          investors_result_in_last_seven_days || [];
+
+        const total_investors_last_seven_days = Array.isArray(
+          investors_result_in_last_seven_days
+        )
+          ? calculateTotalInvestors(investors_result_in_last_seven_days)
+          : 0;
+        const total_investors_before_seven_days = Array.isArray(
+          investors_result_before_seven_days
+        )
+          ? calculateTotalInvestors(investors_result_before_seven_days)
+          : 0;
+
+        obj["total_investors"] = total_investors_last_seven_days.toString();
+
+        obj["country_count"] = (
+          investors_result_in_last_seven_days?.length || 0
+        ).toString();
+
+        obj["change_percentage"] = total_investors_before_seven_days
+          ? (
+              ((total_investors_last_seven_days -
+                total_investors_before_seven_days) /
+                total_investors_before_seven_days) *
+              100
+            ).toString()
+          : "0";
+      }
+
+      // By Investment Amount --------------------
+      if (investor_distribution_by === "ia") {
+        // Investment in last 7 days
+        const [investment_result_in_last_seven_days]: any[] =
+          await sequelize.query(
+            queries.getByInvestmentAmountQuery(
+              token_offering_id,
+              start_date,
+              end_date
+            )
+          );
+        // Investment List Before 7 days
+        const [investment_result_before_seven_days]: any[] =
+          await sequelize.query(
+            queries.getByInvestmentAmountQuery(
+              token_offering_id,
+              start_date,
+              null
+            )
+          );
+
+        obj["investment_country_data"] =
+          investment_result_in_last_seven_days || [];
+
+        const total_investment_last_seven_days = Array.isArray(
+          investment_result_in_last_seven_days
+        )
+          ? calculateTotalInvestment(investment_result_in_last_seven_days)
+          : 0;
+        const total_investment_before_seven_days = Array.isArray(
+          investment_result_before_seven_days
+        )
+          ? calculateTotalInvestment(investment_result_before_seven_days)
+          : 0;
+
+        obj["total_investment"] = total_investment_last_seven_days.toString();
+
+        obj["investors_count"] = (
+          calculateTotalInvestors(investment_result_in_last_seven_days) || 0
+        ).toString();
+
+        obj["change_percentage"] = total_investment_before_seven_days
+          ? (
+              ((total_investment_last_seven_days -
+                total_investment_before_seven_days) /
+                total_investment_before_seven_days) *
+              100
+            ).toString()
+          : "0";
+      }
+
       return obj;
     } catch (error) {
       throw error;
