@@ -315,8 +315,114 @@ FROM
   LEFT JOIN assets AS ast_inv ON ent_inv.logo_asset_id = ast_inv.id
 WHERE
   tor.token_offering_id = '${token_offering_id}'
-  ORDER BY tt.created_at DESC
+  ORDER BY tt.created_at DESC 
+  OFFSET 0 LIMIT 5
       `;
+
+  return baseQuery;
+};
+
+export const getByNoOfInvestorsQuery = (
+  token_offering_id?: string,
+  start_date?: string,
+  end_date?: string | null
+) => {
+  /* Get Investor Distribution By no of investors Query  */
+
+  /* In Where Condition
+                        
+                       */
+
+  let dateQuery = ``;
+  if (start_date && end_date && start_date.length > 0 && end_date.length > 0) {
+    dateQuery = ` AND tor.updated_at BETWEEN '${start_date}' AND '${end_date}'`;
+  } else {
+    dateQuery = ` AND tor.updated_at < '${start_date}'`;
+  }
+
+  /* For Data */
+  let baseQuery = `WITH
+  vas_id_noi AS(
+    SELECT
+      COUNT (DISTINCT(tor.receiver_entity_id)) AS investor_count,
+      mc.name AS country_name
+    FROM
+      token_orders AS tor
+      INNER JOIN entities AS inv_en ON tor.receiver_entity_id = inv_en.id
+      INNER JOIN master_countries AS mc ON inv_en.country_id = mc.id
+    WHERE
+      tor.token_offering_id = '${token_offering_id}'
+      AND tor.status_id IN (5, 11) 
+      ${dateQuery}
+    GROUP BY
+      mc.name
+  )
+SELECT
+  *
+FROM
+  vas_id_noi
+ORDER BY
+  investor_count DESC
+        `;
+
+  return baseQuery;
+};
+
+export const getByInvestmentAmountQuery = (
+  token_offering_id?: string,
+  start_date?: string,
+  end_date?: string | null
+) => {
+  /* Get Investor Distribution By investment amount Query */
+
+  /* In Where Condition
+                          
+                         */
+
+  let dateQuery = ``;
+  if (start_date && end_date && start_date.length > 0 && end_date.length > 0) {
+    dateQuery = ` AND tor.updated_at BETWEEN '${start_date}' AND '${end_date}'`;
+  } else {
+    dateQuery = ` AND tor.updated_at < '${start_date}'`;
+  }
+
+  /* For Data */
+  let baseQuery = `WITH
+  vas_id_ia AS (
+    SELECT
+      SUM(
+        CASE
+          WHEN tor.type = 'subscription'
+          AND tor.status_id = 5 THEN COALESCE(tor.net_investment_value_in_euro, 0)
+          ELSE 0
+        END
+      ) - SUM(
+        CASE
+          WHEN tor.type = 'redemption'
+          AND tor.status_id = 11 THEN COALESCE(tor.net_investment_value_in_euro, 0)
+          ELSE 0
+        END
+      ) net_investment,
+      COUNT (DISTINCT(tor.receiver_entity_id)) AS investor_count,
+      mc.name AS country_name
+    FROM
+      token_orders AS tor
+      INNER JOIN entities AS inv_en ON tor.receiver_entity_id = inv_en.id
+      INNER JOIN master_countries AS mc ON inv_en.country_id = mc.id
+    WHERE
+      tor.token_offering_id = '${token_offering_id}'
+      AND tor.status_id IN (5, 11) 
+      ${dateQuery}
+    GROUP BY
+      mc.name
+  )
+SELECT
+  *
+FROM
+  vas_id_ia
+ORDER BY
+  net_investment DESC
+          `;
 
   return baseQuery;
 };
