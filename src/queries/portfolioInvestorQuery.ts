@@ -151,7 +151,27 @@ export const getInvestorDashboardQuery = (user_entity_id?: string) => {
           ELSE 0
         END
       ) AS token_count,
-      tof.valuation_price AS valuation_price
+      (
+        SELECT
+          tv.valuation_price
+        FROM
+          token_valuations AS tv
+        WHERE
+          tv.token_offering_id = tor.token_offering_id
+          AND (
+            tv.start_date < CURRENT_DATE
+            OR (
+              tv.start_date = CURRENT_DATE
+              AND start_time <= CURRENT_TIME
+            )
+          )
+        ORDER BY
+          start_date DESC,
+          start_time DESC
+        LIMIT
+          1
+      ) AS valuation_price,
+      tof.offering_price AS offering_price
     FROM
       token_orders AS tor
       INNER JOIN token_offerings AS tof ON tor.token_offering_id = tof.id
@@ -159,14 +179,34 @@ export const getInvestorDashboardQuery = (user_entity_id?: string) => {
       tor.receiver_entity_id = '${user_entity_id}'
     GROUP BY
       tor.token_offering_id,
-      tof.valuation_price
+      tof.offering_price
   )
 SELECT
   SUM(COALESCE(investment, 0)) AS investment,
-  SUM(COALESCE(token_count * valuation_price, 0)) AS current_value,
+  SUM(
+    COALESCE(
+      token_count * (
+        CASE
+          WHEN valuation_price IS NOT NULL THEN valuation_price
+          ELSE offering_price
+        END
+      ),
+      0
+    )
+  ) AS current_value,
   (
-    SUM(COALESCE(token_count * valuation_price, 0)) - SUM(COALESCE(investment, 0))
-  ) / ABS(SUM(COALESCE(investment, 0))) * 100 AS percentage_change
+    SUM(
+      COALESCE(
+        token_count * (
+          CASE
+            WHEN valuation_price IS NOT NULL THEN valuation_price
+            ELSE offering_price
+          END
+        ),
+        0
+      )
+    ) - SUM(COALESCE(investment, 0))
+  ) / NULLIF(ABS(SUM(COALESCE(investment, 0))), 0) * 100 AS percentage_change
 FROM
   vas_pd`;
 

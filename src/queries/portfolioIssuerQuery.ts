@@ -69,13 +69,33 @@ export const getCirculatingSupplyQuery = (user_entity_id?: string) => {
     SUM(COALESCE(tof.circulating_supply_count, 0)) AS circulating_supply,
     SUM(
       CASE
-        WHEN tof.valuation_price IS NOT NULL
-        AND tof.valuation_price != 0 THEN COALESCE(tof.circulating_supply_count, 0) * tof.valuation_price
+        WHEN v.valuation_price IS NOT NULL
+        AND v.valuation_price != 0 THEN COALESCE(tof.circulating_supply_count, 0) * v.valuation_price
         ELSE COALESCE(tof.circulating_supply_count, 0) * tof.offering_price
       END
     ) AS circulating_supply_amount
   FROM
-    token_offerings AS tof
+    token_offerings AS tof 
+    LEFT JOIN LATERAL (
+      SELECT
+        tv.valuation_price
+      FROM
+        token_valuations AS tv
+      WHERE
+        tv.token_offering_id = tof.id
+        AND (
+          tv.start_date < CURRENT_DATE
+          OR (
+            tv.start_date = CURRENT_DATE
+            AND start_time <= CURRENT_TIME
+          )
+        )
+      ORDER BY
+        tv.start_date DESC,
+        tv.start_time DESC
+      LIMIT
+        1
+    ) v ON true
   WHERE
     tof.issuer_entity_id = '${user_entity_id}'
     AND tof.is_active = true
@@ -102,14 +122,34 @@ export const getPendingRedemptionQuery = (user_entity_id?: string) => {
     SUM(COALESCE(tor.ordered_tokens, 0)) AS pending_redemption,
     SUM(
       CASE
-        WHEN tof.valuation_price IS NOT NULL AND tof.valuation_price != 0
-        THEN COALESCE(tor.ordered_tokens, 0) * tof.valuation_price
-        ELSE COALESCE(tor.ordered_tokens, 0) * tof.offering_price
+          WHEN v.valuation_price IS NOT NULL AND v.valuation_price != 0
+          THEN COALESCE(tor.ordered_tokens, 0) * v.valuation_price
+          ELSE COALESCE(tor.ordered_tokens, 0) * tof.offering_price
       END
-    ) AS pending_redemption_amount
+  ) AS pending_redemption_amount
   FROM
     token_orders AS tor
-    INNER JOIN token_offerings AS tof ON tor.token_offering_id = tof.id
+    INNER JOIN token_offerings AS tof ON tor.token_offering_id = tof.id 
+    LEFT JOIN LATERAL (
+      SELECT
+          tv.valuation_price
+      FROM
+          token_valuations AS tv
+      WHERE
+          tv.token_offering_id = tof.id
+          AND (
+              tv.start_date < CURRENT_DATE
+              OR (
+                  tv.start_date = CURRENT_DATE
+                  AND start_time <= CURRENT_TIME
+              )
+          )
+      ORDER BY
+          tv.start_date DESC,
+          tv.start_time DESC
+      LIMIT
+          1
+  ) v ON true
   WHERE
     tor.issuer_entity_id = '${user_entity_id}'
     AND tor.type = 'redemption'
@@ -175,11 +215,31 @@ export const getAllFundOfferingsForPortfolioQuery = (
         ),
         0
       ) AS overall_investment,
-      COALESCE(tof.valuation_price, 0) AS valuation
+      COALESCE(v.valuation_price, tof.offering_price) AS valuation
     FROM
       token_offerings AS tof
       INNER JOIN master_token_offering_status AS mtos ON tof.offer_status_id = mtos.id
       INNER JOIN master_token_status AS mts ON tof.status_id = mts.id
+      LEFT JOIN LATERAL (
+        SELECT
+          tv.valuation_price
+        FROM
+          token_valuations AS tv
+        WHERE
+          tv.token_offering_id = tof.id
+          AND (
+            tv.start_date < CURRENT_DATE
+            OR (
+              tv.start_date = CURRENT_DATE
+              AND tv.start_time <= CURRENT_TIME
+            )
+          )
+        ORDER BY
+          tv.start_date DESC,
+          tv.start_time DESC
+        LIMIT
+          1
+      ) v ON true
     WHERE
       tof.issuer_entity_id = '${user_entity_id}'
   )
