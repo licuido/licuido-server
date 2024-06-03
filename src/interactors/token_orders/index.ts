@@ -1014,6 +1014,23 @@ const getTokenOrdersGraph = async ({
   return { page: result?.rows, count: result?.count };
 };
 
+const getTokenSummaryRecentActivities = async ({
+  user_entity_id,
+  token_offering_id,
+}: {
+  user_entity_id?: string;
+  token_offering_id?: string;
+}) => {
+  token_offering_id;
+  // Get Token Summary & Recent Activites
+  const result: any = await TokenOrders.getTokenSummaryRecentActivities({
+    user_entity_id,
+    token_offering_id,
+  });
+
+  return result;
+};
+
 export default {
   createTokenSubscriptionOrders,
   getTokenOrder,
@@ -1033,4 +1050,5 @@ export default {
   getCurrentTokenListing,
   getInvestorDashboard,
   getTokenOrdersGraph,
+  getTokenSummaryRecentActivities,
 };

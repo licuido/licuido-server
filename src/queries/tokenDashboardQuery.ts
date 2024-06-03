@@ -136,3 +136,187 @@ ORDER BY
 
   return baseQuery;
 };
+
+export const getTokenStatusQuery = (token_offering_id?: string) => {
+  /* Get Token Status Graph Query  */
+
+  /* In Where Condition
+                
+               */
+
+  /* For Data */
+  let baseQuery = `SELECT
+  tof.id AS token_id,
+  tof.name AS token_name,
+  mtot.name AS token_type_name,
+  ast_t.url AS token_logo_url,
+  tof.offer_status_id AS status_id,
+  mtos.name AS status_name,
+  COALESCE(v.valuation_price, tof.offering_price) AS valuation_price
+from
+  token_offerings AS tof
+  INNER JOIN master_token_type AS mtot ON tof.token_type_id = mtot.id
+  LEFT JOIN assets AS ast_t ON tof.logo_asset_id = ast_t.id
+  INNER JOIN master_token_offering_status AS mtos ON tof.offer_status_id = mtos.id
+  LEFT JOIN LATERAL (
+    SELECT
+      tv.valuation_price
+    FROM
+      token_valuations AS tv
+    WHERE
+      tv.token_offering_id = tof.id
+      AND (
+        tv.start_date < CURRENT_DATE
+        OR (
+          tv.start_date = CURRENT_DATE
+          AND tv.start_time <= CURRENT_TIME
+        )
+      )
+    ORDER BY
+      tv.start_date DESC,
+      tv.start_time DESC
+    LIMIT
+      1
+  ) v ON true
+WHERE
+  tof.id = '${token_offering_id}'
+`;
+
+  return baseQuery;
+};
+
+export const getTokenCirculatingSupplyQuery = (token_offering_id?: string) => {
+  /* Get Circulating Supply Graph Query  */
+
+  /* In Where Condition
+                  
+                 */
+
+  /* For Data */
+  let baseQuery = `SELECT
+  tof.id AS token_offering_id,
+  COALESCE(tof.circulating_supply_count, 0) AS circulating_supply,
+  CASE
+    WHEN v.valuation_price IS NOT NULL
+    AND v.valuation_price != 0 THEN COALESCE(tof.circulating_supply_count, 0) * v.valuation_price
+    ELSE COALESCE(tof.circulating_supply_count, 0) * tof.offering_price
+  END AS circulating_supply_amount
+FROM
+  token_offerings AS tof
+  LEFT JOIN LATERAL (
+    SELECT
+      tv.valuation_price
+    FROM
+      token_valuations AS tv
+    WHERE
+      tv.token_offering_id = tof.id
+      AND (
+        tv.start_date < CURRENT_DATE
+        OR (
+          tv.start_date = CURRENT_DATE
+          AND start_time <= CURRENT_TIME
+        )
+      )
+    ORDER BY
+      tv.start_date DESC,
+      tv.start_time DESC
+    LIMIT
+      1
+  ) v ON true
+WHERE
+  tof.id = '${token_offering_id}'
+  AND tof.is_active = true
+  AND tof.status_id = 1
+  AND tof.offer_status_id = 1
+  `;
+
+  return baseQuery;
+};
+
+export const getTokenPendingRedemptionQuery = (token_offering_id?: string) => {
+  /* Get Pending Redemption Graph Query  */
+
+  /* In Where Condition
+                    
+                   */
+
+  /* For Data */
+  let baseQuery = `SELECT
+  tor.token_offering_id AS token_offering_id,
+  SUM(COALESCE(tor.ordered_tokens, 0)) AS pending_redemption,
+  SUM(
+    CASE
+      WHEN v.valuation_price IS NOT NULL
+      AND v.valuation_price != 0 THEN COALESCE(tor.ordered_tokens, 0) * v.valuation_price
+      ELSE COALESCE(tor.ordered_tokens, 0) * tof.offering_price
+    END
+  ) AS pending_redemption_amount
+FROM
+  token_orders AS tor
+  INNER JOIN token_offerings AS tof ON tor.token_offering_id = tof.id
+  LEFT JOIN LATERAL (
+    SELECT
+      tv.valuation_price
+    FROM
+      token_valuations AS tv
+    WHERE
+      tv.token_offering_id = tof.id
+      AND (
+        tv.start_date < CURRENT_DATE
+        OR (
+          tv.start_date = CURRENT_DATE
+          AND start_time <= CURRENT_TIME
+        )
+      )
+    ORDER BY
+      tv.start_date DESC,
+      tv.start_time DESC
+    LIMIT
+      1
+  ) v ON true
+WHERE
+  tor.token_offering_id = '${token_offering_id}'
+  AND tor.type = 'redemption'
+  AND tor.status_id NOT IN (6, 7, 8, 11)
+GROUP BY
+  tor.token_offering_id
+    `;
+
+  return baseQuery;
+};
+
+export const getTokenRecentActivitiesQuery = (token_offering_id?: string) => {
+  /* Get Recent Activities Graph Query  */
+
+  /* In Where Condition
+                      
+                     */
+
+  /* For Data */
+  let baseQuery = `SELECT
+  tor.token_offering_id AS token_offering_id,
+  tt.created_at AS date_time,
+  ent_iss.legal_name AS issuer_name,
+  ast_iss.url AS issuer_logo_url,
+  ent_inv.legal_name AS investor_name,
+  ast_inv.url AS investor_logo_url,
+  tt.type AS type,
+  tt.amount AS amount,
+  tt.status_id AS status_id,
+  mts.name AS status_name,
+  tt.id AS token_transaction_id
+FROM
+  token_transactions AS tt
+  INNER JOIN token_orders AS tor ON tt.order_id = tor.id
+  INNER JOIN master_transaction_status AS mts ON tt.status_id = mts.id
+  INNER JOIN entities AS ent_iss ON tor.issuer_entity_id = ent_iss.id
+  INNER JOIN entities AS ent_inv ON tor.receiver_entity_id = ent_inv.id
+  LEFT JOIN assets AS ast_iss ON ent_iss.logo_asset_id = ast_iss.id
+  LEFT JOIN assets AS ast_inv ON ent_inv.logo_asset_id = ast_inv.id
+WHERE
+  tor.token_offering_id = '${token_offering_id}'
+  ORDER BY tt.created_at DESC
+      `;
+
+  return baseQuery;
+};

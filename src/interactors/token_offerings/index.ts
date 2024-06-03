@@ -692,8 +692,8 @@ const findToken = async ({
 const getIssuerTokens = async ({
   search,
   user_entity_id,
-  offset,
-  limit,
+  offset = 0,
+  limit = 10,
 }: {
   search?: string;
   user_entity_id: string;
@@ -704,8 +704,8 @@ const getIssuerTokens = async ({
     const { rows, count } = await TokenOfferings.getTokenIssuerList({
       search: search ?? "",
       user_entity_id,
-      offset: 0,
-      limit: 10,
+      offset,
+      limit,
     });
 
     // return data?.map((val: any) => {

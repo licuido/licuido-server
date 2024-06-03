@@ -5,7 +5,7 @@ import Schema, { JSONSchema } from "fluent-json-schema";
 const getValuationGraphParams = Schema.object()
   .prop("from_date", Schema.string())
   .prop("to_date", Schema.string())
-  .prop("token_offering_id", Schema.string())
+  .prop("token_offering_id", Schema.string().format("uuid"))
   .required(["token_offering_id"]);
 
 const getValuationGraphResponse: JSONSchema = Schema.object()
@@ -25,7 +25,7 @@ export const GET_VALUATION_GRAPH = {
 const getOrdersGraphParams = Schema.object()
   .prop("from_date", Schema.string())
   .prop("to_date", Schema.string())
-  .prop("token_offering_id", Schema.string())
+  .prop("token_offering_id", Schema.string().format("uuid"))
   .required(["token_offering_id"]);
 
 const getOrdersGraphResponse: JSONSchema = Schema.object()
@@ -43,4 +43,23 @@ export const GET_ORDERS_GRAPH = {
   tags: ["Token Dashboard"],
   response: makeResponseSchema(getOrdersGraphResponse),
   query: getOrdersGraphParams,
+};
+
+// Get Token Summary & Recent Activities
+
+const getSummayRecentActivitiesParams = Schema.object()
+  .prop("token_offering_id", Schema.string().format("uuid"))
+  .required(["token_offering_id"]);
+
+const getSummayRecentActivitiesResponse: JSONSchema = Schema.object()
+  .additionalProperties(true)
+  .prop("meta", Schema.object().prop("message", Schema.string()))
+  .valueOf() as JSONSchema;
+
+export const GET_SUMMARY_RECENT_ACTIVITIES = {
+  description:
+    "Defines the structure and constraints for an API endpoint to get Token summary & Recent ACtivities",
+  tags: ["Token Dashboard"],
+  response: makeResponseSchema(getSummayRecentActivitiesResponse),
+  query: getSummayRecentActivitiesParams,
 };
