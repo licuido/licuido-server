@@ -79,6 +79,8 @@ export async function GET_ISSUER_TOKENS(
     const result = await TokenOfferings.getIssuerTokens({
       user_entity_id: user_entity_id ?? "",
       search,
+      offset,
+      limit,
     });
 
     const data = preparePagination({

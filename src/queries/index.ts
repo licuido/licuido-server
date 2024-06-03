@@ -35,6 +35,10 @@ import {
   getTokenValuationGraphQuery,
   getTodayTokenValuationPriceQuery,
   getTokenOrdersGraphQuery,
+  getTokenStatusQuery,
+  getTokenCirculatingSupplyQuery,
+  getTokenPendingRedemptionQuery,
+  getTokenRecentActivitiesQuery,
 } from "./tokenDashboardQuery";
 
 const queries = {
@@ -62,6 +66,10 @@ const queries = {
   getTokenValuationGraphQuery,
   getTodayTokenValuationPriceQuery,
   getTokenOrdersGraphQuery,
+  getTokenStatusQuery,
+  getTokenCirculatingSupplyQuery,
+  getTokenPendingRedemptionQuery,
+  getTokenRecentActivitiesQuery,
 };
 
 export default queries;

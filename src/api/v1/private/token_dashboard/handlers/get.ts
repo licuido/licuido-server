@@ -77,3 +77,40 @@ export async function GET_ORDERS_GRAPH(
     });
   }
 }
+
+// Get Summary & Recent Actvities
+export async function GET_SUMMARY_RECENT_ACTIVITIES(
+  request: FastifyRequest,
+  reply: FastifyReply
+) {
+  try {
+    /* -----------  MAPPER ----------- */
+    const { entity_id, user_entity_id, ...rest } = queryRequestInfo(request);
+
+    if (entity_id !== 3) {
+      return handleResponse(request, reply, responseType?.FORBIDDEN, {
+        error: {
+          message: "Only Issuer can be get Token dashboard",
+        },
+      });
+    }
+    /* -----------  INTERACTOR ----------- */
+    const result = await TokenOrders.getTokenSummaryRecentActivities({
+      user_entity_id,
+      ...rest,
+    });
+
+    /* -----------  RESPONSE ----------- */
+
+    return handleResponse(request, reply, responseType?.OK, {
+      data: { ...result },
+    });
+  } catch (error: any) {
+    Logger.error(request, error.message, error);
+    return handleResponse(request, reply, responseType?.INTERNAL_SERVER_ERROR, {
+      error: {
+        message: responseType?.INTERNAL_SERVER_ERROR,
+      },
+    });
+  }
+}

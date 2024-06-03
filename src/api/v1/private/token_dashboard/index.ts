@@ -23,6 +23,13 @@ const tokenDashboardRoute: FastifyPluginAsync = async (
     { schema: schema.GET_ORDERS_GRAPH },
     handler.GET_ORDERS_GRAPH
   );
+
+  // Summary & Recent Activities
+  fastify.get(
+    "/summary/recent_activities",
+    { schema: schema.GET_SUMMARY_RECENT_ACTIVITIES },
+    handler.GET_SUMMARY_RECENT_ACTIVITIES
+  );
 };
 
 export default tokenDashboardRoute;
