@@ -166,6 +166,7 @@ const constructBaseQuery = async (
           tor.id AS id,
           tor.type AS type,
           tof.name AS token_name,
+          tof.symbol AS token_symbol,
           tof.isin_number AS token_isin,
           tor.status_id AS status_id,
           mos.name AS status_name,

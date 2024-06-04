@@ -215,7 +215,7 @@ const createTokenRedemptionOrders = async (
           net_investment_value,
           created_by: user_profile_id,
           is_active: true,
-          status_id: 1,
+          status_id: 2, // Pending Redmeption
           bank_name,
           bank_account_name,
           swift_bic_no,
@@ -233,7 +233,7 @@ const createTokenRedemptionOrders = async (
         {
           user_profile_id,
           user_entity_id,
-          action_status_id: 1,
+          action_status_id: 2,
           is_active: true,
           created_by: user_profile_id,
         },

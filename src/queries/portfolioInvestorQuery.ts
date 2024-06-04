@@ -71,6 +71,7 @@ export const getCurrentTokenInvestmentQuery = (
   iss_ent.legal_name AS issuer_name,
   tor.token_offering_id AS token_offering_id,
   tof.name AS token_name,
+  tof.symbol AS token_symbol,
   tof.isin_number AS token_isin,
   tof.start_date AS token_start_date,
   tof.end_date AS token_end_date,

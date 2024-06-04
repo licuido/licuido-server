@@ -22,6 +22,7 @@ export const getTokensByInvestorGraphQuery = (
   let baseQuery = `SELECT
     tof.id,
     tof.name,
+    tof.symbol AS token_symbol,
     SUM (
       CASE
         WHEN tor.type = 'subscription'
