@@ -203,6 +203,7 @@ export const getAllTokensCountQuery = (
         select
         t.id,
         t.name,
+        t.symbol AS token_symbol,
         mtos.name as status,
         mtt.name as token_type,
         ent.legal_name as issuer_name,
