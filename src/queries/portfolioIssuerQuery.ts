@@ -181,6 +181,7 @@ export const getAllFundOfferingsForPortfolioQuery = (
       tof.name AS token_name,
       tof.symbol AS token_symbol,
       tof.isin_number AS isin_no,
+      ast.url AS token_logo_url,
       tof.start_date AS star_date,
       tof.end_date AS end_date,
       tof.offer_status_id AS token_status_id,
@@ -220,7 +221,8 @@ export const getAllFundOfferingsForPortfolioQuery = (
     FROM
       token_offerings AS tof
       INNER JOIN master_token_offering_status AS mtos ON tof.offer_status_id = mtos.id
-      INNER JOIN master_token_status AS mts ON tof.status_id = mts.id
+      INNER JOIN master_token_status AS mts ON tof.status_id = mts.id 
+      LEFT JOIN assets AS ast ON tof.logo_asset_id = ast.id
       LEFT JOIN LATERAL (
         SELECT
           tv.valuation_price
