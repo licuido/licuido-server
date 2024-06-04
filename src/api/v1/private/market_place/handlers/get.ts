@@ -11,13 +11,13 @@ export async function GET_SUBSCRIPTION_PAYMENT_DETAILS(
     /* -----------  MAPPER ----------- */
     const { entity_id, user_entity_id, ...rest } = queryRequestInfo(request);
 
-    if (entity_id === 3) {
-      return handleResponse(request, reply, responseType?.FORBIDDEN, {
-        error: {
-          message: "Only Investor can get subscription payement details",
-        },
-      });
-    }
+    // if (entity_id === 3) {
+    //   return handleResponse(request, reply, responseType?.FORBIDDEN, {
+    //     error: {
+    //       message: "Only Investor can get subscription payement details",
+    //     },
+    //   });
+    // }
 
     /* -----------  INTERACTOR ----------- */
     const result = await TokenOrders.getTokenOrder({
