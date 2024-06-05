@@ -336,7 +336,8 @@ export const getByNoOfInvestorsQuery = (
 
   let dateQuery = ``;
   if (start_date && end_date && start_date.length > 0 && end_date.length > 0) {
-    dateQuery = ` AND tor.updated_at BETWEEN '${start_date}' AND '${end_date}'`;
+    // dateQuery = ` AND tor.updated_at BETWEEN '${start_date}' AND '${end_date}'`;
+    dateQuery = ``;
   } else {
     dateQuery = ` AND tor.updated_at < '${start_date}'`;
   }
@@ -382,7 +383,8 @@ export const getByInvestmentAmountQuery = (
 
   let dateQuery = ``;
   if (start_date && end_date && start_date.length > 0 && end_date.length > 0) {
-    dateQuery = ` AND tor.updated_at BETWEEN '${start_date}' AND '${end_date}'`;
+    // dateQuery = ` AND tor.updated_at BETWEEN '${start_date}' AND '${end_date}'`;
+    dateQuery = ``;
   } else {
     dateQuery = ` AND tor.updated_at < '${start_date}'`;
   }
