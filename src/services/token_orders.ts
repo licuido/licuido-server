@@ -621,6 +621,16 @@ class TokenOrders {
 
       const obj: any = {};
 
+      obj["issuer_name"] =
+        total_investment_result && total_investment_result[0]?.issuer_name
+          ? total_investment_result[0]?.issuer_name
+          : "";
+
+      obj["issuer_logo_url"] =
+        total_investment_result && total_investment_result[0]?.issuer_logo_url
+          ? total_investment_result[0]?.issuer_logo_url
+          : "";
+
       obj["total_investment"] =
         total_investment_result &&
         total_investment_result[0]?.overall_investment
