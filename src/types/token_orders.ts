@@ -52,6 +52,9 @@ export interface updateTokenOrders {
   is_payment_confirmed?: boolean;
   payment_reference?: string;
   updated_by: string;
+  reason_for_reject?: string;
+  rejected_blockchain_reference_id?: string;
+  remarks?: string;
 }
 
 export interface getSubscriptionOrderPayload {

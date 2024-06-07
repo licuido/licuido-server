@@ -119,3 +119,42 @@ export async function SEND_PAYMENT(
     });
   }
 }
+
+// REJECT ORDER
+export async function REJECT_ORDER(
+  request: FastifyRequest,
+  reply: FastifyReply
+) {
+  try {
+    /* -----------  MAPPER ----------- */
+    const { entity_id, user_entity_id, user_profile_id, ...rest } =
+      postRequestInfo(request);
+
+    if (entity_id !== 3) {
+      return handleResponse(request, reply, responseType?.FORBIDDEN, {
+        error: {
+          message: "Only Issuer can reject the token order",
+        },
+      });
+    }
+
+    /* -----------  INTERACTOR ----------- */
+    const result = await TokenOrders.rejectOrder({
+      user_profile_id,
+      user_entity_id,
+      ...rest,
+    });
+
+    /* -----------  Response  ----------- */
+    return handleResponse(request, reply, responseType?.OK, {
+      customMessage: result?.message,
+    });
+  } catch (error: any) {
+    Logger.error(request, error.message, error);
+    return handleResponse(request, reply, responseType?.INTERNAL_SERVER_ERROR, {
+      error: {
+        message: responseType?.INTERNAL_SERVER_ERROR,
+      },
+    });
+  }
+}

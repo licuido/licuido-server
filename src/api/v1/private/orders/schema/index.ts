@@ -5,7 +5,12 @@ import {
   EXPORT_REDEMPTION_ORDER_AS_CSV,
   VIEW_ORDER_DETAILS,
 } from "./get";
-import { CANCEL_ORDER, CONFRIM_PAYMENT, SEND_PAYMENT } from "./put";
+import {
+  CANCEL_ORDER,
+  CONFRIM_PAYMENT,
+  SEND_PAYMENT,
+  REJECT_ORDER,
+} from "./put";
 
 export default {
   GET_ALL_SUBSCRIPTION_ORDER,
@@ -16,4 +21,5 @@ export default {
   CANCEL_ORDER,
   CONFRIM_PAYMENT,
   SEND_PAYMENT,
+  REJECT_ORDER,
 };

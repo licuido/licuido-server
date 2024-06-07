@@ -42,11 +42,8 @@ const orderRoute: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
       { schema: schema.CONFRIM_PAYMENT },
       handler.CONFRIM_PAYMENT
     )
-    .put(
-      "/payment/send",
-      { schema: schema.SEND_PAYMENT },
-      handler.SEND_PAYMENT
-    );
+    .put("/payment/send", { schema: schema.SEND_PAYMENT }, handler.SEND_PAYMENT)
+    .put("/reject", { schema: schema.REJECT_ORDER }, handler.REJECT_ORDER);
 };
 
 export default orderRoute;

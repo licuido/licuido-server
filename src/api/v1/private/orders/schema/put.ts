@@ -59,3 +59,23 @@ export const SEND_PAYMENT = {
   response: makeResponseSchema(sendPayment),
   body: sendPaymentBody,
 };
+
+/* REJECT_ORDER */
+const rejectOrderBody = Schema.object()
+  .prop("id", Schema.string().format("uuid"))
+  .prop("reason_for_reject", Schema.string())
+  .prop("rejected_blockchain_reference_id", Schema.string())
+  .prop("remarks", Schema.string())
+  .required(["id", "reason_for_reject", "rejected_blockchain_reference_id"]);
+
+const rejectOrder: JSONSchema = Schema.object()
+  .prop("meta", Schema.object().prop("message", Schema.string()))
+  .valueOf() as JSONSchema;
+
+export const REJECT_ORDER = {
+  description:
+    "Defines the structure and constraints for an API endpoint to reject the Subcription/Redemption Order",
+  tags: ["Token Order"],
+  response: makeResponseSchema(rejectOrder),
+  body: rejectOrderBody,
+};
