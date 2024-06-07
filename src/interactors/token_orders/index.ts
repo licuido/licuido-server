@@ -1051,6 +1051,68 @@ const getInvestorDistribution = async ({
   return result;
 };
 
+const rejectOrder = async ({
+  user_profile_id,
+  user_entity_id,
+  id,
+  reason_for_reject,
+  rejected_blockchain_reference_id,
+  remarks,
+}: {
+  user_profile_id: string;
+  user_entity_id: string;
+  id: string;
+  reason_for_reject: string;
+  rejected_blockchain_reference_id: string;
+  remarks?: string;
+}) => {
+  // Update Reject Order Details
+  const result: any = await sequelize.transaction(async (transaction) => {
+    // Update Token Order Status As Rejected With Track Id
+    await TokenOrders.update(
+      {
+        options: {
+          status_id: 8, // 8--> Rejected By Issuer
+          updated_by: user_profile_id,
+          reason_for_reject,
+          rejected_blockchain_reference_id,
+          remarks,
+        },
+        id: id,
+      },
+      transaction
+    );
+
+    // Track Actions Of Order Rejection
+    const track_id = await TrackTokenOrderActions.create(
+      {
+        user_profile_id,
+        user_entity_id,
+        action_status_id: 8,
+        is_active: true,
+        created_by: user_profile_id,
+      },
+      transaction
+    );
+
+    // Update Token Order With Track Id
+    await TokenOrders.update(
+      {
+        options: {
+          last_action_track_id: track_id,
+          updated_by: user_profile_id,
+        },
+        id: id,
+      },
+      transaction
+    );
+
+    return { message: successCustomMessage.orderRejected };
+  });
+
+  return result;
+};
+
 export default {
   createTokenSubscriptionOrders,
   getTokenOrder,
@@ -1072,4 +1134,5 @@ export default {
   getTokenOrdersGraph,
   getTokenSummaryRecentActivities,
   getInvestorDistribution,
+  rejectOrder,
 };
