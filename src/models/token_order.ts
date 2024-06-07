@@ -41,11 +41,14 @@ export interface token_orderAttributes {
   recived_amount_in_euro?: number;
   fulfilled_by?: "admin" | "issuer";
   is_payment_confirmed?: boolean;
+  reason_for_reject?: string;
+  rejected_blockchain_reference_id?: string;
+  remarks?: string;
 }
 
 export type token_orderPk = "id";
 export type token_orderId = token_order[token_orderPk];
-export type token_orderOptionalAttributes = "id" | "type" | "investment_type" | "issuer_entity_id" | "receiver_entity_id" | "individual_receiving_investor_id" | "token_offering_id" | "currency" | "currency_code" | "ordered_tokens" | "price_per_token" | "net_investment_value" | "fee" | "total_paid" | "payment_reference" | "status_id" | "is_active" | "created_by" | "updated_by" | "created_at" | "updated_at" | "bank_name" | "bank_account_name" | "swift_bic_no" | "iban_no" | "default_currency" | "default_currency_code" | "net_investment_value_in_euro" | "last_action_track_id" | "recived_amount_in_euro" | "fulfilled_by" | "is_payment_confirmed";
+export type token_orderOptionalAttributes = "id" | "type" | "investment_type" | "issuer_entity_id" | "receiver_entity_id" | "individual_receiving_investor_id" | "token_offering_id" | "currency" | "currency_code" | "ordered_tokens" | "price_per_token" | "net_investment_value" | "fee" | "total_paid" | "payment_reference" | "status_id" | "is_active" | "created_by" | "updated_by" | "created_at" | "updated_at" | "bank_name" | "bank_account_name" | "swift_bic_no" | "iban_no" | "default_currency" | "default_currency_code" | "net_investment_value_in_euro" | "last_action_track_id" | "recived_amount_in_euro" | "fulfilled_by" | "is_payment_confirmed" | "reason_for_reject" | "rejected_blockchain_reference_id" | "remarks";
 export type token_orderCreationAttributes = Optional<token_orderAttributes, token_orderOptionalAttributes>;
 
 export class token_order extends Model<token_orderAttributes, token_orderCreationAttributes> implements token_orderAttributes {
@@ -81,6 +84,9 @@ export class token_order extends Model<token_orderAttributes, token_orderCreatio
   recived_amount_in_euro?: number;
   fulfilled_by?: "admin" | "issuer";
   is_payment_confirmed?: boolean;
+  reason_for_reject?: string;
+  rejected_blockchain_reference_id?: string;
+  remarks?: string;
 
   // token_order belongsTo entity via issuer_entity_id
   issuer_entity!: entity;
@@ -291,6 +297,18 @@ export class token_order extends Model<token_orderAttributes, token_orderCreatio
       type: DataTypes.BOOLEAN,
       allowNull: true,
       defaultValue: false
+    },
+    reason_for_reject: {
+      type: DataTypes.TEXT,
+      allowNull: true
+    },
+    rejected_blockchain_reference_id: {
+      type: DataTypes.TEXT,
+      allowNull: true
+    },
+    remarks: {
+      type: DataTypes.TEXT,
+      allowNull: true
     }
   }, {
     sequelize,
