@@ -12,6 +12,8 @@ export const getTotalInvestmentQuery = (user_entity_id?: string) => {
   /* For Data */
   let baseQuery = `SELECT
     tof.issuer_entity_id AS issuer_entity_id,
+    en.legal_name AS issuer_name,
+    iss_ast.url AS issuer_logo_url,
     SUM(COALESCE(tor.net_investment_value_in_euro, 0)) AS overall_investment,
     COALESCE(
       ROUND(
@@ -40,6 +42,8 @@ export const getTotalInvestmentQuery = (user_entity_id?: string) => {
     ) AS percentage_change_till_today
   FROM
     token_offerings AS tof
+    INNER JOIN entities AS en ON tof.issuer_entity_id = en.id
+    LEFT JOIN assets AS iss_ast ON en.logo_asset_id = iss_ast.id
     LEFT JOIN token_orders AS tor ON tof.id = tor.token_offering_id
   WHERE
     tof.issuer_entity_id = '${user_entity_id}'
@@ -49,7 +53,9 @@ export const getTotalInvestmentQuery = (user_entity_id?: string) => {
     AND tor.type = 'subscription'
     AND tor.status_id = 5
   GROUP BY
-    tof.issuer_entity_id`;
+    tof.issuer_entity_id,
+    en.legal_name,
+    iss_ast.url`;
 
   return baseQuery;
 };

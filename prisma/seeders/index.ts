@@ -15,8 +15,8 @@ import {
   // master_token_offering_status,
   // master_ekc_status,
   // master_entity_investor_status,
-  // master_order_status,
-  master_transaction_status,
+  master_order_status,
+  // master_transaction_status,
 } from "@prisma/client";
 const prisma = new PrismaClient();
 import * as Seeds from "./seed";
@@ -171,17 +171,17 @@ const main = async () => {
     //   });
     // }
 
-    // if (seed.table === "master_order_status") {
-    //   seed.data.forEach((data: master_order_status) => {
-    //     upsertPromises.push(
-    //       prisma.master_order_status.upsert({
-    //         where: { id: data.id },
-    //         update: data,
-    //         create: data,
-    //       })
-    //     );
-    //   });
-    // }
+    if (seed.table === "master_order_status") {
+      seed.data.forEach((data: master_order_status) => {
+        upsertPromises.push(
+          prisma.master_order_status.upsert({
+            where: { id: data.id },
+            update: data,
+            create: data,
+          })
+        );
+      });
+    }
     // // fun offer agency
     // if (seed.table == "master_fund_agencies") {
     //   seed.data.forEach((data: master_fund_agencies) => {
@@ -195,17 +195,17 @@ const main = async () => {
     //   });
     // }
     //master_transaction_status
-    if (seed.table == "master_transaction_status") {
-      seed.data.forEach((data: master_transaction_status) => {
-        upsertPromises.push(
-          prisma.master_transaction_status.upsert({
-            where: { id: data.id },
-            update: data,
-            create: data,
-          })
-        );
-      });
-    }
+    // if (seed.table == "master_transaction_status") {
+    //   seed.data.forEach((data: master_transaction_status) => {
+    //     upsertPromises.push(
+    //       prisma.master_transaction_status.upsert({
+    //         where: { id: data.id },
+    //         update: data,
+    //         create: data,
+    //       })
+    //     );
+    //   });
+    // }
   });
 
   await Promise.all(upsertPromises);
