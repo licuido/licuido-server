@@ -115,6 +115,7 @@ const constructBaseQuery = async (
         tor.created_at AS creation_date,
         tor.net_investment_value AS amount_to_pay,
         tor.ordered_tokens AS token_ordered,
+        tof.symbol AS token_symbol,
         CASE
           WHEN tor.is_payment_confirmed = true
           AND tor.recived_amount_in_euro IS NOT NULL THEN tor.recived_amount_in_euro

@@ -43,7 +43,7 @@ export const masterOrderStatus: {
     },
     {
       id: 6,
-      name: "Redeemed",
+      name: "Burn",
       is_active: true,
       created_at: new Date(),
       updated_at: new Date(),
@@ -78,7 +78,7 @@ export const masterOrderStatus: {
     },
     {
       id: 11,
-      name: "Burn",
+      name: "Redeemed",
       is_active: true,
       created_at: new Date(),
       updated_at: new Date(),
