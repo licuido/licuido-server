@@ -69,8 +69,10 @@ export const getCurrentTokenInvestmentQuery = (
   let baseQuery = `SELECT
   tor.receiver_entity_id AS investor_entity_id,
   iss_ent.legal_name AS issuer_name,
+  iss_ast.url AS issuer_logo_url,
   tor.token_offering_id AS token_offering_id,
   tof.name AS token_name,
+  t_ast.url AS token_logo_url,
   tof.symbol AS token_symbol,
   tof.isin_number AS token_isin,
   tof.start_date AS token_start_date,
@@ -93,7 +95,9 @@ export const getCurrentTokenInvestmentQuery = (
 FROM
   token_orders AS tor
   INNER JOIN token_offerings AS tof ON tor.token_offering_id = tof.id
+  LEFT JOIN assets AS t_ast ON tof.logo_asset_id = t_ast.id
   INNER JOIN entities AS iss_ent ON tor.issuer_entity_id = iss_ent.id
+  LEFT JOIN assets AS iss_ast ON iss_ent.logo_asset_id = iss_ast.id
   INNER JOIN master_token_status AS mts ON tof.status_id = mts.id
 WHERE
   tor.receiver_entity_id = '${user_entity_id}'
@@ -101,11 +105,14 @@ GROUP BY
   tor.receiver_entity_id,
   tor.token_offering_id,
   iss_ent.legal_name,
+  iss_ast.url,
   tof.name,
+  t_ast.url,
   tof.isin_number,
   tof.start_date,
   tof.end_date,
   tof.status_id,
+  tof.symbol,
   mts.name
 ORDER BY
   total_holdings ASC 
