@@ -638,8 +638,8 @@ class TokenOrders {
           : "0.00";
       obj["percentage_change_from_yesterday"] =
         total_investment_result &&
-        total_investment_result[0]?.percentage_change_till_today
-          ? total_investment_result[0]?.percentage_change_till_today.toString()
+        total_investment_result[0]?.percentage_change_from_yesterday
+          ? total_investment_result[0]?.percentage_change_from_yesterday.toString()
           : "0";
       obj["circulating_supply"] =
         circulating_supply_result &&

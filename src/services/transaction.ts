@@ -1,7 +1,8 @@
 import { token_transaction, token_order } from "@models";
 import queries from "@queries";
-import { createTransaction } from "@types";
+import { createTransaction, updateTransaction } from "@types";
 import { sequelize } from "@utils";
+import { Transaction } from "sequelize";
 
 class TokenTransactions {
   /**
@@ -11,11 +12,15 @@ class TokenTransactions {
    * @throws {Error} Throws an error if there's an issue extracting parameters from the response.
    */
 
-  static async createTransactions(data: createTransaction): Promise<any> {
+  static async createTransactions(
+    data: createTransaction,
+    transaction?: Transaction
+  ): Promise<any> {
     try {
       const result = token_transaction.create(data, {
         raw: false,
         returning: true,
+        transaction,
       });
       return JSON.parse(JSON.stringify(result));
     } catch (error) {
@@ -36,7 +41,10 @@ class TokenTransactions {
   ): Promise<any> {
     try {
       const last_transaction = await token_transaction.findAll({
-        attributes: ["id", "created_at", "sender_balance"],
+        attributes: ["id", "created_at", "sender_balance", "unblock_token"],
+        where: {
+          status_id: 2,
+        },
         include: [
           {
             model: token_order,
@@ -51,7 +59,7 @@ class TokenTransactions {
           },
         ],
         order: [
-          ["created_at", "DESC"], // Order by start_date in descending order
+          ["updated_at", "DESC"], // Order by start_date in descending order
         ],
         limit: 1,
       });
@@ -72,6 +80,9 @@ class TokenTransactions {
     try {
       const last_transaction = await token_transaction.findAll({
         attributes: ["id", "created_at", "sender_balance", "total_supply"],
+        where: {
+          status_id: 2,
+        },
         include: [
           {
             model: token_order,
@@ -85,7 +96,7 @@ class TokenTransactions {
           },
         ],
         order: [
-          ["created_at", "DESC"], // Order by start_date in descending order
+          ["updated_at", "DESC"], // Order by start_date in descending order
         ],
         limit: 1,
       });
@@ -155,6 +166,33 @@ class TokenTransactions {
         rows: result,
         count: dataCount?.[0]?.count ?? 0,
       };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async UpdateTransactions(
+    {
+      options,
+      order_id,
+    }: {
+      options: updateTransaction;
+      order_id: string;
+    },
+    transaction?: Transaction
+  ): Promise<any> {
+    try {
+      return await token_transaction.update(
+        {
+          ...options,
+        },
+        {
+          where: {
+            order_id: order_id,
+          },
+          transaction,
+        }
+      );
     } catch (error) {
       throw error;
     }

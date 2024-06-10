@@ -7,7 +7,11 @@ import {
   qualifiedStatus,
   successCustomMessage,
 } from "@helpers";
-import { TokenOrders, TrackTokenOrderActions } from "@services";
+import {
+  TokenOrders,
+  TokenTransactions,
+  TrackTokenOrderActions,
+} from "@services";
 import {
   createTokenRedemptionOrderPayload,
   createTokenSubscriptionOrderPayload,
@@ -95,6 +99,59 @@ const createTokenSubscriptionOrders = async (
         },
         transaction
       );
+
+      // Get Last Transaction Against Investor
+      const lastTransacation =
+        await TokenTransactions.getLatestTransactionAgainstInvestor(
+          token_offering_id,
+          user_entity_id
+        );
+
+      // Get Token Total Supply
+      const totalSupply = await TokenTransactions.getTotalSupply(
+        token_offering_id
+      );
+
+      let insertParams: any = {
+        type: "mint",
+        order_id: tokenOrderId,
+        amount: ordered_tokens,
+        status_id: 1, // Pending
+        created_by: user_profile_id,
+        is_active: true,
+      };
+
+      // If first time transaction we can't add previous balance
+      if (lastTransacation?.length === 0) {
+        insertParams["sender_balance"] = 0;
+        insertParams["block_token"] = 0;
+        insertParams["unblock_token"] = 0;
+      }
+
+      // If already had a transaction we add previous balance
+      if (lastTransacation?.length > 0) {
+        let sender_balance = lastTransacation?.[0]?.sender_balance ?? 0;
+        let unblock_token = lastTransacation?.[0]?.unblock_token ?? 0;
+        insertParams["sender_balance"] = parseFloat(sender_balance);
+        insertParams["unblock_token"] = parseFloat(unblock_token);
+        insertParams["block_token"] = 0;
+      }
+
+      //note : later we need to add from block chain network
+
+      // If there is no total supply assign order token
+      if (totalSupply?.length === 0) {
+        insertParams["total_supply"] = 0;
+      }
+
+      // If there is total supply assign sum to total supply
+      if (totalSupply?.length > 0) {
+        const total_supply = totalSupply?.[0]?.total_supply ?? 0;
+        insertParams["total_supply"] = total_supply;
+      }
+
+      // Create Token Transactions Table Record
+      await TokenTransactions.createTransactions(insertParams, transaction);
 
       // Track Actions Of Order - Insert Track Record
       const track_id = await TrackTokenOrderActions.create(
@@ -227,6 +284,63 @@ const createTokenRedemptionOrders = async (
         },
         transaction
       );
+
+      // Get Last Transaction
+      const lastTransacation =
+        await TokenTransactions.getLatestTransactionAgainstInvestor(
+          token_offering_id,
+          user_entity_id
+        );
+
+      // Get Token Total Supply
+      const totalSupply = await TokenTransactions.getTotalSupply(
+        token_offering_id
+      );
+
+      let insertParams: any = {
+        type: "burn",
+        order_id: tokenOrderId,
+        amount: ordered_tokens,
+        status_id: 1,
+        created_by: user_profile_id,
+        is_active: true,
+      };
+
+      // if first time transaction we can't add previous balance
+      if (lastTransacation?.length === 0) {
+        return {
+          code: 500,
+          customMessage: "You don't have a token to burn",
+          data: {},
+        };
+      }
+
+      if (lastTransacation?.length > 0) {
+        let sender_balance = lastTransacation?.[0]?.sender_balance ?? 0;
+
+        if (parseFloat(sender_balance) < ordered_tokens) {
+          return {
+            code: 500,
+            customMessage: `your balance is ${sender_balance} but you try to burn ${ordered_tokens}`,
+            data: {},
+          };
+        }
+        let unblock_token = lastTransacation?.[0]?.unblock_token ?? 0;
+
+        insertParams["sender_balance"] = parseFloat(sender_balance);
+        insertParams["unblock_token"] =
+          parseFloat(unblock_token) - ordered_tokens;
+        insertParams["block_token"] = ordered_tokens;
+      }
+
+      // Total Supply
+      if (totalSupply?.length > 0) {
+        const total_supply = totalSupply?.[0]?.total_supply ?? 0;
+        insertParams["total_supply"] = parseFloat(total_supply ?? 0);
+      }
+
+      // Create Token Transactions Table Record
+      await TokenTransactions.createTransactions(insertParams, transaction);
 
       // Track Actions Of Order - Insert Track Record
       const track_id = await TrackTokenOrderActions.create(
@@ -690,6 +804,17 @@ const cancelOrder = async ({
       transaction
     );
 
+    await TokenTransactions.UpdateTransactions(
+      {
+        options: {
+          status_id: 3, // Failed
+          updated_by: user_profile_id,
+        },
+        order_id: id,
+      },
+      transaction
+    );
+
     // Track Actions Of Order Cancel
     const track_id = await TrackTokenOrderActions.create(
       {
@@ -756,6 +881,20 @@ const confirmPayment = async ({
       },
       transaction
     );
+
+    // If Reject By issuer
+    if (status_id === 8) {
+      await TokenTransactions.UpdateTransactions(
+        {
+          options: {
+            status_id: 3, // Failed
+            updated_by: user_profile_id,
+          },
+          order_id: id,
+        },
+        transaction
+      );
+    }
 
     // Track Actions Of Order Payment Confirm / Reject
     const track_id = await TrackTokenOrderActions.create(
@@ -837,6 +976,20 @@ const sendPayment = async ({
       },
       transaction
     );
+
+    // If Reject By issuer
+    if (status_id === 8) {
+      await TokenTransactions.UpdateTransactions(
+        {
+          options: {
+            status_id: 3, // Failed
+            updated_by: user_profile_id,
+          },
+          order_id: id,
+        },
+        transaction
+      );
+    }
 
     // Track Actions Of Order Payment Send / Reject
     const track_id = await TrackTokenOrderActions.create(
@@ -1079,6 +1232,18 @@ const rejectOrder = async ({
           remarks,
         },
         id: id,
+      },
+      transaction
+    );
+
+    // If Reject By issuer
+    await TokenTransactions.UpdateTransactions(
+      {
+        options: {
+          status_id: 3, // Failed
+          updated_by: user_profile_id,
+        },
+        order_id: id,
       },
       transaction
     );
