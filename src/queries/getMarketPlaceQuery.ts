@@ -57,7 +57,7 @@ export const getMarketPlaceListingQuery = (
   //For fundStatus
   let fundStatusFilter = ``;
   if (fundStatus && fundStatus?.length > 0) {
-    fundStatusFilter = ` AND mts.name IN (${fundStatus
+    fundStatusFilter = ` WHERE master_token_status_name IN (${fundStatus
       ?.map((value: any) => `'${value}'`)
       .join(",")})`;
   }
@@ -83,13 +83,17 @@ export const getMarketPlaceListingQuery = (
         ass.url as logo_assets_url,
         ass.type as logo_assets_type,
         mtt.name as master_token_type_name,
-        mts.name as master_token_status_name,
+        CASE
+          WHEN ts.start_date > CURRENT_DATE THEN 'Upcoming'
+          WHEN order_count > 0 THEN 'Invested'
+          ELSE mts.name
+        END AS master_token_status_name,
         array_to_string(array_agg(DISTINCT mfa.name), ',') AS agency_name,
         array_to_string(array_agg(DISTINCT mfar.name), ',') AS rating_name,
         ts.is_all_countries_allowed,
         array_agg(DISTINCT toac.allowed_country_id) AS allowed_country_ids,
-        ei.status_id as is_qualified_status_id,
-        meis.name as investor_status
+        COALESCE(ei_sub.is_qualified_status_id, NULL) as is_qualified_status_id,
+        COALESCE(ei_sub.investor_status, NULL) as investor_status
       FROM
         token_offerings AS ts
         INNER JOIN assets AS ass ON ts.logo_asset_id = ass.id
@@ -99,24 +103,45 @@ export const getMarketPlaceListingQuery = (
         LEFT JOIN master_fund_agencies AS mfa ON ofr.agency_id = mfa.id
         LEFT JOIN master_fund_agency_ratings AS mfar ON ofr.rating_id = mfar.id
         LEFT JOIN token_offering_allowed_countries AS toac ON ts.id = toac.token_offering_id
-        LEFT JOIN entity_investors AS ei ON ts.issuer_entity_id = ei.issuer_entity_id
-        LEFT JOIN master_entity_investor_status AS meis ON ei.status_id = meis.id
+         LEFT JOIN LATERAL (
+          SELECT
+          ei.status_id as is_qualified_status_id,
+          meis.name as investor_status
+        FROM
+          entity_investors ei
+          INNER JOIN master_entity_investor_status meis ON ei.status_id = meis.id
+        WHERE
+          ei.issuer_entity_id = ts.issuer_entity_id
           AND '${user_entity_id}' = ei.investor_entity_id
+        LIMIT
+          1
+      ) ei_sub ON true
+      LEFT JOIN LATERAL (
+        SELECT
+          COUNT(*) AS order_count
+        FROM
+          token_orders tor
+        WHERE
+          tor.receiver_entity_id = '${user_entity_id}'
+          AND tor.token_offering_id = ts.id
+          AND tor.status_id = 5
+      ) order_count_sub ON true
       WHERE ts.is_active = true AND ts.offer_status_id = 1 ${searchFilter} ${tokenTypeIdFilter} ${currencyCodeFilter} ${investorStatusFilter}
-         ${countryFilter} ${fundStatusFilter}
+         ${countryFilter}
       GROUP BY
         ts.id,
         ass.url,
         ass.type,
         mtt.name,
         mts.name,
-        ei.status_id,
-        meis.name
+        ei_sub.is_qualified_status_id,
+        ei_sub.investor_status,
+        order_count_sub.order_count
     )
   SELECT
     *
   FROM
-    cte
+    cte ${fundStatusFilter}
   ORDER BY
     CASE
       WHEN is_all_countries_allowed IS TRUE
