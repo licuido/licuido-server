@@ -20,7 +20,7 @@ import { createTokenOffering, updateTokenOffering } from "@types";
 import { sequelize } from "@utils";
 import { ENTITY_INVESTOR_STATUS } from "helpers/constants";
 // import { sequelize } from "@utils";
-import { Op } from "sequelize";
+import { Op, Transaction } from "sequelize";
 // import moment from "moment";
 
 class TokenOfferings {
@@ -635,6 +635,24 @@ class TokenOfferings {
         rows: result,
         count: dataCount?.length ?? 0,
       };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async updateTokenOffering(
+    options: updateTokenOffering,
+    token_id: string,
+    transaction: Transaction
+  ): Promise<any> {
+    try {
+      // Update Token Offering Meta Data
+      return await token_offering.update(options, {
+        where: {
+          id: token_id,
+        },
+        transaction,
+      });
     } catch (error) {
       throw error;
     }

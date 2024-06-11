@@ -24,7 +24,7 @@ export const getAllTokenOrderGraphQuery = (
   // For Date Filters
   let dateFilter = ``;
   if (from_date && to_date) {
-    dateFilter = ` AND tor.created_at BETWEEN '${from_date}' AND '${to_date}'`;
+    dateFilter = ` AND tor.updated_at BETWEEN '${from_date}' AND '${to_date}'`;
   }
 
   /* For Data */
@@ -46,7 +46,7 @@ export const getAllTokenOrderGraphQuery = (
     INNER JOIN token_offerings AS tof ON tor.token_offering_id = tof.id
   WHERE
     tor.issuer_entity_id = '${user_entity_id}'
-    AND tor.status_id IN (5, 6) 
+    AND tor.status_id IN (5, 11) 
     ${dateFilter} 
   GROUP BY
     tor.token_offering_id,

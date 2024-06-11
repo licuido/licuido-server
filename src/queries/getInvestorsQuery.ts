@@ -54,7 +54,10 @@ export const getAllInvestorsQuery = (
     statusFilter = `  AND (
         CAST(
           CASE
-            WHEN eni.status_id IS NOT NULL AND eni.issuer_entity_id = '${user_entity_id}' THEN eni.status_id
+            WHEN eni.status_id IS NOT NULL AND (
+            eni.issuer_entity_id = '${user_entity_id}'
+            OR eni.status_id IS NULL
+          ) THEN eni.status_id
             ELSE 1
           END AS INT
         ) IN (${status_filters?.join(",")})
@@ -84,18 +87,27 @@ export const getAllInvestorsQuery = (
       mwt.name AS wallet_type_name,
       ue.created_at AS creation_date,
       CASE
-          WHEN eni.status_id IS NOT NULL AND eni.issuer_entity_id = '${user_entity_id}' THEN eni.id
+          WHEN eni.status_id IS NOT NULL AND (
+            eni.issuer_entity_id = '${user_entity_id}'
+            OR eni.status_id IS NULL
+          ) THEN eni.id
           ELSE null
         END  AS entity_investor_id,
       CAST(
         CASE
-          WHEN eni.status_id IS NOT NULL AND eni.issuer_entity_id = '${user_entity_id}' THEN eni.status_id
+          WHEN eni.status_id IS NOT NULL AND (
+            eni.issuer_entity_id = '${user_entity_id}'
+            OR eni.status_id IS NULL
+          ) THEN eni.status_id
           ELSE 1
         END AS INT
       ) AS investor_status_id,
       CAST(
         CASE
-          WHEN eni.status_id IS NOT NULL AND eni.issuer_entity_id = '${user_entity_id}' THEN meis.name
+          WHEN eni.status_id IS NOT NULL AND (
+            eni.issuer_entity_id = '${user_entity_id}'
+            OR eni.status_id IS NULL
+          ) THEN meis.name
           ELSE 'Pending'
         END AS VARCHAR
       ) AS investor_status_name
@@ -111,6 +123,10 @@ export const getAllInvestorsQuery = (
       LEFT JOIN customer_wallets AS cw ON en.id = cw.investor_entity_id
       LEFT JOIN master_wallet_types AS mwt ON cw.wallet_type_id = mwt.id
       LEFT JOIN entity_investors AS eni ON en.id = eni.investor_entity_id
+      AND (
+        eni.issuer_entity_id = '${user_entity_id}'
+        OR eni.issuer_entity_id IS NULL
+      )
       LEFT JOIN master_entity_investor_status AS meis ON eni.status_id = meis.id
     WHERE
       ue.entity_id = ${entity_type_id}
@@ -128,7 +144,7 @@ FROM
 ORDER BY
   creation_date DESC 
   ${limitStatment}`;
-
+  console.log("baseQuery", baseQuery);
   return baseQuery;
 };
 
@@ -179,7 +195,10 @@ export const getAllInvestorsCountQuery = (
     statusFilter = `  AND (
         CAST(
           CASE
-            WHEN eni.status_id IS NOT NULL AND eni.issuer_entity_id = '${user_entity_id}' THEN eni.status_id
+            WHEN eni.status_id IS NOT NULL AND (
+            eni.issuer_entity_id = '${user_entity_id}'
+            OR eni.status_id IS NULL
+          ) THEN eni.status_id
             ELSE 1
           END AS INT
         ) IN (${status_filters?.join(",")})
@@ -209,18 +228,27 @@ export const getAllInvestorsCountQuery = (
       mwt.name AS wallet_type_name,
       ue.created_at AS creation_date,
       CASE
-          WHEN eni.status_id IS NOT NULL AND eni.issuer_entity_id = '${user_entity_id}' THEN eni.id
+          WHEN eni.status_id IS NOT NULL AND (
+            eni.issuer_entity_id = '${user_entity_id}'
+            OR eni.status_id IS NULL
+          ) THEN eni.id
           ELSE null
         END  AS entity_investor_id,
       CAST(
         CASE
-          WHEN eni.status_id IS NOT NULL AND eni.issuer_entity_id = '${user_entity_id}' THEN eni.status_id
+          WHEN eni.status_id IS NOT NULL AND (
+            eni.issuer_entity_id = '${user_entity_id}'
+            OR eni.status_id IS NULL
+          ) THEN eni.status_id
           ELSE 1
         END AS INT
       ) AS investor_status_id,
       CAST(
         CASE
-          WHEN eni.status_id IS NOT NULL AND eni.issuer_entity_id = '${user_entity_id}' THEN meis.name
+          WHEN eni.status_id IS NOT NULL AND (
+            eni.issuer_entity_id = '${user_entity_id}'
+            OR eni.status_id IS NULL
+          ) THEN meis.name
           ELSE 'Pending'
         END AS VARCHAR
       ) AS investor_status_name
@@ -235,7 +263,11 @@ export const getAllInvestorsCountQuery = (
       LEFT JOIN assets AS ast ON en.logo_asset_id = ast.id
       LEFT JOIN customer_wallets AS cw ON en.id = cw.investor_entity_id
       LEFT JOIN master_wallet_types AS mwt ON cw.wallet_type_id = mwt.id
-      LEFT JOIN entity_investors AS eni ON en.id = eni.investor_entity_id
+      LEFT JOIN entity_investors AS eni ON en.id = eni.investor_entity_id 
+      AND (
+        eni.issuer_entity_id = '${user_entity_id}'
+        OR eni.issuer_entity_id IS NULL
+      )
       LEFT JOIN master_entity_investor_status AS meis ON eni.status_id = meis.id
     WHERE
       ue.entity_id = ${entity_type_id}

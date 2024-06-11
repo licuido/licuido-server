@@ -56,8 +56,8 @@ WHERE
     AND start_time <= CURRENT_TIME
   )
 ORDER BY
-  start_date DESC,
-  start_time DESC
+  tv.start_date DESC,
+  tv.start_time DESC
 LIMIT
   1`;
 
@@ -194,93 +194,166 @@ export const getTokenCirculatingSupplyQuery = (token_offering_id?: string) => {
                  */
 
   /* For Data */
-  let baseQuery = `SELECT
-  tof.id AS token_offering_id,
-  COALESCE(tof.circulating_supply_count, 0) AS circulating_supply,
-  CASE
-    WHEN v.valuation_price IS NOT NULL
-    AND v.valuation_price != 0 THEN COALESCE(tof.circulating_supply_count, 0) * v.valuation_price
-    ELSE COALESCE(tof.circulating_supply_count, 0) * tof.offering_price
-  END AS circulating_supply_amount
-FROM
-  token_offerings AS tof
-  LEFT JOIN LATERAL (
+  let baseQuery = `WITH
+  vas_cs AS (
     SELECT
-      tv.valuation_price
+      tof.id AS token_offering_id,
+      COALESCE(
+        (
+          SELECT
+            tt.total_supply
+          FROM
+            token_transactions AS tt
+            INNER JOIN token_orders AS tor ON tt.order_id = tor.id
+          WHERE
+            tor.token_offering_id = tof.id
+            AND tt.status_id IN (1, 2)
+          ORDER BY
+            tt.updated_at DESC
+          LIMIT
+            1
+        ), 0
+      ) AS circulating_supply,
+      COALESCE(
+        (
+          SELECT
+            tv.valuation_price
+          FROM
+            token_valuations AS tv
+          WHERE
+            tv.token_offering_id = tof.id
+            AND (
+              tv.start_date < CURRENT_DATE
+              OR (
+                tv.start_date = CURRENT_DATE
+                AND tv.start_time <= CURRENT_TIME
+              )
+            )
+          ORDER BY
+            tv.start_date DESC,
+            tv.start_time DESC
+          LIMIT
+            1
+        ), tof.offering_price
+      ) AS valuation_price,
+      COALESCE(
+        (
+          SELECT
+            SUM(tt.block_token)
+          FROM
+            token_transactions AS tt
+            INNER JOIN token_orders AS tor ON tt.order_id = tor.id
+          WHERE
+            tor.token_offering_id = tof.id
+            AND tt.status_id IN (1, 2)
+        ),
+        0
+      ) AS pending_token
     FROM
-      token_valuations AS tv
+      token_offerings AS tof
     WHERE
-      tv.token_offering_id = tof.id
-      AND (
-        tv.start_date < CURRENT_DATE
-        OR (
-          tv.start_date = CURRENT_DATE
-          AND start_time <= CURRENT_TIME
-        )
-      )
-    ORDER BY
-      tv.start_date DESC,
-      tv.start_time DESC
-    LIMIT
-      1
-  ) v ON true
-WHERE
-  tof.id = '${token_offering_id}'
-  AND tof.is_active = true
-  AND tof.status_id = 1
-  AND tof.offer_status_id = 1
+      tof.id = '${token_offering_id}'
+      AND tof.is_active = true
+      AND tof.status_id = 1
+      AND tof.offer_status_id = 1
+  )
+SELECT
+  token_offering_id,
+  circulating_supply,
+  pending_token,
+  (circulating_supply * valuation_price) AS circulating_supply_amount,
+  (pending_token * valuation_price) AS pending_redemption_amount
+FROM
+  vas_cs
   `;
 
   return baseQuery;
 };
 
-export const getTokenPendingRedemptionQuery = (token_offering_id?: string) => {
-  /* Get Pending Redemption Graph Query  */
+export const getTokenCirculatingSupplyBefore1dayQuery = (
+  token_offering_id?: string,
+  date?: string
+) => {
+  /* Get Circulating Supply Before 1 day Query  */
 
   /* In Where Condition
                     
                    */
 
   /* For Data */
-  let baseQuery = `SELECT
-  tor.token_offering_id AS token_offering_id,
-  SUM(COALESCE(tor.ordered_tokens, 0)) AS pending_redemption,
-  SUM(
-    CASE
-      WHEN v.valuation_price IS NOT NULL
-      AND v.valuation_price != 0 THEN COALESCE(tor.ordered_tokens, 0) * v.valuation_price
-      ELSE COALESCE(tor.ordered_tokens, 0) * tof.offering_price
-    END
-  ) AS pending_redemption_amount
-FROM
-  token_orders AS tor
-  INNER JOIN token_offerings AS tof ON tor.token_offering_id = tof.id
-  LEFT JOIN LATERAL (
+  let baseQuery = `WITH
+  vas_cs AS (
     SELECT
-      tv.valuation_price
+      tof.id AS token_offering_id,
+      COALESCE(
+        (
+          SELECT
+            tt.total_supply
+          FROM
+            token_transactions AS tt
+            INNER JOIN token_orders AS tor ON tt.order_id = tor.id
+          WHERE
+            tor.token_offering_id = tof.id
+            AND tt.status_id IN (1, 2)
+            AND tt.updated_at < '${date}'
+          ORDER BY
+            tt.updated_at DESC
+          LIMIT
+            1
+        ), 0
+      ) AS circulating_supply,
+      COALESCE(
+        (
+          SELECT
+            tv.valuation_price
+          FROM
+            token_valuations AS tv
+          WHERE
+            tv.token_offering_id = tof.id
+            AND (
+              tv.start_date < CURRENT_DATE - INTERVAL '1 day'
+              OR (
+                tv.start_date = CURRENT_DATE - INTERVAL '1 day'
+                AND tv.start_time <= CURRENT_TIME
+              )
+            )
+          ORDER BY
+            tv.start_date DESC,
+            tv.start_time DESC
+          LIMIT
+            1
+        ), tof.offering_price
+      ) AS valuation_price,
+      COALESCE(
+        (
+          SELECT
+            SUM(tt.block_token)
+          FROM
+            token_transactions AS tt
+            INNER JOIN token_orders AS tor ON tt.order_id = tor.id
+          WHERE
+            tor.token_offering_id = tof.id
+            AND tt.status_id IN (1, 2)
+            AND tt.updated_at < '${date}'
+        ),
+        0
+      ) AS pending_token
     FROM
-      token_valuations AS tv
+      token_offerings AS tof
     WHERE
-      tv.token_offering_id = tof.id
-      AND (
-        tv.start_date < CURRENT_DATE
-        OR (
-          tv.start_date = CURRENT_DATE
-          AND start_time <= CURRENT_TIME
-        )
-      )
-    ORDER BY
-      tv.start_date DESC,
-      tv.start_time DESC
-    LIMIT
-      1
-  ) v ON true
-WHERE
-  tor.token_offering_id = '${token_offering_id}'
-  AND tor.type = 'redemption'
-  AND tor.status_id NOT IN (6, 7, 8, 11)
-GROUP BY
-  tor.token_offering_id
+      tof.id = '${token_offering_id}'
+      AND tof.is_active = true
+      AND tof.status_id = 1
+      AND tof.offer_status_id = 1
+  )
+SELECT
+  token_offering_id,
+  circulating_supply,
+  pending_token,
+  (circulating_supply * valuation_price) AS circulating_supply_amount,
+  (pending_token * valuation_price) AS pending_redemption_amount
+FROM
+  vas_cs
     `;
 
   return baseQuery;
@@ -393,7 +466,7 @@ export const getByInvestmentAmountQuery = (
   let baseQuery = `WITH
   vas_id_ia AS (
     SELECT
-      SUM(
+      COALESCE(SUM(
         CASE
           WHEN tor.type = 'subscription'
           AND tor.status_id = 5 THEN COALESCE(tor.net_investment_value_in_euro, 0)
@@ -405,7 +478,7 @@ export const getByInvestmentAmountQuery = (
           AND tor.status_id = 11 THEN COALESCE(tor.net_investment_value_in_euro, 0)
           ELSE 0
         END
-      ) net_investment,
+      ), 0) net_investment,
       COUNT (DISTINCT(tor.receiver_entity_id)) AS investor_count,
       mc.name AS country_name
     FROM

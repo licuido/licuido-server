@@ -35,6 +35,7 @@ const createPersonBody = Schema.object()
   .prop("mobile_no", Schema.string())
   .prop("position_id", Schema.number())
   .prop("contact_email", Schema.string())
+  .prop("investor_type_id", Schema.number())
   .prop("identity", Schema.array())
   .prop("deletedIdentity", Schema.array())
   .valueOf() as JSONSchema;

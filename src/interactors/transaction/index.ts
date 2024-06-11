@@ -6,6 +6,7 @@ import {
   TrackTokenOrderActions,
 } from "@services";
 import { updateTokenOffering } from "@types";
+import { sequelize } from "@utils";
 
 const mintToken = async (params: any) => {
   try {
@@ -18,7 +19,6 @@ const mintToken = async (params: any) => {
     const {
       receiver_entity_id,
       token_offering_id,
-      total_paid,
       ordered_tokens,
       type,
       status_id,
@@ -50,76 +50,89 @@ const mintToken = async (params: any) => {
       token_offering_id
     );
 
-    let inserParams: any = {
-      type: "mint",
-      order_id,
-      amount: total_paid,
+    let updateParams: any = {
       status_id: 2,
-      created_by: user_profile_id,
+      updated_by: user_profile_id,
       is_active: true,
     };
 
     //note : later we need to add total_supply
 
-    //if first time transaction we can't add previouse balance
+    // If first time transaction we can't add previous balance
     if (lastTransacation?.length === 0) {
-      inserParams["sender_balance"] = parseFloat(ordered_tokens);
-      inserParams["unblock_token"] = parseFloat(ordered_tokens);
-      inserParams["block_token"] = 0;
+      updateParams["sender_balance"] = parseFloat(ordered_tokens);
+      updateParams["unblock_token"] = parseFloat(ordered_tokens);
+      updateParams["block_token"] = 0;
     }
 
-    //if already had atransaction we add previouse balance
-    if (lastTransacation?.length !== 0) {
+    //if already had atransaction we add previous balance
+    if (lastTransacation?.length > 0) {
       let sender_balance = lastTransacation?.[0]?.sender_balance ?? 0;
-
-      inserParams["sender_balance"] =
+      let unblock_token = lastTransacation?.[0]?.unblock_token ?? 0;
+      updateParams["sender_balance"] =
         parseFloat(ordered_tokens) + parseFloat(sender_balance);
-      inserParams["unblock_token"] =
-        parseFloat(ordered_tokens) + parseFloat(sender_balance);
-      inserParams["block_token"] = 0;
+      updateParams["unblock_token"] =
+        parseFloat(ordered_tokens) + parseFloat(unblock_token);
+      updateParams["block_token"] = 0;
     }
 
     //note : later we need to add from block chain network
 
     //if there is no total supply assign order token
     if (totalSupply?.length === 0) {
-      inserParams["total_supply"] = parseFloat(ordered_tokens);
+      updateParams["total_supply"] = parseFloat(ordered_tokens);
     }
 
     //if there is total supply assign sum to total supply
-    if (totalSupply?.length !== 0) {
+    if (totalSupply?.length > 0) {
       const total_supply = totalSupply?.[0]?.total_supply ?? 0;
-      inserParams["total_supply"] =
+      updateParams["total_supply"] =
         parseFloat(ordered_tokens) + parseFloat(total_supply ?? 0);
     }
 
-    //create transaction
-    await TokenTransactions.createTransactions(inserParams).then(async () => {
-      // Update Circulating Supply count
-      await TokenOfferings.update(
+    // create Sequelize transaction
+    await sequelize.transaction(async (transaction) => {
+      await TokenTransactions.UpdateTransactions(
         {
-          circulating_supply_count: inserParams?.total_supply ?? 0,
+          options: updateParams,
+          order_id,
+        },
+        transaction
+      );
+
+      // Update Circulating Supply count
+      await TokenOfferings.updateTokenOffering(
+        {
+          circulating_supply_count: updateParams?.total_supply ?? 0,
           updated_by: user_profile_id,
         } as updateTokenOffering,
-        token_offering_id
+        token_offering_id,
+        transaction
+      );
+
+      const track_id = await TrackTokenOrderActions.create(
+        {
+          user_profile_id,
+          user_entity_id,
+          action_status_id: 5,
+          is_active: true,
+          created_by: user_profile_id,
+        },
+        transaction
       );
 
       //update order status
-      await TokenOrders.update({
-        options: {
-          status_id: 5,
-          updated_by: user_profile_id,
+      await TokenOrders.update(
+        {
+          options: {
+            status_id: 5,
+            updated_by: user_profile_id,
+            last_action_track_id: track_id,
+          },
+          id: order_id,
         },
-        id: order_id,
-      });
-
-      await TrackTokenOrderActions.create({
-        user_profile_id,
-        user_entity_id,
-        action_status_id: 5,
-        is_active: true,
-        created_by: user_profile_id,
-      });
+        transaction
+      );
     });
 
     return {
@@ -140,13 +153,8 @@ const burnToken = async (params: any) => {
       token_order_id: order_id,
     });
 
-    const {
-      receiver_entity_id,
-      token_offering_id,
-      ordered_tokens,
-      type,
-      net_investment_value,
-    } = tokenOrders;
+    const { receiver_entity_id, token_offering_id, ordered_tokens, type } =
+      tokenOrders;
 
     //validate order type is subscription
     if (type !== "redemption") {
@@ -162,17 +170,14 @@ const burnToken = async (params: any) => {
         receiver_entity_id
       );
 
-    // get totalsupply
+    // get total supply
     const totalSupply = await TokenTransactions.getTotalSupply(
       token_offering_id
     );
 
-    let inserParams: any = {
-      type: "burn",
-      order_id,
-      amount: net_investment_value,
+    let updateParams: any = {
       status_id: 2,
-      created_by: user_profile_id,
+      updated_by: user_profile_id,
       is_active: true,
     };
 
@@ -187,8 +192,9 @@ const burnToken = async (params: any) => {
     }
 
     //if already had atransaction we add previouse balance
-    if (lastTransacation?.length !== 0) {
+    if (lastTransacation?.length > 0) {
       let sender_balance = lastTransacation?.[0]?.sender_balance ?? 0;
+      let unblock_token = lastTransacation?.[0]?.unblock_token ?? 0;
 
       if (parseFloat(sender_balance) < parseFloat(ordered_tokens)) {
         return {
@@ -197,47 +203,57 @@ const burnToken = async (params: any) => {
         };
       }
 
-      inserParams["sender_balance"] =
+      updateParams["sender_balance"] =
         parseFloat(sender_balance) - parseFloat(ordered_tokens);
-      inserParams["unblock_token"] =
-        parseFloat(sender_balance) - parseFloat(ordered_tokens);
-      inserParams["block_token"] = parseFloat(ordered_tokens);
+      updateParams["unblock_token"] =
+        parseFloat(unblock_token) - parseFloat(ordered_tokens);
+      updateParams["block_token"] = 0;
     }
 
     //note : later we need to add from block chain network
 
     //if there is total supply assign sum to total supply
-    if (totalSupply?.length !== 0) {
+    if (totalSupply?.length > 0) {
       const total_supply = totalSupply?.[0]?.total_supply ?? 0;
-      inserParams["total_supply"] =
+      updateParams["total_supply"] =
         parseFloat(total_supply ?? 0) - parseFloat(ordered_tokens);
     }
 
-    //create transaction
-    await TokenTransactions.createTransactions(inserParams).then(async () => {
-      // Update Circulating Supply count
-      await TokenOfferings.update(
+    // create Sequelize transaction
+    await sequelize.transaction(async (transaction) => {
+      await TokenTransactions.UpdateTransactions(
         {
-          circulating_supply_count: inserParams?.total_supply ?? 0,
+          options: updateParams,
+          order_id,
+        },
+        transaction
+      );
+      // Update Circulating Supply count
+      await TokenOfferings.updateTokenOffering(
+        {
+          circulating_supply_count: updateParams?.total_supply ?? 0,
           updated_by: user_profile_id,
         } as updateTokenOffering,
-        token_offering_id
+        token_offering_id,
+        transaction
       );
-      //update order status
-      await TokenOrders.update({
-        options: {
-          status_id: 11,
-          updated_by: user_profile_id,
-        },
-        id: order_id,
-      });
 
-      await TrackTokenOrderActions.create({
+      const track_id = await TrackTokenOrderActions.create({
         user_profile_id,
         user_entity_id,
         action_status_id: 11,
         is_active: true,
         created_by: user_profile_id,
+      });
+
+      // update order status
+      await TokenOrders.update({
+        options: {
+          status_id: 11,
+          updated_by: user_profile_id,
+          last_action_track_id: track_id,
+        },
+        id: order_id,
       });
     });
 
