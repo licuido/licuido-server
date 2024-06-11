@@ -232,7 +232,8 @@ const createTokenOfferings = async (options: createTokenOfferingPayload) => {
       iban_no,
       token_type_id,
       is_active: true,
-      offer_status_id: 3,
+      offer_status_id: 1 /* After admin module comes need to put status as yet to be deployed
+      , after deployemnet request goes to admin, admin will deploy token*/,
       projected_rate_return,
       payback_period,
       payback_period_type,
