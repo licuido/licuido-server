@@ -150,6 +150,7 @@ class TokenOfferings {
         },
         attributes: [
           "id",
+          "issuer_entity_id",
           "name",
           "description",
           "isin_number",
