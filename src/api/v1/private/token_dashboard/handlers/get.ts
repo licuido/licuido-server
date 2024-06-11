@@ -12,14 +12,6 @@ export async function GET_VALUATION_GRAPH(
     /* -----------  MAPPER ----------- */
     const { entity_id, user_entity_id, ...rest } = queryRequestInfo(request);
 
-    if (entity_id !== 3) {
-      return handleResponse(request, reply, responseType?.FORBIDDEN, {
-        error: {
-          message: "Only Issuer can get valuation graph",
-        },
-      });
-    }
-
     /* -----------  INTERACTOR ----------- */
     const result = await TokenOfferings.getValuationGraph({
       user_entity_id,

@@ -1,5 +1,5 @@
 import { Logger } from "@helpers";
-import { Asset, Entities } from "@services";
+import { Asset, Entities, UserProfile } from "@services";
 import { createEntity } from "@types";
 import { entityTypeMaster } from "helpers/constants";
 
@@ -49,6 +49,11 @@ const createBussinessDetails = async (options: createEntity) => {
       });
       asset_id = asset?.[0]?.dataValues?.id;
     }
+
+    await UserProfile.upsertPersonInfo({
+      id: contact_profile_id,
+      investor_type_id: investor_type_id,
+    });
 
     const data = await Entities.upsert({
       ...options,
