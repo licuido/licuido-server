@@ -781,6 +781,7 @@ class TokenOrders {
     token_offering_id?: string;
   }): Promise<any> {
     try {
+      let date = moment().subtract(1, "days").endOf("day").toISOString();
       // For Token Summary
       const [token_status_result]: any[] = await sequelize.query(
         queries.getTokenStatusQuery(token_offering_id)
@@ -789,10 +790,14 @@ class TokenOrders {
       const [circulating_supply_result]: any[] = await sequelize.query(
         queries.getTokenCirculatingSupplyQuery(token_offering_id)
       );
-      // For Pending Redemption Data
-      const [pending_redemption_result]: any[] = await sequelize.query(
-        queries.getTokenPendingRedemptionQuery(token_offering_id)
-      );
+      // For Token CS Before 1 Day
+      const [circulating_supply_result_before_1_day]: any[] =
+        await sequelize.query(
+          queries.getTokenCirculatingSupplyBefore1dayQuery(
+            token_offering_id,
+            date
+          )
+        );
 
       // For Recent Activities Data
       const [recent_activities_result]: any[] = await sequelize.query(
@@ -801,44 +806,52 @@ class TokenOrders {
 
       const obj: any = {};
 
-      obj["token_status_result"] =
-        token_status_result && token_status_result?.[0]
-          ? token_status_result?.[0]
-          : {};
-
+      obj["token_status_result"] = token_status_result?.[0] || {};
       obj["circulating_supply"] =
-        circulating_supply_result &&
-        circulating_supply_result[0]?.circulating_supply
-          ? circulating_supply_result[0]?.circulating_supply.toString()
-          : "0";
+        parseFloat(circulating_supply_result?.[0]?.circulating_supply) || 0;
       obj["circulating_supply_amount"] =
-        circulating_supply_result &&
-        circulating_supply_result[0]?.circulating_supply_amount
-          ? circulating_supply_result[0]?.circulating_supply_amount.toString()
-          : "0.00";
+        parseFloat(circulating_supply_result?.[0]?.circulating_supply_amount) ||
+        0;
       obj["pending_redemption"] =
-        pending_redemption_result &&
-        pending_redemption_result[0]?.pending_redemption
-          ? pending_redemption_result[0]?.pending_redemption.toString()
-          : "0";
+        parseFloat(circulating_supply_result?.[0]?.pending_token) || 0;
       obj["pending_redemption_amount"] =
-        pending_redemption_result &&
-        pending_redemption_result[0]?.pending_redemption_amount
-          ? pending_redemption_result[0]?.pending_redemption_amount.toString()
-          : "0.00";
+        parseFloat(circulating_supply_result?.[0]?.pending_redemption_amount) ||
+        0;
 
-      obj["available_tokens"] = (
-        parseInt(obj["circulating_supply"]) -
-        parseInt(obj["pending_redemption"])
-      ).toString();
-      obj["available_tokens_amount"] = (
-        parseInt(obj["circulating_supply_amount"]) -
-        parseInt(obj["pending_redemption_amount"])
-      ).toString();
-      obj["recent_activities"] =
-        recent_activities_result && recent_activities_result
-          ? recent_activities_result
-          : [];
+      obj["available_tokens"] =
+        obj["circulating_supply"] - obj["pending_redemption"];
+      obj["available_tokens_amount"] =
+        obj["circulating_supply_amount"] - obj["pending_redemption_amount"];
+
+      let cs_before_1_day =
+        parseFloat(
+          circulating_supply_result_before_1_day?.[0]?.circulating_supply
+        ) || 0;
+      let pr_before_1_day =
+        parseFloat(
+          circulating_supply_result_before_1_day?.[0]?.pending_token
+        ) || 0;
+      let at_before_1_day = cs_before_1_day - pr_before_1_day;
+
+      obj["cs_change_percentage"] =
+        cs_before_1_day !== 0
+          ? ((obj["circulating_supply"] - cs_before_1_day) / cs_before_1_day) *
+            100
+          : 0;
+
+      obj["pr_change_percentage"] =
+        pr_before_1_day !== 0
+          ? ((obj["pending_redemption"] - pr_before_1_day) / pr_before_1_day) *
+            100
+          : 0;
+
+      obj["at_change_percentage"] =
+        at_before_1_day !== 0
+          ? ((obj["available_tokens"] - at_before_1_day) / at_before_1_day) *
+            100
+          : 0;
+
+      obj["recent_activities"] = recent_activities_result || [];
       return obj;
     } catch (error) {
       throw error;
