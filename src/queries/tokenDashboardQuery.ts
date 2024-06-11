@@ -16,20 +16,37 @@ export const getTokenValuationGraphQuery = (
   }
 
   /* For Data */
-  let baseQuery = `SELECT
-  tv.start_date,
-  tv.start_time,
-  tv.valuation_price,
-  tv.created_at,
-  MAX(tv.valuation_price) OVER () AS max_valuation_price
-from
-  token_valuations AS tv
+  let baseQuery = `WITH
+  ranked_valuations AS (
+    SELECT
+      tv.start_date,
+      tv.start_time,
+      tv.valuation_price,
+      tv.created_at,
+      ROW_NUMBER() OVER (
+        PARTITION BY DATE(tv.created_at)
+        ORDER BY
+          tv.created_at DESC
+      ) AS rn,
+      MAX(tv.valuation_price) OVER () AS max_valuation_price
+    FROM
+      token_valuations AS tv
+    WHERE
+      tv.token_offering_id = '${token_offering_id}'
+      ${dateFilter} 
+  )
+SELECT
+  start_date,
+  start_time,
+  valuation_price,
+  created_at,
+  max_valuation_price
+FROM
+  ranked_valuations
 WHERE
-  tv.token_offering_id = '${token_offering_id}' 
-  ${dateFilter} 
+  rn = 1
 ORDER BY
-  tv.start_date,
-  tv.start_time`;
+  created_at ASC`;
 
   return baseQuery;
 };
@@ -78,61 +95,33 @@ export const getTokenOrdersGraphQuery = (
   // For Date Filters
   let dateFilter = ``;
   if (from_date && to_date) {
-    dateFilter = ` '${from_date}' ::date, '${to_date}'  ::date,`;
-  } else {
-    dateFilter = ` COALESCE(
-        (
-          SELECT
-            MIN(DATE(created_at))
-          FROM
-            token_orders
-          WHERE
-            token_offering_id = '${token_offering_id}'
-        ),
-        current_date
-      ),
-      current_date,`;
+    dateFilter = ` AND tor.created_at BETWEEN '${from_date}' AND '${to_date}'`;
   }
 
   /* For Data */
-  let baseQuery = `WITH
-  date_range AS (
-    SELECT
-      generate_series(
-        ${dateFilter} 
-        interval '1 day'
-      ) ::date AS order_date
-  )
-SELECT
-  date_range.order_date,
-  COALESCE(subscription_count, 0) AS subscription_count,
-  COALESCE(redemption_count, 0) AS redemption_count
+  let baseQuery = `SELECT
+  DATE(tor.created_at) AS order_date,
+  COUNT(
+    CASE
+      WHEN tor.type = 'subscription'
+      AND tor.status_id = 5 THEN 1
+    END
+  ) AS subscription_count,
+  COUNT(
+    CASE
+      WHEN tor.type = 'redemption'
+      AND tor.status_id = 11 THEN 1
+    END
+  ) AS redemption_count
 FROM
-  date_range
-  LEFT JOIN (
-    SELECT
-      DATE(tor.created_at) AS order_date,
-      COUNT(
-        CASE
-          WHEN tor.type = 'subscription'
-          AND tor.status_id = 5 THEN 1
-        END
-      ) AS subscription_count,
-      COUNT(
-        CASE
-          WHEN tor.type = 'redemption'
-          AND tor.status_id = 11 THEN 1
-        END
-      ) AS redemption_count
-    FROM
-      token_orders AS tor
-    WHERE
-      tor.token_offering_id = '${token_offering_id}'
-    GROUP BY
-      DATE(tor.created_at)
-  ) AS counts ON date_range.order_date = counts.order_date
+  token_orders AS tor
+WHERE
+  tor.token_offering_id = '${token_offering_id}' 
+  ${dateFilter}
+GROUP BY
+  DATE(tor.created_at)
 ORDER BY
-  date_range.order_date ASC`;
+  order_date ASC`;
 
   return baseQuery;
 };
