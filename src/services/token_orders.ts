@@ -95,6 +95,7 @@ class TokenOrders {
               "bank_account_name",
               "swift_bic_no",
               "iban_no",
+              "symbol",
             ],
             required: false,
           },
