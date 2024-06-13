@@ -150,7 +150,29 @@ SELECT
     ) * ba.total_balance
   ) AS total_holdings, 
   ba.total_balance AS token_count,
-  tof.issuer_entity_id AS issuer_entity_id
+  tof.issuer_entity_id AS issuer_entity_id,
+  COALESCE(
+    (
+      SELECT
+        tv.valuation_price
+      FROM
+        token_valuations AS tv
+      WHERE
+        tv.token_offering_id = tor.token_offering_id
+        AND (
+          tv.start_date < CURRENT_DATE
+          OR (
+            tv.start_date = CURRENT_DATE
+            AND tv.start_time <= CURRENT_TIME
+          )
+        )
+      ORDER BY
+        tv.start_date DESC,
+        tv.start_time DESC
+      LIMIT
+        1
+    ), tof.offering_price
+  ) AS valuation_price
 FROM
   token_orders AS tor
   INNER JOIN token_offerings AS tof ON tor.token_offering_id = tof.id
@@ -182,7 +204,6 @@ ORDER BY
   total_holdings DESC
   ${limitStatment};`;
 
-  console.log("baseQuery", baseQuery);
   return baseQuery;
 };
 
