@@ -88,6 +88,7 @@ export const getMarketPlaceListingQuery = (
           WHEN order_count > 0 THEN 'Invested'
           ELSE mts.name
         END AS master_token_status_name,
+        mts.name AS token_status,
         array_to_string(array_agg(DISTINCT mfa.name), ',') AS agency_name,
         array_to_string(array_agg(DISTINCT mfar.name), ',') AS rating_name,
         ts.is_all_countries_allowed,
@@ -150,7 +151,7 @@ export const getMarketPlaceListingQuery = (
     END
     ${limitStatment}
     `;
-  console.log(listQuery, "listQuery");
+
   return listQuery;
 };
 

@@ -1,4 +1,10 @@
-import { Logger, errorCustomMessage, successCustomMessage } from "@helpers";
+import {
+  Logger,
+  errorCustomMessage,
+  investedStatus,
+  qualifiedStatus,
+  successCustomMessage,
+} from "@helpers";
 import {
   Asset,
   TokenOfferings,
@@ -669,6 +675,21 @@ const findToken = async ({
 
     const data = await TokenOfferings.getTokenOffering({ token_id });
     const parseData = JSON.parse(JSON.stringify(data));
+
+    const qualifiedStaus: boolean =
+      await qualifiedStatus.getInvestorQualifiedStatus({
+        issuer_entity_id: parseData?.issuer_entity_id,
+        investor_entity_id: user_entity_id,
+      });
+
+    const investedStaus: boolean =
+      await investedStatus.getInvestorInvestedStatus({
+        token_id: token_id,
+        investor_entity_id: user_entity_id,
+      });
+
+    parseData["is_qualified"] = qualifiedStaus;
+    parseData["is_invested"] = investedStaus;
 
     const finalData = {
       ...parseData,

@@ -148,7 +148,9 @@ SELECT
           1
       ), tof.offering_price
     ) * ba.total_balance
-  ) AS total_holdings
+  ) AS total_holdings, 
+  ba.total_balance AS token_count,
+  tof.issuer_entity_id AS issuer_entity_id
 FROM
   token_orders AS tor
   INNER JOIN token_offerings AS tof ON tor.token_offering_id = tof.id
@@ -158,7 +160,8 @@ FROM
   INNER JOIN master_token_status AS mts ON tof.status_id = mts.id
   LEFT JOIN balances AS ba ON tor.token_offering_id = ba.token_offering_id
 WHERE
-  tor.receiver_entity_id = '${user_entity_id}'
+  tor.receiver_entity_id = '${user_entity_id}' 
+  AND tor.status_id IN (5, 11)
 GROUP BY
   tor.receiver_entity_id,
   iss_ent.legal_name,
@@ -173,11 +176,13 @@ GROUP BY
   tof.status_id,
   mts.name,
   tof.offering_price,
-  ba.total_balance
+  ba.total_balance,
+  tof.issuer_entity_id
 ORDER BY
   total_holdings DESC
   ${limitStatment};`;
 
+  console.log("baseQuery", baseQuery);
   return baseQuery;
 };
 
