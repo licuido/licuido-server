@@ -88,6 +88,7 @@ class Entities {
               "mobile_no_std_code",
               "mobile_no",
               "contact_email",
+              "investor_type_id",
             ],
             include: [
               {
@@ -211,6 +212,19 @@ class Entities {
           entity_type_id,
           contact_profile_id,
         },
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async findEntityForCountry(user_entity_id?: string): Promise<any> {
+    try {
+      return await entity.findOne({
+        where: {
+          id: user_entity_id,
+        },
+        attributes: ["country_id"],
       });
     } catch (error) {
       throw error;

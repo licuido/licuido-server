@@ -4,8 +4,8 @@ import Schema, { JSONSchema } from "fluent-json-schema";
 const createTokenBody = Schema.object()
   .prop("name", Schema.string())
   .prop("description", Schema.string())
-  .prop("start_date", Schema.string().format("date-time"))
-  .prop("end_date", Schema.string().format("date-time"))
+  .prop("start_date", Schema.string().format("date"))
+  .prop("end_date", Schema.string().format("date"))
   .prop("bank_account_name", Schema.string())
   .prop("bank_name", Schema.string())
   .prop(

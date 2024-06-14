@@ -115,6 +115,7 @@ const constructBaseQuery = async (
         tor.created_at AS creation_date,
         tor.net_investment_value AS amount_to_pay,
         tor.ordered_tokens AS token_ordered,
+        tof.symbol AS token_symbol,
         CASE
           WHEN tor.is_payment_confirmed = true
           AND tor.recived_amount_in_euro IS NOT NULL THEN tor.recived_amount_in_euro
@@ -212,6 +213,7 @@ const constructBaseQuery = async (
           tor.id AS id,
           tor.type AS type,
           tof.name AS token_name,
+          tof.symbol AS token_symbol,
           tof.isin_number AS token_isin,
           tor.status_id AS status_id,
           mos.name AS status_name,
@@ -322,6 +324,7 @@ const constructBaseQuery = async (
             entrec.legal_name AS investor_name,
             invast.url AS investor_logo_url,
             tof.name AS token_name,
+            tof.symbol AS token_symbol,
             tof.isin_number AS token_isin,
             tor.status_id AS status_id,
             mos.name AS status_name,

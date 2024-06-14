@@ -15,10 +15,12 @@ import {
   master_fund_agency_rating,
   token_valuation,
 } from "@models";
-import { createTokenOffering, updateTokenOffering } from "@types";
-import { Op } from "sequelize";
 import queries from "@queries";
+import { createTokenOffering, updateTokenOffering } from "@types";
 import { sequelize } from "@utils";
+import { ENTITY_INVESTOR_STATUS } from "helpers/constants";
+// import { sequelize } from "@utils";
+import { Op, Transaction } from "sequelize";
 // import moment from "moment";
 
 class TokenOfferings {
@@ -148,6 +150,7 @@ class TokenOfferings {
         },
         attributes: [
           "id",
+          "issuer_entity_id",
           "name",
           "description",
           "isin_number",
@@ -173,6 +176,7 @@ class TokenOfferings {
           "annual_percentage_yield",
           "payback_period",
           "payback_period_type",
+          "valuation_price",
         ],
         include: [
           {
@@ -189,12 +193,19 @@ class TokenOfferings {
             required: false,
             where: {
               is_active: true,
-              start_time: {
-                [Op.lte]: new Date(), // Less than the specific time
-              },
-              start_date: {
-                [Op.lte]: new Date(), // Less than the specific time
-              },
+              [Op.or]: [
+                {
+                  start_date: {
+                    [Op.lt]: new Date(), // Less than the current date
+                  },
+                },
+                {
+                  start_date: new Date(), // Equal to the current date
+                  start_time: {
+                    [Op.lte]: new Date(), // Less than or equal to the current time
+                  },
+                },
+              ],
             },
             order: [
               ["start_date", "DESC"], // Order by start_date in descending order
@@ -336,6 +347,89 @@ class TokenOfferings {
   }
 
   /**
+   * Retrieves all token offerings based on the provided options.
+   *
+   * @param {Object} options - The options for retrieving token offerings.
+   * @param {number} options.offset - The offset for pagination.
+   * @param {number} options.limit - The limit for pagination.
+   * @param {string} [options.search] - The search query for filtering token offerings.
+   * @return {Promise<Object>} - A promise that resolves to an object containing the rows and count of token offerings.
+   * @throws {Error} - If there is an error retrieving the token offerings.
+   */
+  static async getAllTokenOfferings(options: {
+    offset: number;
+    limit: number;
+    search?: string;
+    tokenTypeId?: [];
+    currencyCode?: string[] | [];
+    fundStatus?: string[] | [];
+    countryId?: number;
+    user_entity_id?: string;
+    isQualified?: boolean;
+    countryFilterId?: string[] | [];
+  }): Promise<{
+    rows: any[];
+    count: number;
+  }> {
+    try {
+      const {
+        offset,
+        limit,
+        search,
+        tokenTypeId,
+        currencyCode,
+        fundStatus,
+        countryId,
+        user_entity_id,
+        isQualified,
+        countryFilterId,
+      } = options;
+
+      let investorStatus = null;
+      if (isQualified) {
+        investorStatus = ENTITY_INVESTOR_STATUS.APPROVED;
+      } else if (isQualified !== undefined && isQualified === false) {
+        investorStatus = ENTITY_INVESTOR_STATUS.NOT_APPROVED;
+      }
+
+      const [rows]: any[] = await sequelize.query(
+        queries.getMarketPlaceListingQuery(
+          offset,
+          limit,
+          search,
+          tokenTypeId,
+          currencyCode,
+          fundStatus,
+          countryId,
+          user_entity_id,
+          investorStatus,
+          countryFilterId
+        )
+      );
+      const [dataCount]: any[] = await sequelize.query(
+        queries.getMarketPlaceListingQuery(
+          null,
+          null,
+          search,
+          tokenTypeId,
+          currencyCode,
+          fundStatus,
+          countryId,
+          user_entity_id,
+          investorStatus,
+          countryFilterId
+        )
+      );
+      return {
+        rows,
+        count: dataCount?.length ?? 0,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
    * this function used for checking user have token access
    *
    * @param {token_id:string, user_entity_id:string} options - The response object containing create data.
@@ -370,12 +464,16 @@ class TokenOfferings {
   static async getTokenIssuerList({
     user_entity_id,
     search,
+    offset,
+    limit,
   }: {
     user_entity_id: string;
     search: string;
+    offset: number;
+    limit: number;
   }): Promise<any> {
     try {
-      const token_offer = await token_offering.findAll({
+      const { rows, count } = await token_offering.findAndCountAll({
         where: {
           issuer_entity_id: user_entity_id,
           name: { [Op.iLike]: `%${search}%` },
@@ -395,9 +493,11 @@ class TokenOfferings {
             required: false,
           },
         ],
+        offset,
+        limit,
       });
 
-      return JSON.parse(JSON.stringify(token_offer));
+      return { rows, count };
     } catch (error) {
       throw error;
     }
@@ -492,7 +592,7 @@ class TokenOfferings {
         {
           offer_status_id,
           updated_by,
-          updated_at:new Date()
+          updated_at: new Date(),
         },
         {
           where: {
@@ -502,6 +602,58 @@ class TokenOfferings {
           },
         }
       );
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async getAllFundOfferingsByIssuer(options: {
+    offset: number;
+    limit: number;
+    user_entity_id?: string;
+  }): Promise<{
+    rows: any[];
+    count: number;
+  }> {
+    try {
+      const { offset, limit, user_entity_id } = options;
+
+      // For Data
+      const [result]: any[] = await sequelize.query(
+        queries.getAllFundOfferingsForPortfolioQuery(
+          offset,
+          limit,
+          user_entity_id
+        )
+      );
+
+      // For Count
+      const [dataCount]: any[] = await sequelize.query(
+        queries.getAllFundOfferingsForPortfolioQuery(null, null, user_entity_id)
+      );
+
+      return {
+        rows: result,
+        count: dataCount?.length ?? 0,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async updateTokenOffering(
+    options: updateTokenOffering,
+    token_id: string,
+    transaction: Transaction
+  ): Promise<any> {
+    try {
+      // Update Token Offering Meta Data
+      return await token_offering.update(options, {
+        where: {
+          id: token_id,
+        },
+        transaction,
+      });
     } catch (error) {
       throw error;
     }

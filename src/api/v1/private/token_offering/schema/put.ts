@@ -48,8 +48,8 @@ const updateTokenBody = Schema.object()
   )
   .prop("offering_price", Schema.number())
   .prop("jurisdiction", Schema.number())
-  .prop("start_date", Schema.string().format("date-time"))
-  .prop("end_date", Schema.string().format("date-time"))
+  .prop("start_date", Schema.string().format("date"))
+  .prop("end_date", Schema.string().format("date"))
   .prop(
     "added_currencies",
     Schema.array()
@@ -192,11 +192,13 @@ export const UPDATE_TOKEN_VALUATION = {
   response: makeResponseSchema(updateTokenValuationResponse),
 };
 
-
 /* For Update Token offering Status */
 const updateTokenOfferingStatusBody = Schema.object()
-  .prop("status_id", Schema.number())
-  .prop("token_id", Schema.string())
+  .prop("offer_status_id", Schema.number())
+  .prop(
+    "token_ids",
+    Schema.array().items(Schema.string().format("uuid")).minItems(0)
+  )
   .valueOf();
 
 const updateTokenOfferingStatusResponse: JSONSchema = Schema.object()

@@ -228,6 +228,7 @@ export interface updateTokenOffering
     | "offer_status_id"
   > {
   updated_by: string;
+  circulating_supply_count?: number;
 }
 
 export interface updateTokenOfferingSubData {
@@ -289,6 +290,9 @@ export interface TeamsPayload {
 export interface FundRatingPayload {
   agency_id: number;
   rating_id: number;
+  offer_token_id?: string;
+  created_by?: string;
+  updated_by?: string;
 }
 
 export interface createTokenValuation {
@@ -313,4 +317,10 @@ export interface getAllTokenAdmin {
   block_chain?: string;
   created_by?: string;
   issuer?: string;
+}
+
+export interface getAllFundOfferings {
+  offset?: number;
+  limit?: number;
+  user_entity_id?: string;
 }

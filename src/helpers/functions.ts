@@ -45,5 +45,5 @@ const checkCurrenctData = (date: string) => {
 
 export default {
   returnValuationPrice,
-  checkCurrenctData
+  checkCurrenctData,
 };

@@ -6,8 +6,8 @@ export const getAllTokensQuery = (
   currency_filter?: string[] | [],
   token_type_filters?: number[] | [],
   block_chain_filters?: number[] | [],
-  created_by_filters?:number[] | [],
-  issuer_filters?:string[] | [],
+  created_by_filters?: number[] | [],
+  issuer_filters?: string[] | []
 ) => {
   /* Get All Token Query on Search , Limit & Offset */
 
@@ -62,27 +62,22 @@ export const getAllTokensQuery = (
   // status filter
   let statusFilter = ``;
   if (status_filters && status_filters?.length > 0) {
-    statusFilter = `AND t.offer_status_id IN (${status_filters?.join(
-        ","
-      )})`;
+    statusFilter = `AND t.offer_status_id IN (${status_filters?.join(",")})`;
   }
 
-   // created by filter
-   let createdByFilter = ``;
-   if (created_by_filters && created_by_filters?.length > 0) {
-    createdByFilter = `AND ue.entity_id IN (${created_by_filters?.join(
-         ","
-       )})`;
-   }
+  // created by filter
+  let createdByFilter = ``;
+  if (created_by_filters && created_by_filters?.length > 0) {
+    createdByFilter = `AND ue.entity_id IN (${created_by_filters?.join(",")})`;
+  }
 
-   //issuer filter
-   let issuerFilter = ``;
-   if (issuer_filters && issuer_filters?.length > 0) {
+  //issuer filter
+  let issuerFilter = ``;
+  if (issuer_filters && issuer_filters?.length > 0) {
     let convertedString = issuer_filters.join("','");
     let finalString = "'" + convertedString + "'";
     issuerFilter = `AND t.issuer_entity_id IN (${finalString})`;
-   }
-   
+  }
 
   /* For Data */
   let baseQuery = `WITH
@@ -126,20 +121,19 @@ export const getAllTokensQuery = (
     created_at DESC 
     ${limitStatment}`;
 
-
   return baseQuery;
 };
 
 export const getAllTokensCountQuery = (
-    search?: string,
-    status_filters?: number[] | [],
-    currency_filter?: string[] | [],
-    token_type_filters?: number[] | [],
-    block_chain_filters?: number[] | [],
-    created_by_filters?:number[] | [],
-    issuer_filters?:string[] | [],
-  ) => {
-    /* Get All Token Query on Search , Limit & Offset */
+  search?: string,
+  status_filters?: number[] | [],
+  currency_filter?: string[] | [],
+  token_type_filters?: number[] | [],
+  block_chain_filters?: number[] | [],
+  created_by_filters?: number[] | [],
+  issuer_filters?: string[] | []
+) => {
+  /* Get All Token Query on Search , Limit & Offset */
 
   /* In Where Condition
      ---- entity_id = 1 | 2 | 3 [ Admin | Investor | Issuer ] Here Now Using Only Investor(2)
@@ -153,20 +147,19 @@ export const getAllTokensCountQuery = (
              ---- For Issuer Based
      */
 
-
   // For Search By Token name, Issuer name , symbol Filter
   let searchFilter = ``;
   if (search) {
-    searchFilter = `ent.legal_name ILIKE '${search}%' OR t.name ILIKE '${search}%' OR t.symbol ILIKE '${search}%'`;
+    searchFilter = ` AND (ent.legal_name ILIKE '${search}%' OR t.name ILIKE '${search}%' OR t.symbol ILIKE '${search}%')`;
   }
 
-   // For currenc Filter
-   let currencyFilter = ``;
-   if (currency_filter && currency_filter?.length > 0) {
-     let convertedString = currency_filter.join("','");
-     let finalString = "'" + convertedString + "'";
-     currencyFilter = ` AND t.base_currency IN (${finalString})`;
-   }
+  // For currenc Filter
+  let currencyFilter = ``;
+  if (currency_filter && currency_filter?.length > 0) {
+    let convertedString = currency_filter.join("','");
+    let finalString = "'" + convertedString + "'";
+    currencyFilter = ` AND t.base_currency IN (${finalString})`;
+  }
 
   // For Token Type Filter
   let tokenTypeFilter = ``;
@@ -187,34 +180,30 @@ export const getAllTokensCountQuery = (
   // status filter
   let statusFilter = ``;
   if (status_filters && status_filters?.length > 0) {
-    statusFilter = `AND t.offer_status_id IN (${status_filters?.join(
-        ","
-      )})`;
+    statusFilter = `AND t.offer_status_id IN (${status_filters?.join(",")})`;
   }
 
-   // created by filter
-   let createdByFilter = ``;
-   if (created_by_filters && created_by_filters?.length > 0) {
-    createdByFilter = `AND ue.entity_id IN (${created_by_filters?.join(
-         ","
-       )})`;
-   }
+  // created by filter
+  let createdByFilter = ``;
+  if (created_by_filters && created_by_filters?.length > 0) {
+    createdByFilter = `AND ue.entity_id IN (${created_by_filters?.join(",")})`;
+  }
 
-   //issuer filter
-   let issuerFilter = ``;
-   if (issuer_filters && issuer_filters?.length > 0) {
+  //issuer filter
+  let issuerFilter = ``;
+  if (issuer_filters && issuer_filters?.length > 0) {
     let convertedString = issuer_filters.join("','");
     let finalString = "'" + convertedString + "'";
     issuerFilter = `AND t.issuer_entity_id IN (${finalString})`;
-   }
+  }
 
-  
-    /* For Count */
-    let countQuery = `WITH
+  /* For Count */
+  let countQuery = `WITH
     cte AS (
         select
         t.id,
         t.name,
+        t.symbol AS token_symbol,
         mtos.name as status,
         mtt.name as token_type,
         ent.legal_name as issuer_name,
@@ -234,7 +223,7 @@ export const getAllTokensCountQuery = (
         INNER JOIN master_blockchain_networks AS mbn ON mbn.id = t.blockchain_network
         INNER JOIN user_entities AS ue ON ue.user_profile_id = t.created_by
         INNER JOIN master_entity_types AS met ON met.id = ue.entity_id
-        WHERE status_id = 1
+        WHERE t.status_id = 1
         ${searchFilter} 
         ${currencyFilter} 
         ${tokenTypeFilter} 
@@ -247,7 +236,6 @@ export const getAllTokensCountQuery = (
     COUNT(*) AS count 
   FROM
     cte`;
-  
-    return countQuery;
-  };
-  
+
+  return countQuery;
+};

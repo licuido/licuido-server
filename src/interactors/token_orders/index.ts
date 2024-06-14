@@ -7,7 +7,11 @@ import {
   qualifiedStatus,
   successCustomMessage,
 } from "@helpers";
-import { TokenOrders, TrackTokenOrderActions } from "@services";
+import {
+  TokenOrders,
+  TokenTransactions,
+  TrackTokenOrderActions,
+} from "@services";
 import {
   createTokenRedemptionOrderPayload,
   createTokenSubscriptionOrderPayload,
@@ -95,6 +99,59 @@ const createTokenSubscriptionOrders = async (
         },
         transaction
       );
+
+      // Get Last Transaction Against Investor
+      const lastTransacation =
+        await TokenTransactions.getLatestTransactionAgainstInvestor(
+          token_offering_id,
+          user_entity_id
+        );
+
+      // Get Token Total Supply
+      const totalSupply = await TokenTransactions.getTotalSupply(
+        token_offering_id
+      );
+
+      let insertParams: any = {
+        type: "mint",
+        order_id: tokenOrderId,
+        amount: ordered_tokens,
+        status_id: 1, // Pending
+        created_by: user_profile_id,
+        is_active: true,
+      };
+
+      // If first time transaction we can't add previous balance
+      if (lastTransacation?.length === 0) {
+        insertParams["sender_balance"] = 0;
+        insertParams["block_token"] = 0;
+        insertParams["unblock_token"] = 0;
+      }
+
+      // If already had a transaction we add previous balance
+      if (lastTransacation?.length > 0) {
+        let sender_balance = lastTransacation?.[0]?.sender_balance ?? 0;
+        let unblock_token = lastTransacation?.[0]?.unblock_token ?? 0;
+        insertParams["sender_balance"] = parseFloat(sender_balance);
+        insertParams["unblock_token"] = parseFloat(unblock_token);
+        insertParams["block_token"] = 0;
+      }
+
+      //note : later we need to add from block chain network
+
+      // If there is no total supply assign order token
+      if (totalSupply?.length === 0) {
+        insertParams["total_supply"] = 0;
+      }
+
+      // If there is total supply assign sum to total supply
+      if (totalSupply?.length > 0) {
+        const total_supply = totalSupply?.[0]?.total_supply ?? 0;
+        insertParams["total_supply"] = total_supply;
+      }
+
+      // Create Token Transactions Table Record
+      await TokenTransactions.createTransactions(insertParams, transaction);
 
       // Track Actions Of Order - Insert Track Record
       const track_id = await TrackTokenOrderActions.create(
@@ -215,7 +272,7 @@ const createTokenRedemptionOrders = async (
           net_investment_value,
           created_by: user_profile_id,
           is_active: true,
-          status_id: 1,
+          status_id: 2, // Pending Redmeption
           bank_name,
           bank_account_name,
           swift_bic_no,
@@ -228,12 +285,69 @@ const createTokenRedemptionOrders = async (
         transaction
       );
 
+      // Get Last Transaction
+      const lastTransacation =
+        await TokenTransactions.getLatestTransactionAgainstInvestor(
+          token_offering_id,
+          user_entity_id
+        );
+
+      // Get Token Total Supply
+      const totalSupply = await TokenTransactions.getTotalSupply(
+        token_offering_id
+      );
+
+      let insertParams: any = {
+        type: "burn",
+        order_id: tokenOrderId,
+        amount: ordered_tokens,
+        status_id: 1,
+        created_by: user_profile_id,
+        is_active: true,
+      };
+
+      // if first time transaction we can't add previous balance
+      if (lastTransacation?.length === 0) {
+        return {
+          code: 500,
+          customMessage: "You don't have a token to burn",
+          data: {},
+        };
+      }
+
+      if (lastTransacation?.length > 0) {
+        let sender_balance = lastTransacation?.[0]?.sender_balance ?? 0;
+
+        if (parseFloat(sender_balance) < ordered_tokens) {
+          return {
+            code: 500,
+            customMessage: `your balance is ${sender_balance} but you try to burn ${ordered_tokens}`,
+            data: {},
+          };
+        }
+        let unblock_token = lastTransacation?.[0]?.unblock_token ?? 0;
+
+        insertParams["sender_balance"] = parseFloat(sender_balance);
+        insertParams["unblock_token"] =
+          parseFloat(unblock_token) - ordered_tokens;
+        insertParams["block_token"] = ordered_tokens;
+      }
+
+      // Total Supply
+      if (totalSupply?.length > 0) {
+        const total_supply = totalSupply?.[0]?.total_supply ?? 0;
+        insertParams["total_supply"] = parseFloat(total_supply ?? 0);
+      }
+
+      // Create Token Transactions Table Record
+      await TokenTransactions.createTransactions(insertParams, transaction);
+
       // Track Actions Of Order - Insert Track Record
       const track_id = await TrackTokenOrderActions.create(
         {
           user_profile_id,
           user_entity_id,
-          action_status_id: 1,
+          action_status_id: 2,
           is_active: true,
           created_by: user_profile_id,
         },
@@ -690,6 +804,17 @@ const cancelOrder = async ({
       transaction
     );
 
+    await TokenTransactions.UpdateTransactions(
+      {
+        options: {
+          status_id: 3, // Failed
+          updated_by: user_profile_id,
+        },
+        order_id: id,
+      },
+      transaction
+    );
+
     // Track Actions Of Order Cancel
     const track_id = await TrackTokenOrderActions.create(
       {
@@ -756,6 +881,20 @@ const confirmPayment = async ({
       },
       transaction
     );
+
+    // If Reject By issuer
+    if (status_id === 8) {
+      await TokenTransactions.UpdateTransactions(
+        {
+          options: {
+            status_id: 3, // Failed
+            updated_by: user_profile_id,
+          },
+          order_id: id,
+        },
+        transaction
+      );
+    }
 
     // Track Actions Of Order Payment Confirm / Reject
     const track_id = await TrackTokenOrderActions.create(
@@ -838,6 +977,20 @@ const sendPayment = async ({
       transaction
     );
 
+    // If Reject By issuer
+    if (status_id === 8) {
+      await TokenTransactions.UpdateTransactions(
+        {
+          options: {
+            status_id: 3, // Failed
+            updated_by: user_profile_id,
+          },
+          order_id: id,
+        },
+        transaction
+      );
+    }
+
     // Track Actions Of Order Payment Send / Reject
     const track_id = await TrackTokenOrderActions.create(
       {
@@ -880,6 +1033,251 @@ const sendPayment = async ({
   return result;
 };
 
+const getOrderGraph = async ({
+  user_entity_id,
+  offset = 0,
+  limit = 10,
+  from_date,
+  to_date,
+}: {
+  user_entity_id?: string;
+  offset?: number;
+  limit?: number;
+  from_date?: string;
+  to_date?: string;
+}) => {
+  // Get Token Order Graph Data
+  const { rows, count } = await TokenOrders.getTokenOrderGraph({
+    user_entity_id,
+    offset,
+    limit,
+    from_date,
+    to_date,
+  });
+
+  return { page: rows, count: rows?.length, totalCount: count };
+};
+
+const getTokensByInvestorGraph = async ({
+  user_entity_id,
+  from_date,
+  to_date,
+}: {
+  user_entity_id?: string;
+  from_date?: string;
+  to_date?: string;
+}) => {
+  // Get Token Order Graph Data
+  const result: any = await TokenOrders.getTokensByInvestorGraph({
+    user_entity_id,
+    from_date,
+    to_date,
+  });
+
+  return { page: result?.rows, count: result?.count };
+};
+
+const getDashboard = async ({
+  user_entity_id,
+}: {
+  user_entity_id?: string;
+}) => {
+  // Get Dashboard
+  const result: any = await TokenOrders.getDashboard({
+    user_entity_id,
+  });
+
+  return result;
+};
+
+const getTokensHoldingsGraph = async ({
+  user_entity_id,
+  from_date,
+  to_date,
+}: {
+  user_entity_id?: string;
+  from_date?: string;
+  to_date?: string;
+}) => {
+  // Get Token Holdings Graph Data
+  const result: any = await TokenOrders.getTokensHoldingsGraph({
+    user_entity_id,
+    from_date,
+    to_date,
+  });
+
+  return { page: result?.rows, count: result?.count };
+};
+
+const getCurrentTokenListing = async ({
+  user_entity_id,
+  offset,
+  limit,
+}: {
+  user_entity_id?: string;
+  offset: number;
+  limit: number;
+}) => {
+  // Get Current Token Investment for Investor
+  const result: any = await TokenOrders.getCurrentTokenInvestment({
+    user_entity_id,
+    offset,
+    limit,
+  });
+
+  return {
+    page: result?.rows,
+    count: result?.length,
+    totalCount: result?.count,
+  };
+};
+
+const getInvestorDashboard = async ({
+  user_entity_id,
+}: {
+  user_entity_id?: string;
+}) => {
+  // Get Investor Dashboard
+  const result: any = await TokenOrders.getInvestorDashboard({
+    user_entity_id,
+  });
+
+  return result;
+};
+
+const getTokenOrdersGraph = async ({
+  user_entity_id,
+  from_date,
+  to_date,
+  token_offering_id,
+}: {
+  user_entity_id?: string;
+  from_date?: string;
+  to_date?: string;
+  token_offering_id?: string;
+}) => {
+  // Get Token Orders Graph Data
+  const result: any = await TokenOrders.getTokenOrdersGraph({
+    user_entity_id,
+    from_date,
+    to_date,
+    token_offering_id,
+  });
+
+  return { page: result?.rows, count: result?.count };
+};
+
+const getTokenSummaryRecentActivities = async ({
+  user_entity_id,
+  token_offering_id,
+}: {
+  user_entity_id?: string;
+  token_offering_id?: string;
+}) => {
+  token_offering_id;
+  // Get Token Summary & Recent Activites
+  const result: any = await TokenOrders.getTokenSummaryRecentActivities({
+    user_entity_id,
+    token_offering_id,
+  });
+
+  return result;
+};
+
+const getInvestorDistribution = async ({
+  user_entity_id,
+  token_offering_id,
+  investor_distribution_by,
+}: {
+  user_entity_id?: string;
+  token_offering_id?: string;
+  investor_distribution_by?: string;
+}) => {
+  token_offering_id;
+  // Get Token Distribution Data
+  const result: any = await TokenOrders.getInvestorDistribution({
+    user_entity_id,
+    token_offering_id,
+    investor_distribution_by,
+  });
+
+  return result;
+};
+
+const rejectOrder = async ({
+  user_profile_id,
+  user_entity_id,
+  id,
+  reason_for_reject,
+  rejected_blockchain_reference_id,
+  remarks,
+}: {
+  user_profile_id: string;
+  user_entity_id: string;
+  id: string;
+  reason_for_reject: string;
+  rejected_blockchain_reference_id: string;
+  remarks?: string;
+}) => {
+  // Update Reject Order Details
+  const result: any = await sequelize.transaction(async (transaction) => {
+    // Update Token Order Status As Rejected With Track Id
+    await TokenOrders.update(
+      {
+        options: {
+          status_id: 8, // 8--> Rejected By Issuer
+          updated_by: user_profile_id,
+          reason_for_reject,
+          rejected_blockchain_reference_id,
+          remarks,
+        },
+        id: id,
+      },
+      transaction
+    );
+
+    // If Reject By issuer
+    await TokenTransactions.UpdateTransactions(
+      {
+        options: {
+          status_id: 3, // Failed
+          updated_by: user_profile_id,
+        },
+        order_id: id,
+      },
+      transaction
+    );
+
+    // Track Actions Of Order Rejection
+    const track_id = await TrackTokenOrderActions.create(
+      {
+        user_profile_id,
+        user_entity_id,
+        action_status_id: 8,
+        is_active: true,
+        created_by: user_profile_id,
+      },
+      transaction
+    );
+
+    // Update Token Order With Track Id
+    await TokenOrders.update(
+      {
+        options: {
+          last_action_track_id: track_id,
+          updated_by: user_profile_id,
+        },
+        id: id,
+      },
+      transaction
+    );
+
+    return { message: successCustomMessage.orderRejected };
+  });
+
+  return result;
+};
+
 export default {
   createTokenSubscriptionOrders,
   getTokenOrder,
@@ -892,4 +1290,14 @@ export default {
   cancelOrder,
   confirmPayment,
   sendPayment,
+  getOrderGraph,
+  getTokensByInvestorGraph,
+  getDashboard,
+  getTokensHoldingsGraph,
+  getCurrentTokenListing,
+  getInvestorDashboard,
+  getTokenOrdersGraph,
+  getTokenSummaryRecentActivities,
+  getInvestorDistribution,
+  rejectOrder,
 };

@@ -4,10 +4,12 @@ import {
   master_order_status,
   token_offering,
   token_order,
+  user_profile,
 } from "@models";
 import queries from "@queries";
 import { createTokenOrders, updateTokenOrders } from "@types";
 import { sequelize } from "@utils";
+import moment from "moment";
 import { Transaction } from "sequelize";
 
 class TokenOrders {
@@ -93,6 +95,7 @@ class TokenOrders {
               "bank_account_name",
               "swift_bic_no",
               "iban_no",
+              "symbol",
             ],
             required: false,
           },
@@ -113,7 +116,7 @@ class TokenOrders {
       options: updateTokenOrders;
       id: string;
     },
-    transaction: Transaction
+    transaction?: Transaction
   ): Promise<any> {
     try {
       return await token_order.update(
@@ -465,6 +468,528 @@ class TokenOrders {
       });
 
       return JSON.parse(JSON.stringify(token_order_details));
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async getOrderToken({
+    token_order_id,
+  }: {
+    token_order_id?: string;
+  }): Promise<any> {
+    try {
+      const token_order_details = await token_order.findOne({
+        where: {
+          id: token_order_id,
+          is_active: true,
+        },
+        attributes: [
+          "id",
+          "issuer_entity_id",
+          "receiver_entity_id",
+          "token_offering_id",
+          "type",
+          "ordered_tokens",
+          "total_paid",
+          "type",
+          "status_id",
+          "net_investment_value",
+        ],
+        include: [
+          {
+            model: token_offering,
+            as: "token_offering",
+            required: true,
+            attributes: ["id"],
+            include: [
+              {
+                model: entity,
+                as: "issuer_entity",
+                required: false,
+                attributes: ["id"],
+                include: [
+                  {
+                    model: user_profile,
+                    as: "contact_profile",
+                    required: false,
+                    attributes: ["id", "name", "is_fund_offered_by_licuido"],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      });
+
+      return JSON.parse(JSON.stringify(token_order_details));
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async getTokenOrderGraph({
+    user_entity_id,
+    offset,
+    limit,
+    from_date,
+    to_date,
+  }: {
+    user_entity_id?: string;
+    offset: number;
+    limit: number;
+    from_date?: string;
+    to_date?: string;
+  }): Promise<any> {
+    try {
+      // For Data
+      const [result]: any[] = await sequelize.query(
+        queries.getAllTokenOrderGraphQuery(
+          offset,
+          limit,
+          user_entity_id,
+          from_date,
+          to_date
+        )
+      );
+
+      // For Count
+      const [dataCount]: any[] = await sequelize.query(
+        queries.getAllTokenOrderGraphQuery(
+          null,
+          null,
+          user_entity_id,
+          from_date,
+          to_date
+        )
+      );
+
+      return {
+        rows: result,
+        count: dataCount?.length ?? 0,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async getTokensByInvestorGraph({
+    user_entity_id,
+    from_date,
+    to_date,
+  }: {
+    user_entity_id?: string;
+    from_date?: string;
+    to_date?: string;
+  }): Promise<any> {
+    try {
+      // For Data
+      const [result]: any[] = await sequelize.query(
+        queries.getTokensByInvestorGraphQuery(
+          from_date,
+          to_date,
+          user_entity_id
+        )
+      );
+
+      return {
+        rows: result,
+        count: result?.length ?? 0,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async getDashboard({
+    user_entity_id,
+  }: {
+    user_entity_id?: string;
+  }): Promise<any> {
+    try {
+      // For Total Investment Data
+      const [total_investment_result]: any[] = await sequelize.query(
+        queries.getTotalInvestmentQuery(user_entity_id)
+      );
+      // For Circulating Supply Data
+      const [circulating_supply_result]: any[] = await sequelize.query(
+        queries.getCirculatingSupplyQuery(user_entity_id)
+      );
+      // For Pending Redemption Data
+      const [pending_redemption_result]: any[] = await sequelize.query(
+        queries.getPendingRedemptionQuery(user_entity_id)
+      );
+
+      const obj: any = {};
+
+      obj["issuer_name"] =
+        total_investment_result && total_investment_result[0]?.issuer_name
+          ? total_investment_result[0]?.issuer_name
+          : "";
+
+      obj["issuer_logo_url"] =
+        total_investment_result && total_investment_result[0]?.issuer_logo_url
+          ? total_investment_result[0]?.issuer_logo_url
+          : "";
+
+      obj["total_investment"] =
+        total_investment_result &&
+        total_investment_result[0]?.overall_investment
+          ? total_investment_result[0]?.overall_investment.toString()
+          : "0.00";
+      obj["percentage_change_from_yesterday"] =
+        total_investment_result &&
+        total_investment_result[0]?.percentage_change_from_yesterday
+          ? total_investment_result[0]?.percentage_change_from_yesterday.toString()
+          : "0";
+      obj["circulating_supply"] =
+        circulating_supply_result &&
+        circulating_supply_result[0]?.circulating_supply
+          ? circulating_supply_result[0]?.circulating_supply.toString()
+          : "0";
+      obj["circulating_supply_amount"] =
+        circulating_supply_result &&
+        circulating_supply_result[0]?.circulating_supply_amount
+          ? circulating_supply_result[0]?.circulating_supply_amount.toString()
+          : "0.00";
+      obj["pending_redemption"] =
+        pending_redemption_result &&
+        pending_redemption_result[0]?.pending_redemption
+          ? pending_redemption_result[0]?.pending_redemption.toString()
+          : "0";
+      obj["pending_redemption_amount"] =
+        pending_redemption_result &&
+        pending_redemption_result[0]?.pending_redemption_amount
+          ? pending_redemption_result[0]?.pending_redemption_amount.toString()
+          : "0.00";
+      obj["available_tokens"] = (
+        parseInt(obj["circulating_supply"]) -
+        parseInt(obj["pending_redemption"])
+      ).toString();
+      obj["available_tokens_amount"] = (
+        parseInt(obj["circulating_supply_amount"]) -
+        parseInt(obj["pending_redemption_amount"])
+      ).toString();
+      return obj;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async getTokensHoldingsGraph({
+    user_entity_id,
+    from_date,
+    to_date,
+  }: {
+    user_entity_id?: string;
+    from_date?: string;
+    to_date?: string;
+  }): Promise<any> {
+    try {
+      // For Data
+      const [result]: any[] = await sequelize.query(
+        queries.getTokensHoldingsGraphQuery(from_date, to_date, user_entity_id)
+      );
+
+      return {
+        rows: result,
+        count: result?.length ?? 0,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async getCurrentTokenInvestment({
+    user_entity_id,
+    offset,
+    limit,
+  }: {
+    user_entity_id?: string;
+    offset: number;
+    limit: number;
+  }): Promise<any> {
+    try {
+      // For Data
+      const [result]: any[] = await sequelize.query(
+        queries.getCurrentTokenInvestmentQuery(offset, limit, user_entity_id)
+      );
+
+      // For Count
+      const [resultCount]: any[] = await sequelize.query(
+        queries.getCurrentTokenInvestmentQuery(null, null, user_entity_id)
+      );
+
+      return {
+        rows: result,
+        count: resultCount?.length ?? 0,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async getInvestorDashboard({
+    user_entity_id,
+  }: {
+    user_entity_id?: string;
+  }): Promise<any> {
+    try {
+      // For Investor Dashboard
+      const [investor_data]: any[] = await sequelize.query(
+        queries.getInvestorDashboardQuery(user_entity_id)
+      );
+
+      let obj: any = investor_data && investor_data?.[0];
+
+      return obj;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async getTokenOrdersGraph({
+    user_entity_id,
+    from_date,
+    to_date,
+    token_offering_id,
+  }: {
+    user_entity_id?: string;
+    from_date?: string;
+    to_date?: string;
+    token_offering_id?: string;
+  }): Promise<any> {
+    try {
+      // For Data
+      const [result]: any[] = await sequelize.query(
+        queries.getTokenOrdersGraphQuery(from_date, to_date, token_offering_id)
+      );
+
+      return {
+        rows: result,
+        count: result?.length ?? 0,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async getTokenSummaryRecentActivities({
+    user_entity_id,
+    token_offering_id,
+  }: {
+    user_entity_id?: string;
+    token_offering_id?: string;
+  }): Promise<any> {
+    try {
+      let date = moment().subtract(1, "days").endOf("day").toISOString();
+      // For Token Summary
+      const [token_status_result]: any[] = await sequelize.query(
+        queries.getTokenStatusQuery(token_offering_id)
+      );
+      // For Circulating Supply Data
+      const [circulating_supply_result]: any[] = await sequelize.query(
+        queries.getTokenCirculatingSupplyQuery(token_offering_id)
+      );
+      // For Token CS Before 1 Day
+      const [circulating_supply_result_before_1_day]: any[] =
+        await sequelize.query(
+          queries.getTokenCirculatingSupplyBefore1dayQuery(
+            token_offering_id,
+            date
+          )
+        );
+
+      // For Recent Activities Data
+      const [recent_activities_result]: any[] = await sequelize.query(
+        queries.getTokenRecentActivitiesQuery(token_offering_id)
+      );
+
+      const obj: any = {};
+
+      obj["token_status_result"] = token_status_result?.[0] || {};
+      obj["circulating_supply"] =
+        parseFloat(circulating_supply_result?.[0]?.circulating_supply) || 0;
+      obj["circulating_supply_amount"] =
+        parseFloat(circulating_supply_result?.[0]?.circulating_supply_amount) ||
+        0;
+      obj["pending_redemption"] =
+        parseFloat(circulating_supply_result?.[0]?.pending_token) || 0;
+      obj["pending_redemption_amount"] =
+        parseFloat(circulating_supply_result?.[0]?.pending_redemption_amount) ||
+        0;
+
+      obj["available_tokens"] =
+        obj["circulating_supply"] - obj["pending_redemption"];
+      obj["available_tokens_amount"] =
+        obj["circulating_supply_amount"] - obj["pending_redemption_amount"];
+
+      let cs_before_1_day =
+        parseFloat(
+          circulating_supply_result_before_1_day?.[0]?.circulating_supply
+        ) || 0;
+      let pr_before_1_day =
+        parseFloat(
+          circulating_supply_result_before_1_day?.[0]?.pending_token
+        ) || 0;
+      let at_before_1_day = cs_before_1_day - pr_before_1_day;
+
+      obj["cs_change_percentage"] =
+        cs_before_1_day !== 0
+          ? ((obj["circulating_supply"] - cs_before_1_day) / cs_before_1_day) *
+            100
+          : 0;
+
+      obj["pr_change_percentage"] =
+        pr_before_1_day !== 0
+          ? ((obj["pending_redemption"] - pr_before_1_day) / pr_before_1_day) *
+            100
+          : 0;
+
+      obj["at_change_percentage"] =
+        at_before_1_day !== 0
+          ? ((obj["available_tokens"] - at_before_1_day) / at_before_1_day) *
+            100
+          : 0;
+
+      obj["recent_activities"] = recent_activities_result || [];
+      return obj;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async getInvestorDistribution({
+    user_entity_id,
+    token_offering_id,
+    investor_distribution_by,
+  }: {
+    user_entity_id?: string;
+    token_offering_id?: string;
+    investor_distribution_by?: string;
+  }): Promise<any> {
+    try {
+      const obj: any = {};
+
+      // For Last 7 days
+      let start_date = moment()
+        .subtract(6, "days")
+        .startOf("day")
+        .toISOString();
+      let end_date = moment().endOf("day").toISOString();
+
+      // For Total Investors
+      const calculateTotalInvestors: any = (period: any) => {
+        return period.reduce((acc: any, investor: any) => {
+          return acc + parseFloat(investor.investor_count);
+        }, 0);
+      };
+
+      // For Total Investment
+      const calculateTotalInvestment: any = (period: any) => {
+        return period.reduce((acc: any, investment: any) => {
+          return acc + parseFloat(investment.net_investment);
+        }, 0);
+      };
+
+      // By No Of Invetors --------------------
+      if (investor_distribution_by === "noi") {
+        // Investors List in last 7 days
+        const [investors_result_in_last_seven_days]: any[] =
+          await sequelize.query(
+            queries.getByNoOfInvestorsQuery(
+              token_offering_id,
+              start_date,
+              end_date
+            )
+          );
+        // Investors List Before 7 days
+        const [investors_result_before_seven_days]: any[] =
+          await sequelize.query(
+            queries.getByNoOfInvestorsQuery(token_offering_id, start_date, null)
+          );
+        obj["investor_country_data"] =
+          investors_result_in_last_seven_days || [];
+
+        const total_investors_last_seven_days = Array.isArray(
+          investors_result_in_last_seven_days
+        )
+          ? calculateTotalInvestors(investors_result_in_last_seven_days)
+          : 0;
+        const total_investors_before_seven_days = Array.isArray(
+          investors_result_before_seven_days
+        )
+          ? calculateTotalInvestors(investors_result_before_seven_days)
+          : 0;
+
+        obj["total_investors"] = total_investors_last_seven_days.toString();
+
+        obj["country_count"] = (
+          investors_result_in_last_seven_days?.length || 0
+        ).toString();
+
+        obj["change_percentage"] = total_investors_before_seven_days
+          ? (
+              ((total_investors_last_seven_days -
+                total_investors_before_seven_days) /
+                total_investors_before_seven_days) *
+              100
+            ).toString()
+          : "0";
+      }
+
+      // By Investment Amount --------------------
+      if (investor_distribution_by === "ia") {
+        // Investment in last 7 days
+        const [investment_result_in_last_seven_days]: any[] =
+          await sequelize.query(
+            queries.getByInvestmentAmountQuery(
+              token_offering_id,
+              start_date,
+              end_date
+            )
+          );
+        // Investment List Before 7 days
+        const [investment_result_before_seven_days]: any[] =
+          await sequelize.query(
+            queries.getByInvestmentAmountQuery(
+              token_offering_id,
+              start_date,
+              null
+            )
+          );
+
+        obj["investment_country_data"] =
+          investment_result_in_last_seven_days || [];
+
+        const total_investment_last_seven_days = Array.isArray(
+          investment_result_in_last_seven_days
+        )
+          ? calculateTotalInvestment(investment_result_in_last_seven_days)
+          : 0;
+        const total_investment_before_seven_days = Array.isArray(
+          investment_result_before_seven_days
+        )
+          ? calculateTotalInvestment(investment_result_before_seven_days)
+          : 0;
+
+        obj["total_investment"] = total_investment_last_seven_days.toString();
+
+        obj["investors_count"] = (
+          calculateTotalInvestors(investment_result_in_last_seven_days) || 0
+        ).toString();
+
+        obj["change_percentage"] = total_investment_before_seven_days
+          ? (
+              ((total_investment_last_seven_days -
+                total_investment_before_seven_days) /
+                total_investment_before_seven_days) *
+              100
+            ).toString()
+          : "0";
+      }
+
+      return obj;
     } catch (error) {
       throw error;
     }

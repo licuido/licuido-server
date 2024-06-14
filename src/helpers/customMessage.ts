@@ -18,4 +18,5 @@ export const successCustomMessage = {
   paymentConfirmed: "Token Order Payment Confirmed Successfully",
   paymentRejected: "Token Order Payment Rejected Successflly",
   paymentSend: "Token Order Payment Send Successfully",
+  orderRejected: "Token Order Rejected Successfully",
 };

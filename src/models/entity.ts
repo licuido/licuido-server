@@ -8,6 +8,8 @@ import type { master_business_sector, master_business_sectorId } from './master_
 import type { master_country, master_countryId } from './master_country';
 import type { master_entity_type, master_entity_typeId } from './master_entity_type';
 import type { master_region, master_regionId } from './master_region';
+import type { position_report_investor, position_report_investorId } from './position_report_investor';
+import type { position_report, position_reportId } from './position_report';
 import type { token_offering, token_offeringId } from './token_offering';
 import type { token_order, token_orderId } from './token_order';
 import type { track_token_order_action, track_token_order_actionId } from './track_token_order_action';
@@ -108,6 +110,30 @@ export class entity extends Model<entityAttributes, entityCreationAttributes> im
   hasIssuer_entity_entity_investor!: Sequelize.HasManyHasAssociationMixin<entity_investor, entity_investorId>;
   hasIssuer_entity_entity_investors!: Sequelize.HasManyHasAssociationsMixin<entity_investor, entity_investorId>;
   countIssuer_entity_entity_investors!: Sequelize.HasManyCountAssociationsMixin;
+  // entity hasMany position_report_investor via investor_id
+  position_report_investors!: position_report_investor[];
+  getPosition_report_investors!: Sequelize.HasManyGetAssociationsMixin<position_report_investor>;
+  setPosition_report_investors!: Sequelize.HasManySetAssociationsMixin<position_report_investor, position_report_investorId>;
+  addPosition_report_investor!: Sequelize.HasManyAddAssociationMixin<position_report_investor, position_report_investorId>;
+  addPosition_report_investors!: Sequelize.HasManyAddAssociationsMixin<position_report_investor, position_report_investorId>;
+  createPosition_report_investor!: Sequelize.HasManyCreateAssociationMixin<position_report_investor>;
+  removePosition_report_investor!: Sequelize.HasManyRemoveAssociationMixin<position_report_investor, position_report_investorId>;
+  removePosition_report_investors!: Sequelize.HasManyRemoveAssociationsMixin<position_report_investor, position_report_investorId>;
+  hasPosition_report_investor!: Sequelize.HasManyHasAssociationMixin<position_report_investor, position_report_investorId>;
+  hasPosition_report_investors!: Sequelize.HasManyHasAssociationsMixin<position_report_investor, position_report_investorId>;
+  countPosition_report_investors!: Sequelize.HasManyCountAssociationsMixin;
+  // entity hasMany position_report via issuer_entity_id
+  position_reports!: position_report[];
+  getPosition_reports!: Sequelize.HasManyGetAssociationsMixin<position_report>;
+  setPosition_reports!: Sequelize.HasManySetAssociationsMixin<position_report, position_reportId>;
+  addPosition_report!: Sequelize.HasManyAddAssociationMixin<position_report, position_reportId>;
+  addPosition_reports!: Sequelize.HasManyAddAssociationsMixin<position_report, position_reportId>;
+  createPosition_report!: Sequelize.HasManyCreateAssociationMixin<position_report>;
+  removePosition_report!: Sequelize.HasManyRemoveAssociationMixin<position_report, position_reportId>;
+  removePosition_reports!: Sequelize.HasManyRemoveAssociationsMixin<position_report, position_reportId>;
+  hasPosition_report!: Sequelize.HasManyHasAssociationMixin<position_report, position_reportId>;
+  hasPosition_reports!: Sequelize.HasManyHasAssociationsMixin<position_report, position_reportId>;
+  countPosition_reports!: Sequelize.HasManyCountAssociationsMixin;
   // entity hasMany token_offering via issuer_entity_id
   token_offerings!: token_offering[];
   getToken_offerings!: Sequelize.HasManyGetAssociationsMixin<token_offering>;

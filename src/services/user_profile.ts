@@ -1,9 +1,6 @@
 import { user_profile } from "@models";
 import { createPersonInfo } from "@types";
 
-
-
-
 class UserProfile {
   /**
    * this function used for insert user entities.
@@ -14,7 +11,7 @@ class UserProfile {
 
   static async upsertPersonInfo(options: createPersonInfo): Promise<any> {
     try {
-        return await user_profile.upsert(options);
+      return await user_profile.upsert(options);
     } catch (error) {
       console.log(error);
       throw error;
@@ -46,6 +43,20 @@ class UserProfile {
     }
   }
 
+  static async findUser(id: string): Promise<any> {
+    try {
+      const result = await user_profile.findOne({
+        where: {
+          id,
+        },
+        attributes: ["id"],
+      });
+      return JSON.parse(JSON.stringify(result));
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
 }
 
 export { UserProfile };

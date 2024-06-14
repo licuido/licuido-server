@@ -59,11 +59,12 @@ export interface token_offeringAttributes {
   payback_period_type?: string;
   is_deployed?: boolean;
   valuation_price?: number;
+  circulating_supply_count?: number;
 }
 
 export type token_offeringPk = "id";
 export type token_offeringId = token_offering[token_offeringPk];
-export type token_offeringOptionalAttributes = "id" | "issuer_entity_id" | "name" | "description" | "isin_number" | "symbol" | "token_type_id" | "base_currency" | "base_currency_code" | "blockchain_network" | "logo_asset_id" | "banner_asset_id" | "offering_price" | "jurisdiction" | "start_date" | "end_date" | "minimum_investment_limit" | "maximum_investment_limit" | "bank_name" | "bank_account_name" | "swift_bic_no" | "iban_no" | "is_fund_rating_enabled" | "is_projected_rate_of_return_enabled" | "is_expected_annual_perc_yield_enabled" | "is_all_countries_allowed" | "is_payback_period_enabled" | "is_eligible_for_collateral_enabled" | "offer_status_id" | "status_id" | "is_active" | "created_by" | "updated_by" | "created_at" | "updated_at" | "projected_rate_return" | "annual_percentage_yield" | "payback_period" | "payback_period_type" | "is_deployed" | "valuation_price";
+export type token_offeringOptionalAttributes = "id" | "issuer_entity_id" | "name" | "description" | "isin_number" | "symbol" | "token_type_id" | "base_currency" | "base_currency_code" | "blockchain_network" | "logo_asset_id" | "banner_asset_id" | "offering_price" | "jurisdiction" | "start_date" | "end_date" | "minimum_investment_limit" | "maximum_investment_limit" | "bank_name" | "bank_account_name" | "swift_bic_no" | "iban_no" | "is_fund_rating_enabled" | "is_projected_rate_of_return_enabled" | "is_expected_annual_perc_yield_enabled" | "is_all_countries_allowed" | "is_payback_period_enabled" | "is_eligible_for_collateral_enabled" | "offer_status_id" | "status_id" | "is_active" | "created_by" | "updated_by" | "created_at" | "updated_at" | "projected_rate_return" | "annual_percentage_yield" | "payback_period" | "payback_period_type" | "is_deployed" | "valuation_price" | "circulating_supply_count";
 export type token_offeringCreationAttributes = Optional<token_offeringAttributes, token_offeringOptionalAttributes>;
 
 export class token_offering extends Model<token_offeringAttributes, token_offeringCreationAttributes> implements token_offeringAttributes {
@@ -108,6 +109,7 @@ export class token_offering extends Model<token_offeringAttributes, token_offeri
   payback_period_type?: string;
   is_deployed?: boolean;
   valuation_price?: number;
+  circulating_supply_count?: number;
 
   // token_offering belongsTo asset via banner_asset_id
   banner_asset!: asset;
@@ -453,6 +455,10 @@ export class token_offering extends Model<token_offeringAttributes, token_offeri
       allowNull: true
     },
     valuation_price: {
+      type: DataTypes.DECIMAL,
+      allowNull: true
+    },
+    circulating_supply_count: {
       type: DataTypes.DECIMAL,
       allowNull: true
     }

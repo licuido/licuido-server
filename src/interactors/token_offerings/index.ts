@@ -1,4 +1,10 @@
-import { Logger, errorCustomMessage, successCustomMessage } from "@helpers";
+import {
+  Logger,
+  errorCustomMessage,
+  investedStatus,
+  qualifiedStatus,
+  successCustomMessage,
+} from "@helpers";
 import {
   Asset,
   TokenOfferings,
@@ -18,6 +24,7 @@ import {
   updateTokenOfferingSubData,
   createTokenValuation,
   getAllTokenAdmin,
+  getAllFundOfferings,
 } from "@types";
 import { commentFunction } from "@helpers";
 
@@ -109,6 +116,7 @@ const createOfferingSubDatas = async (
           offer_token_id: token_offering_id,
           agency_id: val?.agency,
           rating_id: val?.rating,
+          created_by: user_profile_id,
         };
       });
       await TokenOfferFund.create(funRatingPayload);
@@ -230,7 +238,8 @@ const createTokenOfferings = async (options: createTokenOfferingPayload) => {
       iban_no,
       token_type_id,
       is_active: true,
-      offer_status_id: 3,
+      offer_status_id: 1 /* After admin module comes need to put status as yet to be deployed
+      , after deployemnet request goes to admin, admin will deploy token*/,
       projected_rate_return,
       payback_period,
       payback_period_type,
@@ -459,17 +468,35 @@ const updateOfferingSubDatas = async (
     }
 
     // For Fund Rating
-    if (fund_rating && fund_rating?.length > 0) {
-      for (const fund of fund_rating) {
-        let funRatingPayload: FundRatingPayload = {
-          agency_id: fund.agency,
-          rating_id: fund.rating,
-        };
+    if (fund_rating && fund_rating.length > 0) {
+      let createfundRatingPayload: FundRatingPayload[] = [];
 
-        await TokenOfferFund.update({
-          options: funRatingPayload,
-          id: fund.rating_id,
-        });
+      for (const fund of fund_rating) {
+        let updatefundRatingPayload: FundRatingPayload;
+
+        if (fund.rating_id) {
+          updatefundRatingPayload = {
+            agency_id: fund.agency,
+            rating_id: fund.rating,
+            updated_by: user_profile_id,
+          };
+
+          await TokenOfferFund.update({
+            options: updatefundRatingPayload,
+            id: fund.rating_id,
+          });
+        } else {
+          createfundRatingPayload.push({
+            agency_id: fund.agency,
+            rating_id: fund.rating,
+            offer_token_id: token_offering_id,
+            created_by: user_profile_id,
+          });
+        }
+      }
+
+      if (createfundRatingPayload.length > 0) {
+        await TokenOfferFund.create(createfundRatingPayload);
       }
     }
   } catch (error: any) {
@@ -646,20 +673,23 @@ const findToken = async ({
       };
     }
 
-    const count = await TokenOfferings.checkTokenHaveAccess({
-      token_id,
-      user_entity_id,
-    });
-
-    if (count === 0) {
-      return {
-        success: false,
-        message: `You Don't Have a access for this token or please verify this token`,
-      };
-    }
-
     const data = await TokenOfferings.getTokenOffering({ token_id });
     const parseData = JSON.parse(JSON.stringify(data));
+
+    const qualifiedStaus: boolean =
+      await qualifiedStatus.getInvestorQualifiedStatus({
+        issuer_entity_id: parseData?.issuer_entity_id,
+        investor_entity_id: user_entity_id,
+      });
+
+    const investedStaus: boolean =
+      await investedStatus.getInvestorInvestedStatus({
+        token_id: token_id,
+        investor_entity_id: user_entity_id,
+      });
+
+    parseData["is_qualified"] = qualifiedStaus;
+    parseData["is_invested"] = investedStaus;
 
     const finalData = {
       ...parseData,
@@ -684,26 +714,33 @@ const findToken = async ({
 const getIssuerTokens = async ({
   search,
   user_entity_id,
+  offset = 0,
+  limit = 10,
 }: {
   search?: string;
   user_entity_id: string;
+  offset?: number;
+  limit?: number;
 }) => {
   try {
-    const data = await TokenOfferings.getTokenIssuerList({
+    const { rows, count } = await TokenOfferings.getTokenIssuerList({
       search: search ?? "",
       user_entity_id,
+      offset,
+      limit,
     });
 
-    return data?.map((val: any) => {
-      return {
-        id: val?.id,
-        name: val?.name,
-        status: val?.offer_status?.name,
-        logo: val?.logo_asset?.url,
-        isin_number: val?.isin_number,
-        symbol: val?.symbol,
-      };
-    });
+    // return data?.map((val: any) => {
+    //   return {
+    //     id: val?.id,
+    //     name: val?.name,
+    //     status: val?.offer_status?.name,
+    //     logo: val?.logo_asset?.url,
+    //     isin_number: val?.isin_number,
+    //     symbol: val?.symbol,
+    //   };
+    // });
+    return { page: rows, count: rows?.length, totalCount: count };
   } catch (error: any) {
     Logger.error(error.message, error);
     throw error;
@@ -718,6 +755,11 @@ const updateTokenValuation = async (option: createTokenValuation) => {
       token_id,
       user_entity_id,
       user_profile_id,
+      offer_price,
+      bid_price,
+      start_date,
+      start_time,
+      valuation_price,
     } = option;
 
     const count = await TokenOfferings.checkTokenHaveAccess({
@@ -733,7 +775,12 @@ const updateTokenValuation = async (option: createTokenValuation) => {
     }
 
     await TokenValuations.create({
-      ...option,
+      token_id,
+      offer_price,
+      bid_price,
+      start_date,
+      start_time,
+      valuation_price,
       created_by: user_profile_id,
     });
 
@@ -866,6 +913,46 @@ const updateTokenOfferingStatus = async ({
   }
 };
 
+const getAllFundOfferings = async (options: getAllFundOfferings) => {
+  try {
+    const { offset = 0, limit = 5, user_entity_id } = options;
+
+    // Getting Rows & Count Data of Fund Offerings
+    const { rows, count } = await TokenOfferings.getAllFundOfferingsByIssuer({
+      offset,
+      limit,
+      user_entity_id,
+    });
+
+    return { page: rows, count: rows?.length, totalCount: count };
+  } catch (error: any) {
+    Logger.error(error.message, error);
+    throw error;
+  }
+};
+
+const getValuationGraph = async ({
+  user_entity_id,
+  from_date,
+  to_date,
+  token_offering_id,
+}: {
+  user_entity_id?: string;
+  from_date?: string;
+  to_date?: string;
+  token_offering_id?: string;
+}) => {
+  // Get Token Valuation graph Data
+  const result: any = await TokenValuations.getTokenValuationGraph({
+    user_entity_id,
+    from_date,
+    to_date,
+    token_offering_id,
+  });
+
+  return result;
+};
+
 export default {
   createTokenOfferings,
   updateTokenStatus,
@@ -875,4 +962,6 @@ export default {
   updateTokenValuation,
   getAllTokens,
   updateTokenOfferingStatus,
+  getAllFundOfferings,
+  getValuationGraph,
 };

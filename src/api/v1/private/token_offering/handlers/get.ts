@@ -2,6 +2,7 @@ import { FastifyReply, FastifyRequest } from "fastify";
 import { Logger, handleResponse, responseType } from "@helpers";
 import { TokenOfferings } from "interactors";
 import { queryRequestInfo } from "@mappers";
+import { preparePagination } from "serializers/getResponse";
 
 export async function FIND_TOKEN(request: FastifyRequest, reply: FastifyReply) {
   try {
@@ -10,21 +11,6 @@ export async function FIND_TOKEN(request: FastifyRequest, reply: FastifyReply) {
     // -----------------------------
     const { entity_id, user_entity_id, user_profile_id, ...rest } =
       queryRequestInfo(request);
-
-    console.log(user_entity_id, "user_entity_id");
-
-    if (entity_id === 2) {
-      return handleResponse(
-        request,
-        reply,
-        responseType?.INTERNAL_SERVER_ERROR,
-        {
-          error: {
-            message: "Only Issuer and admin can be view token offering",
-          },
-        }
-      );
-    }
 
     // -----------------------------
     //  INTERACTOR
@@ -71,7 +57,8 @@ export async function GET_ISSUER_TOKENS(
     // -----------------------------
     //  MAPPER
     // -----------------------------
-    const { entity_id, user_entity_id, search } = queryRequestInfo(request);
+    const { entity_id, user_entity_id, url, offset, limit, search } =
+      queryRequestInfo(request);
 
     if (entity_id !== 3) {
       return handleResponse(
@@ -92,13 +79,25 @@ export async function GET_ISSUER_TOKENS(
     const result = await TokenOfferings.getIssuerTokens({
       user_entity_id: user_entity_id ?? "",
       search,
+      offset,
+      limit,
     });
+
+    const data = preparePagination({
+      result,
+      url,
+      offset,
+      limit,
+      entity_id,
+    });
+
     // -----------------------------
     //  RESPONSE
     // -----------------------------
     return handleResponse(request, reply, responseType?.CREATED, {
-      customMessage: result?.message,
-      data: result,
+      // customMessage: result?.message,
+      // data: result,
+      data,
     });
   } catch (error: any) {
     Logger.error(request, error.message, error);

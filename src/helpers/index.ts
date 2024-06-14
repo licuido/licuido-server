@@ -13,10 +13,10 @@ import excel from "./excel";
 export * from "./s3";
 import streamToBuffer from "./streamToBuffer";
 import qualifiedStatus from "./investorQualifiedStatus";
+import investedStatus from "./investorInvestedStatus";
 import currencyConvert from "./currencyConversion";
 import fulfilledStatus from "./orderFulfilledStatus";
 import commentFunction from "./functions";
-
 
 export {
   dateTime,
@@ -39,5 +39,6 @@ export {
   qualifiedStatus,
   currencyConvert,
   fulfilledStatus,
-  commentFunction
+  commentFunction,
+  investedStatus,
 };
