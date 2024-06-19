@@ -1,0 +1,6 @@
+import { GET_ALL_INVESTORS, EXPORT_INVESTORS_LIST_AS_CSV } from "./get";
+
+export default {
+  GET_ALL_INVESTORS,
+  EXPORT_INVESTORS_LIST_AS_CSV,
+};

@@ -184,3 +184,131 @@ export async function getAllInvestorData(options: {
     throw new Error(error.message);
   }
 }
+
+export async function getInvestorList(options: {
+  offset: number;
+  limit: number;
+  search?: string;
+  status_filters?: number[] | [];
+  country_filters?: number[] | [];
+  investor_type_filters?: number[] | [];
+  entity_type_id: number;
+  user_entity_id?: string;
+  minimum_balance?: string;
+  maximum_balance?: string;
+  token_id?: string;
+}): Promise<{
+  rows: any[];
+  count: number;
+}> {
+  try {
+    const {
+      offset,
+      limit,
+      entity_type_id,
+      user_entity_id,
+      search,
+      status_filters,
+      country_filters,
+      investor_type_filters,
+      minimum_balance,
+      maximum_balance,
+      token_id,
+    } = options;
+
+    // For Data
+
+    const [result]: any[] = await sequelize.query(
+      await queries.getAllInvestorsListQuery(
+        entity_type_id,
+        offset,
+        limit,
+        user_entity_id,
+        search,
+        status_filters,
+        country_filters,
+        investor_type_filters,
+        minimum_balance,
+        maximum_balance,
+        token_id
+      )
+    );
+
+    // For Count
+    const [dataWithoutOffsetLimit]: any[] = await sequelize.query(
+      await queries.getAllInvestorsListQuery(
+        entity_type_id,
+        null,
+        null,
+        user_entity_id,
+        search,
+        status_filters,
+        country_filters,
+        investor_type_filters,
+        minimum_balance,
+        maximum_balance,
+        token_id
+      )
+    );
+
+    return {
+      rows: result,
+      count: dataWithoutOffsetLimit?.length ?? 0,
+    };
+  } catch (error: any) {
+    console.log(error);
+    throw new Error(error.message);
+  }
+}
+
+export async function getInvestorListAsCSV(options: {
+  search?: string;
+  status_filters?: number[] | [];
+  country_filters?: number[] | [];
+  investor_type_filters?: number[] | [];
+  entity_type_id: number;
+  user_entity_id?: string;
+  minimum_balance?: string;
+  maximum_balance?: string;
+  token_id?: string;
+}): Promise<{
+  rows: any[];
+}> {
+  try {
+    const {
+      entity_type_id,
+      user_entity_id,
+      search,
+      status_filters,
+      country_filters,
+      investor_type_filters,
+      minimum_balance,
+      maximum_balance,
+      token_id,
+    } = options;
+
+    // For Data
+    const [result]: any[] = await sequelize.query(
+      await queries.getAllInvestorsListQuery(
+        entity_type_id,
+        null,
+        null,
+        user_entity_id,
+        search,
+        status_filters,
+        country_filters,
+        investor_type_filters,
+        minimum_balance,
+        maximum_balance,
+        token_id
+      )
+    );
+
+    return {
+      rows: result,
+    };
+  } catch (error: any) {
+    console.log(error);
+    throw new Error(error.message);
+  }
+}
