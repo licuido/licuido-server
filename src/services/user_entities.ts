@@ -312,3 +312,19 @@ export async function getInvestorListAsCSV(options: {
     throw new Error(error.message);
   }
 }
+
+export async function getInvestorDetail(id?: string): Promise<{
+  result: any;
+}> {
+  try {
+    // For Data
+    const [result]: any[] = await sequelize.query(
+      queries.getInvestorDetailsQuery(id)
+    );
+
+    return result && result?.length > 0 ? result?.[0] : {};
+  } catch (error: any) {
+    console.log(error);
+    throw new Error(error.message);
+  }
+}
