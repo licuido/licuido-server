@@ -62,7 +62,25 @@ const getAllInvestorsAsCSV: JSONSchema = Schema.object()
 export const EXPORT_INVESTORS_LIST_AS_CSV = {
   description:
     "Defines the structure and constraints for an API endpoint to get all investors list in CSV file.",
-  tags: ["Token Order"],
+  tags: ["Investors List"],
   response: makeResponseSchema(getAllInvestorsAsCSV),
   query: getAllInvestorsCSVParams,
+};
+
+const getInvestorDetailsParams = Schema.object()
+  .prop("id", Schema.string())
+  .required(["id"]);
+
+const getInvestorDetails: JSONSchema = Schema.object()
+  .prop("data", Schema.object())
+  .additionalProperties(true)
+  .prop("meta", Schema.object().prop("message", Schema.string()))
+  .valueOf() as JSONSchema;
+
+export const VIEW_INVESTOR = {
+  description:
+    "Defines the structure and constraints for an API endpoint to get investor details",
+  tags: ["Investors List"],
+  response: makeResponseSchema(getInvestorDetails),
+  query: getInvestorDetailsParams,
 };

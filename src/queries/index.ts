@@ -1,6 +1,7 @@
 import {
   getAllInvestorsQuery,
   getAllInvestorsCountQuery,
+  getInvestorDetailsQuery,
 } from "./getInvestorsQuery";
 import {
   getMarketPlaceListingQuery,
@@ -44,6 +45,10 @@ import {
 } from "./tokenDashboardQuery";
 
 import { getAllInvestorsListQuery } from "./investorsListQuery";
+import {
+  getAllPositionReportsQuery,
+  getAllPosReportInvestorsQuery,
+} from "./positionReportsQuery";
 
 const queries = {
   getAllInvestorsQuery,
@@ -77,6 +82,9 @@ const queries = {
   getByNoOfInvestorsQuery,
   getByInvestmentAmountQuery,
   getAllInvestorsListQuery,
+  getInvestorDetailsQuery,
+  getAllPositionReportsQuery,
+  getAllPosReportInvestorsQuery,
 };
 
 export default queries;

@@ -1,32 +1,30 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { Logger, handleResponse, responseType } from "@helpers";
-import { UserEntities } from "@interactors";
+import { PositionReports } from "@interactors";
 import { queryRequestInfo } from "@mappers";
 import { preparePagination } from "serializers/getResponse";
 import { makeExcelFile } from "@utils";
 
-/* GET_ALL_INVESTORS */
-export async function GET_ALL_INVESTORS(
+/* GET_ALL_POSITION_REPORTS */
+export async function GET_ALL_POSITION_REPORTS(
   request: FastifyRequest,
   reply: FastifyReply
 ) {
   try {
     /* -----------  MAPPER ----------- */
-    const { entity_id, user_entity_id, url, search, offset, limit, ...rest } =
+    const { entity_id, url, search, offset, limit, ...rest } =
       queryRequestInfo(request);
 
-    if (entity_id === 2) {
+    if (entity_id !== 3) {
       return handleResponse(request, reply, responseType?.FORBIDDEN, {
         error: {
-          message: "Only Issuer & Admin can be get investor list",
+          message: "Only Issuer can be get position reports",
         },
       });
     }
 
     /* -----------  INTERACTOR ----------- */
-    const result = await UserEntities.getInvestorsList({
-      entity_type_id: entity_id,
-      user_entity_id,
+    const result = await PositionReports.getAllPositionReports({
       offset,
       limit,
       search,
@@ -56,34 +54,85 @@ export async function GET_ALL_INVESTORS(
   }
 }
 
-/* EXPORT_INVESTORS_LIST_AS_CSV */
-export async function EXPORT_INVESTORS_LIST_AS_CSV(
+/* GET_ALL_INVESTORS */
+export async function GET_ALL_INVESTORS(
   request: FastifyRequest,
   reply: FastifyReply
 ) {
   try {
     /* -----------  MAPPER ----------- */
-    const { entity_id, user_entity_id, ...rest } = queryRequestInfo(request);
+    const { entity_id, user_entity_id, url, offset, limit, ...rest } =
+      queryRequestInfo(request);
 
-    if (entity_id === 2) {
+    if (entity_id !== 3) {
       return handleResponse(request, reply, responseType?.FORBIDDEN, {
         error: {
-          message: "Only Issuer & Admin can be get investor list as csv",
+          message: "Only Issuer can be get position reports investors",
         },
       });
     }
 
     /* -----------  INTERACTOR ----------- */
+    const result = await PositionReports.getAllInvestors({
+      user_entity_id,
+      offset,
+      limit,
+      ...rest,
+    });
 
-    const result = await UserEntities.getInvestorsListAsCSV({
-      entity_type_id: entity_id,
+    /* -----------  SERIALIZER  ----------- */
+    const data = preparePagination({
+      result,
+      url,
+      offset,
+      limit,
+      entity_id,
+    });
+
+    /* -----------  Response  ----------- */
+    return handleResponse(request, reply, responseType?.OK, {
+      data,
+    });
+  } catch (error: any) {
+    Logger.error(request, error.message, error);
+    return handleResponse(request, reply, responseType?.INTERNAL_SERVER_ERROR, {
+      error: {
+        message: responseType?.INTERNAL_SERVER_ERROR,
+      },
+    });
+  }
+}
+
+/* EXPORT_INVESTORS_AS_CSV */
+export async function EXPORT_INVESTORS_AS_CSV(
+  request: FastifyRequest,
+  reply: FastifyReply
+) {
+  try {
+    /* -----------  MAPPER ----------- */
+    const { entity_id, user_entity_id, url, ...rest } =
+      queryRequestInfo(request);
+
+    if (entity_id !== 3) {
+      return handleResponse(request, reply, responseType?.FORBIDDEN, {
+        error: {
+          message: "Only Issuer can be get position reports investors",
+        },
+      });
+    }
+
+    /* -----------  INTERACTOR ----------- */
+    const result = await PositionReports.getAllInvestorsAsCSV({
       user_entity_id,
       ...rest,
     });
 
     if (result?.code === 200) {
       /* Make Excel File */
-      const data = await makeExcelFile(result?.data, "investor_list_data");
+      const data = await makeExcelFile(
+        result?.data,
+        "position_report_investors"
+      );
 
       /* -----------  Response  ----------- */
       return handleResponse(request, reply, responseType?.OK, {
@@ -99,41 +148,6 @@ export async function EXPORT_INVESTORS_LIST_AS_CSV(
         customMessage: "in progress.",
       });
     }
-  } catch (error: any) {
-    Logger.error(request, error.message, error);
-    return handleResponse(request, reply, responseType?.INTERNAL_SERVER_ERROR, {
-      error: {
-        message: responseType?.INTERNAL_SERVER_ERROR,
-      },
-    });
-  }
-}
-
-export async function VIEW_INVESTOR(
-  request: FastifyRequest,
-  reply: FastifyReply
-) {
-  try {
-    /* -----------  MAPPER ----------- */
-    const { entity_id, id } = queryRequestInfo(request);
-
-    if (entity_id === 2) {
-      return handleResponse(request, reply, responseType?.FORBIDDEN, {
-        error: {
-          message: "Admin & Issuer can get investor details",
-        },
-      });
-    }
-    /* -----------  INTERACTOR ----------- */
-    const result = await UserEntities.getInvestorDetails({
-      id,
-    });
-
-    /* -----------  RESPONSE ----------- */
-
-    return handleResponse(request, reply, responseType?.OK, {
-      data: { ...result },
-    });
   } catch (error: any) {
     Logger.error(request, error.message, error);
     return handleResponse(request, reply, responseType?.INTERNAL_SERVER_ERROR, {

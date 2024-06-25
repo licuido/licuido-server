@@ -3,6 +3,7 @@ import {
   getAllInvestorData,
   getInvestorCount,
   getInvestorData,
+  getInvestorDetail,
   getInvestorList,
   getInvestorListAsCSV,
 } from "@services";
@@ -339,10 +340,25 @@ const getInvestorsListAsCSV = async (options: getInvestorListCSVType) => {
   }
 };
 
+const getInvestorDetails = async ({ id }: { id?: string }) => {
+  try {
+    const data: any = await getInvestorDetail(id);
+
+    return {
+      message: "Investor Details Fetched Successfully",
+      data: data,
+    };
+  } catch (error: any) {
+    Logger.error(error.message, error);
+    throw error;
+  }
+};
+
 export default {
   getInvestorCountForQualification,
   getInvestorDataForQualification,
   getInvestorDataAsCSV,
   getInvestorsList,
   getInvestorsListAsCSV,
+  getInvestorDetails,
 };
