@@ -31,9 +31,7 @@ const getAllPositionReportsparams = Schema.object()
   .prop("reporting_start_date", Schema.string())
   .prop("reporting_end_date", Schema.string())
   .prop("creation_start_date", Schema.string())
-  .prop("creation_end_date", Schema.string())
-  .prop("id", Schema.string().format("uuid"))
-  .required(["id", "offset", "limit"]);
+  .prop("creation_end_date", Schema.string());
 
 export const GET_ALL_POSITION_REPORTS = {
   description:
