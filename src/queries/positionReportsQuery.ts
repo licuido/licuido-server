@@ -39,6 +39,7 @@ export const getAllPositionReportsQuery = (
 
   /* For Data */
   let baseQuery = `SELECT
+  pr.id,
   pr.title AS reporting_title,
   pr.start_date AS reporting_start_date,
   pr.start_time AS reporting_start_time,
