@@ -12,7 +12,7 @@ export async function GET_ALL_POSITION_REPORTS(
 ) {
   try {
     /* -----------  MAPPER ----------- */
-    const { entity_id, url, search, offset, limit, ...rest } =
+    const { entity_id, user_entity_id, url, search, offset, limit, ...rest } =
       queryRequestInfo(request);
 
     if (entity_id !== 3) {
@@ -29,6 +29,7 @@ export async function GET_ALL_POSITION_REPORTS(
       limit,
       search,
       ...rest,
+      id: user_entity_id ?? "",
     });
 
     /* -----------  SERIALIZER  ----------- */
