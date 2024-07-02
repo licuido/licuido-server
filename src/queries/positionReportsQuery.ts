@@ -154,6 +154,7 @@ export const getAllPosReportInvestorsQuery = (
     SELECT
       en.id AS investor_entity_id,
       en.legal_name AS investor_name,
+      mc.name AS country_name,
       inv_ast.url AS investor_logo_url,
       up.email_id AS email,
       cw.wallet_address AS wallet,
@@ -185,6 +186,7 @@ export const getAllPosReportInvestorsQuery = (
       INNER JOIN master_entity_investor_status AS meis ON eni.status_id = meis.id
       LEFT JOIN assets AS inv_ast ON en.logo_asset_id = inv_ast.id
       LEFT JOIN customer_wallets AS cw ON en.id = cw.investor_entity_id
+      LEFT JOIN master_countries AS mc ON en.country_id = mc.id
       LEFT JOIN master_wallet_types AS mwt ON cw.wallet_type_id = mwt.id 
       LEFT JOIN position_reports AS pr ON eni.issuer_entity_id = pr.issuer_entity_id
       LEFT JOIN td_query ON td_query.receiver_entity_id = en.id
