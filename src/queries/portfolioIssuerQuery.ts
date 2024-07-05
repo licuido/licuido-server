@@ -483,7 +483,25 @@ ORDER BY
         WHERE
           tor.token_offering_id = tof.id
         LIMIT 1
-      ) AS issuer_entity_id
+      ) AS issuer_entity_id,
+            (
+        SELECT
+          tor.bank_account_name
+        FROM
+          token_orders AS tor
+        WHERE
+          tor.token_offering_id = tof.id
+        LIMIT 1
+      ) AS bank_account_name,
+      (
+        SELECT
+          tor.bank_name
+        FROM
+          token_orders AS tor
+        WHERE
+          tor.token_offering_id = tof.id
+        LIMIT 1
+      ) AS bank_name
     FROM
       token_offerings AS tof
       INNER JOIN master_token_offering_status AS mtos ON tof.offer_status_id = mtos.id
@@ -496,6 +514,7 @@ SELECT
   *,
   (circulating_supply - pending_token_redemption) AS available_token,
   (overall_mint - overall_burn) AS overall_investment,
+  SUM(overall_mint - overall_burn) OVER (PARTITION BY issuer_entity_id) AS total_overall_investment,
   ROUND(
     ((valuation_price - offering_price) / offering_price * 100),
     1

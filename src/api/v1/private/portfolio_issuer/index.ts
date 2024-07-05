@@ -38,6 +38,21 @@ const issuerPortFolioRoute: FastifyPluginAsync = async (
     handler.GET_FUND_OFFERINGS
   );
 
+  /* Update Token Offerings */
+  // fastify
+  // .put(
+  //   "/update",
+  //   { schema: schema.UPDATE_TOKEN_OFFERINGS },
+  //   handler.UPDATE_TOKEN_OFFERINGS
+  // )
+
+  // fastify
+  // .put(
+  //   "/update",
+  //   { schema: schema.GET_FUND_OFFERINGS },
+  //   handler.GET_FUND_OFFERINGS
+  // )
+
   /* Investors List */
   fastify.get(
     "/investor/list",
