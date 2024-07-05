@@ -323,4 +323,5 @@ export interface getAllFundOfferings {
   offset?: number;
   limit?: number;
   user_entity_id?: string;
+  request?: any;
 }

@@ -915,13 +915,14 @@ const updateTokenOfferingStatus = async ({
 
 const getAllFundOfferings = async (options: getAllFundOfferings) => {
   try {
-    const { offset = 0, limit = 5, user_entity_id } = options;
+    const { offset = 0, limit = 5, user_entity_id, request } = options;
 
     // Getting Rows & Count Data of Fund Offerings
     const { rows, count } = await TokenOfferings.getAllFundOfferingsByIssuer({
       offset,
       limit,
       user_entity_id,
+      request,
     });
 
     return { page: rows, count: rows?.length, totalCount: count };

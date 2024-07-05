@@ -611,19 +611,21 @@ class TokenOfferings {
     offset: number;
     limit: number;
     user_entity_id?: string;
+    request?: any;
   }): Promise<{
     rows: any[];
     count: number;
   }> {
     try {
-      const { offset, limit, user_entity_id } = options;
+      const { offset, limit, user_entity_id, request } = options;
 
       // For Data
       const [result]: any[] = await sequelize.query(
         queries.getAllFundOfferingsForPortfolioQuery(
           offset,
           limit,
-          user_entity_id
+          user_entity_id,
+          request
         )
       );
 
