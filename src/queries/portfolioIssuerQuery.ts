@@ -254,7 +254,13 @@ export const getAllFundOfferingsForPortfolioQuery = (
   offset: number | null,
   limit: number | null,
   user_entity_id?: string,
-  request?: any
+  request?: any,
+  statusId?: any,
+  search?: string,
+  symbol?: string,
+  bankName?: string,
+  bankAccountName?: string,
+  blockchain_network?: number
 ) => {
   /* Get All Fund Offerings For Portfolio */
 
@@ -382,6 +388,46 @@ ORDER BY
   created_at DESC  
   ${limitStatment}`;
   /* For Admin Data */
+
+  let statusFilterCondition = "";
+  if (statusId) {
+    statusFilterCondition = `AND tof.status_id = ${statusId}`;
+  }
+
+  let symbolFilterCondition = "";
+  if (symbol && symbol.length > 0) {
+    symbolFilterCondition = ` AND tof.symbol = '%${symbol}%'`;
+  }
+
+  let bankNameFilterCondition = "";
+  if (bankName && bankName.length > 0) {
+    bankNameFilterCondition = ` AND bank_name ILIKE '%${bankName}%'`;
+  }
+
+  let bankAccountNameFilterCondition = "";
+  if (bankAccountName && bankAccountName.length > 0) {
+    bankAccountNameFilterCondition = ` AND bank_account_name ILIKE '%${bankAccountName}%'`;
+  }
+
+  let blockchainNetworkFilterCondition = "";
+  if (blockchain_network && blockchain_network.length > 0) {
+    blockchainNetworkFilterCondition = ` AND tof.blockchain_network = '%${blockchain_network}%'`;
+  }
+
+  // let issuerEntityIdFilterCondition = '';
+  // if (user_entity_id) {
+  //   issuerEntityIdFilterCondition = ` AND tor.issuer_entity_id = ${user_entity_id}`;
+  // }
+
+  let searchFilterCondition = "";
+  if (search && search.length > 0) {
+    searchFilterCondition = ` AND (
+      tof.name ILIKE '%${search}%'
+      OR bank_name ILIKE '%${search}%'
+      OR bank_account_name ILIKE '%${search}%'
+    )`;
+  }
+
   let baseQueryForAdminUser = `WITH
   vas_fo AS(
     SELECT
@@ -397,6 +443,7 @@ ORDER BY
       tof.status_id AS status_id,
       mts.name AS status_name,
       tof.offering_price,
+      tof.blockchain_network,
       COALESCE(
         (
           SELECT
@@ -509,6 +556,12 @@ ORDER BY
       LEFT JOIN assets AS ast ON tof.logo_asset_id = ast.id
     WHERE
       tof.is_active = true
+      ${statusFilterCondition}
+      ${searchFilterCondition}
+      ${symbolFilterCondition}
+      ${bankNameFilterCondition}
+      ${bankAccountNameFilterCondition}
+      ${blockchainNetworkFilterCondition}
   )
 SELECT
   *,
