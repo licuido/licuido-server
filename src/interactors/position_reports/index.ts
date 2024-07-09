@@ -18,7 +18,7 @@ const createPositionReports = async (options: createPositionReport) => {
       is_all_investors,
       investors,
       user_profile_id,
-      issuer_entity_id,
+      user_entity_id,
     } = options;
 
     PositionReports.create({
@@ -29,7 +29,7 @@ const createPositionReports = async (options: createPositionReport) => {
       end_time,
       is_all_investors,
       created_by: user_profile_id,
-      issuer_entity_id,
+      issuer_entity_id: user_entity_id,
     }).then(async (res) => {
       if (investors && investors?.length > 0) {
         const insertParams = investors?.map((val: any) => {

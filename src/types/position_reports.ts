@@ -7,7 +7,7 @@ export interface createPositionReport {
   end_time: string;
   is_all_investors?: boolean;
   user_profile_id: string;
-  issuer_entity_id: string;
+  user_entity_id: string;
 }
 
 export interface getAllPositionReportsType {
