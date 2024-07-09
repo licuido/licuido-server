@@ -410,7 +410,7 @@ ORDER BY
   }
 
   let blockchainNetworkFilterCondition = "";
-  if (blockchain_network && blockchain_network.length > 0) {
+  if (blockchain_network) {
     blockchainNetworkFilterCondition = ` AND tof.blockchain_network = '%${blockchain_network}%'`;
   }
 
