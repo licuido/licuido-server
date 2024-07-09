@@ -149,6 +149,7 @@ export async function GET_FUND_OFFERINGS(
       user_entity_id,
       offset,
       limit,
+      request,
     });
 
     /* -----------  SERIALIZER  ----------- */
