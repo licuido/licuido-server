@@ -260,7 +260,8 @@ export const getAllFundOfferingsForPortfolioQuery = (
   symbol?: string,
   bankName?: string,
   bankAccountName?: string,
-  blockchain_network?: number
+  blockchain_network?: number,
+  tokenTypeId?: number
 ) => {
   /* Get All Fund Offerings For Portfolio */
 
@@ -396,7 +397,7 @@ ORDER BY
 
   let symbolFilterCondition = "";
   if (symbol && symbol.length > 0) {
-    symbolFilterCondition = ` AND tof.symbol = '%${symbol}%'`;
+    symbolFilterCondition = ` AND tof.symbol ILIKE '%${symbol}%'`;
   }
 
   let bankNameFilterCondition = "";
@@ -411,13 +412,18 @@ ORDER BY
 
   let blockchainNetworkFilterCondition = "";
   if (blockchain_network) {
-    blockchainNetworkFilterCondition = ` AND tof.blockchain_network = '%${blockchain_network}%'`;
+    blockchainNetworkFilterCondition = ` AND tof.blockchain_network = ${blockchain_network}`;
   }
 
   // let issuerEntityIdFilterCondition = '';
   // if (user_entity_id) {
   //   issuerEntityIdFilterCondition = ` AND tor.issuer_entity_id = ${user_entity_id}`;
   // }
+
+  let tokenTypeIdFilterCondition = "";
+  if (tokenTypeId) {
+    tokenTypeIdFilterCondition = ` AND tof.token_type_id = ${tokenTypeId}`;
+  }
 
   let searchFilterCondition = "";
   if (search && search.length > 0) {
@@ -444,6 +450,7 @@ ORDER BY
       mts.name AS status_name,
       tof.offering_price,
       tof.blockchain_network,
+      tof.token_type_id,
       COALESCE(
         (
           SELECT
@@ -562,6 +569,7 @@ ORDER BY
       ${bankNameFilterCondition}
       ${bankAccountNameFilterCondition}
       ${blockchainNetworkFilterCondition}
+      ${tokenTypeIdFilterCondition}
   )
 SELECT
   *,
