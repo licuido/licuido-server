@@ -358,6 +358,8 @@ export const getInvestorDetailsQuery = (id?: string) => {
       up.name AS contact_person_name,
       up.mobile_no_std_code AS mobile_no_std_code,
       up.mobile_no AS mobile_no,
+      up.is_politically_exposed AS is_politically_exposed,
+      up.is_legally_confirmed AS is_legally_confirmed,
       mp.id AS position_id,
       mp.name AS position_name,
       CAST(
