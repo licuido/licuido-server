@@ -673,7 +673,10 @@ const findToken = async ({
       };
     }
 
-    const data = await TokenOfferings.getTokenOffering({ token_id });
+    const data = await TokenOfferings.getTokenOffering({
+      token_id,
+      user_entity_id,
+    });
     const parseData = JSON.parse(JSON.stringify(data));
 
     const qualifiedStaus: boolean =
