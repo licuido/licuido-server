@@ -146,8 +146,8 @@ const getAllInvestorsAsCSV = async (options: getAllInvestorsCSVType) => {
       data?.rows?.length > 0 &&
       data?.rows?.map((item: any) => ({
         "Investor name": item?.investor_name ?? "",
-        "First name": "",
-        "Last name": "",
+        // "First name": "",
+        // "Last name": "",
         "Email id": item?.email,
         "Country of Residence": "",
         Balance: item?.balance ?? "",
