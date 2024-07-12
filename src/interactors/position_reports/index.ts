@@ -149,7 +149,7 @@ const getAllInvestorsAsCSV = async (options: getAllInvestorsCSVType) => {
         // "First name": "",
         // "Last name": "",
         "Email id": item?.email,
-        "Country of Residence": "",
+        "Country of Residence": item?.country_name ?? "",
         Balance: item?.balance ?? "",
         Pending: item?.pending ?? "",
         Available: item?.available ?? "",
