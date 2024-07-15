@@ -324,4 +324,10 @@ export interface getAllFundOfferings {
   limit?: number;
   user_entity_id?: string;
   request?: any;
+  statusId?: any;
+  search?: string;
+  symbol?: string;
+  bankName?: string;
+  bankAccountName?: string;
+  blockchain_network?: number;
 }

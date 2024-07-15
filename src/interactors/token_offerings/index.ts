@@ -918,7 +918,18 @@ const updateTokenOfferingStatus = async ({
 
 const getAllFundOfferings = async (options: getAllFundOfferings) => {
   try {
-    const { offset = 0, limit = 5, user_entity_id, request } = options;
+    const {
+      offset = 0,
+      limit = 5,
+      user_entity_id,
+      request,
+      statusId,
+      search,
+      symbol,
+      bankName,
+      bankAccountName,
+      blockchain_network,
+    } = options;
 
     // Getting Rows & Count Data of Fund Offerings
     const { rows, count } = await TokenOfferings.getAllFundOfferingsByIssuer({
@@ -926,6 +937,12 @@ const getAllFundOfferings = async (options: getAllFundOfferings) => {
       limit,
       user_entity_id,
       request,
+      statusId,
+      search,
+      symbol,
+      bankName,
+      bankAccountName,
+      blockchain_network,
     });
 
     return { page: rows, count: rows?.length, totalCount: count };

@@ -254,7 +254,14 @@ export const getAllFundOfferingsForPortfolioQuery = (
   offset: number | null,
   limit: number | null,
   user_entity_id?: string,
-  request?: any
+  request?: any,
+  statusId?: any,
+  search?: string,
+  symbol?: string,
+  bankName?: string,
+  bankAccountName?: string,
+  blockchain_network?: number,
+  tokenTypeId?: number
 ) => {
   /* Get All Fund Offerings For Portfolio */
 
@@ -382,6 +389,51 @@ ORDER BY
   created_at DESC  
   ${limitStatment}`;
   /* For Admin Data */
+
+  let statusFilterCondition = "";
+  if (statusId) {
+    statusFilterCondition = `AND tof.status_id = ${statusId}`;
+  }
+
+  let symbolFilterCondition = "";
+  if (symbol && symbol.length > 0) {
+    symbolFilterCondition = ` AND tof.symbol ILIKE '%${symbol}%'`;
+  }
+
+  let bankNameFilterCondition = "";
+  if (bankName && bankName.length > 0) {
+    bankNameFilterCondition = ` AND bank_name ILIKE '%${bankName}%'`;
+  }
+
+  let bankAccountNameFilterCondition = "";
+  if (bankAccountName && bankAccountName.length > 0) {
+    bankAccountNameFilterCondition = ` AND bank_account_name ILIKE '%${bankAccountName}%'`;
+  }
+
+  let blockchainNetworkFilterCondition = "";
+  if (blockchain_network) {
+    blockchainNetworkFilterCondition = ` AND tof.blockchain_network = ${blockchain_network}`;
+  }
+
+  // let issuerEntityIdFilterCondition = '';
+  // if (user_entity_id) {
+  //   issuerEntityIdFilterCondition = ` AND tor.issuer_entity_id = ${user_entity_id}`;
+  // }
+
+  let tokenTypeIdFilterCondition = "";
+  if (tokenTypeId) {
+    tokenTypeIdFilterCondition = ` AND tof.token_type_id = ${tokenTypeId}`;
+  }
+
+  let searchFilterCondition = "";
+  if (search && search.length > 0) {
+    searchFilterCondition = ` AND (
+      tof.name ILIKE '%${search}%'
+      OR bank_name ILIKE '%${search}%'
+      OR bank_account_name ILIKE '%${search}%'
+    )`;
+  }
+
   let baseQueryForAdminUser = `WITH
   vas_fo AS(
     SELECT
@@ -397,6 +449,8 @@ ORDER BY
       tof.status_id AS status_id,
       mts.name AS status_name,
       tof.offering_price,
+      tof.blockchain_network,
+      tof.token_type_id,
       COALESCE(
         (
           SELECT
@@ -483,7 +537,25 @@ ORDER BY
         WHERE
           tor.token_offering_id = tof.id
         LIMIT 1
-      ) AS issuer_entity_id
+      ) AS issuer_entity_id,
+            (
+        SELECT
+          tor.bank_account_name
+        FROM
+          token_orders AS tor
+        WHERE
+          tor.token_offering_id = tof.id
+        LIMIT 1
+      ) AS bank_account_name,
+      (
+        SELECT
+          tor.bank_name
+        FROM
+          token_orders AS tor
+        WHERE
+          tor.token_offering_id = tof.id
+        LIMIT 1
+      ) AS bank_name
     FROM
       token_offerings AS tof
       INNER JOIN master_token_offering_status AS mtos ON tof.offer_status_id = mtos.id
@@ -491,11 +563,19 @@ ORDER BY
       LEFT JOIN assets AS ast ON tof.logo_asset_id = ast.id
     WHERE
       tof.is_active = true
+      ${statusFilterCondition}
+      ${searchFilterCondition}
+      ${symbolFilterCondition}
+      ${bankNameFilterCondition}
+      ${bankAccountNameFilterCondition}
+      ${blockchainNetworkFilterCondition}
+      ${tokenTypeIdFilterCondition}
   )
 SELECT
   *,
   (circulating_supply - pending_token_redemption) AS available_token,
   (overall_mint - overall_burn) AS overall_investment,
+  SUM(overall_mint - overall_burn) OVER (PARTITION BY issuer_entity_id) AS total_overall_investment,
   ROUND(
     ((valuation_price - offering_price) / offering_price * 100),
     1

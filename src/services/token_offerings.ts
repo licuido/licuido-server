@@ -636,12 +636,29 @@ class TokenOfferings {
     limit: number;
     user_entity_id?: string;
     request?: any;
+    statusId?: any;
+    search?: string;
+    symbol?: string;
+    bankName?: string;
+    bankAccountName?: string;
+    blockchain_network?: number;
   }): Promise<{
     rows: any[];
     count: number;
   }> {
     try {
-      const { offset, limit, user_entity_id, request } = options;
+      const {
+        offset,
+        limit,
+        user_entity_id,
+        request,
+        statusId,
+        search,
+        symbol,
+        bankName,
+        bankAccountName,
+        blockchain_network,
+      } = options;
 
       // For Data
       const [result]: any[] = await sequelize.query(
@@ -649,7 +666,13 @@ class TokenOfferings {
           offset,
           limit,
           user_entity_id,
-          request
+          request,
+          statusId,
+          search,
+          symbol,
+          bankName,
+          bankAccountName,
+          blockchain_network
         )
       );
 
