@@ -1062,16 +1062,19 @@ const getTokensByInvestorGraph = async ({
   user_entity_id,
   from_date,
   to_date,
+  request,
 }: {
   user_entity_id?: string;
   from_date?: string;
   to_date?: string;
+  request?: any;
 }) => {
   // Get Token Order Graph Data
   const result: any = await TokenOrders.getTokensByInvestorGraph({
     user_entity_id,
     from_date,
     to_date,
+    request,
   });
 
   return { page: result?.rows, count: result?.count };

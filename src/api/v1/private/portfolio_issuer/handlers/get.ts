@@ -73,6 +73,7 @@ export async function GET_TOKEN_BY_INVESTOR_GRAPH(
     /* -----------  INTERACTOR ----------- */
     const result = await TokenOrders.getTokensByInvestorGraph({
       user_entity_id,
+      request,
       ...rest,
     });
 
