@@ -1,6 +1,7 @@
 import {
   getAllInvestorsQuery,
   getAllInvestorsCountQuery,
+  getInvestorDetailsQuery,
 } from "./getInvestorsQuery";
 import {
   getMarketPlaceListingQuery,
@@ -29,6 +30,8 @@ import {
   getTokensHoldingsGraphQuery,
   getCurrentTokenInvestmentQuery,
   getInvestorDashboardQuery,
+  getAllValuationPriceQuery,
+  getInvestorTokenHoldingsQuery,
 } from "./portfolioInvestorQuery";
 
 import {
@@ -42,6 +45,12 @@ import {
   getByNoOfInvestorsQuery,
   getByInvestmentAmountQuery,
 } from "./tokenDashboardQuery";
+
+import { getAllInvestorsListQuery } from "./investorsListQuery";
+import {
+  getAllPositionReportsQuery,
+  getAllPosReportInvestorsQuery,
+} from "./positionReportsQuery";
 
 const queries = {
   getAllInvestorsQuery,
@@ -74,6 +83,12 @@ const queries = {
   getTokenRecentActivitiesQuery,
   getByNoOfInvestorsQuery,
   getByInvestmentAmountQuery,
+  getAllInvestorsListQuery,
+  getInvestorDetailsQuery,
+  getAllPositionReportsQuery,
+  getAllPosReportInvestorsQuery,
+  getAllValuationPriceQuery,
+  getInvestorTokenHoldingsQuery,
 };
 
 export default queries;

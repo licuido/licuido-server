@@ -253,7 +253,15 @@ FROM
 export const getAllFundOfferingsForPortfolioQuery = (
   offset: number | null,
   limit: number | null,
-  user_entity_id?: string
+  user_entity_id?: string,
+  request?: any,
+  statusId?: any,
+  search?: string,
+  symbol?: string,
+  bankName?: string,
+  bankAccountName?: string,
+  blockchain_network?: number,
+  tokenTypeId?: number
 ) => {
   /* Get All Fund Offerings For Portfolio */
 
@@ -262,7 +270,6 @@ export const getAllFundOfferingsForPortfolioQuery = (
   if (offset !== null && limit !== null) {
     limitStatment = ` LIMIT '${limit}' OFFSET '${offset * limit}'`;
   }
-
   /* For Data */
   let baseQuery = `WITH
   vas_fo AS(
@@ -381,8 +388,209 @@ FROM
 ORDER BY
   created_at DESC  
   ${limitStatment}`;
+  /* For Admin Data */
 
-  return baseQuery;
+  let statusFilterCondition = "";
+  if (statusId) {
+    statusFilterCondition = `AND tof.status_id = ${statusId}`;
+  }
+
+  let symbolFilterCondition = "";
+  if (symbol && symbol.length > 0) {
+    symbolFilterCondition = ` AND tof.symbol ILIKE '%${symbol}%'`;
+  }
+
+  let bankNameFilterCondition = "";
+  if (bankName && bankName.length > 0) {
+    bankNameFilterCondition = ` AND bank_name ILIKE '%${bankName}%'`;
+  }
+
+  let bankAccountNameFilterCondition = "";
+  if (bankAccountName && bankAccountName.length > 0) {
+    bankAccountNameFilterCondition = ` AND bank_account_name ILIKE '%${bankAccountName}%'`;
+  }
+
+  let blockchainNetworkFilterCondition = "";
+  if (blockchain_network) {
+    blockchainNetworkFilterCondition = ` AND tof.blockchain_network = ${blockchain_network}`;
+  }
+
+  // let issuerEntityIdFilterCondition = '';
+  // if (user_entity_id) {
+  //   issuerEntityIdFilterCondition = ` AND tor.issuer_entity_id = ${user_entity_id}`;
+  // }
+
+  let tokenTypeIdFilterCondition = "";
+  if (tokenTypeId) {
+    tokenTypeIdFilterCondition = ` AND tof.token_type_id = ${tokenTypeId}`;
+  }
+
+  let searchFilterCondition = "";
+  if (search && search.length > 0) {
+    searchFilterCondition = ` AND (
+      tof.name ILIKE '%${search}%'
+      OR bank_name ILIKE '%${search}%'
+      OR bank_account_name ILIKE '%${search}%'
+    )`;
+  }
+
+  let baseQueryForAdminUser = `WITH
+  vas_fo AS(
+    SELECT
+      tof.id AS token_offering_id,
+      tof.name AS token_name,
+      tof.symbol AS token_symbol,
+      tof.isin_number AS isin_no,
+      ast.url AS token_logo_url,
+      tof.start_date AS star_date,
+      tof.end_date AS end_date,
+      tof.offer_status_id AS token_status_id,
+      mtos.name AS token_status_name,
+      tof.status_id AS status_id,
+      mts.name AS status_name,
+      tof.offering_price,
+      tof.blockchain_network,
+      tof.token_type_id,
+      COALESCE(
+        (
+          SELECT
+            tt.total_supply
+          FROM
+            token_transactions AS tt
+            INNER JOIN token_orders AS tor ON tt.order_id = tor.id
+          WHERE
+            tor.token_offering_id = tof.id
+            AND tt.status_id = 2
+          ORDER BY
+            tt.updated_at DESC
+          LIMIT
+            1
+        ), 0
+      ) AS circulating_supply,
+      COALESCE(
+        (
+          SELECT
+            SUM(tt.block_token)
+          FROM
+            token_transactions AS tt
+            INNER JOIN token_orders AS tor ON tt.order_id = tor.id
+          WHERE
+            tor.token_offering_id = tof.id
+            AND tt.status_id IN (1, 2)
+        ),
+        0
+      ) AS pending_token_redemption,
+      COALESCE(
+        (
+          SELECT
+            SUM(COALESCE(tor.net_investment_value_in_euro, 0))
+          FROM
+            token_orders AS tor
+          WHERE
+            tor.token_offering_id = tof.id
+            AND tor.type = 'subscription'
+            AND tor.status_id = 5
+        ),
+        0
+      ) AS overall_mint,
+      COALESCE(
+        (
+          SELECT
+            SUM(COALESCE(tor.net_investment_value_in_euro, 0))
+          FROM
+            token_orders AS tor
+          WHERE
+            tor.token_offering_id = tof.id
+            AND tor.type = 'redemption'
+            AND tor.status_id = 11
+        ),
+        0
+      ) AS overall_burn,
+      COALESCE(
+        (
+          SELECT
+            valuation_price
+          FROM
+            token_valuations AS tv
+          WHERE
+            tv.token_offering_id = tof.id
+            AND (
+              tv.start_date < CURRENT_DATE
+              OR (
+                tv.start_date = CURRENT_DATE
+                AND tv.start_time <= CURRENT_TIME
+              )
+            )
+          ORDER BY
+            tv.start_date DESC,
+            tv.start_time DESC
+          LIMIT
+            1
+        ), tof.offering_price
+      ) AS valuation_price,
+      tof.created_at AS created_at,
+      (
+        SELECT
+          tor.issuer_entity_id
+        FROM
+          token_orders AS tor
+        WHERE
+          tor.token_offering_id = tof.id
+        LIMIT 1
+      ) AS issuer_entity_id,
+            (
+        SELECT
+          tor.bank_account_name
+        FROM
+          token_orders AS tor
+        WHERE
+          tor.token_offering_id = tof.id
+        LIMIT 1
+      ) AS bank_account_name,
+      (
+        SELECT
+          tor.bank_name
+        FROM
+          token_orders AS tor
+        WHERE
+          tor.token_offering_id = tof.id
+        LIMIT 1
+      ) AS bank_name
+    FROM
+      token_offerings AS tof
+      INNER JOIN master_token_offering_status AS mtos ON tof.offer_status_id = mtos.id
+      INNER JOIN master_token_status AS mts ON tof.status_id = mts.id
+      LEFT JOIN assets AS ast ON tof.logo_asset_id = ast.id
+    WHERE
+      tof.is_active = true
+      ${statusFilterCondition}
+      ${searchFilterCondition}
+      ${symbolFilterCondition}
+      ${bankNameFilterCondition}
+      ${bankAccountNameFilterCondition}
+      ${blockchainNetworkFilterCondition}
+      ${tokenTypeIdFilterCondition}
+  )
+SELECT
+  *,
+  (circulating_supply - pending_token_redemption) AS available_token,
+  (overall_mint - overall_burn) AS overall_investment,
+  SUM(overall_mint - overall_burn) OVER (PARTITION BY issuer_entity_id) AS total_overall_investment,
+  ROUND(
+    ((valuation_price - offering_price) / offering_price * 100),
+    1
+  ) AS valuation_percentage
+FROM
+  vas_fo
+ORDER BY
+  created_at DESC
+  ${limitStatment}`;
+
+  if (request?.headers?.build === "AD-1") {
+    return baseQueryForAdminUser;
+  } else {
+    return baseQuery;
+  }
 };
 
 export const getInvestorListQuery = (

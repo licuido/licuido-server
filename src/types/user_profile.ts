@@ -34,4 +34,6 @@ export interface createPersonInfo {
   is_setup_done?: boolean;
   is_fund_offered_by_licuido?: boolean;
   investor_type_id?: number;
+  is_legally_confirmed?: boolean;
+  is_politically_exposed?: boolean;
 }

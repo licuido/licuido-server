@@ -673,7 +673,10 @@ const findToken = async ({
       };
     }
 
-    const data = await TokenOfferings.getTokenOffering({ token_id });
+    const data = await TokenOfferings.getTokenOffering({
+      token_id,
+      user_entity_id,
+    });
     const parseData = JSON.parse(JSON.stringify(data));
 
     const qualifiedStaus: boolean =
@@ -915,13 +918,31 @@ const updateTokenOfferingStatus = async ({
 
 const getAllFundOfferings = async (options: getAllFundOfferings) => {
   try {
-    const { offset = 0, limit = 5, user_entity_id } = options;
+    const {
+      offset = 0,
+      limit = 5,
+      user_entity_id,
+      request,
+      statusId,
+      search,
+      symbol,
+      bankName,
+      bankAccountName,
+      blockchain_network,
+    } = options;
 
     // Getting Rows & Count Data of Fund Offerings
     const { rows, count } = await TokenOfferings.getAllFundOfferingsByIssuer({
       offset,
       limit,
       user_entity_id,
+      request,
+      statusId,
+      search,
+      symbol,
+      bankName,
+      bankAccountName,
+      blockchain_network,
     });
 
     return { page: rows, count: rows?.length, totalCount: count };

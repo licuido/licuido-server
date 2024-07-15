@@ -1278,6 +1278,101 @@ const rejectOrder = async ({
   return result;
 };
 
+const getInvestorlast3MonthsPerformance = async ({
+  user_entity_id,
+  from_date,
+  to_date,
+}: {
+  user_entity_id?: string;
+  from_date?: string;
+  to_date?: string;
+}) => {
+  // Get Valuation Price Data
+
+  // Get Token Holdings Data
+  const tokenHoldings: any = await TokenOrders.getInvestorTokenHoldings({
+    user_entity_id,
+  });
+
+  let token_ids: any = [];
+  for (const tokenHold of tokenHoldings) {
+    token_ids?.push(tokenHold?.token_offering_id);
+  }
+
+  const TokenValuationPrice: any = await TokenOrders.getValuationPrice({
+    from_date,
+    to_date,
+    token_ids,
+  });
+
+  let graphData = [];
+
+  const findPreviousDate = (valuationDate: any, aggregatedBalances: any) => {
+    let closestPrevious = null;
+
+    for (const balance of aggregatedBalances) {
+      if (new Date(balance.date) < new Date(valuationDate)) {
+        closestPrevious = balance; // Update to the last seen previous date
+      }
+    }
+
+    return closestPrevious;
+  };
+
+  if (tokenHoldings?.length > 0) {
+    for (
+      let i = 0;
+      i < TokenValuationPrice?.[0]?.aggregated_valuations?.length;
+      i++
+    ) {
+      let dailyDate = TokenValuationPrice?.[0]?.aggregated_valuations[i]?.date;
+      let sum = 0;
+      for (let j = 0; j < tokenHoldings?.length; j++) {
+        let tokenHold = tokenHoldings[j];
+        for (let valuation of TokenValuationPrice) {
+          if (tokenHold.token_offering_id === valuation?.token_id) {
+            for (let dateCompare of tokenHold?.aggregated_balance_json) {
+              const data = valuation?.aggregated_valuations?.find(
+                (value: any) => value.date === dateCompare.date
+              );
+              if (
+                tokenHold?.aggregated_balance_json &&
+                valuation?.aggregated_valuations &&
+                data
+              ) {
+                sum = sum + data?.valuation_price * dateCompare?.sender_balance;
+              } else {
+                const previousBalance = findPreviousDate(
+                  dateCompare.date,
+                  TokenValuationPrice.aggregated_valuations
+                );
+
+                if (previousBalance) {
+                  sum +=
+                    valuation?.valuation_price *
+                    tokenHold?.aggregated_balance_json?.sender_balance; // Use the closest previous balance
+                } else {
+                  sum += valuation?.valuation_price * 0;
+                }
+              }
+            }
+          }
+        }
+      }
+      graphData?.push({
+        date: dailyDate,
+        value: sum,
+      });
+    }
+  }
+
+  let totalInvestment: any = await TokenOrders.getInvestorDashboard({
+    user_entity_id,
+  });
+
+  return { graphData, profitPercentage: totalInvestment?.percentage_change };
+};
+
 export default {
   createTokenSubscriptionOrders,
   getTokenOrder,
@@ -1300,4 +1395,5 @@ export default {
   getTokenSummaryRecentActivities,
   getInvestorDistribution,
   rejectOrder,
+  getInvestorlast3MonthsPerformance,
 };

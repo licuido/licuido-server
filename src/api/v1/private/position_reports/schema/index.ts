@@ -1,4 +1,3 @@
-import { CREATE_POSITION_REPORT } from "./post";
 import {
   GET_ALL_POSITION_REPORTS,
   GET_ALL_INVESTORS,
@@ -6,7 +5,6 @@ import {
 } from "./get";
 
 export default {
-  CREATE_POSITION_REPORT,
   GET_ALL_POSITION_REPORTS,
   GET_ALL_INVESTORS,
   EXPORT_INVESTORS_AS_CSV,

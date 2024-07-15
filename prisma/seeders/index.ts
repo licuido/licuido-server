@@ -4,7 +4,7 @@ import {
   // master_fund_agency_ratings,
   // master_entity_types,
   // master_regions,
-  // master_countries,
+  master_countries,
   // master_business_sectors,
   // master_position,
   // master_wallet_types,
@@ -210,36 +210,36 @@ const main = async () => {
 
   await Promise.all(upsertPromises);
 
-  // let dependentSeederPromise: any[] = [];
-  // Object.values(Seeds).forEach((seed: { table: string; data: any[] }) => {
-  //   // //countries master
-  //   if (seed.table == "master_countries") {
-  //     seed.data.forEach((data: master_countries) => {
-  //       dependentSeederPromise.push(
-  //         prisma.master_countries.upsert({
-  //           where: { id: data.id },
-  //           update: data,
-  //           create: data,
-  //         })
-  //       );
-  //     });
-  //   }
+  let dependentSeederPromise: any[] = [];
+  Object.values(Seeds).forEach((seed: { table: string; data: any[] }) => {
+    // //countries master
+    if (seed.table == "master_countries") {
+      seed.data.forEach((data: master_countries) => {
+        dependentSeederPromise.push(
+          prisma.master_countries.upsert({
+            where: { id: data.id },
+            update: data,
+            create: data,
+          })
+        );
+      });
+    }
 
-  //   //fund rating
-  //   if (seed.table == "master_fund_agency_ratings") {
-  //     seed.data.forEach((data: master_fund_agency_ratings) => {
-  //       dependentSeederPromise.push(
-  //         prisma.master_fund_agency_ratings.upsert({
-  //           where: { id: data.id },
-  //           update: data,
-  //           create: data,
-  //         })
-  //       );
-  //     });
-  //   }
-  // });
-  // await Promise.all(dependentSeederPromise);
-  // console.log("---- Seeding Completed ----");
+    //   //fund rating
+    //   if (seed.table == "master_fund_agency_ratings") {
+    //     seed.data.forEach((data: master_fund_agency_ratings) => {
+    //       dependentSeederPromise.push(
+    //         prisma.master_fund_agency_ratings.upsert({
+    //           where: { id: data.id },
+    //           update: data,
+    //           create: data,
+    //         })
+    //       );
+    //     });
+    //   }
+  });
+  await Promise.all(dependentSeederPromise);
+  console.log("---- Seeding Completed ----");
 };
 main()
   .then(async () => {

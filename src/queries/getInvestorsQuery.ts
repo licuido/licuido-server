@@ -285,3 +285,117 @@ FROM
 
   return countQuery;
 };
+
+export const getInvestorDetailsQuery = (id?: string) => {
+  /* Get Investor Details  */
+
+  /* In Where Condition
+          
+           */
+
+  /* For Data */
+  let baseQuery = `WITH
+  lastTransact AS (
+    SELECT
+      tor.receiver_entity_id,
+      tt.sender_balance,
+      tt.updated_at,
+      ROW_NUMBER() OVER (
+        PARTITION BY tor.receiver_entity_id,
+        tor.token_offering_id
+        ORDER BY
+          tt.updated_at DESC
+      ) AS rank_no
+    FROM
+      token_orders AS tor
+      LEFT JOIN token_transactions AS tt ON tor.id = tt.order_id
+    WHERE
+      tor.receiver_entity_id = '${id}'
+      AND tt.status_id IN (1, 2)
+  ),
+  td_query AS (
+    SELECT
+      receiver_entity_id,
+      SUM(sender_balance) AS balance
+    FROM
+      lastTransact
+    WHERE
+      rank_no = 1
+    GROUP BY
+      receiver_entity_id
+  ),
+  vas_inv_list AS (
+    SELECT
+      en.id AS investor_entity_id,
+      en.legal_name AS investor_name,
+      en.lei_number AS lei_number,
+      inv_ast.url AS investor_logo_url,
+      up.email_id AS email,
+      eni.investor_type_id AS investor_type_id,
+      mit.name AS investor_type_name,
+      en.country_id AS country_id,
+      mc.name AS country_name,
+      mc.emoji AS country_emoji,
+      mc.emoji_unicode AS country_emoji_unicode,
+      cw.wallet_address AS wallet,
+      mwt.name AS wallet_type,
+      eni.is_active AS is_active,
+      (
+        SELECT
+          lir.logged_at
+        FROM
+          auth.logged_in_records AS lir
+          LEFT JOIN public.user_profiles AS up ON up.user_id = lir.user_id
+        ORDER BY
+          lir.updated_at DESC
+        LIMIT
+          1
+      ) AS last_login,
+      mbs.id AS business_sector_id,
+      mbs.name AS business_sector_name,
+      en.legal_address AS legal_address,
+      en.zipcode AS zipcode,
+      up.name AS contact_person_name,
+      up.mobile_no_std_code AS mobile_no_std_code,
+      up.mobile_no AS mobile_no,
+      up.is_politically_exposed AS is_politically_exposed,
+      up.is_legally_confirmed AS is_legally_confirmed,
+      up.id AS contact_person_id,
+      mp.id AS position_id,
+      mp.name AS position_name,
+      CAST(
+        CASE
+          WHEN COALESCE(td_query.balance, 0) > 0 THEN 4
+          WHEN eni.status_id IS NOT NULL THEN eni.status_id
+          ELSE 1
+        END AS INT
+      ) AS status_id,
+      CASE
+        WHEN COALESCE(td_query.balance, 0) > 0 THEN 'Tokenholder'
+        WHEN eni.status_id IS NOT NULL THEN meis.name
+        ELSE 'Pending'
+      END AS status_name
+    FROM
+      user_entities AS ue
+      INNER JOIN user_profiles AS up ON ue.user_profile_id = up.id
+      INNER JOIN entities AS en ON up.id = en.contact_profile_id
+      LEFT JOIN entity_investors AS eni ON en.id = eni.investor_entity_id
+      INNER JOIN master_investor_types AS mit ON eni.investor_type_id = mit.id
+      INNER JOIN master_entity_investor_status AS meis ON eni.status_id = meis.id
+      LEFT JOIN master_countries AS mc ON en.country_id = mc.id
+      LEFT JOIN assets AS inv_ast ON en.logo_asset_id = inv_ast.id
+      LEFT JOIN customer_wallets AS cw ON en.id = cw.investor_entity_id
+      LEFT JOIN master_wallet_types AS mwt ON cw.wallet_type_id = mwt.id
+      LEFT JOIN master_business_sectors AS mbs ON en.business_sector_id = mbs.id
+      LEFT JOIN master_position AS mp ON up.position_id = mp.id
+      LEFT JOIN td_query ON td_query.receiver_entity_id = en.id
+    WHERE
+      en.id = '${id}'
+  )
+SELECT
+  *
+FROM
+  vas_inv_list;`;
+
+  return baseQuery;
+};

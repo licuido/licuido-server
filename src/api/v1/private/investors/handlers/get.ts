@@ -1,68 +1,36 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { Logger, handleResponse, responseType } from "@helpers";
+import { UserEntities } from "@interactors";
 import { queryRequestInfo } from "@mappers";
-import { TokenOrders } from "@interactors";
 import { preparePagination } from "serializers/getResponse";
+import { makeExcelFile } from "@utils";
 
-// Get Tokens Holdings Graph for Investor Portfolio
-export async function GET_TOKEN_HOLDINGS_GRAPH(
+/* GET_ALL_INVESTORS */
+export async function GET_ALL_INVESTORS(
   request: FastifyRequest,
   reply: FastifyReply
 ) {
   try {
     /* -----------  MAPPER ----------- */
-    const { entity_id, user_entity_id, ...rest } = queryRequestInfo(request);
-
-    if (entity_id !== 2) {
-      return handleResponse(request, reply, responseType?.FORBIDDEN, {
-        error: {
-          message: "Only Investor can be get token holdings graph",
-        },
-      });
-    }
-    /* -----------  INTERACTOR ----------- */
-    const result = await TokenOrders.getTokensHoldingsGraph({
-      user_entity_id,
-      ...rest,
-    });
-
-    /* -----------  RESPONSE ----------- */
-
-    return handleResponse(request, reply, responseType?.OK, {
-      data: result,
-    });
-  } catch (error: any) {
-    Logger.error(request, error.message, error);
-    return handleResponse(request, reply, responseType?.INTERNAL_SERVER_ERROR, {
-      error: {
-        message: responseType?.INTERNAL_SERVER_ERROR,
-      },
-    });
-  }
-}
-
-// Get Current Investment Tokens for Investor Portfolio
-export async function GET_CURRENT_TOKEN_INVESTMENT(
-  request: FastifyRequest,
-  reply: FastifyReply
-) {
-  try {
-    /* -----------  MAPPER ----------- */
-    const { entity_id, user_entity_id, offset, limit, url } =
+    const { entity_id, user_entity_id, url, search, offset, limit, ...rest } =
       queryRequestInfo(request);
 
-    if (entity_id !== 2) {
+    if (entity_id === 2) {
       return handleResponse(request, reply, responseType?.FORBIDDEN, {
         error: {
-          message: "Only Investor can get current token listing",
+          message: "Only Issuer & Admin can be get investor list",
         },
       });
     }
+
     /* -----------  INTERACTOR ----------- */
-    const result = await TokenOrders.getCurrentTokenListing({
+    const result = await UserEntities.getInvestorsList({
+      entity_type_id: entity_id,
       user_entity_id,
       offset,
       limit,
+      search,
+      ...rest,
     });
 
     /* -----------  SERIALIZER  ----------- */
@@ -74,8 +42,7 @@ export async function GET_CURRENT_TOKEN_INVESTMENT(
       entity_id,
     });
 
-    /* -----------  RESPONSE ----------- */
-
+    /* -----------  Response  ----------- */
     return handleResponse(request, reply, responseType?.OK, {
       data,
     });
@@ -89,33 +56,49 @@ export async function GET_CURRENT_TOKEN_INVESTMENT(
   }
 }
 
-// Get Dashboard
-
-export async function GET_DASHBOARD(
+/* EXPORT_INVESTORS_LIST_AS_CSV */
+export async function EXPORT_INVESTORS_LIST_AS_CSV(
   request: FastifyRequest,
   reply: FastifyReply
 ) {
   try {
     /* -----------  MAPPER ----------- */
-    const { entity_id, user_entity_id } = queryRequestInfo(request);
+    const { entity_id, user_entity_id, ...rest } = queryRequestInfo(request);
 
-    if (entity_id !== 2) {
+    if (entity_id === 2) {
       return handleResponse(request, reply, responseType?.FORBIDDEN, {
         error: {
-          message: "Only Investor can be get portfolio dashboard",
+          message: "Only Issuer & Admin can be get investor list as csv",
         },
       });
     }
+
     /* -----------  INTERACTOR ----------- */
-    const result = await TokenOrders.getInvestorDashboard({
+
+    const result = await UserEntities.getInvestorsListAsCSV({
+      entity_type_id: entity_id,
       user_entity_id,
+      ...rest,
     });
 
-    /* -----------  RESPONSE ----------- */
+    if (result?.code === 200) {
+      /* Make Excel File */
+      const data = await makeExcelFile(result?.data, "investor_list_data");
 
-    return handleResponse(request, reply, responseType?.OK, {
-      data: { ...result },
-    });
+      /* -----------  Response  ----------- */
+      return handleResponse(request, reply, responseType?.OK, {
+        data,
+      });
+    } else if (result?.code === 204) {
+      /* -----------  Response  ----------- */
+      return handleResponse(request, reply, responseType?.NO_CONTENT, {
+        customMessage: result?.message,
+      });
+    } else {
+      return handleResponse(request, reply, responseType?.ACCEPTED, {
+        customMessage: "in progress.",
+      });
+    }
   } catch (error: any) {
     Logger.error(request, error.message, error);
     return handleResponse(request, reply, responseType?.INTERNAL_SERVER_ERROR, {
@@ -126,28 +109,24 @@ export async function GET_DASHBOARD(
   }
 }
 
-// GET_LAST_PERFORMANCE
-
-export async function GET_LAST_PERFORMANCE(
+export async function VIEW_INVESTOR(
   request: FastifyRequest,
   reply: FastifyReply
 ) {
   try {
     /* -----------  MAPPER ----------- */
-    const { entity_id, user_entity_id, ...rest } = queryRequestInfo(request);
+    const { entity_id, id } = queryRequestInfo(request);
 
-    if (entity_id !== 2) {
+    if (entity_id === 2) {
       return handleResponse(request, reply, responseType?.FORBIDDEN, {
         error: {
-          message:
-            "Only Investor can be get portfolio last 3 months performance",
+          message: "Admin & Issuer can get investor details",
         },
       });
     }
     /* -----------  INTERACTOR ----------- */
-    const result = await TokenOrders.getInvestorlast3MonthsPerformance({
-      user_entity_id,
-      ...rest,
+    const result = await UserEntities.getInvestorDetails({
+      id,
     });
 
     /* -----------  RESPONSE ----------- */

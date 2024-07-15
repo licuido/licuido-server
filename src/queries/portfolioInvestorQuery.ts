@@ -310,3 +310,131 @@ FROM
 
   return baseQuery;
 };
+
+export const getAllValuationPriceQuery = (
+  from_date?: string,
+  to_date?: string,
+  token_ids?: any[]
+) => {
+  /* Get Valuation Price Query  */
+
+  /* In Where Condition
+          
+           */
+
+  /* For Data */
+  let baseQuery = `WITH
+  date_series AS (
+    SELECT
+      generate_series(
+        '${from_date}'::date, -- Replace with your from_date
+        '${to_date}'::date, -- Replace with your end_date
+        '1 day'::interval
+      ) AS date
+  ),
+  valuations AS (
+    SELECT
+      ds.date,
+      tof.id AS token_id,
+      COALESCE(
+        (
+          SELECT
+            tv.valuation_price
+          FROM
+            token_valuations AS tv
+          WHERE
+            tv.token_offering_id = tof.id
+            AND (
+              tv.start_date < ds.date
+              OR (
+                tv.start_date = ds.date
+                AND tv.start_time <= CURRENT_TIME
+              )
+            )
+          ORDER BY
+            tv.start_date DESC,
+            tv.start_time DESC
+          LIMIT
+            1
+        ),
+        tof.offering_price
+      ) AS valuation_price
+    FROM
+      token_offerings AS tof
+      CROSS JOIN date_series AS ds
+    WHERE
+      tof.id IN (${token_ids?.map((id) => `'${id}'`).join(", ")})
+  ),
+  numbered_valuations AS (
+    SELECT
+      v.*,
+      ROW_NUMBER() OVER (
+        ORDER BY
+          v.date
+      ) AS id
+    FROM
+      valuations AS v
+  )
+SELECT
+  nv.token_id,
+  json_agg(
+    json_build_object(
+      'id',
+      nv.id,
+      'date',
+      nv.date::date,
+      'valuation_price',
+      nv.valuation_price
+    )
+  ) AS aggregated_valuations
+FROM
+  numbered_valuations AS nv
+GROUP BY
+  nv.token_id`;
+
+  return baseQuery;
+};
+
+export const getInvestorTokenHoldingsQuery = (user_entity_id?: string) => {
+  /* Get Investor Token Holdings Query  */
+
+  /* In Where Condition
+          
+           */
+
+  /* For Data */
+  let baseQuery = `WITH
+  aggregated_balances AS (
+    SELECT
+      tor.token_offering_id,
+      tt.updated_at::date AS transaction_date,
+      COALESCE(SUM(tt.sender_balance), 0) AS sender_balance
+    FROM
+      token_transactions tt
+      INNER JOIN token_orders tor ON tt.order_id = tor.id
+    WHERE
+      tt.status_id = 2
+      AND tor.receiver_entity_id = '${user_entity_id}'
+    GROUP BY
+      tor.token_offering_id,
+      tt.updated_at::date
+  )
+SELECT
+  token_offering_id,
+  JSON_AGG(
+    JSON_BUILD_OBJECT(
+      'date',
+      transaction_date,
+      'sender_balance',
+      sender_balance
+    )
+  ) AS aggregated_balance_json
+FROM
+  aggregated_balances
+GROUP BY
+  token_offering_id
+ORDER BY
+  token_offering_id`;
+
+  return baseQuery;
+};
