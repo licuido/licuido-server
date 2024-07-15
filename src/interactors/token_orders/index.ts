@@ -1299,11 +1299,14 @@ const getInvestorlast3MonthsPerformance = async ({
     token_ids?.push(tokenHold?.token_offering_id);
   }
 
-  const TokenValuationPrice: any = await TokenOrders.getValuationPrice({
-    from_date,
-    to_date,
-    token_ids,
-  });
+  const TokenValuationPrice: any =
+    token_ids?.length > 0
+      ? await TokenOrders.getValuationPrice({
+          from_date,
+          to_date,
+          token_ids,
+        })
+      : [];
 
   let graphData = [];
 
@@ -1372,7 +1375,10 @@ const getInvestorlast3MonthsPerformance = async ({
     user_entity_id,
   });
 
-  return { graphData, profitPercentage: totalInvestment?.percentage_change };
+  return {
+    graphData,
+    profitPercentage: totalInvestment?.percentage_change ?? 0,
+  };
 };
 
 export default {
