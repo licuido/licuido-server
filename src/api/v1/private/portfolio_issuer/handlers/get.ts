@@ -134,7 +134,7 @@ export async function GET_FUND_OFFERINGS(
 ) {
   try {
     /* -----------  MAPPER ----------- */
-    const { entity_id, user_entity_id, offset, limit, url } =
+    const { entity_id, user_entity_id, offset, limit, url, ...rest } =
       queryRequestInfo(request);
 
     if (entity_id === 2) {
@@ -150,6 +150,7 @@ export async function GET_FUND_OFFERINGS(
       offset,
       limit,
       request,
+      ...rest,
     });
 
     /* -----------  SERIALIZER  ----------- */
