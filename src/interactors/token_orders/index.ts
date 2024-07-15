@@ -1308,11 +1308,13 @@ const getInvestorlast3MonthsPerformance = async ({
   let graphData = [];
 
   const findPreviousDate = (valuationDate: any, aggregatedBalances: any) => {
-    let closestPrevious = null;
+    let closestPrevious = 0;
 
-    for (const balance of aggregatedBalances) {
-      if (new Date(balance.date) < new Date(valuationDate)) {
-        closestPrevious = balance; // Update to the last seen previous date
+    if (aggregatedBalances) {
+      for (const balance of aggregatedBalances) {
+        if (new Date(balance.date) < new Date(valuationDate)) {
+          closestPrevious = balance; // Update to the last seen previous date
+        }
       }
     }
 
