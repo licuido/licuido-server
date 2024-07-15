@@ -53,6 +53,7 @@ const constructBaseQuery = async (
     let limitStatment = ``;
     let tokenFilterForIssuer = ``;
     let investorTypeFilter = ``;
+    let mainQueryFilter = ``;
 
     /* ------------------  For Issuer  ------------------ */
     if (entity_type_id === 3) {
@@ -92,6 +93,7 @@ const constructBaseQuery = async (
       // For Token Offering Filter
       if (token_id) {
         tokenFilterForIssuer = ` AND tor.token_offering_id = '${token_id}'`;
+        mainQueryFilter = ` AND status_id IN (4)`;
       }
 
       // For Investor Type Filter
@@ -121,6 +123,7 @@ const constructBaseQuery = async (
       LEFT JOIN token_transactions AS tt ON tor.id = tt.order_id
     WHERE
       tt.status_id IN (1, 2) 
+      AND tor.issuer_entity_id = '${user_entity_id}'
       ${tokenFilterForIssuer}
   ),
   td_query AS (
@@ -195,6 +198,7 @@ FROM
   vas_inv_list
 WHERE
   is_active = true 
+  ${mainQueryFilter}
   ${searchFilter} 
   ${statusFilter} 
   ${investorTypeFilter} 

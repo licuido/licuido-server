@@ -994,6 +994,48 @@ class TokenOrders {
       throw error;
     }
   }
+
+  static async getValuationPrice(options: {
+    from_date?: string;
+    to_date?: string;
+    token_ids?: string[];
+  }): Promise<{
+    rows: any[];
+  }> {
+    try {
+      const { from_date, to_date, token_ids } = options;
+
+      // For Data
+      const [result]: any[] = await sequelize.query(
+        queries.getAllValuationPriceQuery(from_date, to_date, token_ids)
+      );
+
+      return result;
+    } catch (error: any) {
+      console.log(error);
+      throw new Error(error.message);
+    }
+  }
+
+  static async getInvestorTokenHoldings(options: {
+    user_entity_id?: string;
+  }): Promise<{
+    rows: any[];
+  }> {
+    try {
+      const { user_entity_id } = options;
+
+      // For Data
+      const [result]: any[] = await sequelize.query(
+        queries.getInvestorTokenHoldingsQuery(user_entity_id)
+      );
+
+      return result;
+    } catch (error: any) {
+      console.log(error);
+      throw new Error(error.message);
+    }
+  }
 }
 
 export { TokenOrders };
