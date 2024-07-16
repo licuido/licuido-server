@@ -602,7 +602,8 @@ export const getInvestorListQuery = (
   country_filters?: number[] | [],
   user_entity_id?: string,
   minimum_investment_value?: string,
-  maximum_investment_value?: string
+  maximum_investment_value?: string,
+  request?: any
 ) => {
   /* Get All Investors Query on Search , Limit & Offset */
 
@@ -772,6 +773,122 @@ WHERE
 ORDER BY
   created_at ASC 
   ${limitStatment}`;
+
+  let baseAdminQuery = `WITH
+  last_transaction AS (
+    SELECT
+      tor.receiver_entity_id,
+      tor.token_offering_id,
+      tt.sender_balance,
+      ROW_NUMBER() OVER (
+        PARTITION BY tor.token_offering_id
+        ORDER BY
+          tt.updated_at DESC
+      ) AS rn
+    FROM
+      token_transactions AS tt
+      INNER JOIN token_orders AS tor ON tt.order_id = tor.id
+    WHERE
+      tt.status_id = 2
+  ),
+  summed_balances AS (
+    SELECT
+      receiver_entity_id,
+      SUM(sender_balance) AS total_balance
+    FROM
+      last_transaction
+    WHERE
+      rn = 1
+    GROUP BY
+      receiver_entity_id
+  ),
+  vas_inv AS (
+    SELECT
+      ei.investor_entity_id AS investor_entity_id,
+      ei.is_active AS is_active,
+      ei.created_at AS created_at,
+      en.legal_name AS investor_name,
+      inv_ast.url AS investor_logo_url,
+      cw.wallet_address AS wallet_address,
+      mwt.name AS wallet_type_name,
+      ei.investor_type_id AS investor_type_id,
+      mit.name AS investor_type_name,
+      en.country_id AS country_id,
+      mco.name AS country_name,
+      mco.emoji AS country_emoji,
+      mco.emoji_unicode AS country_emoji_unicode,
+      en.business_sector_id AS sector_id,
+      mbs.name AS sector,
+      COALESCE(token_status.total_balance, 0) AS tokens,
+      CASE
+        WHEN COALESCE(token_status.total_balance, 0) > 0 THEN 4
+        ELSE ei.status_id
+      END AS status_id,
+      CASE
+        WHEN COALESCE(token_status.total_balance, 0) > 0 THEN 'Tokenholder'
+        ELSE meis.name
+      END AS status_name,
+      (
+        COALESCE(
+          (
+            SELECT
+              SUM(COALESCE(tor.net_investment_value_in_euro, 0))
+            FROM
+              token_orders AS tor
+            WHERE
+              tor.receiver_entity_id = ei.investor_entity_id
+              AND tor.type = 'subscription'
+              AND tor.status_id = 5
+          ),
+          0
+        ) - COALESCE(
+          (
+            SELECT
+              SUM(COALESCE(tor.net_investment_value_in_euro, 0))
+            FROM
+              token_orders AS tor
+            WHERE
+              tor.receiver_entity_id = ei.investor_entity_id
+              AND tor.type = 'redemption'
+              AND tor.status_id = 11
+          ),
+          0
+        )
+      ) AS investment
+    FROM
+      entity_investors AS ei
+      INNER JOIN master_investor_types AS mit ON ei.investor_type_id = mit.id
+      INNER JOIN entities AS en ON ei.investor_entity_id = en.id
+      INNER JOIN master_entity_investor_status AS meis ON ei.status_id = meis.id
+      INNER JOIN assets AS inv_ast ON en.logo_asset_id = inv_ast.id
+      LEFT JOIN master_countries AS mco ON en.country_id = mco.id
+      LEFT JOIN master_business_sectors AS mbs ON en.business_sector_id = mbs.id
+      LEFT JOIN customer_wallets AS cw ON en.id = cw.investor_entity_id
+      LEFT JOIN master_wallet_types AS mwt ON cw.wallet_type_id = mwt.id
+      LEFT JOIN summed_balances AS token_status ON ei.investor_entity_id = token_status.receiver_entity_id
+    WHERE
+      ei.status_id = 3
+  )
+SELECT
+  *
+FROM
+  vas_inv
+WHERE
+  is_active = true 
+  ${searchFilter} 
+  ${statusFilter} 
+  ${investorTypeFilter} 
+  ${countryFilter} 
+  ${invetementValueFilter} 
+ORDER BY
+  created_at ASC 
+  ${limitStatment}`;
+
+  if (request?.headers?.build === "AD-1") {
+    return baseAdminQuery;
+  } else {
+    return baseQuery;
+  }
 
   return baseQuery;
 };

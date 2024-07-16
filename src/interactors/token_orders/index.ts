@@ -1039,12 +1039,14 @@ const getOrderGraph = async ({
   limit = 10,
   from_date,
   to_date,
+  request,
 }: {
   user_entity_id?: string;
   offset?: number;
   limit?: number;
   from_date?: string;
   to_date?: string;
+  request?: any;
 }) => {
   // Get Token Order Graph Data
   const { rows, count } = await TokenOrders.getTokenOrderGraph({
@@ -1053,6 +1055,7 @@ const getOrderGraph = async ({
     limit,
     from_date,
     to_date,
+    request,
   });
 
   return { page: rows, count: rows?.length, totalCount: count };
