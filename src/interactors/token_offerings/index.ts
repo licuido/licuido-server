@@ -260,7 +260,10 @@ const createTokenOfferings = async (options: createTokenOfferingPayload) => {
 
     return {
       code: 200,
-      customMessage: successCustomMessage.tokenOfferingCreated,
+      customMessage:
+        status === 3
+          ? successCustomMessage.saveAsDraft
+          : successCustomMessage.tokenOfferingCreated,
       data: { token_id: data?.dataValues?.id },
     };
   } catch (error: any) {

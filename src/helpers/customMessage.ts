@@ -8,6 +8,7 @@ export const errorCustomMessage = {
 export const successCustomMessage = {
   tokenOfferingCreated: "Token Offering Created",
   tokenOfferingUpdated: "Token Offering Updated",
+  saveAsDraft: "Token Saved As Draft",
   tokenOrderCreated: "Token Order Created",
   getTokenOrderPaymentDetails:
     "Token Order Payment Details Fetched Successfully",
