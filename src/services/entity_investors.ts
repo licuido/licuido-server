@@ -114,6 +114,7 @@ class EntityInvestor {
     user_entity_id?: string;
     minimum_investment_value?: string;
     maximum_investment_value?: string;
+    request?: any;
   }): Promise<{
     rows: any[];
     count: number;
@@ -129,6 +130,7 @@ class EntityInvestor {
         user_entity_id,
         minimum_investment_value,
         maximum_investment_value,
+        request,
       } = options;
 
       // For Data
@@ -142,7 +144,8 @@ class EntityInvestor {
           country_filters,
           user_entity_id,
           minimum_investment_value,
-          maximum_investment_value
+          maximum_investment_value,
+          request
         )
       );
 
@@ -157,7 +160,8 @@ class EntityInvestor {
           country_filters,
           user_entity_id,
           minimum_investment_value,
-          maximum_investment_value
+          maximum_investment_value,
+          request
         )
       );
 
@@ -179,6 +183,7 @@ class EntityInvestor {
     user_entity_id?: string;
     minimum_investment_value?: string;
     maximum_investment_value?: string;
+    request?: any;
   }): Promise<{
     rows: any[];
   }> {
@@ -191,6 +196,7 @@ class EntityInvestor {
         user_entity_id,
         minimum_investment_value,
         maximum_investment_value,
+        request,
       } = options;
 
       // For All Data
@@ -204,7 +210,8 @@ class EntityInvestor {
           country_filters,
           user_entity_id,
           minimum_investment_value,
-          maximum_investment_value
+          maximum_investment_value,
+          request
         )
       );
 

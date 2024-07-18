@@ -55,6 +55,7 @@ const getInvestorList = async (options: getInvestorListPayload) => {
       user_entity_id,
       minimum_investment_value,
       maximum_investment_value,
+      request,
     } = options;
 
     // For Investor Status Filters
@@ -98,6 +99,7 @@ const getInvestorList = async (options: getInvestorListPayload) => {
       user_entity_id,
       minimum_investment_value,
       maximum_investment_value,
+      request,
     });
 
     return { page: rows, count: rows?.length, totalCount: count };

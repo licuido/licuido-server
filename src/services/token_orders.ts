@@ -534,12 +534,14 @@ class TokenOrders {
     limit,
     from_date,
     to_date,
+    request,
   }: {
     user_entity_id?: string;
     offset: number;
     limit: number;
     from_date?: string;
     to_date?: string;
+    request?: any;
   }): Promise<any> {
     try {
       // For Data
@@ -549,7 +551,8 @@ class TokenOrders {
           limit,
           user_entity_id,
           from_date,
-          to_date
+          to_date,
+          request
         )
       );
 
@@ -577,10 +580,12 @@ class TokenOrders {
     user_entity_id,
     from_date,
     to_date,
+    request,
   }: {
     user_entity_id?: string;
     from_date?: string;
     to_date?: string;
+    request?: any;
   }): Promise<any> {
     try {
       // For Data
@@ -588,7 +593,8 @@ class TokenOrders {
         queries.getTokensByInvestorGraphQuery(
           from_date,
           to_date,
-          user_entity_id
+          user_entity_id,
+          request
         )
       );
 
