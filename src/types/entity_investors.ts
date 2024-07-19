@@ -18,6 +18,7 @@ export interface getInvestorListPayload {
   minimum_investment_value?: string;
   maximum_investment_value?: string;
   request?: any;
+  top_five?: boolean;
 }
 
 export interface getInvestorListAsCSVPayload {
