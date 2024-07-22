@@ -20,6 +20,11 @@ const authRoute: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
     { schema: schema.GET_USER_DEVICE_TOKEN },
     handlers.GET_USER_DEVICE_TOKEN
   );
+  fastify.get(
+    "/user_details",
+    { schema: schema.GET_USER_DETAILS },
+    handlers.GET_USER_DETAILS
+  );
 };
 
 export default authRoute;

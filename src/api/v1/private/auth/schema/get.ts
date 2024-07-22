@@ -29,3 +29,11 @@ export const GET_USER_DEVICE_TOKEN = {
 };
 
 //------------------------------------------------------------------
+
+// GET USER DEVICE TOKEN
+export const GET_USER_DETAILS = {
+  description:
+    "Defines the structure and constraints for an API endpoint to get a user device token",
+  tags: ["Private Auth"],
+  response: makeResponseSchema(getDeviceTokenResponse),
+};

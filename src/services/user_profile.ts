@@ -1,4 +1,4 @@
-import { user_profile } from "@models";
+import { asset, entity, user_profile } from "@models";
 import { createPersonInfo } from "@types";
 
 class UserProfile {
@@ -12,6 +12,35 @@ class UserProfile {
   static async upsertPersonInfo(options: createPersonInfo): Promise<any> {
     try {
       return await user_profile.upsert(options);
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
+
+  static async getPersonInfo(id: string): Promise<any> {
+    try {
+      const result = await user_profile.findOne({
+        where: {
+          id,
+        },
+        attributes: ["id", "email_id", "name"],
+        include: [
+          {
+            model: entity,
+            as: "entities",
+            attributes: ["id", "legal_name"],
+            include: [
+              {
+                model: asset,
+                as: "logo_asset",
+                attributes: ["id", "url"],
+              },
+            ],
+          },
+        ],
+      });
+      return JSON.parse(JSON.stringify(result));
     } catch (error) {
       console.log(error);
       throw error;
