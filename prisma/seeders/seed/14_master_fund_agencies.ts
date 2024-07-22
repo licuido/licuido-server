@@ -15,7 +15,14 @@ export const masterFundAgencies: {
     },
     {
       id: 2,
-      name: "Japan Credit Rating Agency (JCR)",
+      name: "Finch (Finch)",
+      is_active: true,
+      created_at: new Date(),
+      updated_at: new Date(),
+    },
+    {
+      id: 3,
+      name: "Moodys (Moodys)",
       is_active: true,
       created_at: new Date(),
       updated_at: new Date(),
