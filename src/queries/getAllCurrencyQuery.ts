@@ -4,30 +4,45 @@ export const getAllCurrenciesQuery = (
   search?: string
 ) => {
   // For Limit & Offset
-  let limitStatment = ``;
+  let limitStatement = ``;
   if (offset !== null && limit !== null) {
-    limitStatment = ` LIMIT '${limit}' OFFSET '${offset}'`;
+    limitStatement = ` LIMIT ${limit} OFFSET ${offset}`;
   }
 
+  // For Search Filter
   let searchFilter = ``;
   if (search) {
     searchFilter = ` AND (
-        currency ILIKE '${search}%'
-        OR currency_code ILIKE '${search}%'
+        currency_code ILIKE '${search}%'
+        OR currency_symbol ILIKE '${search}%'
       )`;
   }
 
   /* For Data */
-  let baseQuery = `SELECT DISTINCT
+  let baseQuery = `
+  SELECT 
     currency_code,
     currency_symbol
-  FROM
-    master_countries
-  WHERE
-    is_active = true 
-    ${searchFilter}
-    ${limitStatment}
-    `;
+  FROM (
+    SELECT DISTINCT
+      currency_code,
+      currency_symbol,
+      CASE
+        WHEN currency_code IN ('GBP', 'EUR', 'USD') THEN 0
+        ELSE 1
+      END AS priority
+    FROM
+      master_countries
+    WHERE
+      is_active = true
+      ${searchFilter}
+  ) AS subquery
+  ORDER BY 
+    priority,
+    currency_code,
+    currency_symbol
+  ${limitStatement};
+  `;
 
   return baseQuery;
 };
