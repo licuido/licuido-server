@@ -27,6 +27,7 @@ export async function GET_ORDERS_GRAPH(
       user_entity_id,
       offset,
       limit,
+      request,
       ...rest,
     });
 
@@ -73,6 +74,7 @@ export async function GET_TOKEN_BY_INVESTOR_GRAPH(
     /* -----------  INTERACTOR ----------- */
     const result = await TokenOrders.getTokensByInvestorGraph({
       user_entity_id,
+      request,
       ...rest,
     });
 
@@ -196,6 +198,7 @@ export async function GET_INVESTOR_LIST(
     }
     /* -----------  INTERACTOR ----------- */
     const result = await EntityInvestors.getInvestorList({
+      request,
       search,
       offset,
       limit,
