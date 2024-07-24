@@ -3,7 +3,8 @@ export const getAllTokenOrderGraphQuery = (
   limit: number | null,
   user_entity_id?: string,
   from_date?: string,
-  to_date?: string
+  to_date?: string,
+  request?: any
 ) => {
   /* Get All Token Order Graph Query on Limit & Offset */
 
@@ -55,5 +56,35 @@ export const getAllTokenOrderGraphQuery = (
     tof.name ASC 
   ${limitStatment}`;
 
-  return baseQuery;
+  let baseAdminQuery = `SELECT
+    tor.token_offering_id,
+    tof.name,
+    COUNT(
+      CASE
+        WHEN tor.type = 'subscription' THEN 1
+      END
+    )::bigint AS subscription_count,
+    COUNT(
+      CASE
+        WHEN tor.type = 'redemption' THEN 1
+      END
+    )::bigint AS redemption_count
+  FROM
+    token_orders AS tor
+    INNER JOIN token_offerings AS tof ON tor.token_offering_id = tof.id
+  WHERE
+    tor.status_id IN (5, 11) 
+    ${dateFilter} 
+  GROUP BY
+    tor.token_offering_id,
+    tof.name 
+  ORDER BY
+    tof.name ASC 
+  ${limitStatment}`;
+
+  if (request?.headers?.build === "AD-1") {
+    return baseAdminQuery;
+  } else {
+    return baseQuery;
+  }
 };

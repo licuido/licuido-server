@@ -34,7 +34,7 @@ class Countries {
 
       const { rows, count } = await master_country.findAndCountAll({
         where,
-        attributes: ["id", "name", "iso3", "emoji"],
+        attributes: ["id", "name", "iso3", "emoji", "phone_code"],
         order: [["id", "ASC"]],
         offset,
         limit,

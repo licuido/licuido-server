@@ -27,5 +27,12 @@ export const masterTokenType: {
       created_at: new Date(),
       updated_at: new Date(),
     },
+    {
+      id: 4,
+      name: "Other",
+      is_active: true,
+      created_at: new Date(),
+      updated_at: new Date(),
+    },
   ],
 };

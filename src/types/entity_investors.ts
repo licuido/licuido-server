@@ -17,6 +17,7 @@ export interface getInvestorListPayload {
   user_entity_id?: string;
   minimum_investment_value?: string;
   maximum_investment_value?: string;
+  request?: any;
 }
 
 export interface getInvestorListAsCSVPayload {

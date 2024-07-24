@@ -1,9 +1,10 @@
 import { CREATE_USER_DEVICE_TOKEN, LOG_OUT } from "./post";
 
-import { GET_USER_DEVICE_TOKEN } from "./get";
+import { GET_USER_DEVICE_TOKEN, GET_USER_DETAILS } from "./get";
 
 export default {
   CREATE_USER_DEVICE_TOKEN,
   GET_USER_DEVICE_TOKEN,
   LOG_OUT,
+  GET_USER_DETAILS,
 };
