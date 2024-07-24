@@ -310,3 +310,53 @@ FROM
 
   return baseQuery;
 };
+
+export const getAllTokensDeploymentCountQuery = (
+  start_date?: string,
+  end_date?: string
+) => {
+  // Date Filter
+  let dateFilter = ``;
+  if (start_date && end_date) {
+    dateFilter = `AND created_at::date >= '${start_date}' AND created_at::date <= '${end_date}'`;
+  }
+
+  // Count Query
+  let countQuery = `
+    SELECT
+      COUNT(*) AS count
+    FROM
+      token_offerings
+    WHERE
+      offer_status_id = 3
+      ${dateFilter}
+  `;
+
+  return countQuery;
+};
+
+export const getIssuerApprovalCountQuery = (
+  start_date?: string,
+  end_date?: string
+) => {
+  // Date filter
+  let dateFilter = "";
+  if (start_date && end_date) {
+    dateFilter = `AND ue.created_at::date >= '${start_date}' AND ue.created_at::date <= '${end_date}'`;
+  }
+
+  // Count Query
+  let countQuery = `
+    SELECT
+      COUNT(*) AS count
+    FROM
+      user_entities ue
+      INNER JOIN user_profiles up ON ue.user_profile_id = up.id
+    WHERE
+      ue.entity_id = 3
+      AND up.is_setup_done = true
+      ${dateFilter}
+  `;
+
+  return countQuery;
+};

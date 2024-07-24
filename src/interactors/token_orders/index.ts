@@ -1096,6 +1096,38 @@ const getDashboard = async ({
   return result;
 };
 
+const getTokenDeploymentCount = async ({
+  start_date,
+  end_date,
+}: {
+  start_date?: string;
+  end_date?: string;
+}) => {
+  // Get TokenDeploymentCount
+  const result: any = await TokenOrders.getTokenDeploymentCount({
+    start_date,
+    end_date,
+  });
+
+  return result;
+};
+
+const getIssuerApprovalCount = async ({
+  start_date,
+  end_date,
+}: {
+  start_date?: string;
+  end_date?: string;
+}) => {
+  // Get IssuerApprovalCount
+  const result: any = await TokenOrders.getIssuerApprovalCount({
+    start_date,
+    end_date,
+  });
+
+  return result;
+};
+
 const getTokensHoldingsGraph = async ({
   user_entity_id,
   from_date,
@@ -1306,4 +1338,6 @@ export default {
   getTokenSummaryRecentActivities,
   getInvestorDistribution,
   rejectOrder,
+  getTokenDeploymentCount,
+  getIssuerApprovalCount,
 };

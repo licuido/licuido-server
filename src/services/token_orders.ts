@@ -682,6 +682,48 @@ class TokenOrders {
     }
   }
 
+  static async getTokenDeploymentCount({
+    start_date,
+    end_date,
+  }: {
+    start_date?: string;
+    end_date?: string;
+  }): Promise<any> {
+    try {
+      // For Data
+      const [result]: any[] = await sequelize.query(
+        queries.getAllTokensDeploymentCountQuery(start_date, end_date)
+      );
+
+      return {
+        count: result,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async getIssuerApprovalCount({
+    start_date,
+    end_date,
+  }: {
+    start_date?: string;
+    end_date?: string;
+  }): Promise<any> {
+    try {
+      // For Data
+      const [result]: any[] = await sequelize.query(
+        queries.getIssuerApprovalCountQuery(start_date, end_date)
+      );
+
+      return {
+        count: result,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
   static async getTokensHoldingsGraph({
     user_entity_id,
     from_date,

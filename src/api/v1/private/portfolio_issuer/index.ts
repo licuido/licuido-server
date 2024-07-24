@@ -31,6 +31,20 @@ const issuerPortFolioRoute: FastifyPluginAsync = async (
     handler.GET_DASHBOARD
   );
 
+  /* Get Token deployment Count */
+  fastify.get(
+    "/token_deployment_count",
+    { schema: schema.GET_TOKEN_DEPLOYMENT_COUNT },
+    handler.GET_TOKEN_DEPLOYMENT_COUNT
+  );
+
+  /* Get Issuer approval Count */
+  fastify.get(
+    "/issuer_approval_count",
+    { schema: schema.GET_ISSUER_APPROVAL_COUNT },
+    handler.GET_ISSUER_APPROVAL_COUNT
+  );
+
   /* List Fund Offeings */
   fastify.get(
     "/fund_offerings",

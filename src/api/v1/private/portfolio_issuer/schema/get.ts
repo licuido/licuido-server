@@ -72,6 +72,34 @@ export const GET_DASHBOARD = {
   response: makeResponseSchema(getDashboardResponse),
 };
 
+/* GET_token_deployment_count */
+
+const getTokenDeploymentCountResponse: JSONSchema = Schema.object()
+  .additionalProperties(true)
+  .prop("meta", Schema.object().prop("message", Schema.string()))
+  .valueOf() as JSONSchema;
+
+export const GET_TOKEN_DEPLOYMENT_COUNT = {
+  description:
+    "Defines the structure and constraints for an API endpoint to get Issuer Portfolio Dashboard",
+  tags: ["token deployment count"],
+  response: makeResponseSchema(getTokenDeploymentCountResponse),
+};
+
+/* GET_ISSUER_APPROVAL_COUNT */
+
+const getIssuerApprovalCountResponse: JSONSchema = Schema.object()
+  .additionalProperties(true)
+  .prop("meta", Schema.object().prop("message", Schema.string()))
+  .valueOf() as JSONSchema;
+
+export const GET_ISSUER_APPROVAL_COUNT = {
+  description:
+    "Defines the structure and constraints for an API endpoint to get Issuer Portfolio Dashboard",
+  tags: ["token deployment count"],
+  response: makeResponseSchema(getIssuerApprovalCountResponse),
+};
+
 /* GET_FUND_OFFERINGS */
 
 const getfundOfferingsGraphParams = Schema.object()
