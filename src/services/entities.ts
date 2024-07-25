@@ -87,6 +87,7 @@ class Entities {
               "name",
               "mobile_no_std_code",
               "mobile_no",
+              "other_position",
               "contact_email",
               "investor_type_id",
             ],
