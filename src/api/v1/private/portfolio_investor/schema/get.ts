@@ -70,3 +70,21 @@ export const GET_DASHBOARD = {
   tags: ["Investor Portfolio"],
   response: makeResponseSchema(getDashboardResponse),
 };
+
+// GET_LAST_PERFORMANCE
+const getLastPerformanceParams = Schema.object()
+  .prop("from_date", Schema.string())
+  .prop("to_date", Schema.string());
+
+const getLastPerformanceResponse: JSONSchema = Schema.object()
+  .additionalProperties(true)
+  .prop("meta", Schema.object().prop("message", Schema.string()))
+  .valueOf() as JSONSchema;
+
+export const GET_LAST_PERFORMANCE = {
+  description:
+    "Defines the structure and constraints for an API endpoint to get Investor Portfolio last 3 months performance",
+  tags: ["Investor Portfolio"],
+  query: getLastPerformanceParams,
+  response: makeResponseSchema(getLastPerformanceResponse),
+};

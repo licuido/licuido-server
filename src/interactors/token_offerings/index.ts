@@ -260,7 +260,10 @@ const createTokenOfferings = async (options: createTokenOfferingPayload) => {
 
     return {
       code: 200,
-      customMessage: successCustomMessage.tokenOfferingCreated,
+      customMessage:
+        status === 3
+          ? successCustomMessage.saveAsDraft
+          : successCustomMessage.tokenOfferingCreated,
       data: { token_id: data?.dataValues?.id },
     };
   } catch (error: any) {
@@ -673,7 +676,10 @@ const findToken = async ({
       };
     }
 
-    const data = await TokenOfferings.getTokenOffering({ token_id });
+    const data = await TokenOfferings.getTokenOffering({
+      token_id,
+      user_entity_id,
+    });
     const parseData = JSON.parse(JSON.stringify(data));
 
     const qualifiedStaus: boolean =

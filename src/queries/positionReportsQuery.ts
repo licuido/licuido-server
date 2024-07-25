@@ -102,7 +102,7 @@ export const getAllPosReportInvestorsQuery = (
   }
 
   let allInvestorsFilter = ``;
-  if (is_all_investors === true) {
+  if (is_all_investors !== true) {
     allInvestorsFilter = ` AND eni.investor_entity_id IN (
         SELECT
           investor_id

@@ -140,8 +140,10 @@ class TokenOfferings {
    */
   static async getTokenOffering({
     token_id,
+    user_entity_id,
   }: {
     token_id: string;
+    user_entity_id: string;
   }): Promise<any> {
     try {
       const token_offer = await token_offering.findOne({
@@ -339,8 +341,30 @@ class TokenOfferings {
           },
         ],
       });
-
-      return JSON.parse(JSON.stringify(token_offer));
+      const token_transactions = await sequelize.query(
+        `SELECT
+      tor.token_offering_id,
+      tt.sender_balance,
+      ROW_NUMBER() OVER (
+        PARTITION BY tor.token_offering_id
+        ORDER BY
+          tt.updated_at DESC
+      ) AS rn
+    FROM
+      token_transactions AS tt
+      INNER JOIN token_orders AS tor ON tt.order_id = tor.id
+    WHERE
+      tt.status_id = 2
+      AND tor.receiver_entity_id = '${user_entity_id}'`
+      );
+      let tt = JSON.parse(JSON.stringify(token_transactions));
+      const tot =
+        tt?.[0]?.filter(
+          (vl: any) => vl.token_offering_id == token_id && vl.rn == "1"
+        )?.[0]?.sender_balance ?? 0;
+      let offer = JSON.parse(JSON.stringify(token_offer));
+      offer.token_count = tot ?? 0;
+      return offer;
     } catch (error) {
       throw error;
     }

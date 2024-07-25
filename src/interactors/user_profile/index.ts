@@ -52,6 +52,20 @@ const createPersonInfoDetails = async (options: createPersonInfo) => {
   }
 };
 
+// get person info details
+const getPersonInfoDetails = async (id: string) => {
+  try {
+    const data = await UserProfile.getPersonInfo(id);
+    return {
+      success: true,
+      data,
+    };
+  } catch (error: any) {
+    Logger.error(error.message, error);
+    throw error;
+  }
+};
+
 // after set up last step
 const setupUserAccount = async (
   id: string,
@@ -77,4 +91,5 @@ const setupUserAccount = async (
 export default {
   createPersonInfoDetails,
   setupUserAccount,
+  getPersonInfoDetails,
 };

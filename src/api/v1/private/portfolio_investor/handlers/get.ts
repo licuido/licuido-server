@@ -125,3 +125,42 @@ export async function GET_DASHBOARD(
     });
   }
 }
+
+// GET_LAST_PERFORMANCE
+
+export async function GET_LAST_PERFORMANCE(
+  request: FastifyRequest,
+  reply: FastifyReply
+) {
+  try {
+    /* -----------  MAPPER ----------- */
+    const { entity_id, user_entity_id, ...rest } = queryRequestInfo(request);
+
+    if (entity_id !== 2) {
+      return handleResponse(request, reply, responseType?.FORBIDDEN, {
+        error: {
+          message:
+            "Only Investor can be get portfolio last 3 months performance",
+        },
+      });
+    }
+    /* -----------  INTERACTOR ----------- */
+    const result = await TokenOrders.getInvestorlast3MonthsPerformance({
+      user_entity_id,
+      ...rest,
+    });
+
+    /* -----------  RESPONSE ----------- */
+
+    return handleResponse(request, reply, responseType?.OK, {
+      data: { ...result },
+    });
+  } catch (error: any) {
+    Logger.error(request, error.message, error);
+    return handleResponse(request, reply, responseType?.INTERNAL_SERVER_ERROR, {
+      error: {
+        message: responseType?.INTERNAL_SERVER_ERROR,
+      },
+    });
+  }
+}

@@ -11,7 +11,7 @@ const createTokenBody = Schema.object()
   .prop(
     "banner_asset",
     Schema.object()
-      .prop("url", Schema.string().format("uri"))
+      .prop("url", Schema.string())
       .prop("type", Schema.string())
       .prop("file_meta", Schema.object().additionalProperties(true))
       .required(["url", "type", "file_meta"])

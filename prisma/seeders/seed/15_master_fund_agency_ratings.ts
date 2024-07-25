@@ -38,5 +38,21 @@ export const masterFundAgencyRatings: {
       updated_at: new Date(),
       agency_id: 2,
     },
+    {
+      id: 5,
+      name: "AAA",
+      is_active: true,
+      created_at: new Date(),
+      updated_at: new Date(),
+      agency_id: 3,
+    },
+    {
+      id: 6,
+      name: "BBB",
+      is_active: true,
+      created_at: new Date(),
+      updated_at: new Date(),
+      agency_id: 3,
+    },
   ],
 };
