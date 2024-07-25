@@ -100,6 +100,20 @@ export const GET_ISSUER_APPROVAL_COUNT = {
   response: makeResponseSchema(getIssuerApprovalCountResponse),
 };
 
+// GET_TOTAL_INVESTMENT_ISSUERS_INVESTORS_COUNT
+
+const totalInvestmentIssuersInvestorsCountResponse: JSONSchema = Schema.object()
+  .additionalProperties(true)
+  .prop("meta", Schema.object().prop("message", Schema.string()))
+  .valueOf() as JSONSchema;
+
+export const GET_TOTAL_INVESTMENT_ISSUERS_INVESTORS_COUNT = {
+  description:
+    "Defines the structure and constraints for an API endpoint to get Issuer Portfolio Dashboard",
+  tags: ["token deployment count"],
+  response: makeResponseSchema(totalInvestmentIssuersInvestorsCountResponse),
+};
+
 /* GET_FUND_OFFERINGS */
 
 const getfundOfferingsGraphParams = Schema.object()

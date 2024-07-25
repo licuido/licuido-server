@@ -360,3 +360,30 @@ export const getIssuerApprovalCountQuery = (
 
   return countQuery;
 };
+
+export const getTotalInvestmentIssuersInvestorsCount = (
+  start_date?: string,
+  end_date?: string
+) => {
+  // Date filter
+  let dateFilter = "";
+  if (start_date && end_date) {
+    dateFilter = `AND up.created_at::date >= '${start_date}' AND up.created_at::date <= '${end_date}'`;
+  }
+
+  // Count Query
+  let countQuery = `
+    SELECT
+      SUM(CASE WHEN ue.entity_id = 2 THEN 1 ELSE 0 END) AS total_investor_count,
+      SUM(CASE WHEN ue.entity_id = 3 THEN 1 ELSE 0 END) AS total_issuer_count,
+      SUM(CASE WHEN ue.entity_id = 2 ${dateFilter} THEN 1 ELSE 0 END) AS investor_count,
+      SUM(CASE WHEN ue.entity_id = 3 ${dateFilter} THEN 1 ELSE 0 END) AS issuer_count
+    FROM
+      user_profiles up
+      INNER JOIN user_entities ue ON up.id = ue.user_profile_id
+    WHERE
+      ue.entity_id IN (2, 3);
+  `;
+
+  return countQuery;
+};

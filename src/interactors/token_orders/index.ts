@@ -1128,6 +1128,24 @@ const getIssuerApprovalCount = async ({
   return result;
 };
 
+const getTotalInvestmentIssuersInvestorsCount = async ({
+  start_date,
+  end_date,
+}: {
+  start_date?: string;
+  end_date?: string;
+}) => {
+  // Get IssuerApprovalCount
+  const result: any = await TokenOrders.getTotalInvestmentIssuersInvestorsCount(
+    {
+      start_date,
+      end_date,
+    }
+  );
+
+  return result;
+};
+
 const getTokensHoldingsGraph = async ({
   user_entity_id,
   from_date,
@@ -1340,4 +1358,5 @@ export default {
   rejectOrder,
   getTokenDeploymentCount,
   getIssuerApprovalCount,
+  getTotalInvestmentIssuersInvestorsCount,
 };

@@ -32,6 +32,7 @@ import {
   getInvestorDashboardQuery,
   getAllTokensDeploymentCountQuery,
   getIssuerApprovalCountQuery,
+  getTotalInvestmentIssuersInvestorsCount,
 } from "./portfolioInvestorQuery";
 
 import {
@@ -89,6 +90,7 @@ const queries = {
   getAllPosReportInvestorsQuery,
   getAllTokensDeploymentCountQuery,
   getIssuerApprovalCountQuery,
+  getTotalInvestmentIssuersInvestorsCount,
 };
 
 export default queries;

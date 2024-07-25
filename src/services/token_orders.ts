@@ -724,6 +724,27 @@ class TokenOrders {
     }
   }
 
+  static async getTotalInvestmentIssuersInvestorsCount({
+    start_date,
+    end_date,
+  }: {
+    start_date?: string;
+    end_date?: string;
+  }): Promise<any> {
+    try {
+      // For Data
+      const [result]: any[] = await sequelize.query(
+        queries.getTotalInvestmentIssuersInvestorsCount(start_date, end_date)
+      );
+
+      return {
+        count: result,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
   static async getTokensHoldingsGraph({
     user_entity_id,
     from_date,
