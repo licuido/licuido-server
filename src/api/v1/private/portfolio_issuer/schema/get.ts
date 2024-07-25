@@ -96,7 +96,7 @@ const getIssuerApprovalCountResponse: JSONSchema = Schema.object()
 export const GET_ISSUER_APPROVAL_COUNT = {
   description:
     "Defines the structure and constraints for an API endpoint to get Issuer Portfolio Dashboard",
-  tags: ["token deployment count"],
+  tags: ["issuer approval count"],
   response: makeResponseSchema(getIssuerApprovalCountResponse),
 };
 
@@ -110,7 +110,7 @@ const totalInvestmentIssuersInvestorsCountResponse: JSONSchema = Schema.object()
 export const GET_TOTAL_INVESTMENT_ISSUERS_INVESTORS_COUNT = {
   description:
     "Defines the structure and constraints for an API endpoint to get Issuer Portfolio Dashboard",
-  tags: ["token deployment count"],
+  tags: ["total investment issuers investors count"],
   response: makeResponseSchema(totalInvestmentIssuersInvestorsCountResponse),
 };
 
