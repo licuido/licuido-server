@@ -4,9 +4,9 @@ import {
   // master_fund_agency_ratings,
   // master_entity_types,
   // master_regions,
-  master_countries,
+  // master_countries,
   // master_business_sectors,
-  // master_position,
+  master_position,
   // master_wallet_types,
   // master_investor_types,
   // master_token_type,
@@ -15,7 +15,7 @@ import {
   // master_token_offering_status,
   // master_ekc_status,
   // master_entity_investor_status,
-  master_order_status,
+  // master_order_status,
   // master_transaction_status,
 } from "@prisma/client";
 const prisma = new PrismaClient();
@@ -63,17 +63,17 @@ const main = async () => {
     //   });
     // }
     // //Master Position
-    // if (seed.table == "master_position") {
-    //   seed.data.forEach((data: master_position) => {
-    //     upsertPromises.push(
-    //       prisma.master_position.upsert({
-    //         where: { id: data.id },
-    //         update: data,
-    //         create: data,
-    //       })
-    //     );
-    //   });
-    // }
+    if (seed.table == "master_position") {
+      seed.data.forEach((data: master_position) => {
+        upsertPromises.push(
+          prisma.master_position.upsert({
+            where: { id: data.id },
+            update: data,
+            create: data,
+          })
+        );
+      });
+    }
 
     // if (seed.table == "master_wallet_types") {
     //   seed.data.forEach((data: master_wallet_types) => {
@@ -171,18 +171,18 @@ const main = async () => {
     //   });
     // }
 
-    if (seed.table === "master_order_status") {
-      seed.data.forEach((data: master_order_status) => {
-        upsertPromises.push(
-          prisma.master_order_status.upsert({
-            where: { id: data.id },
-            update: data,
-            create: data,
-          })
-        );
-      });
-    }
-    // // fun offer agency
+    // if (seed.table === "master_order_status") {
+    //   seed.data.forEach((data: master_order_status) => {
+    //     upsertPromises.push(
+    //       prisma.master_order_status.upsert({
+    //         where: { id: data.id },
+    //         update: data,
+    //         create: data,
+    //       })
+    //     );
+    //   });
+    // }
+    // fun offer agency
     // if (seed.table == "master_fund_agencies") {
     //   seed.data.forEach((data: master_fund_agencies) => {
     //     upsertPromises.push(
@@ -213,30 +213,29 @@ const main = async () => {
   let dependentSeederPromise: any[] = [];
   Object.values(Seeds).forEach((seed: { table: string; data: any[] }) => {
     // //countries master
-    if (seed.table == "master_countries") {
-      seed.data.forEach((data: master_countries) => {
-        dependentSeederPromise.push(
-          prisma.master_countries.upsert({
-            where: { id: data.id },
-            update: data,
-            create: data,
-          })
-        );
-      });
-    }
-
-    //   //fund rating
-    //   if (seed.table == "master_fund_agency_ratings") {
-    //     seed.data.forEach((data: master_fund_agency_ratings) => {
-    //       dependentSeederPromise.push(
-    //         prisma.master_fund_agency_ratings.upsert({
-    //           where: { id: data.id },
-    //           update: data,
-    //           create: data,
-    //         })
-    //       );
-    //     });
-    //   }
+    // if (seed.table == "master_countries") {
+    //   seed.data.forEach((data: master_countries) => {
+    //     dependentSeederPromise.push(
+    //       prisma.master_countries.upsert({
+    //         where: { id: data.id },
+    //         update: data,
+    //         create: data,
+    //       })
+    //     );
+    //   });
+    // }
+    //fund rating
+    // if (seed.table == "master_fund_agency_ratings") {
+    //   seed.data.forEach((data: master_fund_agency_ratings) => {
+    //     dependentSeederPromise.push(
+    //       prisma.master_fund_agency_ratings.upsert({
+    //         where: { id: data.id },
+    //         update: data,
+    //         create: data,
+    //       })
+    //     );
+    //   });
+    // }
   });
   await Promise.all(dependentSeederPromise);
   console.log("---- Seeding Completed ----");
