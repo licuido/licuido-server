@@ -285,3 +285,94 @@ export async function GET_INVESTOR_LIST_AS_CSV(
     });
   }
 }
+
+// GET_TOKEN_DEPLOYMENT_COUNT
+export async function GET_TOKEN_DEPLOYMENT_COUNT(
+  request: FastifyRequest,
+  reply: FastifyReply
+) {
+  try {
+    /* -----------  MAPPER ----------- */
+    const { start_date, end_date } = queryRequestInfo(request);
+
+    /* -----------  INTERACTOR ----------- */
+    const result = await TokenOrders.getTokenDeploymentCount({
+      start_date,
+      end_date,
+    });
+
+    /* -----------  RESPONSE ----------- */
+
+    return handleResponse(request, reply, responseType?.OK, {
+      data: { ...result },
+    });
+  } catch (error: any) {
+    Logger.error(request, error.message, error);
+    return handleResponse(request, reply, responseType?.INTERNAL_SERVER_ERROR, {
+      error: {
+        message: responseType?.INTERNAL_SERVER_ERROR,
+      },
+    });
+  }
+}
+
+// GET_ISSUER_APPROVAL_COUNT
+export async function GET_ISSUER_APPROVAL_COUNT(
+  request: FastifyRequest,
+  reply: FastifyReply
+) {
+  try {
+    /* -----------  MAPPER ----------- */
+    const { start_date, end_date } = queryRequestInfo(request);
+
+    /* -----------  INTERACTOR ----------- */
+    const result = await TokenOrders.getIssuerApprovalCount({
+      start_date,
+      end_date,
+    });
+
+    /* -----------  RESPONSE ----------- */
+
+    return handleResponse(request, reply, responseType?.OK, {
+      data: { ...result },
+    });
+  } catch (error: any) {
+    Logger.error(request, error.message, error);
+    return handleResponse(request, reply, responseType?.INTERNAL_SERVER_ERROR, {
+      error: {
+        message: responseType?.INTERNAL_SERVER_ERROR,
+      },
+    });
+  }
+}
+
+// GET_TOTAL_INVESTMENT_ISSUERS_INVESTORS_COUNT
+
+export async function GET_TOTAL_INVESTMENT_ISSUERS_INVESTORS_COUNT(
+  request: FastifyRequest,
+  reply: FastifyReply
+) {
+  try {
+    /* -----------  MAPPER ----------- */
+    const { start_date, end_date } = queryRequestInfo(request);
+
+    /* -----------  INTERACTOR ----------- */
+    const result = await TokenOrders.getTotalInvestmentIssuersInvestorsCount({
+      start_date,
+      end_date,
+    });
+
+    /* -----------  RESPONSE ----------- */
+
+    return handleResponse(request, reply, responseType?.OK, {
+      data: { ...result },
+    });
+  } catch (error: any) {
+    Logger.error(request, error.message, error);
+    return handleResponse(request, reply, responseType?.INTERNAL_SERVER_ERROR, {
+      error: {
+        message: responseType?.INTERNAL_SERVER_ERROR,
+      },
+    });
+  }
+}

@@ -30,6 +30,9 @@ import {
   getTokensHoldingsGraphQuery,
   getCurrentTokenInvestmentQuery,
   getInvestorDashboardQuery,
+  getAllTokensDeploymentCountQuery,
+  getIssuerApprovalCountQuery,
+  getTotalInvestmentIssuersInvestorsCount,
   getAllValuationPriceQuery,
   getInvestorTokenHoldingsQuery,
 } from "./portfolioInvestorQuery";
@@ -87,6 +90,9 @@ const queries = {
   getInvestorDetailsQuery,
   getAllPositionReportsQuery,
   getAllPosReportInvestorsQuery,
+  getAllTokensDeploymentCountQuery,
+  getIssuerApprovalCountQuery,
+  getTotalInvestmentIssuersInvestorsCount,
   getAllValuationPriceQuery,
   getInvestorTokenHoldingsQuery,
 };

@@ -25,6 +25,7 @@ export interface createPersonInfo {
   name?: string;
   position_id?: number;
   mobile_no_std_code?: string;
+  other_position?: string;
   mobile_no?: string;
   email_id?: string;
   identity?: createAsset[];

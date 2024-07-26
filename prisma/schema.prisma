@@ -528,6 +528,7 @@ model user_profiles {
   investor_type_id                                                                              Int?
   is_politically_exposed                                                                        Boolean?                            @default(false)
   is_legally_confirmed                                                                          Boolean?                            @default(false)
+  other_position                                                                                String?
   assets_assets_created_byTouser_profiles                                                       assets[]                            @relation("assets_created_byTouser_profiles")
   assets_assets_updated_byTouser_profiles                                                       assets[]                            @relation("assets_updated_byTouser_profiles")
   business_documents_business_documents_created_byTouser_profiles                               business_documents[]                @relation("business_documents_created_byTouser_profiles")

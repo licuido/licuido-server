@@ -43,11 +43,12 @@ export interface user_profileAttributes {
   investor_type_id?: number;
   is_politically_exposed?: boolean;
   is_legally_confirmed?: boolean;
+  other_position?: string;
 }
 
 export type user_profilePk = "id";
 export type user_profileId = user_profile[user_profilePk];
-export type user_profileOptionalAttributes = "id" | "name" | "user_id" | "email_id" | "mobile_no_std_code" | "mobile_no" | "is_active" | "is_agree_terms_condition" | "is_setup_done" | "is_verified" | "is_fund_offered_by_licuido" | "created_at" | "updated_at" | "position_id" | "contact_email" | "investor_type_id" | "is_politically_exposed" | "is_legally_confirmed";
+export type user_profileOptionalAttributes = "id" | "name" | "user_id" | "email_id" | "mobile_no_std_code" | "mobile_no" | "is_active" | "is_agree_terms_condition" | "is_setup_done" | "is_verified" | "is_fund_offered_by_licuido" | "created_at" | "updated_at" | "position_id" | "contact_email" | "investor_type_id" | "is_politically_exposed" | "is_legally_confirmed" | "other_position";
 export type user_profileCreationAttributes = Optional<user_profileAttributes, user_profileOptionalAttributes>;
 
 export class user_profile extends Model<user_profileAttributes, user_profileCreationAttributes> implements user_profileAttributes {
@@ -69,6 +70,7 @@ export class user_profile extends Model<user_profileAttributes, user_profileCrea
   investor_type_id?: number;
   is_politically_exposed?: boolean;
   is_legally_confirmed?: boolean;
+  other_position?: string;
 
   // user_profile belongsTo master_investor_type via investor_type_id
   investor_type!: master_investor_type;
@@ -734,6 +736,10 @@ export class user_profile extends Model<user_profileAttributes, user_profileCrea
       type: DataTypes.BOOLEAN,
       allowNull: true,
       defaultValue: false
+    },
+    other_position: {
+      type: DataTypes.TEXT,
+      allowNull: true
     }
   }, {
     sequelize,

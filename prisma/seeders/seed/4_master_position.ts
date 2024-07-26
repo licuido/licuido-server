@@ -52,5 +52,12 @@ export const masterPositon: { table: string; data: master_position[] } = {
       created_at: new Date(),
       updated_at: new Date(),
     },
+    {
+      id: 8,
+      name: "Other",
+      is_active: true,
+      created_at: new Date(),
+      updated_at: new Date(),
+    },
   ],
 };
