@@ -34,5 +34,12 @@ export const masterBlockChainNetworks: {
       created_at: new Date(),
       updated_at: new Date(),
     },
+    {
+      id: 5,
+      name: "Ripple (XRP)",
+      is_active: true,
+      created_at: new Date(),
+      updated_at: new Date(),
+    },
   ],
 };
