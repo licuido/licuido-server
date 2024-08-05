@@ -41,5 +41,12 @@ export const masterBlockChainNetworks: {
       created_at: new Date(),
       updated_at: new Date(),
     },
+    {
+      id: 6,
+      name: "Polygon (MATIC)",
+      is_active: true,
+      created_at: new Date(),
+      updated_at: new Date(),
+    },
   ],
 };

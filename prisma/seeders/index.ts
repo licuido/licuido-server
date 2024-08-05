@@ -9,7 +9,7 @@ import {
   // master_position,
   // master_wallet_types,
   // master_investor_types,
-  master_token_type,
+  // master_token_type,
   // master_token_status,
   master_blockchain_networks,
   // master_token_offering_status,
@@ -99,17 +99,17 @@ const main = async () => {
     //   });
     // }
     // //master token types
-    if (seed.table === "master_token_type") {
-      seed.data.forEach((data: master_token_type) => {
-        upsertPromises.push(
-          prisma.master_token_type.upsert({
-            where: { id: data.id },
-            update: data,
-            create: data,
-          })
-        );
-      });
-    }
+    // if (seed.table === "master_token_type") {
+    //   seed.data.forEach((data: master_token_type) => {
+    //     upsertPromises.push(
+    //       prisma.master_token_type.upsert({
+    //         where: { id: data.id },
+    //         update: data,
+    //         create: data,
+    //       })
+    //     );
+    //   });
+    // }
     // //master token status
     // if (seed.table === "master_token_status") {
     //   seed.data.forEach((data: master_token_status) => {
