@@ -13,6 +13,7 @@ import type { token_offering_allowed_currency, token_offering_allowed_currencyId
 import type { token_offering_document, token_offering_documentId } from './token_offering_document';
 import type { token_offering_team, token_offering_teamId } from './token_offering_team';
 import type { token_order, token_orderId } from './token_order';
+import type { token_pledge, token_pledgeId } from './token_pledge';
 import type { token_valuation, token_valuationId } from './token_valuation';
 import type { user_profile, user_profileId } from './user_profile';
 import type { wallet_token, wallet_tokenId } from './wallet_token';
@@ -223,6 +224,18 @@ export class token_offering extends Model<token_offeringAttributes, token_offeri
   hasToken_order!: Sequelize.HasManyHasAssociationMixin<token_order, token_orderId>;
   hasToken_orders!: Sequelize.HasManyHasAssociationsMixin<token_order, token_orderId>;
   countToken_orders!: Sequelize.HasManyCountAssociationsMixin;
+  // token_offering hasMany token_pledge via token_offering_id
+  token_pledges!: token_pledge[];
+  getToken_pledges!: Sequelize.HasManyGetAssociationsMixin<token_pledge>;
+  setToken_pledges!: Sequelize.HasManySetAssociationsMixin<token_pledge, token_pledgeId>;
+  addToken_pledge!: Sequelize.HasManyAddAssociationMixin<token_pledge, token_pledgeId>;
+  addToken_pledges!: Sequelize.HasManyAddAssociationsMixin<token_pledge, token_pledgeId>;
+  createToken_pledge!: Sequelize.HasManyCreateAssociationMixin<token_pledge>;
+  removeToken_pledge!: Sequelize.HasManyRemoveAssociationMixin<token_pledge, token_pledgeId>;
+  removeToken_pledges!: Sequelize.HasManyRemoveAssociationsMixin<token_pledge, token_pledgeId>;
+  hasToken_pledge!: Sequelize.HasManyHasAssociationMixin<token_pledge, token_pledgeId>;
+  hasToken_pledges!: Sequelize.HasManyHasAssociationsMixin<token_pledge, token_pledgeId>;
+  countToken_pledges!: Sequelize.HasManyCountAssociationsMixin;
   // token_offering hasMany token_valuation via token_offering_id
   token_valuations!: token_valuation[];
   getToken_valuations!: Sequelize.HasManyGetAssociationsMixin<token_valuation>;

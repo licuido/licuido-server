@@ -12,6 +12,7 @@ import type { position_report_investor, position_report_investorId } from './pos
 import type { position_report, position_reportId } from './position_report';
 import type { token_offering, token_offeringId } from './token_offering';
 import type { token_order, token_orderId } from './token_order';
+import type { token_pledge, token_pledgeId } from './token_pledge';
 import type { track_token_order_action, track_token_order_actionId } from './track_token_order_action';
 import type { user_profile, user_profileId } from './user_profile';
 
@@ -170,6 +171,30 @@ export class entity extends Model<entityAttributes, entityCreationAttributes> im
   hasReceiver_entity_token_order!: Sequelize.HasManyHasAssociationMixin<token_order, token_orderId>;
   hasReceiver_entity_token_orders!: Sequelize.HasManyHasAssociationsMixin<token_order, token_orderId>;
   countReceiver_entity_token_orders!: Sequelize.HasManyCountAssociationsMixin;
+  // entity hasMany token_pledge via invester_id
+  token_pledges!: token_pledge[];
+  getToken_pledges!: Sequelize.HasManyGetAssociationsMixin<token_pledge>;
+  setToken_pledges!: Sequelize.HasManySetAssociationsMixin<token_pledge, token_pledgeId>;
+  addToken_pledge!: Sequelize.HasManyAddAssociationMixin<token_pledge, token_pledgeId>;
+  addToken_pledges!: Sequelize.HasManyAddAssociationsMixin<token_pledge, token_pledgeId>;
+  createToken_pledge!: Sequelize.HasManyCreateAssociationMixin<token_pledge>;
+  removeToken_pledge!: Sequelize.HasManyRemoveAssociationMixin<token_pledge, token_pledgeId>;
+  removeToken_pledges!: Sequelize.HasManyRemoveAssociationsMixin<token_pledge, token_pledgeId>;
+  hasToken_pledge!: Sequelize.HasManyHasAssociationMixin<token_pledge, token_pledgeId>;
+  hasToken_pledges!: Sequelize.HasManyHasAssociationsMixin<token_pledge, token_pledgeId>;
+  countToken_pledges!: Sequelize.HasManyCountAssociationsMixin;
+  // entity hasMany token_pledge via issuer_id
+  issuer_token_pledges!: token_pledge[];
+  getIssuer_token_pledges!: Sequelize.HasManyGetAssociationsMixin<token_pledge>;
+  setIssuer_token_pledges!: Sequelize.HasManySetAssociationsMixin<token_pledge, token_pledgeId>;
+  addIssuer_token_pledge!: Sequelize.HasManyAddAssociationMixin<token_pledge, token_pledgeId>;
+  addIssuer_token_pledges!: Sequelize.HasManyAddAssociationsMixin<token_pledge, token_pledgeId>;
+  createIssuer_token_pledge!: Sequelize.HasManyCreateAssociationMixin<token_pledge>;
+  removeIssuer_token_pledge!: Sequelize.HasManyRemoveAssociationMixin<token_pledge, token_pledgeId>;
+  removeIssuer_token_pledges!: Sequelize.HasManyRemoveAssociationsMixin<token_pledge, token_pledgeId>;
+  hasIssuer_token_pledge!: Sequelize.HasManyHasAssociationMixin<token_pledge, token_pledgeId>;
+  hasIssuer_token_pledges!: Sequelize.HasManyHasAssociationsMixin<token_pledge, token_pledgeId>;
+  countIssuer_token_pledges!: Sequelize.HasManyCountAssociationsMixin;
   // entity hasMany track_token_order_action via user_entity_id
   track_token_order_actions!: track_token_order_action[];
   getTrack_token_order_actions!: Sequelize.HasManyGetAssociationsMixin<track_token_order_action>;

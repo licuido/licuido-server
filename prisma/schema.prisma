@@ -120,6 +120,8 @@ model entities {
   token_offerings                                              token_offerings[]
   token_orders_token_orders_issuer_entity_idToentities         token_orders[]              @relation("token_orders_issuer_entity_idToentities")
   token_orders_token_orders_receiver_entity_idToentities       token_orders[]              @relation("token_orders_receiver_entity_idToentities")
+  token_pledges_token_pledges_invester_idToentities            token_pledges[]             @relation("token_pledges_invester_idToentities")
+  token_pledges_token_pledges_issuer_idToentities              token_pledges[]             @relation("token_pledges_issuer_idToentities")
   track_token_order_actions                                    track_token_order_actions[]
 }
 
@@ -421,6 +423,7 @@ model token_offerings {
   master_token_type                                       master_token_type?                  @relation(fields: [token_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   user_profiles_token_offerings_updated_byTouser_profiles user_profiles?                      @relation("token_offerings_updated_byTouser_profiles", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
   token_orders                                            token_orders[]
+  token_pledges                                           token_pledges[]
   token_valuations                                        token_valuations[]
   wallet_tokens                                           wallet_tokens[]
 }
@@ -560,6 +563,8 @@ model user_profiles {
   token_offerings_token_offerings_updated_byTouser_profiles                                     token_offerings[]                   @relation("token_offerings_updated_byTouser_profiles")
   token_orders_token_orders_created_byTouser_profiles                                           token_orders[]                      @relation("token_orders_created_byTouser_profiles")
   token_orders_token_orders_updated_byTouser_profiles                                           token_orders[]                      @relation("token_orders_updated_byTouser_profiles")
+  token_pledges_token_pledges_created_byTouser_profiles                                         token_pledges[]                     @relation("token_pledges_created_byTouser_profiles")
+  token_pledges_token_pledges_updated_byTouser_profiles                                         token_pledges[]                     @relation("token_pledges_updated_byTouser_profiles")
   token_transactions_token_transactions_created_byTouser_profiles                               token_transactions[]                @relation("token_transactions_created_byTouser_profiles")
   token_transactions_token_transactions_updated_byTouser_profiles                               token_transactions[]                @relation("token_transactions_updated_byTouser_profiles")
   token_valuations_token_valuations_created_byTouser_profiles                                   token_valuations[]                  @relation("token_valuations_created_byTouser_profiles")
@@ -749,6 +754,24 @@ model position_reports {
   user_profiles_position_reports_created_byTouser_profiles user_profiles?              @relation("position_reports_created_byTouser_profiles", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
   entities                                                 entities?                   @relation(fields: [issuer_entity_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   user_profiles_position_reports_updated_byTouser_profiles user_profiles?              @relation("position_reports_updated_byTouser_profiles", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model token_pledges {
+  id                                                    String           @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  token_offering_id                                     String?          @db.Uuid
+  invester_id                                           String?          @db.Uuid
+  issuer_id                                             String?          @db.Uuid
+  pledge_token                                          Int?
+  is_active                                             Boolean?         @default(true)
+  created_by                                            String?          @db.Uuid
+  updated_by                                            String?          @db.Uuid
+  created_at                                            DateTime?        @default(dbgenerated("(now() AT TIME ZONE 'utc'::text)")) @db.Timestamptz(6)
+  updated_at                                            DateTime?        @default(dbgenerated("(now() AT TIME ZONE 'utc'::text)")) @db.Timestamptz(6)
+  user_profiles_token_pledges_created_byTouser_profiles user_profiles?   @relation("token_pledges_created_byTouser_profiles", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  entities_token_pledges_invester_idToentities          entities?        @relation("token_pledges_invester_idToentities", fields: [invester_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  entities_token_pledges_issuer_idToentities            entities?        @relation("token_pledges_issuer_idToentities", fields: [issuer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  token_offerings                                       token_offerings? @relation(fields: [token_offering_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_profiles_token_pledges_updated_byTouser_profiles user_profiles?   @relation("token_pledges_updated_byTouser_profiles", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 enum investment_types {

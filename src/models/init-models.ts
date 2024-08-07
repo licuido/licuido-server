@@ -65,6 +65,8 @@ import { token_offering as _token_offering } from "./token_offering";
 import type { token_offeringAttributes, token_offeringCreationAttributes } from "./token_offering";
 import { token_order as _token_order } from "./token_order";
 import type { token_orderAttributes, token_orderCreationAttributes } from "./token_order";
+import { token_pledge as _token_pledge } from "./token_pledge";
+import type { token_pledgeAttributes, token_pledgeCreationAttributes } from "./token_pledge";
 import { token_transaction as _token_transaction } from "./token_transaction";
 import type { token_transactionAttributes, token_transactionCreationAttributes } from "./token_transaction";
 import { token_valuation as _token_valuation } from "./token_valuation";
@@ -116,6 +118,7 @@ export {
   _token_offering_team as token_offering_team,
   _token_offering as token_offering,
   _token_order as token_order,
+  _token_pledge as token_pledge,
   _token_transaction as token_transaction,
   _token_valuation as token_valuation,
   _track_token_order_action as track_token_order_action,
@@ -193,6 +196,8 @@ export type {
   token_offeringCreationAttributes,
   token_orderAttributes,
   token_orderCreationAttributes,
+  token_pledgeAttributes,
+  token_pledgeCreationAttributes,
   token_transactionAttributes,
   token_transactionCreationAttributes,
   token_valuationAttributes,
@@ -245,6 +250,7 @@ export function initModels(sequelize: Sequelize) {
   const token_offering_team = _token_offering_team.initModel(sequelize);
   const token_offering = _token_offering.initModel(sequelize);
   const token_order = _token_order.initModel(sequelize);
+  const token_pledge = _token_pledge.initModel(sequelize);
   const token_transaction = _token_transaction.initModel(sequelize);
   const token_valuation = _token_valuation.initModel(sequelize);
   const track_token_order_action = _track_token_order_action.initModel(sequelize);
@@ -292,6 +298,10 @@ export function initModels(sequelize: Sequelize) {
   entity.hasMany(token_order, { as: "token_orders", foreignKey: "issuer_entity_id"});
   token_order.belongsTo(entity, { as: "receiver_entity", foreignKey: "receiver_entity_id"});
   entity.hasMany(token_order, { as: "receiver_entity_token_orders", foreignKey: "receiver_entity_id"});
+  token_pledge.belongsTo(entity, { as: "invester", foreignKey: "invester_id"});
+  entity.hasMany(token_pledge, { as: "token_pledges", foreignKey: "invester_id"});
+  token_pledge.belongsTo(entity, { as: "issuer", foreignKey: "issuer_id"});
+  entity.hasMany(token_pledge, { as: "issuer_token_pledges", foreignKey: "issuer_id"});
   track_token_order_action.belongsTo(entity, { as: "user_entity", foreignKey: "user_entity_id"});
   entity.hasMany(track_token_order_action, { as: "track_token_order_actions", foreignKey: "user_entity_id"});
   customer_wallet.belongsTo(individual_investor, { as: "individual_investor", foreignKey: "individual_investor_id"});
@@ -362,6 +372,8 @@ export function initModels(sequelize: Sequelize) {
   token_offering.hasMany(token_offering_team, { as: "token_offering_teams", foreignKey: "token_offering_id"});
   token_order.belongsTo(token_offering, { as: "token_offering", foreignKey: "token_offering_id"});
   token_offering.hasMany(token_order, { as: "token_orders", foreignKey: "token_offering_id"});
+  token_pledge.belongsTo(token_offering, { as: "token_offering", foreignKey: "token_offering_id"});
+  token_offering.hasMany(token_pledge, { as: "token_pledges", foreignKey: "token_offering_id"});
   token_valuation.belongsTo(token_offering, { as: "token_offering", foreignKey: "token_offering_id"});
   token_offering.hasMany(token_valuation, { as: "token_valuations", foreignKey: "token_offering_id"});
   wallet_token.belongsTo(token_offering, { as: "token_offering", foreignKey: "token_offering_id"});
@@ -432,6 +444,10 @@ export function initModels(sequelize: Sequelize) {
   user_profile.hasMany(token_order, { as: "token_orders", foreignKey: "created_by"});
   token_order.belongsTo(user_profile, { as: "updated_by_user_profile", foreignKey: "updated_by"});
   user_profile.hasMany(token_order, { as: "updated_by_token_orders", foreignKey: "updated_by"});
+  token_pledge.belongsTo(user_profile, { as: "created_by_user_profile", foreignKey: "created_by"});
+  user_profile.hasMany(token_pledge, { as: "token_pledges", foreignKey: "created_by"});
+  token_pledge.belongsTo(user_profile, { as: "updated_by_user_profile", foreignKey: "updated_by"});
+  user_profile.hasMany(token_pledge, { as: "updated_by_token_pledges", foreignKey: "updated_by"});
   token_transaction.belongsTo(user_profile, { as: "created_by_user_profile", foreignKey: "created_by"});
   user_profile.hasMany(token_transaction, { as: "token_transactions", foreignKey: "created_by"});
   token_transaction.belongsTo(user_profile, { as: "updated_by_user_profile", foreignKey: "updated_by"});
@@ -501,6 +517,7 @@ export function initModels(sequelize: Sequelize) {
     token_offering_team: token_offering_team,
     token_offering: token_offering,
     token_order: token_order,
+    token_pledge: token_pledge,
     token_transaction: token_transaction,
     token_valuation: token_valuation,
     track_token_order_action: track_token_order_action,
