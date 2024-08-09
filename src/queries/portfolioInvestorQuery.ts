@@ -124,6 +124,8 @@ SELECT
   tof.start_date AS token_start_date,
   tof.end_date AS token_end_date,
   tof.status_id AS status_id,
+  tp.id as token_pledge_id,
+  tp.pledge_token as token_pledge_count,
   mts.name AS status,
   (
     COALESCE(
@@ -181,6 +183,7 @@ FROM
   LEFT JOIN assets AS iss_ast ON iss_ent.logo_asset_id = iss_ast.id
   INNER JOIN master_token_status AS mts ON tof.status_id = mts.id
   LEFT JOIN balances AS ba ON tor.token_offering_id = ba.token_offering_id
+  LEFT JOIN token_pledges AS tp ON tp.token_offering_id = tof.id
 WHERE
   tor.receiver_entity_id = '${user_entity_id}' 
   AND tor.status_id IN (5, 11)
@@ -191,6 +194,7 @@ GROUP BY
   tor.token_offering_id,
   tof.name,
   t_ast.url,
+  tp.id,
   tof.symbol,
   tof.isin_number,
   tof.start_date,
@@ -203,7 +207,6 @@ GROUP BY
 ORDER BY
   total_holdings DESC
   ${limitStatment};`;
-
   return baseQuery;
 };
 

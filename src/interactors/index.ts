@@ -22,6 +22,7 @@ import UserDeviceToken from "./user_device_token";
 import TokenTransaction from "./transaction";
 import PositionReports from "./position_reports";
 import MasterOrderStatus from "./master_order_status";
+import PledgeToken from "./pledge";
 
 export {
   MasterBlockChainNetwork,
@@ -48,4 +49,5 @@ export {
   TokenTransaction,
   PositionReports,
   MasterOrderStatus,
+  PledgeToken,
 };

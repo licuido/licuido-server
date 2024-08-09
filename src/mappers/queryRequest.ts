@@ -11,6 +11,9 @@ interface RequestParameters {
   entity_id: number; // Remove duplicate declaration here
   url: string;
   user_profile_id?: string;
+  from?: string;
+  to?: string;
+  amount?: string;
   user_entity_id?: string;
   start_date?: string;
   end_date?: string;
