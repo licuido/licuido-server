@@ -66,7 +66,11 @@ class Countries {
       const data = await master_country.findAll({
         where: {
           is_active: true,
-          name: { [Op.iLike]: `%${search}%` },
+          // name: { [Op.iLike]: `%${search}%` },
+          [Op.or]: [
+            { name: { [Op.iLike]: `%${search}%` } },
+            { "$region.name$": { [Op.iLike]: `%${search}%` } },
+          ],
         },
         attributes: ["id", "name"],
         include: [
