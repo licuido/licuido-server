@@ -58,23 +58,36 @@ export async function getInvestorCount({
   try {
     // Get Count of Investor for Qualification
 
-    return await user_entity.count({
-      where: {
-        entity_id: entity_type_id,
-        is_active: true,
-      },
-      include: [
-        {
-          model: user_profile,
-          as: "user_profile",
-          where: {
-            is_active: true,
-            is_setup_done: true, // Complete Onboarding
-          },
-          required: true,
-        },
-      ],
-    });
+    // return await user_entity.count({
+    //   where: {
+    //     entity_id: entity_type_id,
+    //     is_active: true,
+    //   },
+    //   include: [
+    //     {
+    //       model: user_profile,
+    //       as: "user_profile",
+    //       where: {
+    //         is_active: true,
+    //         is_setup_done: true, // Complete Onboarding
+    //       },
+    //       required: true,
+    //     }
+    //   ],
+    // });
+    const [dataCount]: any[] = await sequelize.query(
+      ` SELECT
+  COUNT(*) AS count 
+FROM
+   user_entities as ue
+      INNER JOIN user_profiles AS up ON ue.user_profile_id = up.id
+      INNER JOIN master_investor_types AS mit ON up.investor_type_id = mit.id
+      where  
+      ue.is_active= true AND
+      ue.entity_id = ${entity_type_id}
+       AND up.is_setup_done = true`
+    );
+    return dataCount?.[0]?.count ?? 0;
   } catch (error: any) {
     console.log(error);
     throw new Error(error.message);

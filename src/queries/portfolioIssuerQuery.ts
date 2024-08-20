@@ -750,7 +750,7 @@ export const getInvestorListQuery = (
       INNER JOIN master_investor_types AS mit ON ei.investor_type_id = mit.id
       INNER JOIN entities AS en ON ei.investor_entity_id = en.id
       INNER JOIN master_entity_investor_status AS meis ON ei.status_id = meis.id
-      INNER JOIN assets AS inv_ast ON en.logo_asset_id = inv_ast.id
+      LEFT JOIN assets AS inv_ast ON en.logo_asset_id = inv_ast.id
       LEFT JOIN master_countries AS mco ON en.country_id = mco.id
       LEFT JOIN master_business_sectors AS mbs ON en.business_sector_id = mbs.id
       LEFT JOIN customer_wallets AS cw ON en.id = cw.investor_entity_id
@@ -861,7 +861,7 @@ ORDER BY
       INNER JOIN master_investor_types AS mit ON ei.investor_type_id = mit.id
       INNER JOIN entities AS en ON ei.investor_entity_id = en.id
       INNER JOIN master_entity_investor_status AS meis ON ei.status_id = meis.id
-      INNER JOIN assets AS inv_ast ON en.logo_asset_id = inv_ast.id
+      LEFT JOIN assets AS inv_ast ON en.logo_asset_id = inv_ast.id
       LEFT JOIN master_countries AS mco ON en.country_id = mco.id
       LEFT JOIN master_business_sectors AS mbs ON en.business_sector_id = mbs.id
       LEFT JOIN customer_wallets AS cw ON en.id = cw.investor_entity_id
@@ -971,7 +971,7 @@ ORDER BY
       INNER JOIN master_investor_types AS mit ON ei.investor_type_id = mit.id
       INNER JOIN entities AS en ON ei.investor_entity_id = en.id
       INNER JOIN master_entity_investor_status AS meis ON ei.status_id = meis.id
-      INNER JOIN assets AS inv_ast ON en.logo_asset_id = inv_ast.id
+      LEFT JOIN assets AS inv_ast ON en.logo_asset_id = inv_ast.id
       LEFT JOIN master_countries AS mco ON en.country_id = mco.id
       LEFT JOIN master_business_sectors AS mbs ON en.business_sector_id = mbs.id
       LEFT JOIN customer_wallets AS cw ON en.id = cw.investor_entity_id
