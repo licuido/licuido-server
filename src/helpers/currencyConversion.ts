@@ -16,9 +16,9 @@ async function currencyConvert({
   to_currency_code,
   amount,
 }: {
-  from_currency_code: string;
-  to_currency_code: string;
-  amount: number;
+  from_currency_code: any;
+  to_currency_code: any;
+  amount?: any;
 }): Promise<any> {
   try {
     let currencyConverter = new CC({
