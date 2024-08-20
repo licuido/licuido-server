@@ -102,6 +102,7 @@ const constructBaseQuery = async (
         tokenFilterForIssuer = ` AND tor.token_offering_id = '${token_id}'`;
       }
 
+      console.log(user_entity_id, "user_entity_id");
       /* Construct Base Query */
       Query = `WITH
       vas AS (
@@ -141,10 +142,10 @@ const constructBaseQuery = async (
         FROM
           token_orders AS tor
           INNER JOIN entities AS entis ON tor.issuer_entity_id = entis.id
-          INNER JOIN entities AS entrec ON tor.receiver_entity_id = entrec.id
+          LEFT JOIN entities AS entrec ON tor.receiver_entity_id = entrec.id
           INNER JOIN token_offerings AS tof ON tor.token_offering_id = tof.id
-          INNER JOIN assets AS tast ON tof.logo_asset_id = tast.id
-          INNER JOIN assets AS invast ON entrec.logo_asset_id = invast.id
+          LEFT JOIN assets AS tast ON tof.logo_asset_id = tast.id
+          LEFT JOIN assets AS invast ON entrec.logo_asset_id = invast.id
           INNER JOIN master_order_status AS mos ON tor.status_id = mos.id
           INNER JOIN user_profiles AS up ON entrec.contact_profile_id = up.id
           LEFT JOIN token_transactions AS totr ON tor.id = totr.order_id
