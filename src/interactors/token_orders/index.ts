@@ -1365,7 +1365,7 @@ const calculation = (startDate: any, endDate: any, arr1: any, arr2: any) => {
 
     return {
       date: date,
-      calculated_value: calculatedValue,
+      value: calculatedValue,
     };
   });
   return progressArray;
@@ -1379,13 +1379,13 @@ const mergeValuesByDate = (arrays: any) => {
       if (!result[date]) {
         result[date] = 0;
       }
-      result[date] += item.calculated_value;
+      result[date] += item.value;
     });
   });
 
   return Object.keys(result).map((date) => ({
     date: date,
-    calculated_value: result[date],
+    value: result[date],
   }));
 };
 
