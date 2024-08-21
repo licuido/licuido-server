@@ -94,11 +94,7 @@ export async function getInvestorCount({
 
     const [dataCount]: any[] = await sequelize.query(
       `SELECT
-  ue.id,
-  (SELECT COUNT(ei.id) 
-   FROM entity_investors AS ei 
-   WHERE ei.investor_entity_id = e.id 
-   AND ei.issuer_entity_id = '${user_entity_id}') AS qualify
+  count(ue.id)
 FROM
   user_entities AS ue
   INNER JOIN user_profiles AS up ON ue.user_profile_id = up.id
@@ -107,10 +103,15 @@ FROM
 WHERE  
   ue.is_active = true
   AND ue.entity_id = ${entity_type_id}
-  AND up.is_setup_done = true;`
+  AND up.is_setup_done = true
+  AND (SELECT COUNT(ei.id) 
+       FROM entity_investors AS ei 
+       WHERE ei.investor_entity_id = e.id 
+       AND ei.issuer_entity_id = '${user_entity_id}') = 0;
+`
     );
 
-    return dataCount;
+    return dataCount?.[0]?.count ?? 0;
   } catch (error: any) {
     console.log(error);
     throw new Error(error.message);

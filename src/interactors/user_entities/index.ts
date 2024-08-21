@@ -22,14 +22,12 @@ const getInvestorCountForQualification = async ({
   user_entity_id: string;
 }) => {
   try {
-    const data: any = await getInvestorCount({
+    const data: number = await getInvestorCount({
       entity_type_id,
       user_entity_id,
     });
 
-    let filteredData = data?.filter((i: any) => i?.qualify === "0");
-
-    return filteredData?.length;
+    return data;
   } catch (error: any) {
     Logger.error(error.message, error);
     throw error;
