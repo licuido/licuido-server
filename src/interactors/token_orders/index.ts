@@ -1422,7 +1422,7 @@ const getInvestorlast3MonthsPerformance = async ({
       }
       graphData?.push({
         date: dailyDate,
-        value: sum,
+        value: sum ? sum : 0,
       });
     }
   }
