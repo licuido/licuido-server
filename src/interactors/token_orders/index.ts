@@ -1428,8 +1428,8 @@ const getInvestorlast3MonthsPerformance = async ({
     let datevalues = calculation(
       moment(from_date, "YYYY-MM-DD"),
       moment(to_date, "YYYY-MM-DD"),
-      vl.aggregated_balance_json,
-      matchingEntry.aggregated_valuations
+      vl?.aggregated_balance_json ?? [],
+      matchingEntry?.aggregated_valuations ?? []
     );
     dates.push(datevalues);
   });
