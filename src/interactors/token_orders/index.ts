@@ -21,6 +21,7 @@ import {
   getTokenSubscriptionOrderAsCSVPayload,
 } from "@types";
 import { sequelize } from "@utils";
+import moment from "moment";
 
 const createTokenSubscriptionOrders = async (
   options: createTokenSubscriptionOrderPayload
@@ -1333,6 +1334,60 @@ const rejectOrder = async ({
 
   return result;
 };
+const calculation = (startDate: any, endDate: any, arr1: any, arr2: any) => {
+  const datesArray = [];
+  let currentDate = startDate;
+
+  while (currentDate.isSameOrBefore(endDate)) {
+    datesArray.push(currentDate.format("YYYY-MM-DD"));
+    currentDate.add(1, "day");
+  }
+
+  // Calculate progress array
+  const progressArray = datesArray.map((date) => {
+    // Get the closest valuation price available on or before the current date
+    const applicableValuation = arr2.reduce((closest: any, current: any) => {
+      if (
+        moment(current.date).isSameOrBefore(date) &&
+        (!closest || moment(current.date).isAfter(closest.date))
+      ) {
+        return current;
+      }
+      return closest;
+    }, null);
+
+    // Get the balance from arr1 (assuming the balance stays constant for the 90 days)
+    const balance = arr1[0].sender_balance;
+
+    // Calculate the result for the current date
+    const calculatedValue =
+      balance * (applicableValuation ? applicableValuation.valuation_price : 0);
+
+    return {
+      date: date,
+      calculated_value: calculatedValue,
+    };
+  });
+  return progressArray;
+};
+const mergeValuesByDate = (arrays: any) => {
+  const result: any = {};
+
+  arrays.forEach((array: any) => {
+    array.forEach((item: any) => {
+      const date: any = item.date;
+      if (!result[date]) {
+        result[date] = 0;
+      }
+      result[date] += item.calculated_value;
+    });
+  });
+
+  return Object.keys(result).map((date) => ({
+    date: date,
+    calculated_value: result[date],
+  }));
+};
 
 const getInvestorlast3MonthsPerformance = async ({
   user_entity_id,
@@ -1349,7 +1404,6 @@ const getInvestorlast3MonthsPerformance = async ({
   const tokenHoldings: any = await TokenOrders.getInvestorTokenHoldings({
     user_entity_id,
   });
-
   let token_ids: any = [];
   for (const tokenHold of tokenHoldings) {
     token_ids?.push(tokenHold?.token_offering_id);
@@ -1364,68 +1418,22 @@ const getInvestorlast3MonthsPerformance = async ({
         })
       : [];
 
-  let graphData = [];
+  let graphData: any = [];
 
-  const findPreviousDate = (valuationDate: any, aggregatedBalances: any) => {
-    let closestPrevious = 0;
-
-    if (aggregatedBalances) {
-      for (const balance of aggregatedBalances) {
-        if (new Date(balance.date) < new Date(valuationDate)) {
-          closestPrevious = balance; // Update to the last seen previous date
-        }
-      }
-    }
-
-    return closestPrevious;
-  };
-
-  if (tokenHoldings?.length > 0) {
-    for (
-      let i = 0;
-      i < TokenValuationPrice?.[0]?.aggregated_valuations?.length;
-      i++
-    ) {
-      let dailyDate = TokenValuationPrice?.[0]?.aggregated_valuations[i]?.date;
-      let sum = 0;
-      for (let j = 0; j < tokenHoldings?.length; j++) {
-        let tokenHold = tokenHoldings[j];
-        for (let valuation of TokenValuationPrice) {
-          if (tokenHold.token_offering_id === valuation?.token_id) {
-            for (let dateCompare of tokenHold?.aggregated_balance_json) {
-              const data = valuation?.aggregated_valuations?.find(
-                (value: any) => value.date === dateCompare.date
-              );
-              if (
-                tokenHold?.aggregated_balance_json &&
-                valuation?.aggregated_valuations &&
-                data
-              ) {
-                sum = sum + data?.valuation_price * dateCompare?.sender_balance;
-              } else {
-                const previousBalance = findPreviousDate(
-                  dateCompare.date,
-                  TokenValuationPrice.aggregated_valuations
-                );
-
-                if (previousBalance) {
-                  sum +=
-                    valuation?.valuation_price *
-                    tokenHold?.aggregated_balance_json?.sender_balance; // Use the closest previous balance
-                } else {
-                  sum += valuation?.valuation_price * 0;
-                }
-              }
-            }
-          }
-        }
-      }
-      graphData?.push({
-        date: dailyDate,
-        value: sum ? sum : 0,
-      });
-    }
-  }
+  const dates: any = [];
+  tokenHoldings.map((vl: any) => {
+    const matchingEntry = TokenValuationPrice.find(
+      (entry2: any) => entry2.token_id === vl.token_offering_id
+    );
+    let datevalues = calculation(
+      moment(from_date, "YYYY-MM-DD"),
+      moment(to_date, "YYYY-MM-DD"),
+      vl.aggregated_balance_json,
+      matchingEntry.aggregated_valuations
+    );
+    dates.push(datevalues);
+  });
+  graphData = mergeValuesByDate(dates);
 
   let totalInvestment: any = await TokenOrders.getInvestorDashboard({
     user_entity_id,
