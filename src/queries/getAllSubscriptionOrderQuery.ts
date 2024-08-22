@@ -116,15 +116,17 @@ const constructBaseQuery = async (
         tor.created_at AS creation_date,
         tor.net_investment_value AS amount_to_pay,
         tor.ordered_tokens AS token_ordered,
+        tof.base_currency_code AS token_base_currency,
+        tof.base_currency AS token_base_currency_symbol,
         tof.symbol AS token_symbol,
         CASE
           WHEN tor.is_payment_confirmed = true
-          AND tor.recived_amount_in_euro IS NOT NULL THEN tor.recived_amount_in_euro
+          AND tor.net_investment_value IS NOT NULL THEN tor.net_investment_value
           ELSE null
         END AS confirmed_payment,
         CASE
           WHEN tor.is_payment_confirmed = true
-          AND tor.recived_amount_in_euro IS NOT NULL THEN tor.ordered_tokens
+          AND tor.net_investment_value IS NOT NULL THEN tor.ordered_tokens
           ELSE null
         END AS confirmed_tokens,
         tor.price_per_token AS token_price,
@@ -132,7 +134,8 @@ const constructBaseQuery = async (
         tor.payment_reference AS payment_reference,
         totr.transaction_hash AS transaction_hash,
         tor.is_active AS is_active,
-        tor.currency_code AS investment_currency_code,
+        tor.currency AS investment_currency,
+        tor.currency_code AS investment_currency_symbol,
         tor.token_offering_id AS token_offering_id,
         tast.url AS token_logo_url,
         CASE
@@ -220,15 +223,17 @@ const constructBaseQuery = async (
           mos.name AS status_name,
           tor.created_at AS creation_date,
           tor.net_investment_value AS amount_to_pay,
+            tof.base_currency_code AS token_base_currency,
+        tof.base_currency AS token_base_currency_symbol,
           tor.ordered_tokens AS token_ordered,
           CASE
             WHEN tor.is_payment_confirmed = true
-            AND tor.recived_amount_in_euro IS NOT NULL THEN tor.recived_amount_in_euro
+            AND tor.net_investment_value IS NOT NULL THEN tor.net_investment_value
             ELSE null
           END AS confirmed_payment,
           CASE
             WHEN tor.is_payment_confirmed = true
-            AND tor.recived_amount_in_euro IS NOT NULL THEN tor.ordered_tokens
+            AND tor.net_investment_value IS NOT NULL THEN tor.ordered_tokens
             ELSE null
           END AS confirmed_tokens,
           tor.price_per_token AS token_price,
@@ -237,6 +242,7 @@ const constructBaseQuery = async (
           tor.is_active AS is_active,
           tor.currency_code AS investment_currency_code,
           tor.token_offering_id AS token_offering_id,
+          tor.currency AS investment_currency,
           ast.url AS token_logo_url,
           false AS is_mint_enabled
           FROM
@@ -334,12 +340,12 @@ const constructBaseQuery = async (
             tor.ordered_tokens AS token_ordered,
             CASE
               WHEN tor.is_payment_confirmed = true
-              AND tor.recived_amount_in_euro IS NOT NULL THEN tor.recived_amount_in_euro
+              AND tor.recived_amount IS NOT NULL THEN tor.recived_amount
               ELSE null
             END AS confirmed_payment,
             CASE
               WHEN tor.is_payment_confirmed = true
-              AND tor.recived_amount_in_euro IS NOT NULL THEN tor.ordered_tokens
+              AND tor.recived_amount IS NOT NULL THEN tor.ordered_tokens
               ELSE null
             END AS confirmed_tokens,
             tor.price_per_token AS token_price,

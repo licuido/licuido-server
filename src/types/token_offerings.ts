@@ -34,6 +34,7 @@ export interface createTokenOffering {
   annual_percentage_yield?: string;
   payback_period?: string;
   payback_period_type?: string;
+  offering_price_in_euro?: number;
 }
 
 export interface createTokenOfferingCurrencies {
@@ -305,6 +306,7 @@ export interface createTokenValuation {
   valuation_price: number;
   user_entity_id?: string;
   user_profile_id?: string;
+  valuation_price_in_euro: number;
 }
 
 export interface getAllTokenAdmin {

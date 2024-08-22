@@ -1,5 +1,6 @@
 import {
   Logger,
+  currencyConvert,
   errorCustomMessage,
   investedStatus,
   qualifiedStatus,
@@ -207,6 +208,12 @@ const createTokenOfferings = async (options: createTokenOfferingPayload) => {
       banner_asset_id = asset?.[0]?.dataValues?.id;
     }
 
+    const conversionResponse = await currencyConvert({
+      from_currency_code: base_currency,
+      to_currency_code: "EUR",
+      amount: offering_price,
+    });
+
     const data = await TokenOfferings.create({
       issuer_entity_id: user_entity_id,
       name,
@@ -221,6 +228,7 @@ const createTokenOfferings = async (options: createTokenOfferingPayload) => {
       swift_bic_no,
       symbol,
       offering_price,
+      offering_price_in_euro: conversionResponse,
       is_all_countries_allowed,
       is_eligible_for_collateral_enabled,
       is_expected_annual_perc_yield_enabled,
@@ -595,9 +603,16 @@ const updateTokenOfferings = async (options: updateTokenOfferingPayload) => {
       banner_asset_id = asset?.[0]?.dataValues?.id;
     }
 
+    const conversionResponse = await currencyConvert({
+      from_currency_code: base_currency,
+      to_currency_code: "EUR",
+      amount: offering_price,
+    });
+
     // For Token Offerings
     await TokenOfferings.update(
       {
+        offering_price_in_euro: conversionResponse,
         name,
         description,
         start_date,
@@ -780,6 +795,17 @@ const updateTokenValuation = async (option: createTokenValuation) => {
       };
     }
 
+    const tokenOffering: any =
+      await TokenOfferings.getTokenOfferingBaseCurrency(token_id);
+
+    const conversionResponse = await currencyConvert({
+      from_currency_code: tokenOffering?.base_currency,
+      to_currency_code: "EUR",
+      amount: valuation_price,
+    });
+
+    console.log(conversionResponse, "conversionResponse");
+
     await TokenValuations.create({
       token_id,
       offer_price,
@@ -788,6 +814,7 @@ const updateTokenValuation = async (option: createTokenValuation) => {
       start_time,
       valuation_price,
       created_by: user_profile_id,
+      valuation_price_in_euro: conversionResponse,
     });
 
     return {

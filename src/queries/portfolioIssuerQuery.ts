@@ -143,7 +143,7 @@ export const getCirculatingSupplyQuery = (user_entity_id?: string) => {
       COALESCE(
         (
           SELECT
-            tv.valuation_price
+            tv.valuation_price_in_euro
           FROM
             token_valuations AS tv
           WHERE
@@ -160,7 +160,7 @@ export const getCirculatingSupplyQuery = (user_entity_id?: string) => {
             tv.start_time DESC
           LIMIT
             1
-        ), tof.offering_price
+        ), tof.offering_price_in_euro
       ) AS valuation_price
     FROM
       token_offerings AS tof
@@ -212,7 +212,7 @@ export const getPendingRedemptionQuery = (user_entity_id?: string) => {
       COALESCE(
         (
           SELECT
-            tv.valuation_price
+            tv.valuation_price_in_euro
           FROM
             token_valuations AS tv
           WHERE
@@ -229,7 +229,7 @@ export const getPendingRedemptionQuery = (user_entity_id?: string) => {
             tv.start_time DESC
           LIMIT
             1
-        ), tof.offering_price
+        ), tof.offering_price_in_euro
       ) AS valuation_price
     FROM
       token_offerings AS tof
@@ -276,6 +276,7 @@ export const getAllFundOfferingsForPortfolioQuery = (
     SELECT
       tof.id AS token_offering_id,
       tof.name AS token_name,
+      tof.base_currency_code,
       tof.symbol AS token_symbol,
       tof.isin_number AS isin_no,
       ast.url AS token_logo_url,
