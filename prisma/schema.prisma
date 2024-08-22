@@ -408,6 +408,7 @@ model token_offerings {
   is_deployed                                             Boolean?
   valuation_price                                         Decimal?                            @db.Decimal
   circulating_supply_count                                Decimal?                            @db.Decimal
+  offering_price_in_euro                                  Decimal?                            @db.Decimal
   offer_fund_ratings                                      offer_fund_ratings[]
   token_offering_allowed_countries                        token_offering_allowed_countries[]
   token_offering_allowed_currencies                       token_offering_allowed_currencies[]
@@ -467,6 +468,8 @@ model token_orders {
   reason_for_reject                                    String?
   rejected_blockchain_reference_id                     String?
   remarks                                              String?
+  net_investment_value_by_token                        Decimal?                   @db.Decimal
+  recived_amount_by_token                              Decimal?                   @db.Decimal
   user_profiles_token_orders_created_byTouser_profiles user_profiles?             @relation("token_orders_created_byTouser_profiles", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
   individual_investors                                 individual_investors?      @relation(fields: [individual_receiving_investor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   entities_token_orders_issuer_entity_idToentities     entities?                  @relation("token_orders_issuer_entity_idToentities", fields: [issuer_entity_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -722,6 +725,7 @@ model token_valuations {
   created_at                                               DateTime?        @default(dbgenerated("(now() AT TIME ZONE 'utc'::text)")) @db.Timestamptz(6)
   updated_at                                               DateTime?        @default(dbgenerated("(now() AT TIME ZONE 'utc'::text)")) @db.Timestamptz(6)
   start_time                                               DateTime?        @db.Time(6)
+  valuation_price_in_euro                                  Decimal?         @db.Decimal
   user_profiles_token_valuations_created_byTouser_profiles user_profiles?   @relation("token_valuations_created_byTouser_profiles", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
   token_offerings                                          token_offerings? @relation(fields: [token_offering_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   user_profiles_token_valuations_updated_byTouser_profiles user_profiles?   @relation("token_valuations_updated_byTouser_profiles", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)

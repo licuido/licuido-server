@@ -12,7 +12,7 @@ export async function GET_INVESTOR_COUNT_FOR_QUALIFY(
 ) {
   try {
     /* -----------  MAPPER ----------- */
-    const { entity_id } = queryRequestInfo(request);
+    const { entity_id, user_entity_id } = queryRequestInfo(request);
 
     if (entity_id === 2) {
       return handleResponse(request, reply, responseType?.FORBIDDEN, {
@@ -25,6 +25,7 @@ export async function GET_INVESTOR_COUNT_FOR_QUALIFY(
     /* -----------  INTERACTOR ----------- */
     const result = await UserEntities.getInvestorCountForQualification({
       entity_type_id: 2, // Investor
+      user_entity_id: user_entity_id ?? "",
     });
 
     /* -----------  RESPONSE ----------- */

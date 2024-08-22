@@ -46,7 +46,7 @@ export const getTokensByInvestorGraphQuery = (
       COALESCE(
         (
           SELECT
-            tv.valuation_price
+            tv.valuation_price_in_euro
           FROM
             token_valuations AS tv
           WHERE
@@ -63,7 +63,7 @@ export const getTokensByInvestorGraphQuery = (
             tv.start_time DESC
           LIMIT
             1
-        ), tof.offering_price
+        ), tof.offering_price_in_euro
       ) AS valuation_price
     FROM
       token_offerings AS tof
@@ -110,7 +110,7 @@ ORDER BY
       COALESCE(
         (
           SELECT
-            tv.valuation_price
+            tv.valuation_price_in_euro
           FROM
             token_valuations AS tv
           WHERE
@@ -127,7 +127,7 @@ ORDER BY
             tv.start_time DESC
           LIMIT
             1
-        ), tof.offering_price
+        ), tof.offering_price_in_euro
       ) AS valuation_price
     FROM
       token_offerings AS tof

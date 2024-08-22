@@ -32,6 +32,7 @@ export interface createTokenOrders
   default_currency_code: string;
   net_investment_value_in_euro: number;
   fulfilled_by: "admin" | "issuer";
+  net_investment_values_by_token: number;
 }
 
 export interface createTokenRedemptionOrderPayload
@@ -55,6 +56,7 @@ export interface updateTokenOrders {
   reason_for_reject?: string;
   rejected_blockchain_reference_id?: string;
   remarks?: string;
+  recived_amount_by_token?: number;
 }
 
 export interface getSubscriptionOrderPayload {

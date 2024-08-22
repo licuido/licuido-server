@@ -1105,6 +1105,33 @@ class TokenOrders {
       throw new Error(error.message);
     }
   }
+
+  static async getOrder({
+    token_order_id,
+  }: {
+    token_order_id?: string;
+  }): Promise<any> {
+    try {
+      const token_offer = await token_order.findOne({
+        where: {
+          id: token_order_id,
+        },
+        attributes: ["currency", "currency_code"],
+        include: [
+          {
+            model: token_offering,
+            as: "token_offering",
+            required: false,
+            attributes: ["base_currency"],
+          },
+        ],
+      });
+
+      return JSON.parse(JSON.stringify(token_offer));
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export { TokenOrders };

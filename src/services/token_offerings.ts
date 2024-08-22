@@ -707,6 +707,21 @@ class TokenOfferings {
       throw error;
     }
   }
+
+  static async getTokenOfferingBaseCurrency(token_id: string): Promise<any> {
+    try {
+      // Update Token Offering Meta Data
+      const token_offer = await token_offering.findOne({
+        where: {
+          id: token_id,
+        },
+        attributes: ["base_currency", "base_currency_code"],
+      });
+      return JSON.parse(JSON.stringify(token_offer));
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export { TokenOfferings };

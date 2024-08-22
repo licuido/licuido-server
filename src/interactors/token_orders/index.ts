@@ -8,6 +8,7 @@ import {
   successCustomMessage,
 } from "@helpers";
 import {
+  TokenOfferings,
   TokenOrders,
   TokenTransactions,
   TrackTokenOrderActions,
@@ -61,6 +62,15 @@ const createTokenSubscriptionOrders = async (
 
     const default_currency = "€";
     const default_currency_code = "EUR";
+
+    const tokenOffering: any =
+      await TokenOfferings.getTokenOfferingBaseCurrency(token_offering_id);
+
+    const tokenconversionResponse = await currencyConvert({
+      from_currency_code: currency_code,
+      to_currency_code: tokenOffering?.base_currency,
+      amount: net_investment_value,
+    });
     const conversionResponse = await currencyConvert({
       from_currency_code: currency_code,
       to_currency_code: default_currency_code,
@@ -97,6 +107,7 @@ const createTokenSubscriptionOrders = async (
           default_currency_code: default_currency_code,
           net_investment_value_in_euro: conversionResponse,
           fulfilled_by: isFulfilledBylicuido ? "admin" : "issuer",
+          net_investment_values_by_token: Math.round(tokenconversionResponse),
         },
         transaction
       );
@@ -243,6 +254,15 @@ const createTokenRedemptionOrders = async (
       iban_no,
     } = options;
 
+    const tokenOffering: any =
+      await TokenOfferings.getTokenOfferingBaseCurrency(token_offering_id);
+
+    const tokenconversionResponse = await currencyConvert({
+      from_currency_code: currency_code,
+      to_currency_code: tokenOffering?.base_currency,
+      amount: net_investment_value,
+    });
+
     const default_currency = "€";
     const default_currency_code = "EUR";
     const conversionResponse = await currencyConvert({
@@ -282,6 +302,7 @@ const createTokenRedemptionOrders = async (
           default_currency_code: default_currency_code,
           net_investment_value_in_euro: conversionResponse,
           fulfilled_by: isFulfilledBylicuido ? "admin" : "issuer",
+          net_investment_values_by_token: Math.round(tokenconversionResponse),
         },
         transaction
       );
@@ -864,6 +885,21 @@ const confirmPayment = async ({
   // Update Confrim Payment / Reject Order Details
   const result: any = await sequelize.transaction(async (transaction) => {
     // Update Token Order Status With Track Id
+
+    const order = await TokenOrders.getOrder({ token_order_id: id });
+
+    const euroConvert = await currencyConvert({
+      from_currency_code: order?.currency_code,
+      to_currency_code: "EUR",
+      amount: Number(received_payment),
+    });
+
+    const tokenConvert = await currencyConvert({
+      from_currency_code: order?.currency_code,
+      to_currency_code: order?.token_offering?.base_currency,
+      amount: Number(received_payment),
+    });
+
     await TokenOrders.update(
       {
         options: {
@@ -874,7 +910,9 @@ const confirmPayment = async ({
               ? status_id
               : 9, // 3 --> Payment Confirmed | 8 --> Rejected By Issuer | 9 --> Request to mint
           recived_amount_in_euro:
-            status_id === 3 ? received_payment : undefined,
+            status_id === 3 ? Math.round(euroConvert) : undefined,
+          recived_amount_by_token:
+            status_id === 3 ? Math.round(tokenConvert) : undefined,
           is_payment_confirmed: status_id === 3 ? true : false,
           updated_by: user_profile_id,
         },

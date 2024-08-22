@@ -102,6 +102,7 @@ const constructBaseQuery = async (
         tokenFilterForIssuer = ` AND tor.token_offering_id = '${token_id}'`;
       }
 
+      console.log(user_entity_id, "user_entity_id");
       /* Construct Base Query */
       Query = `WITH
       vas AS (
@@ -115,15 +116,17 @@ const constructBaseQuery = async (
         tor.created_at AS creation_date,
         tor.net_investment_value AS amount_to_pay,
         tor.ordered_tokens AS token_ordered,
+        tof.base_currency_code AS token_base_currency,
+        tof.base_currency AS token_base_currency_symbol,
         tof.symbol AS token_symbol,
         CASE
           WHEN tor.is_payment_confirmed = true
-          AND tor.recived_amount_in_euro IS NOT NULL THEN tor.recived_amount_in_euro
+          AND tor.net_investment_value IS NOT NULL THEN tor.net_investment_value
           ELSE null
         END AS confirmed_payment,
         CASE
           WHEN tor.is_payment_confirmed = true
-          AND tor.recived_amount_in_euro IS NOT NULL THEN tor.ordered_tokens
+          AND tor.net_investment_value IS NOT NULL THEN tor.ordered_tokens
           ELSE null
         END AS confirmed_tokens,
         tor.price_per_token AS token_price,
@@ -131,7 +134,8 @@ const constructBaseQuery = async (
         tor.payment_reference AS payment_reference,
         totr.transaction_hash AS transaction_hash,
         tor.is_active AS is_active,
-        tor.currency_code AS investment_currency_code,
+        tor.currency AS investment_currency,
+        tor.currency_code AS investment_currency_symbol,
         tor.token_offering_id AS token_offering_id,
         tast.url AS token_logo_url,
         CASE
@@ -141,10 +145,10 @@ const constructBaseQuery = async (
         FROM
           token_orders AS tor
           INNER JOIN entities AS entis ON tor.issuer_entity_id = entis.id
-          INNER JOIN entities AS entrec ON tor.receiver_entity_id = entrec.id
+          LEFT JOIN entities AS entrec ON tor.receiver_entity_id = entrec.id
           INNER JOIN token_offerings AS tof ON tor.token_offering_id = tof.id
-          INNER JOIN assets AS tast ON tof.logo_asset_id = tast.id
-          INNER JOIN assets AS invast ON entrec.logo_asset_id = invast.id
+          LEFT JOIN assets AS tast ON tof.logo_asset_id = tast.id
+          LEFT JOIN assets AS invast ON entrec.logo_asset_id = invast.id
           INNER JOIN master_order_status AS mos ON tor.status_id = mos.id
           INNER JOIN user_profiles AS up ON entrec.contact_profile_id = up.id
           LEFT JOIN token_transactions AS totr ON tor.id = totr.order_id
@@ -219,15 +223,17 @@ const constructBaseQuery = async (
           mos.name AS status_name,
           tor.created_at AS creation_date,
           tor.net_investment_value AS amount_to_pay,
+            tof.base_currency_code AS token_base_currency,
+        tof.base_currency AS token_base_currency_symbol,
           tor.ordered_tokens AS token_ordered,
           CASE
             WHEN tor.is_payment_confirmed = true
-            AND tor.recived_amount_in_euro IS NOT NULL THEN tor.recived_amount_in_euro
+            AND tor.net_investment_value IS NOT NULL THEN tor.net_investment_value
             ELSE null
           END AS confirmed_payment,
           CASE
             WHEN tor.is_payment_confirmed = true
-            AND tor.recived_amount_in_euro IS NOT NULL THEN tor.ordered_tokens
+            AND tor.net_investment_value IS NOT NULL THEN tor.ordered_tokens
             ELSE null
           END AS confirmed_tokens,
           tor.price_per_token AS token_price,
@@ -236,6 +242,7 @@ const constructBaseQuery = async (
           tor.is_active AS is_active,
           tor.currency_code AS investment_currency_code,
           tor.token_offering_id AS token_offering_id,
+          tor.currency AS investment_currency,
           ast.url AS token_logo_url,
           false AS is_mint_enabled
           FROM
@@ -333,12 +340,12 @@ const constructBaseQuery = async (
             tor.ordered_tokens AS token_ordered,
             CASE
               WHEN tor.is_payment_confirmed = true
-              AND tor.recived_amount_in_euro IS NOT NULL THEN tor.recived_amount_in_euro
+              AND tor.recived_amount IS NOT NULL THEN tor.recived_amount
               ELSE null
             END AS confirmed_payment,
             CASE
               WHEN tor.is_payment_confirmed = true
-              AND tor.recived_amount_in_euro IS NOT NULL THEN tor.ordered_tokens
+              AND tor.recived_amount IS NOT NULL THEN tor.ordered_tokens
               ELSE null
             END AS confirmed_tokens,
             tor.price_per_token AS token_price,

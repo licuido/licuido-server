@@ -52,8 +52,10 @@ export async function findUserExisit({
 
 export async function getInvestorCount({
   entity_type_id,
+  user_entity_id,
 }: {
   entity_type_id: 1 | 2 | 3;
+  user_entity_id: string;
 }) {
   try {
     // Get Count of Investor for Qualification
@@ -75,18 +77,40 @@ export async function getInvestorCount({
     //     }
     //   ],
     // });
+    //     const [dataCount]: any[] = await sequelize.query(
+    //       ` SELECT
+    //   COUNT(*) AS count
+    // FROM
+    //    user_entities as ue
+    //       INNER JOIN user_profiles AS up ON ue.user_profile_id = up.id
+    //       INNER JOIN master_investor_types AS mit ON up.investor_type_id = mit.id
+    //       LEFT JOIN entity_investors AS ei ON ei.issuer_entity_id = ue.id
+    //       where
+    //       ei.id IS NULL AND
+    //       ue.is_active= true AND
+    //       ue.entity_id = ${entity_type_id}
+    //       AND up.is_setup_done = true`
+    //     );
+
     const [dataCount]: any[] = await sequelize.query(
-      ` SELECT
-  COUNT(*) AS count 
+      `SELECT
+  count(ue.id)
 FROM
-   user_entities as ue
-      INNER JOIN user_profiles AS up ON ue.user_profile_id = up.id
-      INNER JOIN master_investor_types AS mit ON up.investor_type_id = mit.id
-      where  
-      ue.is_active= true AND
-      ue.entity_id = ${entity_type_id}
-       AND up.is_setup_done = true`
+  user_entities AS ue
+  INNER JOIN user_profiles AS up ON ue.user_profile_id = up.id
+  INNER JOIN entities AS e ON e.contact_profile_id = up.id
+  INNER JOIN master_investor_types AS mit ON up.investor_type_id = mit.id
+WHERE  
+  ue.is_active = true
+  AND ue.entity_id = ${entity_type_id}
+  AND up.is_setup_done = true
+  AND (SELECT COUNT(ei.id) 
+       FROM entity_investors AS ei 
+       WHERE ei.investor_entity_id = e.id 
+       AND ei.issuer_entity_id = '${user_entity_id}') = 0;
+`
     );
+
     return dataCount?.[0]?.count ?? 0;
   } catch (error: any) {
     console.log(error);
