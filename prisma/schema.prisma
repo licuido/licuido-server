@@ -457,8 +457,10 @@ model token_orders {
   default_currency                                     String?
   default_currency_code                                String?
   net_investment_value_in_euro                         Decimal?                   @db.Decimal
+  net_investment_value_by_token                        Decimal?                   @db.Decimal
   last_action_track_id                                 String?                    @db.Uuid
   recived_amount_in_euro                               Decimal?                   @db.Decimal
+  recived_amount_by_token                              Decimal?                   @db.Decimal
   fulfilled_by                                         fulfilled_by_types?
   is_payment_confirmed                                 Boolean?                   @default(false)
   reason_for_reject                                    String?
