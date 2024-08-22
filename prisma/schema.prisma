@@ -378,6 +378,7 @@ model token_offerings {
   logo_asset_id                                           String?                             @db.Uuid
   banner_asset_id                                         String?                             @db.Uuid
   offering_price                                          Decimal?                            @db.Decimal
+  offering_price_in_euro                                  Decimal?                            @db.Decimal
   jurisdiction                                            Int?
   start_date                                              DateTime?                           @db.Date
   end_date                                                DateTime?                           @db.Date
@@ -713,6 +714,7 @@ model token_valuations {
   offer_price                                              Decimal?         @db.Decimal
   bid_price                                                Decimal?         @db.Decimal
   valuation_price                                          Decimal?         @db.Decimal
+  valuation_price_in_euro                                  Decimal?         @db.Decimal
   start_date                                               DateTime?        @db.Date
   is_active                                                Boolean?         @default(true)
   created_by                                               String?          @db.Uuid
