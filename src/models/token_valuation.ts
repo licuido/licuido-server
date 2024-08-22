@@ -16,11 +16,12 @@ export interface token_valuationAttributes {
   created_at?: Date;
   updated_at?: Date;
   start_time?: string;
+  valuation_price_in_euro?: number;
 }
 
 export type token_valuationPk = "id";
 export type token_valuationId = token_valuation[token_valuationPk];
-export type token_valuationOptionalAttributes = "id" | "token_offering_id" | "offer_price" | "bid_price" | "valuation_price" | "start_date" | "is_active" | "created_by" | "updated_by" | "created_at" | "updated_at" | "start_time";
+export type token_valuationOptionalAttributes = "id" | "token_offering_id" | "offer_price" | "bid_price" | "valuation_price" | "start_date" | "is_active" | "created_by" | "updated_by" | "created_at" | "updated_at" | "start_time" | "valuation_price_in_euro";
 export type token_valuationCreationAttributes = Optional<token_valuationAttributes, token_valuationOptionalAttributes>;
 
 export class token_valuation extends Model<token_valuationAttributes, token_valuationCreationAttributes> implements token_valuationAttributes {
@@ -36,6 +37,7 @@ export class token_valuation extends Model<token_valuationAttributes, token_valu
   created_at?: Date;
   updated_at?: Date;
   start_time?: string;
+  valuation_price_in_euro?: number;
 
   // token_valuation belongsTo token_offering via token_offering_id
   token_offering!: token_offering;
@@ -108,6 +110,10 @@ export class token_valuation extends Model<token_valuationAttributes, token_valu
     },
     start_time: {
       type: DataTypes.TIME,
+      allowNull: true
+    },
+    valuation_price_in_euro: {
+      type: DataTypes.DECIMAL,
       allowNull: true
     }
   }, {

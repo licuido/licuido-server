@@ -120,6 +120,7 @@ SELECT
   tof.name AS token_name,
   t_ast.url AS token_logo_url,
   tof.symbol AS token_symbol,
+  tof.base_currency_code,
   tof.isin_number AS token_isin,
   tof.start_date AS token_start_date,
   tof.end_date AS token_end_date,
@@ -203,7 +204,8 @@ GROUP BY
   mts.name,
   tof.offering_price,
   ba.total_balance,
-  tof.issuer_entity_id
+  tof.issuer_entity_id,
+  tof.base_currency_code
 ORDER BY
   total_holdings DESC
   ${limitStatment};`;
@@ -266,7 +268,7 @@ export const getInvestorDashboardQuery = (user_entity_id?: string) => {
       COALESCE(
         (
           SELECT
-            tv.valuation_price
+            tv.valuation_price_in_euro
           FROM
             token_valuations AS tv
           WHERE
@@ -283,7 +285,7 @@ export const getInvestorDashboardQuery = (user_entity_id?: string) => {
             start_time DESC
           LIMIT
             1
-        ), tof.offering_price
+        ), tof.offering_price_in_euro
       ) AS valuation_price,
       token_status.sender_balance AS sender_balance
     FROM
@@ -294,7 +296,7 @@ export const getInvestorDashboardQuery = (user_entity_id?: string) => {
       tor.receiver_entity_id = '${user_entity_id}'
     GROUP BY
       tor.token_offering_id,
-      tof.offering_price,
+      tof.offering_price_in_euro,
       token_status.sender_balance
   )
 SELECT

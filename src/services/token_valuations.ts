@@ -62,6 +62,7 @@ class TokenValuations {
         start_time,
         valuation_price,
         created_by,
+        valuation_price_in_euro,
       } = options;
 
       await token_valuation.create({
@@ -74,6 +75,7 @@ class TokenValuations {
         valuation_price,
         is_active: true,
         created_at: new Date(),
+        valuation_price_in_euro,
       });
 
       token_offering.update(

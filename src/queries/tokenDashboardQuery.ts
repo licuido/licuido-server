@@ -367,7 +367,8 @@ export const getTokenRecentActivitiesQuery = (token_offering_id?: string) => {
   tt.amount AS amount,
   tt.status_id AS status_id,
   mts.name AS status_name,
-  tt.id AS token_transaction_id
+  tt.id AS token_transaction_id,
+  tor.currency
 FROM
   token_transactions AS tt
   INNER JOIN token_orders AS tor ON tt.order_id = tor.id
