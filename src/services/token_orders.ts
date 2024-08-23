@@ -883,7 +883,7 @@ class TokenOrders {
           to_currency_code: "EUR",
           amount: Number(investor_data?.[0]?.investment),
         });
-        investment = investment_convert?.toString;
+        investment = investment_convert?.toString();
       }
 
       let obj: any = {
