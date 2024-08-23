@@ -1240,12 +1240,15 @@ const getCurrentTokenListing = async ({
 
 const getInvestorDashboard = async ({
   user_entity_id,
+  currency,
 }: {
   user_entity_id?: string;
+  currency?: string;
 }) => {
   // Get Investor Dashboard
   const result: any = await TokenOrders.getInvestorDashboard({
     user_entity_id,
+    currency,
   });
 
   return result;

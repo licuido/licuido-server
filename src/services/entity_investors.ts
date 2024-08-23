@@ -1,3 +1,4 @@
+import { currencyConvert } from "@helpers";
 import { entity_investor } from "@models";
 import queries from "@queries";
 import { sequelize } from "@utils";
@@ -116,6 +117,7 @@ class EntityInvestor {
     maximum_investment_value?: string;
     request?: any;
     top_five?: boolean;
+    currency?: string;
   }): Promise<{
     rows: any[];
     count: number;
@@ -133,6 +135,7 @@ class EntityInvestor {
         maximum_investment_value,
         request,
         top_five,
+        currency,
       } = options;
 
       // For Data
@@ -169,8 +172,31 @@ class EntityInvestor {
         )
       );
 
+      let convertedResult = [];
+
+      for (const item of result) {
+        let convertedInvestamount = 0;
+        if (currency) {
+          if (item?.investment && Number(item?.investment) > 0) {
+            let convertedamount = await currencyConvert({
+              from_currency_code: "EUR",
+              to_currency_code: currency ?? "EUR",
+              amount: Number(item?.investment ?? 0),
+            });
+            convertedInvestamount = Math.round(convertedamount);
+          }
+        } else {
+          convertedInvestamount = item?.investment;
+        }
+
+        convertedResult.push({
+          ...item,
+          investment: convertedInvestamount,
+        });
+      }
+
       return {
-        rows: result,
+        rows: convertedResult,
         count: allData?.length ?? 0,
       };
     } catch (error: any) {

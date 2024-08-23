@@ -97,7 +97,8 @@ export async function GET_DASHBOARD(
 ) {
   try {
     /* -----------  MAPPER ----------- */
-    const { entity_id, user_entity_id } = queryRequestInfo(request);
+    const { entity_id, user_entity_id, currency }: any =
+      queryRequestInfo(request);
 
     if (entity_id !== 2) {
       return handleResponse(request, reply, responseType?.FORBIDDEN, {
@@ -109,6 +110,7 @@ export async function GET_DASHBOARD(
     /* -----------  INTERACTOR ----------- */
     const result = await TokenOrders.getInvestorDashboard({
       user_entity_id,
+      currency,
     });
 
     /* -----------  RESPONSE ----------- */

@@ -1,4 +1,5 @@
 // import { currencyConvert } from "@helpers";
+import { currencyConvert } from "@helpers";
 import {
   customer_wallet,
   entity,
@@ -629,28 +630,45 @@ class TokenOrders {
         queries.getPendingRedemptionQuery(user_entity_id)
       );
 
-      // console.log(total_investment_result[0]?.overall_investment)
-      // let overall_investment = await currencyConvert({
-      //   from_currency_code: "EUR",
-      //   to_currency_code: currency ?? "EUR",
-      //   amount: Number(total_investment_result[0]?.overall_investment ?? 0),
-      // });
+      let overall_investment = 0;
+      if (
+        total_investment_result[0]?.overall_investment &&
+        total_investment_result[0]?.overall_investment > 0
+      ) {
+        overall_investment = await currencyConvert({
+          from_currency_code: "EUR",
+          to_currency_code: currency ?? "EUR",
+          amount: Number(total_investment_result[0]?.overall_investment),
+        });
+      }
 
-      // let circulating_supply_amount = await currencyConvert({
-      //   from_currency_code: "EUR",
-      //   to_currency_code: currency ?? "EUR",
-      //   amount: Number(
-      //     total_investment_result[0]?.circulating_supply_amount ?? 0
-      //   ),
-      // });
+      let circulating_supply_amount = 0;
+      if (
+        circulating_supply_result[0]?.circulating_supply_amount &&
+        circulating_supply_result[0]?.circulating_supply_amount > 0
+      ) {
+        circulating_supply_amount = await currencyConvert({
+          from_currency_code: "EUR",
+          to_currency_code: currency ?? "EUR",
+          amount: Number(
+            circulating_supply_result[0]?.circulating_supply_amount ?? 0
+          ),
+        });
+      }
 
-      // let pending_redemption_amount = await currencyConvert({
-      //   from_currency_code: "EUR",
-      //   to_currency_code: currency ?? "EUR",
-      //   amount: Number(
-      //     total_investment_result[0]?.pending_redemption_amount ?? 0
-      //   ),
-      // });
+      let pending_redemption_amount = 0;
+      if (
+        pending_redemption_result[0]?.pending_redemption_amount &&
+        pending_redemption_result[0]?.pending_redemption > 0
+      ) {
+        pending_redemption_amount = await currencyConvert({
+          from_currency_code: "EUR",
+          to_currency_code: currency ?? "EUR",
+          amount: Number(
+            pending_redemption_result[0]?.pending_redemption_amount ?? 0
+          ),
+        });
+      }
 
       const obj: any = {};
 
@@ -664,45 +682,21 @@ class TokenOrders {
           ? total_investment_result[0]?.issuer_logo_url
           : "";
 
-      // obj["total_investment"] =
-      //   total_investment_result &&
-      //   total_investment_result[0]?.overall_investment
-      //     ? overall_investment.toString()
-      //     : "0.00";
-      // obj["percentage_change_from_yesterday"] =
-      //   total_investment_result &&
-      //   total_investment_result[0]?.percentage_change_from_yesterday
-      //     ? total_investment_result[0]?.percentage_change_from_yesterday.toString()
-      //     : "0";
+      obj["circulating_supply_amount"] =
+        circulating_supply_result &&
+        circulating_supply_result[0]?.circulating_supply_amount
+          ? Math.round(circulating_supply_amount).toString()
+          : "0.00";
 
-      // obj["circulating_supply"] =
-      //   circulating_supply_result &&
-      //   circulating_supply_result[0]?.circulating_supply
-      //     ? circulating_supply_result[0]?.circulating_supply.toString()
-      //     : "0";
-
-      // obj["circulating_supply_amount"] =
-      //   circulating_supply_result &&
-      //   circulating_supply_result[0]?.circulating_supply_amount
-      //     ? circulating_supply_amount.toString()
-      //     : "0.00";
-
-      // obj["pending_redemption"] =
-      //   pending_redemption_result &&
-      //   pending_redemption_result[0]?.pending_redemption
-      //     ? pending_redemption_result[0]?.pending_redemption.toString()
-      //     : "0";
-
-      // obj["pending_redemption_amount"] =
-      //   pending_redemption_result &&
-      //   pending_redemption_result[0]?.pending_redemption_amount
-      //     ? pending_redemption_amount.toString()
-      //     : "0.00";
+      obj["pending_redemption_amount"] =
+        pending_redemption_result &&
+        pending_redemption_result[0]?.pending_redemption_amount
+          ? Math.round(pending_redemption_amount).toString()
+          : "0.00";
 
       obj["total_investment"] =
-        total_investment_result &&
-        total_investment_result[0]?.overall_investment
-          ? total_investment_result[0]?.overall_investment.toString()
+        total_investment_result && overall_investment
+          ? Math.round(overall_investment).toString()
           : "0.00";
       obj["percentage_change_from_yesterday"] =
         total_investment_result &&
@@ -714,28 +708,17 @@ class TokenOrders {
         circulating_supply_result[0]?.circulating_supply
           ? circulating_supply_result[0]?.circulating_supply.toString()
           : "0";
-      obj["circulating_supply_amount"] =
-        circulating_supply_result &&
-        circulating_supply_result[0]?.circulating_supply_amount
-          ? circulating_supply_result[0]?.circulating_supply_amount.toString()
-          : "0.00";
+
       obj["pending_redemption"] =
         pending_redemption_result &&
         pending_redemption_result[0]?.pending_redemption
           ? pending_redemption_result[0]?.pending_redemption.toString()
           : "0";
-      obj["pending_redemption_amount"] =
-        pending_redemption_result &&
-        pending_redemption_result[0]?.pending_redemption_amount
-          ? pending_redemption_result[0]?.pending_redemption_amount.toString()
-          : "0.00";
 
       obj["available_tokens"] = (
         parseInt(obj["circulating_supply"]) -
         parseInt(obj["pending_redemption"])
       ).toString();
-
-      // obj["overall_investment_test"]= overall_investment
 
       obj["available_tokens_amount"] = (
         parseInt(obj["circulating_supply_amount"]) -
@@ -866,8 +849,10 @@ class TokenOrders {
 
   static async getInvestorDashboard({
     user_entity_id,
+    currency,
   }: {
     user_entity_id?: string;
+    currency?: string;
   }): Promise<any> {
     try {
       // For Investor Dashboard
@@ -875,7 +860,37 @@ class TokenOrders {
         queries.getInvestorDashboardQuery(user_entity_id)
       );
 
-      let obj: any = investor_data && investor_data?.[0];
+      let current_value = "0";
+      let investment = "0";
+
+      if (
+        investor_data?.[0]?.current_value &&
+        parseFloat(investor_data?.[0]?.current_value) > 0
+      ) {
+        const current_value_convert = await currencyConvert({
+          from_currency_code: currency ?? "EUR",
+          to_currency_code: "EUR",
+          amount: Number(investor_data?.[0]?.current_value),
+        });
+        current_value = current_value_convert?.toString();
+      }
+      if (
+        investor_data?.[0]?.investment &&
+        parseFloat(investor_data?.[0]?.investment) > 0
+      ) {
+        const investment_convert = await currencyConvert({
+          from_currency_code: currency ?? "EUR",
+          to_currency_code: "EUR",
+          amount: Number(investor_data?.[0]?.investment),
+        });
+        investment = investment_convert?.toString;
+      }
+
+      let obj: any = {
+        current_value,
+        investment,
+        percentage_change: investor_data?.[0]?.percentage_change ?? "0.00",
+      };
 
       return obj;
     } catch (error) {
