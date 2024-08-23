@@ -321,7 +321,7 @@ export const getAllFundOfferingsForPortfolioQuery = (
       COALESCE(
         (
           SELECT
-            SUM(COALESCE(tor.net_investment_value_in_euro, 0))
+            SUM(COALESCE(tor.net_investment_value_by_token, 0))
           FROM
             token_orders AS tor
           WHERE
@@ -334,7 +334,7 @@ export const getAllFundOfferingsForPortfolioQuery = (
       COALESCE(
         (
           SELECT
-            SUM(COALESCE(tor.net_investment_value_in_euro, 0))
+            SUM(COALESCE(tor.net_investment_value_by_token, 0))
           FROM
             token_orders AS tor
           WHERE
@@ -484,7 +484,7 @@ ORDER BY
       COALESCE(
         (
           SELECT
-            SUM(COALESCE(tor.net_investment_value_in_euro, 0))
+            SUM(COALESCE(tor.net_investment_value_by_token, 0))
           FROM
             token_orders AS tor
           WHERE
@@ -497,7 +497,7 @@ ORDER BY
       COALESCE(
         (
           SELECT
-            SUM(COALESCE(tor.net_investment_value_in_euro, 0))
+            SUM(COALESCE(tor.net_investment_value_by_token, 0))
           FROM
             token_orders AS tor
           WHERE

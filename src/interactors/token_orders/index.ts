@@ -107,7 +107,7 @@ const createTokenSubscriptionOrders = async (
           default_currency_code: default_currency_code,
           net_investment_value_in_euro: conversionResponse,
           fulfilled_by: isFulfilledBylicuido ? "admin" : "issuer",
-          net_investment_values_by_token: Math.round(tokenconversionResponse),
+          net_investment_value_by_token: Math.round(tokenconversionResponse),
         },
         transaction
       );
@@ -302,7 +302,7 @@ const createTokenRedemptionOrders = async (
           default_currency_code: default_currency_code,
           net_investment_value_in_euro: conversionResponse,
           fulfilled_by: isFulfilledBylicuido ? "admin" : "issuer",
-          net_investment_values_by_token: Math.round(tokenconversionResponse),
+          net_investment_value_by_token: Math.round(tokenconversionResponse),
         },
         transaction
       );
@@ -994,6 +994,14 @@ const sendPayment = async ({
   amount_to_pay?: number;
   payment_reference?: string;
 }) => {
+  const order = await TokenOrders.getOrder({ token_order_id: id });
+
+  const euroConvert = await currencyConvert({
+    from_currency_code: order?.currency_code,
+    to_currency_code: "EUR",
+    amount: Number(amount_to_pay),
+  });
+
   // Update Send Payment / Reject Order Payment Status
   const result: any = await sequelize.transaction(async (transaction) => {
     // Update Token Order Status With Track Id
@@ -1006,7 +1014,7 @@ const sendPayment = async ({
               : status_id === 8
               ? status_id
               : 10, // 3 --> Payment Sent | 8 --> Rejected By Issuer | 10 --> Request to burn
-          recived_amount_in_euro: status_id === 4 ? amount_to_pay : undefined,
+          recived_amount_in_euro: status_id === 4 ? euroConvert : undefined,
           payment_reference: status_id === 4 ? payment_reference : undefined,
           is_payment_confirmed: status_id === 4 ? true : false,
           updated_by: user_profile_id,

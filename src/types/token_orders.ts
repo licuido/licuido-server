@@ -32,7 +32,7 @@ export interface createTokenOrders
   default_currency_code: string;
   net_investment_value_in_euro: number;
   fulfilled_by: "admin" | "issuer";
-  net_investment_values_by_token: number;
+  net_investment_value_by_token: number;
 }
 
 export interface createTokenRedemptionOrderPayload
