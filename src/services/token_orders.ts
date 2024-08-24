@@ -868,22 +868,22 @@ class TokenOrders {
         parseFloat(investor_data?.[0]?.current_value) > 0
       ) {
         const current_value_convert = await currencyConvert({
-          from_currency_code: currency ?? "EUR",
-          to_currency_code: "EUR",
+          from_currency_code: "EUR",
+          to_currency_code: currency ?? "EUR",
           amount: Number(investor_data?.[0]?.current_value),
         });
-        current_value = current_value_convert?.toString();
+        current_value = Math.round(current_value_convert)?.toString();
       }
       if (
         investor_data?.[0]?.investment &&
         parseFloat(investor_data?.[0]?.investment) > 0
       ) {
         const investment_convert = await currencyConvert({
-          from_currency_code: currency ?? "EUR",
-          to_currency_code: "EUR",
+          from_currency_code: "EUR",
+          to_currency_code: currency ?? "EUR",
           amount: Number(investor_data?.[0]?.investment),
         });
-        investment = investment_convert?.toString();
+        investment = Math.round(investment_convert)?.toString();
       }
 
       let obj: any = {
