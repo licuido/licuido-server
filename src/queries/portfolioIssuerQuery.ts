@@ -657,8 +657,9 @@ export const getInvestorListQuery = (
     maximum_investment_value &&
     maximum_investment_value?.length > 0
   ) {
-    invetementValueFilter = `  AND investment BETWEEN ${minimum_investment_value} AND ${maximum_investment_value}
-      `;
+    // invetementValueFilter = `  AND investment BETWEEN ${minimum_investment_value} AND ${maximum_investment_value}
+    //   `;
+    limitStatment = ``;
   }
 
   /* For Data */
@@ -721,7 +722,7 @@ export const getInvestorListQuery = (
         COALESCE(
           (
             SELECT
-              SUM(COALESCE(tor.ordered_tokens * tof.offering_price, 0))
+              SUM(COALESCE(tor.net_investment_value_in_euro, 0))
             FROM
               token_orders AS tor
               LEFT JOIN token_offerings AS tof ON tor.token_offering_id = tof.id
@@ -735,7 +736,7 @@ export const getInvestorListQuery = (
         ) - COALESCE(
           (
             SELECT
-              SUM(COALESCE(tor.ordered_tokens * tof.offering_price, 0))
+              SUM(COALESCE(tor.net_investment_value_in_euro, 0))
             FROM
               token_orders AS tor
               LEFT JOIN token_offerings AS tof ON tor.token_offering_id = tof.id
@@ -773,7 +774,6 @@ WHERE
   ${statusFilter} 
   ${investorTypeFilter} 
   ${countryFilter} 
-  ${invetementValueFilter} 
 ORDER BY
   created_at ASC 
   ${limitStatment}`;

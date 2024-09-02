@@ -172,9 +172,31 @@ class EntityInvestor {
         )
       );
 
+      let filteredResults = [];
+      let finalData = [];
+
+      if (
+        minimum_investment_value &&
+        minimum_investment_value?.length > 0 &&
+        maximum_investment_value &&
+        maximum_investment_value?.length > 0 &&
+        result?.length > 0
+      ) {
+        filteredResults = result.filter((item: any) => {
+          return (
+            Number(item?.investment) >= Number(minimum_investment_value) &&
+            Number(item?.investment) <= Number(maximum_investment_value)
+          );
+        });
+        filteredResults = result.slice(0, 5);
+        finalData = filteredResults;
+      } else {
+        finalData = result;
+      }
+
       let convertedResult = [];
 
-      for (const item of result) {
+      for (const item of finalData) {
         let convertedInvestamount = 0;
         if (currency) {
           if (item?.investment && Number(item?.investment) > 0) {
@@ -183,10 +205,10 @@ class EntityInvestor {
               to_currency_code: currency ?? "EUR",
               amount: Number(item?.investment ?? 0),
             });
-            convertedInvestamount = Math.round(convertedamount);
+            convertedInvestamount = parseFloat(convertedamount.toFixed(2));
           }
         } else {
-          convertedInvestamount = item?.investment;
+          convertedInvestamount = parseFloat(item?.investment.toFixed(2));
         }
 
         convertedResult.push({
@@ -215,6 +237,7 @@ class EntityInvestor {
     maximum_investment_value?: string;
     request?: any;
     top_five?: boolean;
+    currency?: string;
   }): Promise<{
     rows: any[];
   }> {
@@ -229,6 +252,7 @@ class EntityInvestor {
         maximum_investment_value,
         request,
         top_five,
+        currency,
       } = options;
 
       // For All Data
@@ -248,8 +272,31 @@ class EntityInvestor {
         )
       );
 
+      let convertedResult = [];
+
+      for (const item of allData) {
+        let convertedInvestamount = 0;
+        if (currency) {
+          if (item?.investment && Number(item?.investment) > 0) {
+            let convertedamount = await currencyConvert({
+              from_currency_code: "EUR",
+              to_currency_code: currency ?? "EUR",
+              amount: Number(item?.investment ?? 0),
+            });
+            convertedInvestamount = parseFloat(convertedamount.toFixed(2));
+          }
+        } else {
+          convertedInvestamount = parseFloat(item?.investment.toFixed(2));
+        }
+
+        convertedResult.push({
+          ...item,
+          investment: convertedInvestamount,
+        });
+      }
+
       return {
-        rows: allData,
+        rows: convertedResult,
       };
     } catch (error: any) {
       console.log(error);

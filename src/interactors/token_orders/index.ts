@@ -1,6 +1,6 @@
 import {
   Logger,
-  // currencyConvert,
+  currencyConvert,
   dateTime,
   errorCustomMessage,
   fulfilledStatus,
@@ -60,22 +60,22 @@ const createTokenSubscriptionOrders = async (
       };
     }
 
-    // const default_currency = "€";
-    // const default_currency_code = "EUR";
+    const default_currency = "€";
+    const default_currency_code = "EUR";
 
     const tokenOffering: any =
       await TokenOfferings.getTokenOfferingBaseCurrency(token_offering_id);
 
-    // const tokenconversionResponse = await currencyConvert({
-    //   from_currency_code: currency_code,
-    //   to_currency_code: tokenOffering?.base_currency,
-    //   amount: net_investment_value,
-    // });
-    // const conversionResponse = await currencyConvert({
-    //   from_currency_code: currency_code,
-    //   to_currency_code: default_currency_code,
-    //   amount: net_investment_value,
-    // });
+    const tokenconversionResponse = await currencyConvert({
+      from_currency_code: currency_code,
+      to_currency_code: tokenOffering?.base_currency,
+      amount: net_investment_value,
+    });
+    const conversionResponse = await currencyConvert({
+      from_currency_code: currency_code,
+      to_currency_code: default_currency_code,
+      amount: net_investment_value,
+    });
 
     // To check order fulfilled by licuido or issuer
     const isFulfilledBylicuido: boolean =
@@ -106,6 +106,14 @@ const createTokenSubscriptionOrders = async (
           fee,
           total_paid,
           payment_reference,
+          default_currency: default_currency,
+          default_currency_code: default_currency_code,
+          net_investment_value_in_euro: parseFloat(
+            conversionResponse.toFixed(2)
+          ),
+          net_investment_value_by_token: parseFloat(
+            tokenconversionResponse.toFixed(2)
+          ),
           created_by: user_profile_id,
           is_active: true,
           status_id: 1, // Pending Order
@@ -259,19 +267,21 @@ const createTokenRedemptionOrders = async (
     const tokenOffering: any =
       await TokenOfferings.getTokenOfferingBaseCurrency(token_offering_id);
 
-    // const tokenconversionResponse = await currencyConvert({
-    //   from_currency_code: currency_code,
-    //   to_currency_code: tokenOffering?.base_currency,
-    //   amount: net_investment_value,
-    // });
+    const tokenconversionResponse = await currencyConvert({
+      from_currency_code: currency_code,
+      to_currency_code: tokenOffering?.base_currency,
+      amount: net_investment_value,
+    });
 
-    // const default_currency = "€";
-    // const default_currency_code = "EUR";
-    // const conversionResponse = await currencyConvert({
-    //   from_currency_code: currency_code,
-    //   to_currency_code: default_currency_code,
-    //   amount: net_investment_value,
-    // });
+    const default_currency = "€";
+    const default_currency_code = "EUR";
+    const amount = ordered_tokens * tokenOffering?.offering_price;
+
+    const conversionResponse = await currencyConvert({
+      from_currency_code: currency_code,
+      to_currency_code: default_currency_code,
+      amount: amount,
+    });
 
     // To check order fulfilled by licuido or issuer
     const isFulfilledBylicuido: boolean =
@@ -307,6 +317,14 @@ const createTokenRedemptionOrders = async (
           swift_bic_no,
           iban_no,
           fulfilled_by: isFulfilledBylicuido ? "admin" : "issuer",
+          default_currency: default_currency,
+          default_currency_code: default_currency_code,
+          net_investment_value_in_euro: parseFloat(
+            conversionResponse.toFixed(2)
+          ),
+          net_investment_value_by_token: parseFloat(
+            tokenconversionResponse.toFixed(2)
+          ),
         },
         transaction
       );
