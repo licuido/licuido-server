@@ -28,11 +28,7 @@ export interface createTokenOrders
   bank_account_name?: string;
   swift_bic_no?: string;
   iban_no?: string;
-  default_currency: string;
-  default_currency_code: string;
-  net_investment_value_in_euro: number;
   fulfilled_by: "admin" | "issuer";
-  net_investment_value_by_token: number;
 }
 
 export interface createTokenRedemptionOrderPayload

@@ -102,7 +102,6 @@ const constructBaseQuery = async (
         tokenFilterForIssuer = ` AND tor.token_offering_id = '${token_id}'`;
       }
 
-      console.log(user_entity_id, "user_entity_id");
       /* Construct Base Query */
       Query = `WITH
       vas AS (
@@ -223,8 +222,8 @@ const constructBaseQuery = async (
           mos.name AS status_name,
           tor.created_at AS creation_date,
           tor.net_investment_value AS amount_to_pay,
-            tof.base_currency_code AS token_base_currency,
-        tof.base_currency AS token_base_currency_symbol,
+          tof.base_currency_code AS token_base_currency,
+          tof.base_currency AS token_base_currency_symbol,
           tor.ordered_tokens AS token_ordered,
           CASE
             WHEN tor.is_payment_confirmed = true
@@ -241,8 +240,8 @@ const constructBaseQuery = async (
           totr.transaction_hash AS transaction_hash,
           tor.is_active AS is_active,
           tor.currency_code AS investment_currency_code,
-          tor.token_offering_id AS token_offering_id,
           tor.currency AS investment_currency,
+          tor.token_offering_id AS token_offering_id,
           ast.url AS token_logo_url,
           false AS is_mint_enabled
           FROM
@@ -354,6 +353,7 @@ const constructBaseQuery = async (
             totr.transaction_hash AS transaction_hash,
             tor.is_active AS is_active,
             tor.currency_code AS investment_currency_code,
+            tor.currency AS investment_currency,
             tor.token_offering_id AS token_offering_id,
             tast.url AS asset_logo_url,
             tor.fulfilled_by AS fulfilled_by,

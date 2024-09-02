@@ -1197,7 +1197,7 @@ class TokenOrders {
         where: {
           id: token_order_id,
         },
-        attributes: ["currency", "currency_code"],
+        attributes: ["currency", "currency_code", "net_investment_value"],
         include: [
           {
             model: token_offering,

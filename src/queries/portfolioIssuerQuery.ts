@@ -721,9 +721,10 @@ export const getInvestorListQuery = (
         COALESCE(
           (
             SELECT
-              SUM(COALESCE(tor.net_investment_value_in_euro, 0))
+              SUM(COALESCE(tor.ordered_tokens * tof.offering_price, 0))
             FROM
               token_orders AS tor
+              LEFT JOIN token_offerings AS tof ON tor.token_offering_id = tof.id
             WHERE
               tor.receiver_entity_id = ei.investor_entity_id
               AND tor.issuer_entity_id = '${user_entity_id}'
@@ -734,9 +735,10 @@ export const getInvestorListQuery = (
         ) - COALESCE(
           (
             SELECT
-              SUM(COALESCE(tor.net_investment_value_in_euro, 0))
+              SUM(COALESCE(tor.ordered_tokens * tof.offering_price, 0))
             FROM
               token_orders AS tor
+              LEFT JOIN token_offerings AS tof ON tor.token_offering_id = tof.id
             WHERE
               tor.receiver_entity_id = ei.investor_entity_id
               AND tor.issuer_entity_id = '${user_entity_id}'

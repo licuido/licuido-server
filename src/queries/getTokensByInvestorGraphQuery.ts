@@ -25,6 +25,8 @@ export const getTokensByInvestorGraphQuery = (
       tof.id,
       tof.name,
       tof.symbol AS token_symbol,
+      tof.base_currency_code AS investment_currency,
+      tof.base_currency AS investment_currency_code,
       COALESCE(
         (
           SELECT
@@ -73,12 +75,11 @@ export const getTokensByInvestorGraphQuery = (
       AND tof.status_id = 1
       AND tof.offer_status_id = 1
     GROUP BY
-      tof.id,
-      tof.name
+      tof.id
   )
 SELECT
   *,
-  COALESCE(total_supply * valuation_price, 0) AS token_holdings_in_euro
+  COALESCE(total_supply * valuation_price, 0) AS token_holdings
 FROM
   vas_tbi
 ORDER BY
