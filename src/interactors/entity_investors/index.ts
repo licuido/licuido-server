@@ -1,4 +1,5 @@
-import { Logger } from "@helpers";
+import { currencyConvert, Logger } from "@helpers";
+import { token_offering } from "@models";
 import { EntityInvestor } from "@services";
 import {
   UpsertInvestorQualifyStatusPayload,
@@ -60,6 +61,39 @@ const getInvestorList = async (options: getInvestorListPayload) => {
       currency,
     } = options;
 
+    // Get All Token Offerings Created By Issuer
+    let issuerToken = await token_offering.findAll({
+      attributes: ["id", "base_currency"],
+      where: {
+        issuer_entity_id: user_entity_id,
+        offer_status_id: 1,
+        status_id: 1,
+      },
+    });
+
+    issuerToken = JSON.parse(JSON.stringify(issuerToken));
+
+    let currency_codes = [];
+    if (issuerToken?.length > 0) {
+      for (const item of issuerToken) {
+        currency_codes.push(item.base_currency);
+      }
+    }
+
+    let currencyValues = [];
+    for (const item of currency_codes) {
+      let convertedamount = await currencyConvert({
+        from_currency_code: item,
+        to_currency_code: "EUR",
+        amount: 1,
+      });
+
+      currencyValues.push({
+        currency_code: item,
+        euro_value: parseFloat(convertedamount.toFixed(2)),
+      });
+    }
+
     // For Investor Status Filters
     const status_filters: any[] =
       status_filter && typeof status_filter === "string"
@@ -104,6 +138,7 @@ const getInvestorList = async (options: getInvestorListPayload) => {
       request,
       top_five,
       currency,
+      currencyValues,
     });
 
     return { page: rows, count: rows?.length, totalCount: count };

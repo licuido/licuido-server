@@ -118,6 +118,7 @@ class EntityInvestor {
     request?: any;
     top_five?: boolean;
     currency?: string;
+    currencyValues?: any;
   }): Promise<{
     rows: any[];
     count: number;
@@ -136,7 +137,13 @@ class EntityInvestor {
         request,
         top_five,
         currency,
+        currencyValues,
       } = options;
+
+      // Currency Data
+      const currencyData = currencyValues
+        ?.map((cv: any) => `('${cv.currency_code}', ${cv.euro_value})`)
+        .join(",");
 
       // For Data
       const [result]: any[] = await sequelize.query(
@@ -151,24 +158,8 @@ class EntityInvestor {
           minimum_investment_value,
           maximum_investment_value,
           request,
-          top_five
-        )
-      );
-
-      // For Count
-      const [allData]: any[] = await sequelize.query(
-        queries.getInvestorListQuery(
-          null,
-          null,
-          search,
-          status_filters,
-          investor_type_filters,
-          country_filters,
-          user_entity_id,
-          minimum_investment_value,
-          maximum_investment_value,
-          request,
-          top_five
+          top_five,
+          currencyData
         )
       );
 
@@ -198,7 +189,7 @@ class EntityInvestor {
 
       for (const item of finalData) {
         let convertedInvestamount = 0;
-        if (currency) {
+        if (currency && currency !== "EUR") {
           if (item?.investment && Number(item?.investment) > 0) {
             let convertedamount = await currencyConvert({
               from_currency_code: "EUR",
@@ -208,7 +199,8 @@ class EntityInvestor {
             convertedInvestamount = parseFloat(convertedamount.toFixed(2));
           }
         } else {
-          convertedInvestamount = parseFloat(item?.investment.toFixed(2));
+          const investmentAmount = Number(item?.investment ?? 0);
+          convertedInvestamount = parseFloat(investmentAmount.toFixed(2));
         }
 
         convertedResult.push({
@@ -219,7 +211,7 @@ class EntityInvestor {
 
       return {
         rows: convertedResult,
-        count: allData?.length ?? 0,
+        count: result?.length > 0 ? result?.[0]?.total_count : 0,
       };
     } catch (error: any) {
       console.log(error);

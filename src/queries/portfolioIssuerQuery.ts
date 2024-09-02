@@ -605,13 +605,21 @@ export const getInvestorListQuery = (
   minimum_investment_value?: string,
   maximum_investment_value?: string,
   request?: any,
-  top_five?: Boolean
+  top_five?: Boolean,
+  currencyData?: any
 ) => {
   /* Get All Investors Query on Search , Limit & Offset */
 
   /* In Where Condition
   
    */
+
+  // Currency Conversion table Sample
+  let currencyConversionTable = `
+    WITH currency_conversion AS (
+      SELECT * FROM (VALUES ${currencyData}) AS cc(currency_code, euro_value)
+    ),
+  `;
 
   // For Limit & Offset
   let limitStatment = ``;
@@ -663,7 +671,8 @@ export const getInvestorListQuery = (
   }
 
   /* For Data */
-  let baseQuery = `WITH
+  let baseQuery = `
+  ${currencyConversionTable}
   last_transaction AS (
     SELECT
       tor.receiver_entity_id,
@@ -722,10 +731,11 @@ export const getInvestorListQuery = (
         COALESCE(
           (
             SELECT
-              SUM(COALESCE(tor.net_investment_value_in_euro, 0))
+              SUM(COALESCE(tor.ordered_tokens * tof.offering_price * cc.euro_value, 0)) 
             FROM
               token_orders AS tor
-              LEFT JOIN token_offerings AS tof ON tor.token_offering_id = tof.id
+              LEFT JOIN token_offerings AS tof ON tor.token_offering_id = tof.id 
+              LEFT JOIN currency_conversion AS cc ON tof.base_currency = cc.currency_code
             WHERE
               tor.receiver_entity_id = ei.investor_entity_id
               AND tor.issuer_entity_id = '${user_entity_id}'
@@ -736,10 +746,11 @@ export const getInvestorListQuery = (
         ) - COALESCE(
           (
             SELECT
-              SUM(COALESCE(tor.net_investment_value_in_euro, 0))
+              SUM(COALESCE(tor.ordered_tokens * tof.offering_price * cc.euro_value, 0))
             FROM
               token_orders AS tor
-              LEFT JOIN token_offerings AS tof ON tor.token_offering_id = tof.id
+              LEFT JOIN token_offerings AS tof ON tor.token_offering_id = tof.id 
+              LEFT JOIN currency_conversion AS cc ON tof.base_currency = cc.currency_code
             WHERE
               tor.receiver_entity_id = ei.investor_entity_id
               AND tor.issuer_entity_id = '${user_entity_id}'
@@ -748,7 +759,8 @@ export const getInvestorListQuery = (
           ),
           0
         )
-      ) AS investment
+      ) AS investment,
+    COUNT(*) OVER() AS total_count 
     FROM
       entity_investors AS ei
       INNER JOIN master_investor_types AS mit ON ei.investor_type_id = mit.id
