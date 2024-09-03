@@ -1,24 +1,27 @@
+import { Logger } from "@helpers";
+
 export const getTokensHoldingsGraphQuery = (
   from_date?: string,
   to_date?: string,
   user_entity_id?: string
 ) => {
-  /* Get All Token Holdings Graph Query  */
+  try {
+    /* Get All Token Holdings Graph Query  */
 
-  /* In Where Condition
+    /* In Where Condition
            ---- receiver_entity_id = ""
            ---- status_id = 5
            ---- updated_at BETWEEN '' AND '' [ For Date Filters ]  
            */
 
-  // For Date Filters
-  let dateFilter = ``;
-  if (from_date && to_date) {
-    dateFilter = ` AND tor.updated_at BETWEEN '${from_date}' AND '${to_date}'`;
-  }
+    // For Date Filters
+    let dateFilter = ``;
+    if (from_date && to_date) {
+      dateFilter = ` AND tor.updated_at BETWEEN '${from_date}' AND '${to_date}'`;
+    }
 
-  /* For Data */
-  let baseQuery = `SELECT
+    /* For Data */
+    let baseQuery = `SELECT
   tor.token_offering_id AS token_offering_id,
   MIN(tof.name) AS token_name,
   (
@@ -61,7 +64,11 @@ GROUP BY
 ORDER BY
   investment ASC`;
 
-  return baseQuery;
+    return baseQuery;
+  } catch (error: any) {
+    Logger.error(error.message, error);
+    throw error;
+  }
 };
 
 export const getCurrentTokenInvestmentQuery = (
@@ -69,20 +76,21 @@ export const getCurrentTokenInvestmentQuery = (
   limit: number | null,
   user_entity_id?: string
 ) => {
-  /* Get CurrentTokenInvestment Query  */
+  try {
+    /* Get CurrentTokenInvestment Query  */
 
-  /* In Where Condition
+    /* In Where Condition
            ---- receiver_entity_id = "" 
             tor.status_id = 5 | 11 [ Minted | Burned ]
            */
 
-  // For Limit & Offset
-  let limitStatment = ``;
-  if (offset !== null && limit !== null) {
-    limitStatment = ` LIMIT '${limit}' OFFSET '${offset * limit}'`;
-  }
-  /* For Data */
-  let baseQuery = `
+    // For Limit & Offset
+    let limitStatment = ``;
+    if (offset !== null && limit !== null) {
+      limitStatment = ` LIMIT '${limit}' OFFSET '${offset * limit}'`;
+    }
+    /* For Data */
+    let baseQuery = `
   WITH
   last_transaction AS (
     SELECT
@@ -211,31 +219,36 @@ GROUP BY
 ORDER BY
   total_holdings DESC
   ${limitStatment};`;
-  return baseQuery;
+    return baseQuery;
+  } catch (error: any) {
+    Logger.error(error.message, error);
+    throw error;
+  }
 };
 
 export const getInvestorDashboardQuery = (
   user_entity_id?: string,
   currency_data?: any
 ) => {
-  /* Get Investor DashBoard  */
+  try {
+    /* Get Investor DashBoard  */
 
-  /* In Where Condition
+    /* In Where Condition
           
            */
 
-  // Currency Conversion table Sample
-  let currencyConversionTable = ``;
-  if (currency_data && currency_data.trim() !== "") {
-    currencyConversionTable = `
+    // Currency Conversion table Sample
+    let currencyConversionTable = ``;
+    if (currency_data && currency_data.trim() !== "") {
+      currencyConversionTable = `
     currency_conversion AS (
       SELECT * FROM (VALUES ${currency_data}) AS cc(currency_code, euro_value)
     ),
   `;
-  }
+    }
 
-  /* For Data */
-  let baseQuery = `WITH 
+    /* For Data */
+    let baseQuery = `WITH 
   ${currencyConversionTable} 
   last_transaction AS (
     SELECT
@@ -333,7 +346,11 @@ SELECT
 FROM
   vas_inv`;
 
-  return baseQuery;
+    return baseQuery;
+  } catch (error: any) {
+    Logger.error(error.message, error);
+    throw error;
+  }
 };
 
 export const getAllValuationPriceQuery = (
@@ -341,14 +358,15 @@ export const getAllValuationPriceQuery = (
   to_date?: string,
   token_ids?: any[]
 ) => {
-  /* Get Valuation Price Query  */
+  try {
+    /* Get Valuation Price Query  */
 
-  /* In Where Condition
+    /* In Where Condition
           
            */
 
-  /* For Data */
-  let baseQuery = `WITH
+    /* For Data */
+    let baseQuery = `WITH
   date_series AS (
     SELECT
       generate_series(
@@ -417,18 +435,23 @@ FROM
 GROUP BY
   nv.token_id`;
 
-  return baseQuery;
+    return baseQuery;
+  } catch (error: any) {
+    Logger.error(error.message, error);
+    throw error;
+  }
 };
 
 export const getInvestorTokenHoldingsQuery = (user_entity_id?: string) => {
-  /* Get Investor Token Holdings Query  */
+  try {
+    /* Get Investor Token Holdings Query  */
 
-  /* In Where Condition
+    /* In Where Condition
           
            */
 
-  /* For Data */
-  let baseQuery = `WITH
+    /* For Data */
+    let baseQuery = `WITH
   aggregated_balances AS (
     SELECT
       tor.token_offering_id,
@@ -461,7 +484,11 @@ GROUP BY
 ORDER BY
   token_offering_id`;
 
-  return baseQuery;
+    return baseQuery;
+  } catch (error: any) {
+    Logger.error(error.message, error);
+    throw error;
+  }
 };
 
 export const getAllTokensDeploymentCountQuery = (

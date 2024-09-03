@@ -13,22 +13,27 @@ export const getAllRedemptionOrderQuery = async (
   end_date?: string,
   token_id?: string
 ) => {
-  // Construct Base Query
-  let baseQuery = await constructBaseQuery(
-    entity_type_id,
-    order_type,
-    offset,
-    limit,
-    user_entity_id,
-    search,
-    status_filters,
-    order_fulfillment_filters,
-    start_date,
-    end_date,
-    token_id
-  );
+  try {
+    // Construct Base Query
+    let baseQuery = await constructBaseQuery(
+      entity_type_id,
+      order_type,
+      offset,
+      limit,
+      user_entity_id,
+      search,
+      status_filters,
+      order_fulfillment_filters,
+      start_date,
+      end_date,
+      token_id
+    );
 
-  return baseQuery;
+    return baseQuery;
+  } catch (error: any) {
+    Logger.error(error.message, error);
+    throw error;
+  }
 };
 
 const constructBaseQuery = async (
@@ -181,7 +186,7 @@ const constructBaseQuery = async (
           tor.currency AS investment_currency,
           tor.currency_code AS investment_currency_symbol,
           tor.created_at AS token_price_time,
-          tor.net_investment_value AS amount_to_receive,
+          tor.net_investment_value AS amount_to_pay,
           tor.is_active AS is_active,
           tor.token_offering_id AS token_offering_id,
           ast.url AS token_logo_url,

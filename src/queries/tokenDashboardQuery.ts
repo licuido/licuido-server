@@ -1,22 +1,25 @@
+import { Logger } from "@helpers";
+
 export const getTokenValuationGraphQuery = (
   from_date?: string,
   to_date?: string,
   token_offering_id?: string
 ) => {
-  /* Get All Token Valuation Graph Query  */
+  try {
+    /* Get All Token Valuation Graph Query  */
 
-  /* In Where Condition
+    /* In Where Condition
             
              */
 
-  // For Date Filters
-  let dateFilter = ``;
-  if (from_date && to_date) {
-    dateFilter = ` AND tv.created_at BETWEEN '${from_date}' AND '${to_date}'`;
-  }
+    // For Date Filters
+    let dateFilter = ``;
+    if (from_date && to_date) {
+      dateFilter = ` AND tv.created_at BETWEEN '${from_date}' AND '${to_date}'`;
+    }
 
-  /* For Data */
-  let baseQuery = `WITH
+    /* For Data */
+    let baseQuery = `WITH
   ranked_valuations AS (
     SELECT
       tv.start_date,
@@ -48,20 +51,25 @@ WHERE
 ORDER BY
   created_at ASC`;
 
-  return baseQuery;
+    return baseQuery;
+  } catch (error: any) {
+    Logger.error(error.message, error);
+    throw error;
+  }
 };
 
 export const getTodayTokenValuationPriceQuery = (
   token_offering_id?: string
 ) => {
-  /* Get Today Token Valuation Price Query  */
+  try {
+    /* Get Today Token Valuation Price Query  */
 
-  /* In Where Condition
+    /* In Where Condition
               
                */
 
-  /* For Data */
-  let baseQuery = `SELECT
+    /* For Data */
+    let baseQuery = `SELECT
   tv.valuation_price
 FROM
   token_valuations AS tv
@@ -78,7 +86,11 @@ ORDER BY
 LIMIT
   1`;
 
-  return baseQuery;
+    return baseQuery;
+  } catch (error: any) {
+    Logger.error(error.message, error);
+    throw error;
+  }
 };
 
 export const getTokenOrdersGraphQuery = (
@@ -86,20 +98,21 @@ export const getTokenOrdersGraphQuery = (
   to_date?: string,
   token_offering_id?: string
 ) => {
-  /* Get All Token Orders Graph Query  */
+  try {
+    /* Get All Token Orders Graph Query  */
 
-  /* In Where Condition
+    /* In Where Condition
               
              */
 
-  // For Date Filters
-  let dateFilter = ``;
-  if (from_date && to_date) {
-    dateFilter = ` AND tor.created_at BETWEEN '${from_date}' AND '${to_date}'`;
-  }
+    // For Date Filters
+    let dateFilter = ``;
+    if (from_date && to_date) {
+      dateFilter = ` AND tor.created_at BETWEEN '${from_date}' AND '${to_date}'`;
+    }
 
-  /* For Data */
-  let baseQuery = `SELECT
+    /* For Data */
+    let baseQuery = `SELECT
   DATE(tor.created_at) AS order_date,
   COUNT(
     CASE
@@ -124,18 +137,23 @@ GROUP BY
 ORDER BY
   order_date ASC`;
 
-  return baseQuery;
+    return baseQuery;
+  } catch (error: any) {
+    Logger.error(error.message, error);
+    throw error;
+  }
 };
 
 export const getTokenStatusQuery = (token_offering_id?: string) => {
-  /* Get Token Status Graph Query  */
+  try {
+    /* Get Token Status Graph Query  */
 
-  /* In Where Condition
+    /* In Where Condition
                 
                */
 
-  /* For Data */
-  let baseQuery = `SELECT
+    /* For Data */
+    let baseQuery = `SELECT
   tof.id AS token_id,
   tof.name AS token_name,
   tof.symbol AS token_symbol,
@@ -173,18 +191,23 @@ WHERE
   tof.id = '${token_offering_id}'
 `;
 
-  return baseQuery;
+    return baseQuery;
+  } catch (error: any) {
+    Logger.error(error.message, error);
+    throw error;
+  }
 };
 
 export const getTokenCirculatingSupplyQuery = (token_offering_id?: string) => {
-  /* Get Circulating Supply Graph Query  */
+  try {
+    /* Get Circulating Supply Graph Query  */
 
-  /* In Where Condition
+    /* In Where Condition
                   
                  */
 
-  /* For Data */
-  let baseQuery = `WITH
+    /* For Data */
+    let baseQuery = `WITH
   vas_cs AS (
     SELECT
       tof.id AS token_offering_id,
@@ -261,21 +284,26 @@ FROM
   vas_cs
   `;
 
-  return baseQuery;
+    return baseQuery;
+  } catch (error: any) {
+    Logger.error(error.message, error);
+    throw error;
+  }
 };
 
 export const getTokenCirculatingSupplyBefore1dayQuery = (
   token_offering_id?: string,
   date?: string
 ) => {
-  /* Get Circulating Supply Before 1 day Query  */
+  try {
+    /* Get Circulating Supply Before 1 day Query  */
 
-  /* In Where Condition
+    /* In Where Condition
                     
                    */
 
-  /* For Data */
-  let baseQuery = `WITH
+    /* For Data */
+    let baseQuery = `WITH
   vas_cs AS (
     SELECT
       tof.id AS token_offering_id,
@@ -354,18 +382,23 @@ FROM
   vas_cs
     `;
 
-  return baseQuery;
+    return baseQuery;
+  } catch (error: any) {
+    Logger.error(error.message, error);
+    throw error;
+  }
 };
 
 export const getTokenRecentActivitiesQuery = (token_offering_id?: string) => {
-  /* Get Recent Activities Graph Query  */
+  try {
+    /* Get Recent Activities Graph Query  */
 
-  /* In Where Condition
+    /* In Where Condition
                       
                      */
 
-  /* For Data */
-  let baseQuery = `SELECT
+    /* For Data */
+    let baseQuery = `SELECT
   tor.token_offering_id AS token_offering_id,
   tt.updated_at AS date_time,
   ent_iss.legal_name AS issuer_name,
@@ -392,7 +425,11 @@ WHERE
   OFFSET 0 LIMIT 5
       `;
 
-  return baseQuery;
+    return baseQuery;
+  } catch (error: any) {
+    Logger.error(error.message, error);
+    throw error;
+  }
 };
 
 export const getByNoOfInvestorsQuery = (
@@ -400,22 +437,28 @@ export const getByNoOfInvestorsQuery = (
   start_date?: string,
   end_date?: string | null
 ) => {
-  /* Get Investor Distribution By no of investors Query  */
+  try {
+    /* Get Investor Distribution By no of investors Query  */
 
-  /* In Where Condition
+    /* In Where Condition
                         
                        */
 
-  let dateQuery = ``;
-  if (start_date && end_date && start_date.length > 0 && end_date.length > 0) {
-    // dateQuery = ` AND tor.updated_at BETWEEN '${start_date}' AND '${end_date}'`;
-    dateQuery = ``;
-  } else {
-    dateQuery = ` AND tor.updated_at < '${start_date}'`;
-  }
+    let dateQuery = ``;
+    if (
+      start_date &&
+      end_date &&
+      start_date.length > 0 &&
+      end_date.length > 0
+    ) {
+      dateQuery = ` AND tor.updated_at BETWEEN '${start_date}' AND '${end_date}'`;
+      dateQuery = ``;
+    } else {
+      dateQuery = ` AND tor.updated_at < '${start_date}'`;
+    }
 
-  /* For Data */
-  let baseQuery = `WITH
+    /* For Data */
+    let baseQuery = `WITH
   vas_id_noi AS(
     SELECT
       COUNT (DISTINCT(tor.receiver_entity_id)) AS investor_count,
@@ -443,7 +486,11 @@ OFFSET
   0
         `;
 
-  return baseQuery;
+    return baseQuery;
+  } catch (error: any) {
+    Logger.error(error.message, error);
+    throw error;
+  }
 };
 
 export const getByInvestmentAmountQuery = (
@@ -451,22 +498,28 @@ export const getByInvestmentAmountQuery = (
   start_date?: string,
   end_date?: string | null
 ) => {
-  /* Get Investor Distribution By investment amount Query */
+  try {
+    /* Get Investor Distribution By investment amount Query */
 
-  /* In Where Condition
+    /* In Where Condition
                           
                          */
 
-  let dateQuery = ``;
-  if (start_date && end_date && start_date.length > 0 && end_date.length > 0) {
-    // dateQuery = ` AND tor.updated_at BETWEEN '${start_date}' AND '${end_date}'`;
-    dateQuery = ``;
-  } else {
-    dateQuery = ` AND tor.updated_at < '${start_date}'`;
-  }
+    let dateQuery = ``;
+    if (
+      start_date &&
+      end_date &&
+      start_date.length > 0 &&
+      end_date.length > 0
+    ) {
+      // dateQuery = ` AND tor.updated_at BETWEEN '${start_date}' AND '${end_date}'`;
+      dateQuery = ``;
+    } else {
+      dateQuery = ` AND tor.updated_at < '${start_date}'`;
+    }
 
-  /* For Data */
-  let baseQuery = `WITH
+    /* For Data */
+    let baseQuery = `WITH
   vas_id_ia AS (
     SELECT
       COALESCE(SUM(
@@ -511,5 +564,9 @@ OFFSET
   0
           `;
 
-  return baseQuery;
+    return baseQuery;
+  } catch (error: any) {
+    Logger.error(error.message, error);
+    throw error;
+  }
 };

@@ -14,23 +14,28 @@ export const getAllSubscriptionOrderQuery = async (
   end_date?: string,
   token_id?: string
 ) => {
-  // Construct Base Query
-  let baseQuery = await constructBaseQuery(
-    entity_type_id,
-    order_type,
-    offset,
-    limit,
-    user_entity_id,
-    search,
-    status_filters,
-    investment_currency_filters,
-    order_fulfillment_filters,
-    start_date,
-    end_date,
-    token_id
-  );
+  try {
+    // Construct Base Query
+    let baseQuery = await constructBaseQuery(
+      entity_type_id,
+      order_type,
+      offset,
+      limit,
+      user_entity_id,
+      search,
+      status_filters,
+      investment_currency_filters,
+      order_fulfillment_filters,
+      start_date,
+      end_date,
+      token_id
+    );
 
-  return baseQuery;
+    return baseQuery;
+  } catch (error: any) {
+    Logger.error(error.message, error);
+    throw error;
+  }
 };
 
 const constructBaseQuery = async (
@@ -339,12 +344,12 @@ const constructBaseQuery = async (
             tor.ordered_tokens AS token_ordered,
             CASE
               WHEN tor.is_payment_confirmed = true
-              AND tor.recived_amount IS NOT NULL THEN tor.recived_amount
+              AND tor.net_investment_value IS NOT NULL THEN tor.net_investment_value
               ELSE null
             END AS confirmed_payment,
             CASE
               WHEN tor.is_payment_confirmed = true
-              AND tor.recived_amount IS NOT NULL THEN tor.ordered_tokens
+              AND tor.net_investment_value IS NOT NULL THEN tor.ordered_tokens
               ELSE null
             END AS confirmed_tokens,
             tor.price_per_token AS token_price,

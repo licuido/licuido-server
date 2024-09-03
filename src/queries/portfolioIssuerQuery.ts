@@ -1,27 +1,30 @@
+import { Logger } from "@helpers";
+
 export const getTotalInvestmentQuery = (
   user_entity_id?: string,
   currency_data?: any
 ) => {
-  /* Get Token Investment & Investment Variation Percentage */
+  try {
+    /* Get Token Investment & Investment Variation Percentage */
 
-  /* In Where Condition
+    /* In Where Condition
            ---- issuer_entity_id = ""
            ---- AND tof.status_id = 1
            ---- AND tof.offer_status_id = 1
            */
 
-  // Currency Conversion table Sample
-  let currencyConversionTable = ``;
-  if (currency_data && currency_data.trim() !== "") {
-    currencyConversionTable = `
+    // Currency Conversion table Sample
+    let currencyConversionTable = ``;
+    if (currency_data && currency_data.trim() !== "") {
+      currencyConversionTable = `
     currency_conversion AS (
       SELECT * FROM (VALUES ${currency_data}) AS cc(currency_code, euro_value)
     ),
   `;
-  }
+    }
 
-  /* For Data */
-  let baseQuery = `WITH 
+    /* For Data */
+    let baseQuery = `WITH 
   ${currencyConversionTable} 
   vas_tot_investment AS(
     SELECT
@@ -155,30 +158,35 @@ GROUP BY
   issuer_name,
   issuer_logo_url`;
 
-  return baseQuery;
+    return baseQuery;
+  } catch (error: any) {
+    Logger.error(error.message, error);
+    throw error;
+  }
 };
 
 export const getCirculatingSupplyQuery = (
   user_entity_id?: string,
   currency_data?: any
 ) => {
-  /* Get Circulating Supply & Amount */
+  try {
+    /* Get Circulating Supply & Amount */
 
-  /* In Where Condition
-   */
+    /* In Where Condition
+     */
 
-  // Currency Conversion table Sample
-  let currencyConversionTable = ``;
-  if (currency_data && currency_data.trim() !== "") {
-    currencyConversionTable = `
+    // Currency Conversion table Sample
+    let currencyConversionTable = ``;
+    if (currency_data && currency_data.trim() !== "") {
+      currencyConversionTable = `
     currency_conversion AS (
       SELECT * FROM (VALUES ${currency_data}) AS cc(currency_code, euro_value)
     ),
   `;
-  }
+    }
 
-  /* For Data */
-  let baseQuery = `WITH 
+    /* For Data */
+    let baseQuery = `WITH 
   ${currencyConversionTable}
   vas_cs AS (
     SELECT
@@ -247,33 +255,38 @@ SELECT
 FROM
   vas_cs`;
 
-  return baseQuery;
+    return baseQuery;
+  } catch (error: any) {
+    Logger.error(error.message, error);
+    throw error;
+  }
 };
 
 export const getPendingRedemptionQuery = (
   user_entity_id?: string,
   currency_data?: any
 ) => {
-  /* Get Pending Redemption & Amount */
+  try {
+    /* Get Pending Redemption & Amount */
 
-  /* In Where Condition
+    /* In Where Condition
            ---- issuer_entity_id = ""
            ---- AND tof.status_id = 1 Active
            ---- AND tof.offer_status_id = 1 Active
            */
 
-  // Currency Conversion table Sample
-  let currencyConversionTable = ``;
-  if (currency_data && currency_data.trim() !== "") {
-    currencyConversionTable = `
+    // Currency Conversion table Sample
+    let currencyConversionTable = ``;
+    if (currency_data && currency_data.trim() !== "") {
+      currencyConversionTable = `
     currency_conversion AS (
       SELECT * FROM (VALUES ${currency_data}) AS cc(currency_code, euro_value)
     ),
   `;
-  }
+    }
 
-  /* For Data */
-  let baseQuery = `WITH 
+    /* For Data */
+    let baseQuery = `WITH 
   ${currencyConversionTable}
   vas_pr AS (
     SELECT
@@ -339,7 +352,11 @@ SELECT
 FROM
   vas_pr`;
 
-  return baseQuery;
+    return baseQuery;
+  } catch (error: any) {
+    Logger.error(error.message, error);
+    throw error;
+  }
 };
 
 export const getAllFundOfferingsForPortfolioQuery = (
@@ -355,15 +372,16 @@ export const getAllFundOfferingsForPortfolioQuery = (
   blockchain_network?: number,
   tokenTypeId?: number
 ) => {
-  /* Get All Fund Offerings For Portfolio */
+  try {
+    /* Get All Fund Offerings For Portfolio */
 
-  // For Limit & Offset
-  let limitStatment = ``;
-  if (offset !== null && limit !== null) {
-    limitStatment = ` LIMIT '${limit}' OFFSET '${offset * limit}'`;
-  }
-  /* For Data */
-  let baseQuery = `WITH
+    // For Limit & Offset
+    let limitStatment = ``;
+    if (offset !== null && limit !== null) {
+      limitStatment = ` LIMIT '${limit}' OFFSET '${offset * limit}'`;
+    }
+    /* For Data */
+    let baseQuery = `WITH
   vas_fo AS(
     SELECT
       tof.id AS token_offering_id,
@@ -483,53 +501,53 @@ FROM
 ORDER BY
   created_at DESC  
   ${limitStatment}`;
-  /* For Admin Data */
+    /* For Admin Data */
 
-  let statusFilterCondition = "";
-  if (statusId) {
-    statusFilterCondition = `AND tof.status_id = ${statusId}`;
-  }
+    let statusFilterCondition = "";
+    if (statusId) {
+      statusFilterCondition = `AND tof.status_id = ${statusId}`;
+    }
 
-  let symbolFilterCondition = "";
-  if (symbol && symbol.length > 0) {
-    symbolFilterCondition = ` AND tof.symbol ILIKE '%${symbol}%'`;
-  }
+    let symbolFilterCondition = "";
+    if (symbol && symbol.length > 0) {
+      symbolFilterCondition = ` AND tof.symbol ILIKE '%${symbol}%'`;
+    }
 
-  let bankNameFilterCondition = "";
-  if (bankName && bankName.length > 0) {
-    bankNameFilterCondition = ` AND bank_name ILIKE '%${bankName}%'`;
-  }
+    let bankNameFilterCondition = "";
+    if (bankName && bankName.length > 0) {
+      bankNameFilterCondition = ` AND bank_name ILIKE '%${bankName}%'`;
+    }
 
-  let bankAccountNameFilterCondition = "";
-  if (bankAccountName && bankAccountName.length > 0) {
-    bankAccountNameFilterCondition = ` AND bank_account_name ILIKE '%${bankAccountName}%'`;
-  }
+    let bankAccountNameFilterCondition = "";
+    if (bankAccountName && bankAccountName.length > 0) {
+      bankAccountNameFilterCondition = ` AND bank_account_name ILIKE '%${bankAccountName}%'`;
+    }
 
-  let blockchainNetworkFilterCondition = "";
-  if (blockchain_network) {
-    blockchainNetworkFilterCondition = ` AND tof.blockchain_network = ${blockchain_network}`;
-  }
+    let blockchainNetworkFilterCondition = "";
+    if (blockchain_network) {
+      blockchainNetworkFilterCondition = ` AND tof.blockchain_network = ${blockchain_network}`;
+    }
 
-  // let issuerEntityIdFilterCondition = '';
-  // if (user_entity_id) {
-  //   issuerEntityIdFilterCondition = ` AND tor.issuer_entity_id = ${user_entity_id}`;
-  // }
+    // let issuerEntityIdFilterCondition = '';
+    // if (user_entity_id) {
+    //   issuerEntityIdFilterCondition = ` AND tor.issuer_entity_id = ${user_entity_id}`;
+    // }
 
-  let tokenTypeIdFilterCondition = "";
-  if (tokenTypeId) {
-    tokenTypeIdFilterCondition = ` AND tof.token_type_id = ${tokenTypeId}`;
-  }
+    let tokenTypeIdFilterCondition = "";
+    if (tokenTypeId) {
+      tokenTypeIdFilterCondition = ` AND tof.token_type_id = ${tokenTypeId}`;
+    }
 
-  let searchFilterCondition = "";
-  if (search && search.length > 0) {
-    searchFilterCondition = ` AND (
+    let searchFilterCondition = "";
+    if (search && search.length > 0) {
+      searchFilterCondition = ` AND (
       tof.name ILIKE '%${search}%'
       OR bank_name ILIKE '%${search}%'
       OR bank_account_name ILIKE '%${search}%'
     )`;
-  }
+    }
 
-  let baseQueryForAdminUser = `WITH
+    let baseQueryForAdminUser = `WITH
   vas_fo AS(
     SELECT
       tof.id AS token_offering_id,
@@ -681,10 +699,14 @@ ORDER BY
   created_at DESC
   ${limitStatment}`;
 
-  if (request?.headers?.build === "AD-1") {
-    return baseQueryForAdminUser;
-  } else {
-    return baseQuery;
+    if (request?.headers?.build === "AD-1") {
+      return baseQueryForAdminUser;
+    } else {
+      return baseQuery;
+    }
+  } catch (error: any) {
+    Logger.error(error.message, error);
+    throw error;
   }
 };
 
@@ -702,73 +724,74 @@ export const getInvestorListQuery = (
   top_five?: Boolean,
   currency_data?: any
 ) => {
-  /* Get All Investors Query on Search , Limit & Offset */
+  try {
+    /* Get All Investors Query on Search , Limit & Offset */
 
-  /* In Where Condition
+    /* In Where Condition
   
    */
 
-  // Currency Conversion table Sample
-  let currencyConversionTable = ``;
-  if (currency_data && currency_data.trim() !== "") {
-    currencyConversionTable = `
+    // Currency Conversion table Sample
+    let currencyConversionTable = ``;
+    if (currency_data && currency_data.trim() !== "") {
+      currencyConversionTable = `
     currency_conversion AS (
       SELECT * FROM (VALUES ${currency_data}) AS cc(currency_code, euro_value)
     ),
   `;
-  }
+    }
 
-  // For Limit & Offset
-  let limitStatment = ``;
-  if (offset !== null && limit !== null) {
-    limitStatment = ` LIMIT '${limit}' OFFSET '${offset * limit}'`;
-  }
+    // For Limit & Offset
+    let limitStatment = ``;
+    if (offset !== null && limit !== null) {
+      limitStatment = ` LIMIT '${limit}' OFFSET '${offset * limit}'`;
+    }
 
-  // For Search By Investor Name & Wallet Id Filter
-  let searchFilter = ``;
-  if (search && search.length > 0) {
-    searchFilter = ` AND (
+    // For Search By Investor Name & Wallet Id Filter
+    let searchFilter = ``;
+    if (search && search.length > 0) {
+      searchFilter = ` AND (
       investor_name ILIKE '${search}%'
       OR wallet_address ILIKE '${search}%'
     )`;
-  }
+    }
 
-  // For Country Filter
-  let countryFilter = ``;
-  if (country_filters && country_filters?.length > 0) {
-    countryFilter = ` AND country_id IN (${country_filters?.join(",")})`;
-  }
+    // For Country Filter
+    let countryFilter = ``;
+    if (country_filters && country_filters?.length > 0) {
+      countryFilter = ` AND country_id IN (${country_filters?.join(",")})`;
+    }
 
-  // For Investor Type Filter [Corporate | Individual]
-  let investorTypeFilter = ``;
-  if (investor_type_filters && investor_type_filters?.length > 0) {
-    investorTypeFilter = ` AND investor_type_id IN (${investor_type_filters?.join(
-      ","
-    )})`;
-  }
+    // For Investor Type Filter [Corporate | Individual]
+    let investorTypeFilter = ``;
+    if (investor_type_filters && investor_type_filters?.length > 0) {
+      investorTypeFilter = ` AND investor_type_id IN (${investor_type_filters?.join(
+        ","
+      )})`;
+    }
 
-  // Entity Investor Status Filter [Qualify | Tokenholder]
-  let statusFilter = ``;
-  if (status_filters && status_filters?.length > 0) {
-    statusFilter = `  AND status_id IN (${status_filters?.join(",")})
+    // Entity Investor Status Filter [Qualify | Tokenholder]
+    let statusFilter = ``;
+    if (status_filters && status_filters?.length > 0) {
+      statusFilter = `  AND status_id IN (${status_filters?.join(",")})
       `;
-  }
+    }
 
-  // Investment Value Filter
-  let invetementValueFilter = ``;
-  if (
-    minimum_investment_value &&
-    minimum_investment_value?.length > 0 &&
-    maximum_investment_value &&
-    maximum_investment_value?.length > 0
-  ) {
-    // invetementValueFilter = `  AND investment BETWEEN ${minimum_investment_value} AND ${maximum_investment_value}
-    //   `;
-    limitStatment = ``;
-  }
+    // Investment Value Filter
+    let invetementValueFilter = ``;
+    if (
+      minimum_investment_value &&
+      minimum_investment_value?.length > 0 &&
+      maximum_investment_value &&
+      maximum_investment_value?.length > 0
+    ) {
+      // invetementValueFilter = `  AND investment BETWEEN ${minimum_investment_value} AND ${maximum_investment_value}
+      //   `;
+      limitStatment = ``;
+    }
 
-  /* For Data */
-  let baseQuery = `
+    /* For Data */
+    let baseQuery = `
   WITH 
   ${currencyConversionTable}
   last_transaction AS (
@@ -904,7 +927,7 @@ ORDER BY
   created_at ASC 
   ${limitStatment}`;
 
-  let baseAdminQuery = `WITH
+    let baseAdminQuery = `WITH
   last_transaction AS (
     SELECT
       tor.receiver_entity_id,
@@ -1013,8 +1036,8 @@ WHERE
 ORDER BY
   created_at ASC 
   ${limitStatment}`;
-  // Top 5 investor based on investment value
-  let TopFiveInvestor = `WITH
+    // Top 5 investor based on investment value
+    let TopFiveInvestor = `WITH
   last_transaction AS (
     SELECT
       tor.receiver_entity_id,
@@ -1125,12 +1148,16 @@ ORDER BY
   created_at ASC
 LIMIT 5;`;
 
-  if (top_five) {
-    return TopFiveInvestor;
-  }
-  if (request?.headers?.build === "AD-1") {
-    return baseAdminQuery;
-  } else {
-    return baseQuery;
+    if (top_five) {
+      return TopFiveInvestor;
+    }
+    if (request?.headers?.build === "AD-1") {
+      return baseAdminQuery;
+    } else {
+      return baseQuery;
+    }
+  } catch (error: any) {
+    Logger.error(error.message, error);
+    throw error;
   }
 };

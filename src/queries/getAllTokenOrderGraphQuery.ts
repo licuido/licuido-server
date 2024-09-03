@@ -1,3 +1,5 @@
+import { Logger } from "@helpers";
+
 export const getAllTokenOrderGraphQuery = (
   offset: number | null,
   limit: number | null,
@@ -6,9 +8,10 @@ export const getAllTokenOrderGraphQuery = (
   to_date?: string,
   request?: any
 ) => {
-  /* Get All Token Order Graph Query on Limit & Offset */
+  try {
+    /* Get All Token Order Graph Query on Limit & Offset */
 
-  /* In Where Condition
+    /* In Where Condition
        ---- issuer_entity_id = ""
        ---- status_id IN (5, 6) [ Either Mint or Burn Status ]
        ---- created_at BETWEEN '' AND '' [ For Date Filters ]  
@@ -17,19 +20,19 @@ export const getAllTokenOrderGraphQuery = (
                ---- For Date Filters
        */
 
-  // For Limit & Offset
-  let limitStatment = ``;
-  if (offset !== null && limit !== null) {
-    limitStatment = ` LIMIT '${limit}' OFFSET '${offset * limit}'`;
-  }
-  // For Date Filters
-  let dateFilter = ``;
-  if (from_date && to_date) {
-    dateFilter = ` AND tor.updated_at BETWEEN '${from_date}' AND '${to_date}'`;
-  }
+    // For Limit & Offset
+    let limitStatment = ``;
+    if (offset !== null && limit !== null) {
+      limitStatment = ` LIMIT '${limit}' OFFSET '${offset * limit}'`;
+    }
+    // For Date Filters
+    let dateFilter = ``;
+    if (from_date && to_date) {
+      dateFilter = ` AND tor.updated_at BETWEEN '${from_date}' AND '${to_date}'`;
+    }
 
-  /* For Data */
-  let baseQuery = `SELECT
+    /* For Data */
+    let baseQuery = `SELECT
     tor.token_offering_id,
     tof.name,
     COUNT(
@@ -56,7 +59,7 @@ export const getAllTokenOrderGraphQuery = (
     tof.name ASC 
   ${limitStatment}`;
 
-  let baseAdminQuery = `SELECT
+    let baseAdminQuery = `SELECT
     tor.token_offering_id,
     tof.name,
     COUNT(
@@ -82,9 +85,13 @@ export const getAllTokenOrderGraphQuery = (
     tof.name ASC 
   ${limitStatment}`;
 
-  if (request?.headers?.build === "AD-1") {
-    return baseAdminQuery;
-  } else {
-    return baseQuery;
+    if (request?.headers?.build === "AD-1") {
+      return baseAdminQuery;
+    } else {
+      return baseQuery;
+    }
+  } catch (error: any) {
+    Logger.error(error.message, error);
+    throw error;
   }
 };

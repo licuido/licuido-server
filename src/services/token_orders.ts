@@ -1108,6 +1108,7 @@ class TokenOrders {
 
       // For Total Investors
       const calculateTotalInvestors: any = (period: any) => {
+        if (!period) return 0;
         return period.reduce((acc: any, investor: any) => {
           return acc + parseFloat(investor.investor_count);
         }, 0);
@@ -1115,6 +1116,7 @@ class TokenOrders {
 
       // For Total Investment
       const calculateTotalInvestment: any = (period: any) => {
+        if (!period) return 0;
         return period.reduce((acc: any, investment: any) => {
           return acc + parseFloat(investment.net_investment);
         }, 0);
@@ -1136,6 +1138,7 @@ class TokenOrders {
           await sequelize.query(
             queries.getByNoOfInvestorsQuery(token_offering_id, start_date, null)
           );
+
         obj["investor_country_data"] =
           investors_result_in_last_seven_days || [];
 
@@ -1144,6 +1147,7 @@ class TokenOrders {
         )
           ? calculateTotalInvestors(investors_result_in_last_seven_days)
           : 0;
+
         const total_investors_before_seven_days = Array.isArray(
           investors_result_before_seven_days
         )
@@ -1156,10 +1160,12 @@ class TokenOrders {
           investors_result_in_last_seven_days?.length || 0
         ).toString();
 
+        const total_investors_till_now =
+          total_investors_last_seven_days + total_investors_before_seven_days;
+
         obj["change_percentage"] = total_investors_before_seven_days
           ? (
-              ((total_investors_last_seven_days -
-                total_investors_before_seven_days) /
+              ((total_investors_till_now - total_investors_before_seven_days) /
                 total_investors_before_seven_days) *
               100
             ).toString()
@@ -1207,9 +1213,12 @@ class TokenOrders {
           calculateTotalInvestors(investment_result_in_last_seven_days) || 0
         ).toString();
 
+        const total_investments_till_now =
+          total_investment_last_seven_days + total_investment_before_seven_days;
+
         obj["change_percentage"] = total_investment_before_seven_days
           ? (
-              ((total_investment_last_seven_days -
+              ((total_investments_till_now -
                 total_investment_before_seven_days) /
                 total_investment_before_seven_days) *
               100
