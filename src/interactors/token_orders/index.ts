@@ -1,6 +1,7 @@
 import {
   Logger,
   currencyConvert,
+  currencyDetails,
   dateTime,
   errorCustomMessage,
   fulfilledStatus,
@@ -1161,10 +1162,29 @@ const getDashboard = async ({
   user_entity_id?: string;
   currency: string;
 }) => {
+  let currency_codes: any = await currencyDetails.getTokenCurrencyDetails({
+    issuer_entity_id: user_entity_id,
+  });
+
+  let currency_values = [];
+  for (const item of currency_codes) {
+    let convertedamount = await currencyConvert({
+      from_currency_code: item,
+      to_currency_code: "EUR",
+      amount: 1,
+    });
+
+    currency_values.push({
+      currency_code: item,
+      euro_value: parseFloat(convertedamount.toFixed(2)),
+    });
+  }
+
   // Get Dashboard
   const result: any = await TokenOrders.getDashboard({
     user_entity_id,
     currency,
+    currency_values,
   });
 
   return result;
