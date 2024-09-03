@@ -905,46 +905,69 @@ class TokenOrders {
   static async getInvestorDashboard({
     user_entity_id,
     currency,
+    currency_values,
   }: {
     user_entity_id?: string;
     currency?: string;
+    currency_values?: any;
   }): Promise<any> {
     try {
+      // Currency Data
+      const currency_data =
+        currency_values?.length > 0
+          ? currency_values
+              .map((cv: any) => `('${cv.currency_code}', ${cv.euro_value})`)
+              .join(",")
+          : "";
+
       // For Investor Dashboard
       const [investor_data]: any[] = await sequelize.query(
-        queries.getInvestorDashboardQuery(user_entity_id)
+        queries.getInvestorDashboardQuery(user_entity_id, currency_data)
       );
 
-      let current_value = "0";
-      let investment = "0";
+      // Currency Conversion At Amount 1 for Expected Currency
+      let convertedamount = await currencyConvert({
+        from_currency_code: "EUR",
+        to_currency_code: currency ?? "EUR",
+        amount: 1,
+      });
+
+      let current_value: any = 0;
+      let investment: any = 0;
+      let percentage_change: any = 0;
 
       if (
+        investor_data &&
+        investor_data?.length > 0 &&
         investor_data?.[0]?.current_value &&
         parseFloat(investor_data?.[0]?.current_value) > 0
       ) {
-        const current_value_convert = await currencyConvert({
-          from_currency_code: "EUR",
-          to_currency_code: currency ?? "EUR",
-          amount: Number(investor_data?.[0]?.current_value),
-        });
-        current_value = Math.round(current_value_convert)?.toString();
+        let currentValue: any = Number(investor_data?.[0]?.current_value);
+        currentValue = parseFloat(currentValue) * convertedamount;
+        current_value = parseFloat(currentValue.toFixed(2)) ?? "0.00";
       }
+
       if (
         investor_data?.[0]?.investment &&
         parseFloat(investor_data?.[0]?.investment) > 0
       ) {
-        const investment_convert = await currencyConvert({
-          from_currency_code: "EUR",
-          to_currency_code: currency ?? "EUR",
-          amount: Number(investor_data?.[0]?.investment),
-        });
-        investment = Math.round(investment_convert)?.toString();
+        let investorInvestment: any = Number(investor_data?.[0]?.investment);
+        investorInvestment = parseFloat(investorInvestment) * convertedamount;
+        investment = parseFloat(investorInvestment.toFixed(2)) ?? "0.00";
+      }
+
+      // Calculate percentage change
+      if (investment > 0) {
+        percentage_change = ((current_value - investment) / investment) * 100;
+        percentage_change = parseFloat(percentage_change.toFixed(2));
+      } else {
+        percentage_change = "0.00";
       }
 
       let obj: any = {
-        current_value,
-        investment,
-        percentage_change: investor_data?.[0]?.percentage_change ?? "0.00",
+        current_value: current_value.toFixed(2),
+        investment: investment.toFixed(2),
+        percentage_change: percentage_change.toFixed(2),
       };
 
       return obj;

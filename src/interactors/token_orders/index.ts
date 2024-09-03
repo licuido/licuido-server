@@ -1289,10 +1289,31 @@ const getInvestorDashboard = async ({
   user_entity_id?: string;
   currency?: string;
 }) => {
+  // Get Investor Invested Token Currencies & Values
+  let currency_codes: any =
+    await currencyDetails.getInvestorTokenCurrencyDetails({
+      receiver_entity_id: user_entity_id,
+    });
+
+  let currency_values = [];
+  for (const item of currency_codes) {
+    let convertedamount = await currencyConvert({
+      from_currency_code: item,
+      to_currency_code: "EUR",
+      amount: 1,
+    });
+
+    currency_values.push({
+      currency_code: item,
+      euro_value: parseFloat(convertedamount.toFixed(2)),
+    });
+  }
+
   // Get Investor Dashboard
   const result: any = await TokenOrders.getInvestorDashboard({
     user_entity_id,
     currency,
+    currency_values,
   });
 
   return result;
