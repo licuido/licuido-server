@@ -78,10 +78,12 @@ FROM
   token_valuations AS tv
 WHERE
   tv.token_offering_id = '${token_offering_id}'
-  AND (tv.start_date < CURRENT_DATE)
-  OR (
-    tv.start_date = CURRENT_DATE
-    AND start_time <= CURRENT_TIME
+  AND (
+    tv.start_date < CURRENT_DATE
+    OR (
+      tv.start_date = CURRENT_DATE
+      AND start_time <= CURRENT_TIME
+    )
   )
 ORDER BY
   tv.start_date DESC,
@@ -607,10 +609,12 @@ FROM
   token_valuations AS tv
 WHERE
   tv.token_offering_id = '${token_offering_id}'
-  AND (tv.start_date < '${date}')
-  OR (
-    tv.start_date = '${date}'
-    AND start_time <= '${time}'
+  AND (
+    tv.start_date < '${date}'
+    OR (
+      tv.start_date = '${date}'
+      AND start_time <= '${time}'
+    )
   )
 ORDER BY
   tv.start_date DESC,

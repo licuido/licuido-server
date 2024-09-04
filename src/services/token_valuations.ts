@@ -174,32 +174,63 @@ class TokenValuations {
       if (result && result.length > 0) {
         if (result?.[0]?.start_date !== start_date) {
           if (before_valuation_data && before_valuation_data?.length > 0) {
-            result?.unshift({
+            if (result?.[0]?.start_date !== final_start_date) {
+              result?.unshift({
+                start_date: final_start_date,
+                start_time: TIME_VALUE?.DEFAULT_START_TIME,
+                valuation_price: before_valuation_data?.[0]?.valuation_price,
+                created_at: "",
+                max_valuation_price: "",
+              });
+            }
+          }
+        }
+      } else {
+        if (before_valuation_data && before_valuation_data?.length > 0) {
+          if (!from_date && !to_date) {
+            result?.push({
               start_date: final_start_date,
               start_time: TIME_VALUE?.DEFAULT_START_TIME,
               valuation_price: before_valuation_data?.[0]?.valuation_price,
               created_at: "",
               max_valuation_price: "",
             });
-          }
-        }
-      } else {
-        if (before_valuation_data && before_valuation_data?.length > 0) {
-          result?.push({
-            start_date: final_start_date,
-            start_time: TIME_VALUE?.DEFAULT_START_TIME,
-            valuation_price: before_valuation_data?.[0]?.valuation_price,
-            created_at: "",
-            max_valuation_price: "",
-          });
 
-          result?.push({
-            start_date: end_date,
-            start_time: TIME_VALUE?.DEFAULT_START_TIME,
-            valuation_price: before_valuation_data?.[0]?.valuation_price,
-            created_at: "",
-            max_valuation_price: "",
-          });
+            if (final_start_date !== end_date) {
+              result?.push({
+                start_date: end_date,
+                start_time: TIME_VALUE?.DEFAULT_START_TIME,
+                valuation_price: before_valuation_data?.[0]?.valuation_price,
+                created_at: "",
+                max_valuation_price: "",
+              });
+            }
+          } else {
+            if (
+              from_date &&
+              to_date &&
+              new Date(from_date) < new Date(start_offering_date) &&
+              new Date(to_date) > new Date(start_offering_date)
+            ) {
+              result?.push({
+                start_date: final_start_date,
+                start_time: TIME_VALUE?.DEFAULT_START_TIME,
+                valuation_price: before_valuation_data?.[0]?.valuation_price,
+                created_at: "",
+                max_valuation_price: "",
+              });
+
+              if (final_start_date !== end_date) {
+                result?.push({
+                  start_date: end_date,
+                  start_time: TIME_VALUE?.DEFAULT_START_TIME,
+                  valuation_price: before_valuation_data?.[0]?.valuation_price,
+                  created_at: "",
+                  max_valuation_price: "",
+                });
+              }
+            }
+          }
         }
       }
 
