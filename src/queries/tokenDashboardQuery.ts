@@ -51,7 +51,6 @@ WHERE
 ORDER BY
   created_at ASC`;
 
-    console.log(baseQuery);
     return baseQuery;
   } catch (error: any) {
     Logger.error(error.message, error);
@@ -102,7 +101,6 @@ LIMIT
     )
   ) AS valuation_price`;
 
-    console.log(baseQuery);
     return baseQuery;
   } catch (error: any) {
     Logger.error(error.message, error);
