@@ -1510,10 +1510,12 @@ const getInvestorlast3MonthsPerformance = async ({
   user_entity_id,
   from_date,
   to_date,
+  currency,
 }: {
   user_entity_id?: string;
   from_date?: string;
   to_date?: string;
+  currency?: string;
 }) => {
   // Get Valuation Price Data
 
@@ -1552,8 +1554,29 @@ const getInvestorlast3MonthsPerformance = async ({
   });
   graphData = mergeValuesByDate(dates);
 
+  let currency_codes: any =
+    await currencyDetails.getInvestorTokenCurrencyDetails({
+      receiver_entity_id: user_entity_id,
+    });
+
+  let currency_values = [];
+  for (const item of currency_codes) {
+    let convertedamount = await currencyConvert({
+      from_currency_code: item,
+      to_currency_code: "EUR",
+      amount: 1,
+    });
+
+    currency_values.push({
+      currency_code: item,
+      euro_value: parseFloat(convertedamount.toFixed(2)),
+    });
+  }
+
   let totalInvestment: any = await TokenOrders.getInvestorDashboard({
     user_entity_id,
+    currency,
+    currency_values,
   });
 
   return {

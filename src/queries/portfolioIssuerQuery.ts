@@ -431,7 +431,7 @@ export const getAllFundOfferingsForPortfolioQuery = (
       COALESCE(
         (
           SELECT
-            SUM(COALESCE(tor.ordered_token * tofer.offering_price, 0))
+            SUM(COALESCE(tor.ordered_tokens * tofer.offering_price, 0))
           FROM
             token_orders AS tor 
             LEFT JOIN token_offerings AS tofer ON tor.token_offering_id = tofer.id 
@@ -445,7 +445,7 @@ export const getAllFundOfferingsForPortfolioQuery = (
       COALESCE(
         (
           SELECT
-            SUM(COALESCE(tor.ordered_token * tofer.offering_price, 0))
+            SUM(COALESCE(tor.ordered_tokens * tofer.offering_price, 0))
           FROM
             token_orders AS tor 
             LEFT JOIN token_offerings AS tofer ON tor.token_offering_id = tofer.id 
