@@ -184,7 +184,8 @@ SELECT
       LIMIT
         1
     ), tof.offering_price
-  ) AS valuation_price
+  ) AS valuation_price,
+   tof.offering_price AS offering_price
 FROM
   token_orders AS tor
   INNER JOIN token_offerings AS tof ON tor.token_offering_id = tof.id

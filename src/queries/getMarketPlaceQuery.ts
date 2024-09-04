@@ -29,9 +29,9 @@ export const getMarketPlaceListingQuery = (
   // For investor status
   let investorStatusFilter = ``;
   if (investorStatus === ENTITY_INVESTOR_STATUS.APPROVED) {
-    investorStatusFilter = ` AND ei.status_id = ${investorStatus} AND '${user_entity_id}' = ei.investor_entity_id`;
+    investorStatusFilter = ` AND ei_sub.is_qualified_status_id = ${investorStatus}`;
   } else if (investorStatus === ENTITY_INVESTOR_STATUS.NOT_APPROVED) {
-    investorStatusFilter = ` AND ei.status_id IS NULL OR ei.status_id != ${ENTITY_INVESTOR_STATUS.APPROVED}`;
+    investorStatusFilter = ` AND ei_sub.is_qualified_status_id IS NULL OR ei_sub.is_qualified_status_id != ${ENTITY_INVESTOR_STATUS.APPROVED}`;
   }
 
   // For Search

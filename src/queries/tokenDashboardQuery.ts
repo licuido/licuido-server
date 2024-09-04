@@ -483,8 +483,7 @@ ORDER BY
   LIMIT
   5
 OFFSET
-  0
-        `;
+  0`;
 
     return baseQuery;
   } catch (error: any) {
@@ -512,7 +511,7 @@ export const getByInvestmentAmountQuery = (
       start_date.length > 0 &&
       end_date.length > 0
     ) {
-      // dateQuery = ` AND tor.updated_at BETWEEN '${start_date}' AND '${end_date}'`;
+      dateQuery = ` AND tor.updated_at BETWEEN '${start_date}' AND '${end_date}'`;
       dateQuery = ``;
     } else {
       dateQuery = ` AND tor.updated_at < '${start_date}'`;
@@ -542,7 +541,8 @@ export const getByInvestmentAmountQuery = (
     FROM
       token_orders AS tor
       INNER JOIN entities AS inv_en ON tor.receiver_entity_id = inv_en.id
-      INNER JOIN master_countries AS mc ON inv_en.country_id = mc.id
+      INNER JOIN master_countries AS mc ON inv_en.country_id = mc.id 
+      LEFT JOIN token_offerings AS tof ON tor.token_offering_id = tof.id
     WHERE
       tor.token_offering_id = '${token_offering_id}'
       AND tor.status_id IN (5, 11) 
@@ -561,9 +561,7 @@ ORDER BY
   LIMIT
   5
 OFFSET
-  0
-          `;
-
+  0`;
     return baseQuery;
   } catch (error: any) {
     Logger.error(error.message, error);
