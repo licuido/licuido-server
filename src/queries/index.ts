@@ -47,6 +47,7 @@ import {
   getTokenRecentActivitiesQuery,
   getByNoOfInvestorsQuery,
   getByInvestmentAmountQuery,
+  getBeforeValuationPriceQuery,
 } from "./tokenDashboardQuery";
 
 import { getAllInvestorsListQuery } from "./investorsListQuery";
@@ -95,6 +96,7 @@ const queries = {
   getTotalInvestmentIssuersInvestorsCount,
   getAllValuationPriceQuery,
   getInvestorTokenHoldingsQuery,
+  getBeforeValuationPriceQuery,
 };
 
 export default queries;

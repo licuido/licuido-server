@@ -70,6 +70,9 @@ export const getTodayTokenValuationPriceQuery = (
 
     /* For Data */
     let baseQuery = `SELECT
+  COALESCE(
+    (
+      SELECT
   tv.valuation_price
 FROM
   token_valuations AS tv
@@ -84,7 +87,17 @@ ORDER BY
   tv.start_date DESC,
   tv.start_time DESC
 LIMIT
-  1`;
+  1
+    ),
+    (
+      SELECT
+        tof.offering_price
+      FROM
+        token_offerings AS tof
+      WHERE
+        tof.id = '${token_offering_id}'
+    )
+  ) AS valuation_price`;
 
     return baseQuery;
   } catch (error: any) {
@@ -562,6 +575,67 @@ ORDER BY
   5
 OFFSET
   0`;
+    return baseQuery;
+  } catch (error: any) {
+    Logger.error(error.message, error);
+    throw error;
+  }
+};
+
+export const getBeforeValuationPriceQuery = (
+  token_offering_id?: string,
+  date?: string,
+  time?: string
+) => {
+  try {
+    /* Get Today Token Valuation Price Query  */
+
+    /* In Where Condition
+              
+               */
+
+    /* For Data */
+    let baseQuery = ``;
+
+    if (date && time && date.length > 0 && time.length > 0) {
+      baseQuery = `SELECT
+  COALESCE(
+    (
+      SELECT
+  tv.valuation_price
+FROM
+  token_valuations AS tv
+WHERE
+  tv.token_offering_id = '${token_offering_id}'
+  AND (tv.start_date < '${date}')
+  OR (
+    tv.start_date = '${date}'
+    AND start_time <= '${time}'
+  )
+ORDER BY
+  tv.start_date DESC,
+  tv.start_time DESC
+LIMIT
+  1
+    ),
+    (
+      SELECT
+        tof.offering_price
+      FROM
+        token_offerings AS tof
+      WHERE
+        tof.id = '${token_offering_id}'
+    )
+  ) AS valuation_price`;
+    } else {
+      baseQuery = ` SELECT
+    tof.offering_price AS valuation_price
+  FROM
+    token_offerings AS tof
+  WHERE
+    tof.id = '${token_offering_id}'`;
+    }
+
     return baseQuery;
   } catch (error: any) {
     Logger.error(error.message, error);

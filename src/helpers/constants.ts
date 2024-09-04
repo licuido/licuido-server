@@ -144,14 +144,19 @@ export const buildCodes: { [key: string]: number } = {
 
 export const FUND_STATUS_FILTER = {
   OPEN: 1,
-  CLOSE:2,
-  UPCOMING:3,
-  INVESTED:4
-}
+  CLOSE: 2,
+  UPCOMING: 3,
+  INVESTED: 4,
+};
 
 export const ENTITY_INVESTOR_STATUS = {
-  NOT_APPROVED:0,
-  PENDING:1,
-  CONSIDERED:2,
-  APPROVED:3
-}
+  NOT_APPROVED: 0,
+  PENDING: 1,
+  CONSIDERED: 2,
+  APPROVED: 3,
+};
+
+export const TIME_VALUE = {
+  DEFAULT_END_TIME: "23:59:59",
+  DEFAULT_START_TIME: "00:00:00",
+};
