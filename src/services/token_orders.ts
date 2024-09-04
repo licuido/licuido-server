@@ -944,7 +944,7 @@ class TokenOrders {
       ) {
         let currentValue: any = Number(investor_data?.[0]?.current_value);
         currentValue = parseFloat(currentValue) * convertedamount;
-        current_value = parseFloat(currentValue.toFixed(2)) ?? "0.00";
+        current_value = parseFloat(currentValue.toFixed(2));
       }
 
       if (
@@ -953,15 +953,13 @@ class TokenOrders {
       ) {
         let investorInvestment: any = Number(investor_data?.[0]?.investment);
         investorInvestment = parseFloat(investorInvestment) * convertedamount;
-        investment = parseFloat(investorInvestment.toFixed(2)) ?? "0.00";
+        investment = parseFloat(investorInvestment.toFixed(2));
       }
 
       // Calculate percentage change
       if (investment > 0) {
         percentage_change = ((current_value - investment) / investment) * 100;
         percentage_change = parseFloat(percentage_change.toFixed(2));
-      } else {
-        percentage_change = "0.00";
       }
 
       let obj: any = {

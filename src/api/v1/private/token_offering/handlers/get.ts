@@ -67,7 +67,7 @@ export async function GET_ISSUER_TOKENS(
         responseType?.INTERNAL_SERVER_ERROR,
         {
           error: {
-            message: "Only Issuer view issuer tikens",
+            message: "Only Issuer view issuer tokens",
           },
         }
       );
