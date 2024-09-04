@@ -2,6 +2,8 @@ import { token_valuation, token_offering } from "@models";
 import queries from "@queries";
 import { createTokenValuation } from "@types";
 import { sequelize } from "@utils";
+import { TIME_VALUE } from "helpers/constants";
+import moment from "moment";
 
 class TokenValuations {
   /**
@@ -123,9 +125,87 @@ class TokenValuations {
         queries.getTodayTokenValuationPriceQuery(token_offering_id)
       );
 
+      let date: string = from_date
+        ? moment(from_date).subtract(1, "days").format("YYYY-MM-DD")
+        : "";
+
+      let time: string = from_date ? TIME_VALUE?.DEFAULT_END_TIME : "";
+
+      // For Graph , Get before Valuation Price,, If Not Exists
+      const [before_valuation_data]: any[] = await sequelize.query(
+        queries.getBeforeValuationPriceQuery(token_offering_id, date, time)
+      );
+
+      let token_offering_data: any = await token_offering.findOne({
+        attributes: ["start_date"],
+        where: {
+          id: token_offering_id,
+        },
+      });
+
+      token_offering_data = JSON.parse(JSON.stringify(token_offering_data));
+
+      let start_date = from_date
+        ? moment(from_date).format("YYYY-MM-DD")
+        : token_offering_data?.start_date;
+
+      let start_offering_date = token_offering_data?.start_date;
+
+      let end_date: string = moment().format("YYYY-MM-DD");
+
+      // Max Valuation Price
+      let maxValuationPrice = Math.max(
+        result?.[0]?.max_valuation_price ?? 0,
+        today_valuation_price?.[0]?.valuation_price ?? 0,
+        before_valuation_data?.[0]?.valuation_price ?? 0
+      ).toString();
+
+      let final_start_date = "";
+
+      if (start_offering_date) {
+        final_start_date =
+          new Date(start_offering_date) > new Date(start_date)
+            ? start_offering_date
+            : start_date;
+      } else {
+        final_start_date = start_date;
+      }
+
+      if (result && result.length > 0) {
+        if (result?.[0]?.start_date !== start_date) {
+          if (before_valuation_data && before_valuation_data?.length > 0) {
+            result?.unshift({
+              start_date: final_start_date,
+              start_time: TIME_VALUE?.DEFAULT_START_TIME,
+              valuation_price: before_valuation_data?.[0]?.valuation_price,
+              created_at: "",
+              max_valuation_price: "",
+            });
+          }
+        }
+      } else {
+        if (before_valuation_data && before_valuation_data?.length > 0) {
+          result?.push({
+            start_date: final_start_date,
+            start_time: TIME_VALUE?.DEFAULT_START_TIME,
+            valuation_price: before_valuation_data?.[0]?.valuation_price,
+            created_at: "",
+            max_valuation_price: "",
+          });
+
+          result?.push({
+            start_date: end_date,
+            start_time: TIME_VALUE?.DEFAULT_START_TIME,
+            valuation_price: before_valuation_data?.[0]?.valuation_price,
+            created_at: "",
+            max_valuation_price: "",
+          });
+        }
+      }
+
       return {
         valuation_data: result ?? [],
-        max_valuation_price: result?.[0]?.max_valuation_price ?? 0,
+        max_valuation_price: maxValuationPrice,
         today_valuation_price: today_valuation_price?.[0]?.valuation_price ?? 0,
         issuer_entity_id: user_entity_id,
       };
