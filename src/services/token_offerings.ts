@@ -715,7 +715,7 @@ class TokenOfferings {
         where: {
           id: token_id,
         },
-        attributes: ["base_currency", "base_currency_code"],
+        attributes: ["base_currency", "base_currency_code", "offering_price"],
       });
       return JSON.parse(JSON.stringify(token_offer));
     } catch (error) {

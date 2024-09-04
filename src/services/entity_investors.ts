@@ -1,3 +1,4 @@
+import { currencyConvert } from "@helpers";
 import { entity_investor } from "@models";
 import queries from "@queries";
 import { sequelize } from "@utils";
@@ -116,6 +117,8 @@ class EntityInvestor {
     maximum_investment_value?: string;
     request?: any;
     top_five?: boolean;
+    currency?: string;
+    currency_values?: any;
   }): Promise<{
     rows: any[];
     count: number;
@@ -133,7 +136,17 @@ class EntityInvestor {
         maximum_investment_value,
         request,
         top_five,
+        currency,
+        currency_values,
       } = options;
+
+      // Currency Data
+      const currency_data =
+        currency_values?.length > 0
+          ? currency_values
+              .map((cv: any) => `('${cv.currency_code}', ${cv.euro_value})`)
+              .join(",")
+          : "";
 
       // For Data
       const [result]: any[] = await sequelize.query(
@@ -148,30 +161,61 @@ class EntityInvestor {
           minimum_investment_value,
           maximum_investment_value,
           request,
-          top_five
+          top_five,
+          currency_data
         )
       );
 
-      // For Count
-      const [allData]: any[] = await sequelize.query(
-        queries.getInvestorListQuery(
-          null,
-          null,
-          search,
-          status_filters,
-          investor_type_filters,
-          country_filters,
-          user_entity_id,
-          minimum_investment_value,
-          maximum_investment_value,
-          request,
-          top_five
-        )
-      );
+      let finalData = [];
+      let convertedResult = [];
+
+      // Currency Conversion At Amount 1 for Expected Currency
+      let convertedamount = await currencyConvert({
+        from_currency_code: "EUR",
+        to_currency_code: currency ?? "EUR",
+        amount: 1,
+      });
+
+      for (const item of result) {
+        let convertedInvestamount = 0;
+        if (currency && currency !== "EUR") {
+          if (item?.investment && Number(item?.investment) > 0) {
+            convertedInvestamount = item?.investment * convertedamount;
+            convertedInvestamount = parseFloat(
+              convertedInvestamount.toFixed(2)
+            );
+          }
+        } else {
+          const investmentAmount = Number(item?.investment ?? 0);
+          convertedInvestamount = parseFloat(investmentAmount.toFixed(2));
+        }
+
+        convertedResult.push({
+          ...item,
+          investment: convertedInvestamount,
+        });
+      }
+
+      if (
+        minimum_investment_value &&
+        maximum_investment_value &&
+        convertedResult?.length > 0
+      ) {
+        const minValue = Number(minimum_investment_value);
+        const maxValue = Number(maximum_investment_value);
+
+        finalData = convertedResult.filter((item: any) => {
+          const investment = Number(item?.investment);
+          return investment >= minValue && investment <= maxValue;
+        });
+        finalData = finalData.slice(offset * limit, (offset + 1) * limit);
+      } else {
+        finalData = convertedResult;
+      }
 
       return {
-        rows: result,
-        count: allData?.length ?? 0,
+        rows: finalData ?? [],
+        count: result?.length > 0 ? result?.[0]?.total_count : 0,
       };
     } catch (error: any) {
       console.log(error);
@@ -189,6 +233,8 @@ class EntityInvestor {
     maximum_investment_value?: string;
     request?: any;
     top_five?: boolean;
+    currency?: string;
+    currency_values?: any;
   }): Promise<{
     rows: any[];
   }> {
@@ -203,7 +249,17 @@ class EntityInvestor {
         maximum_investment_value,
         request,
         top_five,
+        currency,
+        currency_values,
       } = options;
+
+      // Currency Data
+      const currency_data =
+        currency_values?.length > 0
+          ? currency_values
+              .map((cv: any) => `('${cv.currency_code}', ${cv.euro_value})`)
+              .join(",")
+          : "";
 
       // For All Data
       const [allData]: any[] = await sequelize.query(
@@ -218,12 +274,59 @@ class EntityInvestor {
           minimum_investment_value,
           maximum_investment_value,
           request,
-          top_five
+          top_five,
+          currency_data
         )
       );
 
+      let finalData = [];
+      let convertedResult = [];
+
+      // Currency Conversion At Amount 1 for Expected Currency
+      let convertedamount = await currencyConvert({
+        from_currency_code: "EUR",
+        to_currency_code: currency ?? "EUR",
+        amount: 1,
+      });
+
+      for (const item of allData) {
+        let convertedInvestamount = 0;
+        if (currency && currency !== "EUR") {
+          if (item?.investment && Number(item?.investment) > 0) {
+            convertedInvestamount = item?.investment * convertedamount;
+            convertedInvestamount = parseFloat(
+              convertedInvestamount.toFixed(2)
+            );
+          }
+        } else {
+          const investmentAmount = Number(item?.investment ?? 0);
+          convertedInvestamount = parseFloat(investmentAmount.toFixed(2));
+        }
+
+        convertedResult.push({
+          ...item,
+          investment: convertedInvestamount,
+        });
+      }
+
+      if (
+        minimum_investment_value &&
+        maximum_investment_value &&
+        convertedResult?.length > 0
+      ) {
+        const minValue = Number(minimum_investment_value);
+        const maxValue = Number(maximum_investment_value);
+
+        finalData = convertedResult.filter((item: any) => {
+          const investment = Number(item?.investment);
+          return investment >= minValue && investment <= maxValue;
+        });
+      } else {
+        finalData = convertedResult;
+      }
+
       return {
-        rows: allData,
+        rows: finalData,
       };
     } catch (error: any) {
       console.log(error);

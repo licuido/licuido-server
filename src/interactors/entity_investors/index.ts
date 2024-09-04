@@ -1,4 +1,4 @@
-import { Logger } from "@helpers";
+import { currencyConvert, currencyDetails, Logger } from "@helpers";
 import { EntityInvestor } from "@services";
 import {
   UpsertInvestorQualifyStatusPayload,
@@ -57,7 +57,26 @@ const getInvestorList = async (options: getInvestorListPayload) => {
       maximum_investment_value,
       request,
       top_five,
+      currency,
     } = options;
+
+    let currency_codes: any = await currencyDetails.getTokenCurrencyDetails({
+      issuer_entity_id: user_entity_id,
+    });
+
+    let currency_values = [];
+    for (const item of currency_codes) {
+      let convertedamount = await currencyConvert({
+        from_currency_code: item,
+        to_currency_code: "EUR",
+        amount: 1,
+      });
+
+      currency_values.push({
+        currency_code: item,
+        euro_value: parseFloat(convertedamount.toFixed(2)),
+      });
+    }
 
     // For Investor Status Filters
     const status_filters: any[] =
@@ -102,6 +121,8 @@ const getInvestorList = async (options: getInvestorListPayload) => {
       maximum_investment_value,
       request,
       top_five,
+      currency,
+      currency_values,
     });
 
     return { page: rows, count: rows?.length, totalCount: count };
@@ -122,6 +143,24 @@ const getInvestorListAsCSV = async (options: getInvestorListAsCSVPayload) => {
       minimum_investment_value,
       maximum_investment_value,
     } = options;
+
+    let currency_codes: any = await currencyDetails.getTokenCurrencyDetails({
+      issuer_entity_id: user_entity_id,
+    });
+
+    let currency_values = [];
+    for (const item of currency_codes) {
+      let convertedamount = await currencyConvert({
+        from_currency_code: item,
+        to_currency_code: "EUR",
+        amount: 1,
+      });
+
+      currency_values.push({
+        currency_code: item,
+        euro_value: parseFloat(convertedamount.toFixed(2)),
+      });
+    }
 
     // For Investor Status Filters
     const status_filters: any[] =
@@ -162,6 +201,7 @@ const getInvestorListAsCSV = async (options: getInvestorListAsCSVPayload) => {
       user_entity_id,
       minimum_investment_value,
       maximum_investment_value,
+      currency_values,
     });
 
     return data?.rows;

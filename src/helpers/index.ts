@@ -17,6 +17,7 @@ import investedStatus from "./investorInvestedStatus";
 import currencyConvert from "./currencyConversion";
 import fulfilledStatus from "./orderFulfilledStatus";
 import commentFunction from "./functions";
+import currencyDetails from "./getTokenDetails";
 
 export {
   dateTime,
@@ -41,4 +42,5 @@ export {
   fulfilledStatus,
   commentFunction,
   investedStatus,
+  currencyDetails,
 };

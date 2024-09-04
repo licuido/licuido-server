@@ -13,22 +13,27 @@ export const getAllRedemptionOrderQuery = async (
   end_date?: string,
   token_id?: string
 ) => {
-  // Construct Base Query
-  let baseQuery = await constructBaseQuery(
-    entity_type_id,
-    order_type,
-    offset,
-    limit,
-    user_entity_id,
-    search,
-    status_filters,
-    order_fulfillment_filters,
-    start_date,
-    end_date,
-    token_id
-  );
+  try {
+    // Construct Base Query
+    let baseQuery = await constructBaseQuery(
+      entity_type_id,
+      order_type,
+      offset,
+      limit,
+      user_entity_id,
+      search,
+      status_filters,
+      order_fulfillment_filters,
+      start_date,
+      end_date,
+      token_id
+    );
 
-  return baseQuery;
+    return baseQuery;
+  } catch (error: any) {
+    Logger.error(error.message, error);
+    throw error;
+  }
 };
 
 const constructBaseQuery = async (
@@ -53,8 +58,6 @@ const constructBaseQuery = async (
     let fulfilledByCheck = "";
     let orderFulfillmentFilter = ``;
     let tokenFilterForIssuer = ``;
-
-    console.log(entity_type_id, "user_entity_id");
 
     /* ------------------  For Issuer  ------------------ */
     if (entity_type_id === 3) {
@@ -181,14 +184,14 @@ const constructBaseQuery = async (
           tor.ordered_tokens AS token_ordered,
           tor.price_per_token AS token_price,
           tor.currency AS investment_currency,
-        tor.currency_code AS investment_currency_symbol,
+          tor.currency_code AS investment_currency_symbol,
           tor.created_at AS token_price_time,
-          tor.net_investment_value AS amount_to_receive,
+          tor.net_investment_value AS amount_to_pay,
           tor.is_active AS is_active,
           tor.token_offering_id AS token_offering_id,
           ast.url AS token_logo_url,
           tof.base_currency_code AS token_base_currency,
-        tof.base_currency AS token_base_currency_symbol,
+          tof.base_currency AS token_base_currency_symbol,
           false AS is_burn_enabled
           FROM
             token_orders AS tor
@@ -274,9 +277,9 @@ const constructBaseQuery = async (
             tor.token_offering_id AS token_offering_id,
             tast.url AS token_logo_url,
             tof.base_currency_code AS token_base_currency,
-        tof.base_currency AS token_base_currency_symbol,
-        tor.currency AS investment_currency,
-        tor.currency_code AS investment_currency_symbol,
+            tof.base_currency AS token_base_currency_symbol,
+            tor.currency AS investment_currency,
+            tor.currency_code AS investment_currency_symbol,
             tor.fulfilled_by AS fulfilled_by,
             CASE
               WHEN tor.fulfilled_by = '${fulfilledByCheck}' THEN true

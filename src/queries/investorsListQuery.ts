@@ -93,7 +93,7 @@ const constructBaseQuery = async (
       // For Token Offering Filter
       if (token_id) {
         tokenFilterForIssuer = ` AND tor.token_offering_id = '${token_id}'`;
-        mainQueryFilter = ` AND status_id IN (4)`;
+        // mainQueryFilter = ` AND status_id IN (4)`;
       }
 
       // For Investor Type Filter
@@ -175,11 +175,11 @@ const constructBaseQuery = async (
       eni.is_active AS is_active
     FROM
       user_entities as ue
-      INNER JOIN user_profiles AS up ON ue.user_profile_id = up.id
-      INNER JOIN entities AS en ON up.id = en.contact_profile_id
+      LEFT JOIN user_profiles AS up ON ue.user_profile_id = up.id
+      LEFT JOIN entities AS en ON up.id = en.contact_profile_id
       LEFT JOIN entity_investors AS eni ON en.id = eni.investor_entity_id
-      INNER JOIN master_investor_types AS mit ON eni.investor_type_id = mit.id
-      INNER JOIN master_entity_investor_status AS meis ON eni.status_id = meis.id
+      LEFT JOIN master_investor_types AS mit ON eni.investor_type_id = mit.id
+      LEFT JOIN master_entity_investor_status AS meis ON eni.status_id = meis.id
       LEFT JOIN master_countries AS mc ON en.country_id = mc.id
       LEFT JOIN assets AS inv_ast ON en.logo_asset_id = inv_ast.id
       LEFT JOIN customer_wallets AS cw ON en.id = cw.investor_entity_id
@@ -321,11 +321,11 @@ ${limitStatment};`;
       eni.is_active AS is_active
     FROM
       user_entities as ue
-      INNER JOIN user_profiles AS up ON ue.user_profile_id = up.id
-      INNER JOIN entities AS en ON up.id = en.contact_profile_id
+      LEFT JOIN user_profiles AS up ON ue.user_profile_id = up.id
+      LEFT JOIN entities AS en ON up.id = en.contact_profile_id
       LEFT JOIN entity_investors AS eni ON en.id = eni.investor_entity_id
-      INNER JOIN master_investor_types AS mit ON eni.investor_type_id = mit.id
-      INNER JOIN master_entity_investor_status AS meis ON eni.status_id = meis.id
+      LEFT JOIN master_investor_types AS mit ON eni.investor_type_id = mit.id
+      LEFT JOIN master_entity_investor_status AS meis ON eni.status_id = meis.id
       LEFT JOIN master_countries AS mc ON en.country_id = mc.id
       LEFT JOIN assets AS inv_ast ON en.logo_asset_id = inv_ast.id
       LEFT JOIN customer_wallets AS cw ON en.id = cw.investor_entity_id

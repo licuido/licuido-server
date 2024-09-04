@@ -20,4 +20,5 @@ export const successCustomMessage = {
   paymentRejected: "Token Order Payment Rejected Successflly",
   paymentSend: "Token Order Payment Send Successfully",
   orderRejected: "Token Order Rejected Successfully",
+  amountMismatch: "Amount Mismatch",
 };

@@ -720,6 +720,13 @@ const findToken = async ({
       ),
     };
 
+    // If Valuation Price Exists , Else Token Offering Price Is Valuation Price
+
+    finalData["valuation_price"] = parseData?.token_valuations?.[0]
+      ?.valuation_price
+      ? parseData?.token_valuations?.[0]?.valuation_price
+      : parseData?.offering_price;
+
     return {
       success: true,
       message: "Token Fetched Successfully",

@@ -1,3 +1,5 @@
+// import { currencyConvert } from "@helpers";
+import { currencyConvert } from "@helpers";
 import {
   customer_wallet,
   entity,
@@ -609,22 +611,105 @@ class TokenOrders {
 
   static async getDashboard({
     user_entity_id,
+    currency,
+    currency_values,
   }: {
     user_entity_id?: string;
+    currency?: string;
+    currency_values?: any;
   }): Promise<any> {
     try {
+      // Currency Data
+      const currency_data =
+        currency_values?.length > 0
+          ? currency_values
+              .map((cv: any) => `('${cv.currency_code}', ${cv.euro_value})`)
+              .join(",")
+          : "";
+
       // For Total Investment Data
       const [total_investment_result]: any[] = await sequelize.query(
-        queries.getTotalInvestmentQuery(user_entity_id)
+        queries.getTotalInvestmentQuery(user_entity_id, currency_data)
       );
+
       // For Circulating Supply Data
       const [circulating_supply_result]: any[] = await sequelize.query(
-        queries.getCirculatingSupplyQuery(user_entity_id)
+        queries.getCirculatingSupplyQuery(user_entity_id, currency_data)
       );
       // For Pending Redemption Data
       const [pending_redemption_result]: any[] = await sequelize.query(
-        queries.getPendingRedemptionQuery(user_entity_id)
+        queries.getPendingRedemptionQuery(user_entity_id, currency_data)
       );
+
+      let overall_investment = 0;
+      let circulating_supply_amount = 0;
+      let pending_redemption_amount = 0;
+
+      // Currency Conversion At Amount 1 for Expected Currency
+      let convertedamount = await currencyConvert({
+        from_currency_code: "EUR",
+        to_currency_code: currency ?? "EUR",
+        amount: 1,
+      });
+
+      // Currency Conversion For Dashboard Data - PortFolio Issuer
+      /* For Total Investment */
+      if (
+        total_investment_result &&
+        total_investment_result?.length > 0 &&
+        total_investment_result[0]?.overall_investment &&
+        total_investment_result[0]?.overall_investment > 0
+      ) {
+        const investmentAmount = Number(
+          total_investment_result[0]?.overall_investment ?? 0
+        );
+        if (currency && currency !== "EUR") {
+          overall_investment = investmentAmount * convertedamount;
+          overall_investment = parseFloat(overall_investment.toFixed(2));
+        } else {
+          overall_investment = parseFloat(investmentAmount.toFixed(2));
+        }
+      }
+
+      /* For Circulating Supply */
+      if (
+        circulating_supply_result &&
+        circulating_supply_result?.length > 0 &&
+        circulating_supply_result[0]?.circulating_supply_amount &&
+        circulating_supply_result[0]?.circulating_supply_amount > 0
+      ) {
+        const circulatingSupplyAmount = Number(
+          circulating_supply_result[0]?.circulating_supply_amount ?? 0
+        );
+        if (currency && currency !== "EUR") {
+          circulating_supply_amount = circulatingSupplyAmount * convertedamount;
+          circulating_supply_amount = parseFloat(overall_investment.toFixed(2));
+        } else {
+          circulating_supply_amount = parseFloat(
+            circulatingSupplyAmount.toFixed(2)
+          );
+        }
+      }
+
+      /* For Pending Redemption */
+      if (
+        pending_redemption_result &&
+        pending_redemption_result?.length > 0 &&
+        pending_redemption_result[0]?.pending_redemption_amount &&
+        pending_redemption_result[0]?.pending_redemption_amount > 0
+      ) {
+        const pendingRedemptionAmount = Number(
+          pending_redemption_result[0]?.pending_redemption_amount ?? 0
+        );
+        if (currency && currency !== "EUR") {
+          pending_redemption_amount = pendingRedemptionAmount * convertedamount;
+          pending_redemption_amount = parseFloat(overall_investment.toFixed(2));
+        } else {
+          pending_redemption_amount = parseFloat(
+            pendingRedemptionAmount.toFixed(2)
+          );
+        }
+      }
 
       const obj: any = {};
 
@@ -638,44 +723,63 @@ class TokenOrders {
           ? total_investment_result[0]?.issuer_logo_url
           : "";
 
-      obj["total_investment"] =
-        total_investment_result &&
-        total_investment_result[0]?.overall_investment
-          ? total_investment_result[0]?.overall_investment.toString()
-          : "0.00";
-      obj["percentage_change_from_yesterday"] =
-        total_investment_result &&
-        total_investment_result[0]?.percentage_change_from_yesterday
-          ? total_investment_result[0]?.percentage_change_from_yesterday.toString()
-          : "0";
-      obj["circulating_supply"] =
-        circulating_supply_result &&
-        circulating_supply_result[0]?.circulating_supply
-          ? circulating_supply_result[0]?.circulating_supply.toString()
-          : "0";
       obj["circulating_supply_amount"] =
         circulating_supply_result &&
         circulating_supply_result[0]?.circulating_supply_amount
-          ? circulating_supply_result[0]?.circulating_supply_amount.toString()
+          ? circulating_supply_amount.toFixed(2)
           : "0.00";
-      obj["pending_redemption"] =
-        pending_redemption_result &&
-        pending_redemption_result[0]?.pending_redemption
-          ? pending_redemption_result[0]?.pending_redemption.toString()
-          : "0";
+
       obj["pending_redemption_amount"] =
         pending_redemption_result &&
         pending_redemption_result[0]?.pending_redemption_amount
-          ? pending_redemption_result[0]?.pending_redemption_amount.toString()
+          ? pending_redemption_amount.toFixed(2)
           : "0.00";
-      obj["available_tokens"] = (
-        parseInt(obj["circulating_supply"]) -
-        parseInt(obj["pending_redemption"])
-      ).toString();
-      obj["available_tokens_amount"] = (
-        parseInt(obj["circulating_supply_amount"]) -
-        parseInt(obj["pending_redemption_amount"])
-      ).toString();
+
+      obj["total_investment"] =
+        total_investment_result && overall_investment
+          ? overall_investment.toFixed(2)
+          : "0.00";
+
+      obj["percentage_change_from_yesterday"] =
+        total_investment_result &&
+        total_investment_result[0]?.percentage_change_from_yesterday
+          ? parseFloat(
+              total_investment_result[0]?.percentage_change_from_yesterday
+            ).toFixed(2)
+          : "0.00";
+
+      obj["circulating_supply"] =
+        circulating_supply_result &&
+        circulating_supply_result[0]?.circulating_supply
+          ? parseFloat(
+              circulating_supply_result[0]?.circulating_supply
+            ).toFixed(2)
+          : "0.00";
+
+      obj["pending_redemption"] =
+        pending_redemption_result &&
+        pending_redemption_result[0]?.pending_redemption
+          ? parseFloat(
+              pending_redemption_result[0]?.pending_redemption
+            ).toFixed(2)
+          : "0.00";
+
+      obj["available_tokens"] =
+        parseFloat(
+          (
+            parseFloat(obj["circulating_supply"]) -
+            parseFloat(obj["pending_redemption"])
+          ).toFixed(2)
+        ).toFixed(2) ?? "0.00";
+
+      obj["available_tokens_amount"] =
+        parseFloat(
+          (
+            parseFloat(obj["circulating_supply_amount"]) -
+            parseFloat(obj["pending_redemption_amount"])
+          ).toFixed(2)
+        ).toFixed(2) ?? "0.00";
+
       return obj;
     } catch (error) {
       throw error;
@@ -800,16 +904,71 @@ class TokenOrders {
 
   static async getInvestorDashboard({
     user_entity_id,
+    currency,
+    currency_values,
   }: {
     user_entity_id?: string;
+    currency?: string;
+    currency_values?: any;
   }): Promise<any> {
     try {
+      // Currency Data
+      const currency_data =
+        currency_values?.length > 0
+          ? currency_values
+              .map((cv: any) => `('${cv.currency_code}', ${cv.euro_value})`)
+              .join(",")
+          : "";
+
       // For Investor Dashboard
       const [investor_data]: any[] = await sequelize.query(
-        queries.getInvestorDashboardQuery(user_entity_id)
+        queries.getInvestorDashboardQuery(user_entity_id, currency_data)
       );
 
-      let obj: any = investor_data && investor_data?.[0];
+      // Currency Conversion At Amount 1 for Expected Currency
+      let convertedamount = await currencyConvert({
+        from_currency_code: "EUR",
+        to_currency_code: currency ?? "EUR",
+        amount: 1,
+      });
+
+      let current_value: any = 0;
+      let investment: any = 0;
+      let percentage_change: any = 0;
+
+      if (
+        investor_data &&
+        investor_data?.length > 0 &&
+        investor_data?.[0]?.current_value &&
+        parseFloat(investor_data?.[0]?.current_value) > 0
+      ) {
+        let currentValue: any = Number(investor_data?.[0]?.current_value);
+        currentValue = parseFloat(currentValue) * convertedamount;
+        current_value = parseFloat(currentValue.toFixed(2)) ?? "0.00";
+      }
+
+      if (
+        investor_data?.[0]?.investment &&
+        parseFloat(investor_data?.[0]?.investment) > 0
+      ) {
+        let investorInvestment: any = Number(investor_data?.[0]?.investment);
+        investorInvestment = parseFloat(investorInvestment) * convertedamount;
+        investment = parseFloat(investorInvestment.toFixed(2)) ?? "0.00";
+      }
+
+      // Calculate percentage change
+      if (investment > 0) {
+        percentage_change = ((current_value - investment) / investment) * 100;
+        percentage_change = parseFloat(percentage_change.toFixed(2));
+      } else {
+        percentage_change = "0.00";
+      }
+
+      let obj: any = {
+        current_value: current_value.toFixed(2),
+        investment: investment.toFixed(2),
+        percentage_change: percentage_change.toFixed(2),
+      };
 
       return obj;
     } catch (error) {
@@ -949,6 +1108,7 @@ class TokenOrders {
 
       // For Total Investors
       const calculateTotalInvestors: any = (period: any) => {
+        if (!period) return 0;
         return period.reduce((acc: any, investor: any) => {
           return acc + parseFloat(investor.investor_count);
         }, 0);
@@ -956,6 +1116,7 @@ class TokenOrders {
 
       // For Total Investment
       const calculateTotalInvestment: any = (period: any) => {
+        if (!period) return 0;
         return period.reduce((acc: any, investment: any) => {
           return acc + parseFloat(investment.net_investment);
         }, 0);
@@ -977,6 +1138,7 @@ class TokenOrders {
           await sequelize.query(
             queries.getByNoOfInvestorsQuery(token_offering_id, start_date, null)
           );
+
         obj["investor_country_data"] =
           investors_result_in_last_seven_days || [];
 
@@ -985,6 +1147,7 @@ class TokenOrders {
         )
           ? calculateTotalInvestors(investors_result_in_last_seven_days)
           : 0;
+
         const total_investors_before_seven_days = Array.isArray(
           investors_result_before_seven_days
         )
@@ -997,10 +1160,12 @@ class TokenOrders {
           investors_result_in_last_seven_days?.length || 0
         ).toString();
 
+        const total_investors_till_now =
+          total_investors_last_seven_days + total_investors_before_seven_days;
+
         obj["change_percentage"] = total_investors_before_seven_days
           ? (
-              ((total_investors_last_seven_days -
-                total_investors_before_seven_days) /
+              ((total_investors_till_now - total_investors_before_seven_days) /
                 total_investors_before_seven_days) *
               100
             ).toString()
@@ -1048,9 +1213,12 @@ class TokenOrders {
           calculateTotalInvestors(investment_result_in_last_seven_days) || 0
         ).toString();
 
+        const total_investments_till_now =
+          total_investment_last_seven_days + total_investment_before_seven_days;
+
         obj["change_percentage"] = total_investment_before_seven_days
           ? (
-              ((total_investment_last_seven_days -
+              ((total_investments_till_now -
                 total_investment_before_seven_days) /
                 total_investment_before_seven_days) *
               100
@@ -1116,7 +1284,7 @@ class TokenOrders {
         where: {
           id: token_order_id,
         },
-        attributes: ["currency", "currency_code"],
+        attributes: ["currency", "currency_code", "net_investment_value"],
         include: [
           {
             model: token_offering,

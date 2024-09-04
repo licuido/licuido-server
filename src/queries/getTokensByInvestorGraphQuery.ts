@@ -25,6 +25,8 @@ export const getTokensByInvestorGraphQuery = (
       tof.id,
       tof.name,
       tof.symbol AS token_symbol,
+      tof.base_currency_code AS investment_currency,
+      tof.base_currency AS investment_currency_code,
       COALESCE(
         (
           SELECT
@@ -44,26 +46,7 @@ export const getTokensByInvestorGraphQuery = (
         ), 0
       ) AS total_supply,
       COALESCE(
-        (
-          SELECT
-            tv.valuation_price_in_euro
-          FROM
-            token_valuations AS tv
-          WHERE
-            tv.token_offering_id = tof.id
-            AND (
-              tv.start_date < CURRENT_DATE
-              OR (
-                tv.start_date = CURRENT_DATE
-                AND tv.start_time <= CURRENT_TIME
-              )
-            )
-          ORDER BY
-            tv.start_date DESC,
-            tv.start_time DESC
-          LIMIT
-            1
-        ), tof.offering_price_in_euro
+        tof.offering_price, 0
       ) AS valuation_price
     FROM
       token_offerings AS tof
@@ -73,12 +56,11 @@ export const getTokensByInvestorGraphQuery = (
       AND tof.status_id = 1
       AND tof.offer_status_id = 1
     GROUP BY
-      tof.id,
-      tof.name
+      tof.id
   )
 SELECT
   *,
-  COALESCE(total_supply * valuation_price, 0) AS token_holdings_in_euro
+  COALESCE(total_supply * valuation_price, 0) AS token_holdings
 FROM
   vas_tbi
 ORDER BY
