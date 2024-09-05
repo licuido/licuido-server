@@ -905,70 +905,100 @@ class TokenOrders {
   static async getInvestorDashboard({
     user_entity_id,
     currency,
-    currency_values,
   }: {
     user_entity_id?: string;
     currency?: string;
-    currency_values?: any;
   }): Promise<any> {
     try {
-      // Currency Data
-      const currency_data =
-        currency_values?.length > 0
-          ? currency_values
-              .map((cv: any) => `('${cv.currency_code}', ${cv.euro_value})`)
-              .join(",")
-          : "";
-
       // For Investor Dashboard
       const [investor_data]: any[] = await sequelize.query(
-        queries.getInvestorDashboardQuery(user_entity_id, currency_data)
+        queries.getInvestorDashboardQuery(user_entity_id)
       );
 
-      // Currency Conversion At Amount 1 for Expected Currency
-      let convertedamount = await currencyConvert({
-        from_currency_code: "EUR",
-        to_currency_code: currency ?? "EUR",
-        amount: 1,
-      });
-
-      let current_value: any = 0;
-      let investment: any = 0;
-      let percentage_change: any = 0;
-
-      if (
-        investor_data &&
-        investor_data?.length > 0 &&
-        investor_data?.[0]?.current_value &&
-        parseFloat(investor_data?.[0]?.current_value) > 0
-      ) {
-        let currentValue: any = Number(investor_data?.[0]?.current_value);
-        currentValue = parseFloat(currentValue) * convertedamount;
-        current_value = parseFloat(currentValue.toFixed(2));
-      }
-
-      if (
-        investor_data?.[0]?.investment &&
-        parseFloat(investor_data?.[0]?.investment) > 0
-      ) {
-        let investorInvestment: any = Number(investor_data?.[0]?.investment);
-        investorInvestment = parseFloat(investorInvestment) * convertedamount;
-        investment = parseFloat(investorInvestment.toFixed(2));
-      }
-
-      // Calculate percentage change
-      if (investment > 0) {
-        percentage_change = ((current_value - investment) / investment) * 100;
-        percentage_change = parseFloat(percentage_change.toFixed(2));
-      }
-
-      let obj: any = {
-        current_value: current_value.toFixed(2),
-        investment: investment.toFixed(2),
-        percentage_change: percentage_change.toFixed(2),
+      let object: any = {
+        current_value: "0.00",
+        investment: "0.00",
+        percentage_change: "0.00",
       };
 
-      return obj;
+      if (investor_data && investor_data?.length > 0) {
+        const investmentResult: any = Object.values(
+          investor_data.reduce((acc: any, curr: any) => {
+            const { base_currency, investment } = curr;
+
+            if (!acc[base_currency]) {
+              acc[base_currency] = { base_currency, investment: 0 };
+            }
+
+            acc[base_currency].investment += parseFloat(investment);
+
+            return acc;
+          }, {})
+        );
+
+        const valuationResult: any = Object.values(
+          investor_data.reduce((acc: any, curr: any) => {
+            const { base_currency, valuation_price, sender_balance } = curr;
+
+            const validSenderBalance = parseFloat(sender_balance) || 0;
+            const validValuationPrice = parseFloat(valuation_price) || 0;
+
+            if (!acc[base_currency]) {
+              acc[base_currency] = { base_currency, valuation_price: 0 };
+            }
+
+            acc[base_currency].valuation_price +=
+              validSenderBalance * validValuationPrice;
+
+            return acc;
+          }, {})
+        );
+
+        let investment_value: any = 0;
+        let valuation_value: any = 0;
+
+        if (investmentResult.length > 0) {
+          for (let invData of investmentResult) {
+            if (invData?.investment && Number(invData?.investment) > 0) {
+              const convertedAmount = await currencyConvert({
+                from_currency_code: invData?.base_currency,
+                to_currency_code: currency,
+                amount: Number(invData?.investment),
+              });
+
+              investment_value = investment_value + convertedAmount;
+            }
+          }
+        }
+
+        if (valuationResult.length > 0) {
+          for (let valData of valuationResult) {
+            if (
+              valData?.valuation_price &&
+              Number(valData?.valuation_price) > 0
+            ) {
+              const convertedAmount = await currencyConvert({
+                from_currency_code: valData?.base_currency,
+                to_currency_code: currency,
+                amount: Number(valData?.valuation_price),
+              });
+
+              valuation_value = valuation_value + convertedAmount;
+            }
+          }
+        }
+
+        let percentage =
+          ((valuation_value - investment_value) / investment_value) * 100;
+
+        object = {
+          current_value: investment_value.toFixed(2),
+          investment: valuation_value.toFixed(2),
+          percentage_change: percentage.toFixed(2),
+        };
+      }
+
+      return object;
     } catch (error) {
       throw error;
     }

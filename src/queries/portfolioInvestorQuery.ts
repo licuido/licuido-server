@@ -227,30 +227,17 @@ ORDER BY
   }
 };
 
-export const getInvestorDashboardQuery = (
-  user_entity_id?: string,
-  currency_data?: any
-) => {
+export const getInvestorDashboardQuery = (user_entity_id?: string) => {
   try {
     /* Get Investor DashBoard  */
 
     /* In Where Condition
           
            */
-
-    // Currency Conversion table Sample
-    let currencyConversionTable = ``;
-    if (currency_data && currency_data.trim() !== "") {
-      currencyConversionTable = `
-    currency_conversion AS (
-      SELECT * FROM (VALUES ${currency_data}) AS cc(currency_code, euro_value)
-    ),
-  `;
-    }
+    // Currency table Sample
 
     /* For Data */
     let baseQuery = `WITH 
-  ${currencyConversionTable} 
   last_transaction AS (
     SELECT
       tor.token_offering_id,
@@ -282,20 +269,17 @@ export const getInvestorDashboardQuery = (
   vas_inv AS(
     SELECT
       tor.token_offering_id,
+      tof.base_currency,
       SUM(
         CASE
           WHEN tor.type = 'subscription'
-          AND tor.status_id = 5 THEN COALESCE(tor.ordered_tokens * tof.offering_price * ${
-            currency_data && currency_data.trim() !== "" ? "cc.euro_value" : 1
-          }, 0)
+          AND tor.status_id = 5 THEN COALESCE(tor.ordered_tokens * tof.offering_price, 0)
           ELSE 0
         END
       ) - SUM(
         CASE
           WHEN tor.type = 'redemption'
-          AND tor.status_id = 11 THEN COALESCE(tor.ordered_tokens * tof.offering_price * ${
-            currency_data && currency_data.trim() !== "" ? "cc.euro_value" : 1
-          }, 0)
+          AND tor.status_id = 11 THEN COALESCE(tor.ordered_tokens * tof.offering_price, 0)
           ELSE 0
         END
       ) AS investment,
@@ -320,30 +304,22 @@ export const getInvestorDashboardQuery = (
           LIMIT
             1
         ), tof.offering_price
-      ) * ${
-        currency_data && currency_data.trim() !== "" ? "cc.euro_value" : 1
-      } AS valuation_price,
+      ) AS valuation_price,
       token_status.sender_balance AS sender_balance
     FROM
       token_orders AS tor
       INNER JOIN token_offerings AS tof ON tor.token_offering_id = tof.id
       LEFT JOIN summed_balances AS token_status ON tof.id = token_status.token_offering_id 
-       ${
-         currency_data && currency_data.trim() !== ""
-           ? "LEFT JOIN currency_conversion AS cc ON tof.base_currency = cc.currency_code"
-           : ""
-       }
     WHERE
       tor.receiver_entity_id = '${user_entity_id}'
     GROUP BY
       tor.token_offering_id,
       tof.offering_price,
-      token_status.sender_balance
-      ${currency_data && currency_data.trim() !== "" ? ", cc.euro_value" : ""}
+      token_status.sender_balance,
+      tof.base_currency
   )
 SELECT
-  SUM(COALESCE(investment, 0)) AS investment,
-  SUM(COALESCE(sender_balance * valuation_price, 0)) AS current_value
+  *
 FROM
   vas_inv`;
 
