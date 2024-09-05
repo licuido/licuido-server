@@ -21,6 +21,10 @@ async function currencyConvert({
   amount?: any;
 }): Promise<any> {
   try {
+    if (from_currency_code === to_currency_code) {
+      return amount;
+    }
+
     let currencyConverter = new CC({
       from: from_currency_code,
       to: to_currency_code,
@@ -31,7 +35,7 @@ async function currencyConvert({
     const response = await currencyConverter.convert(amount);
     return response;
   } catch (error: any) {
-    console.log(error);
+    console.log(error, "Error At Currency Conversion");
     throw new Error(error.message);
   }
 }

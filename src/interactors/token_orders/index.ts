@@ -1,6 +1,7 @@
 import {
   Logger,
   currencyConvert,
+  currencyDetails,
   dateTime,
   errorCustomMessage,
   fulfilledStatus,
@@ -92,22 +93,32 @@ const createTokenSubscriptionOrders = async (
           issuer_entity_id,
           receiver_entity_id: user_entity_id,
           token_offering_id,
-          currency,
-          currency_code,
+          currency:
+            currency === tokenOffering?.base_currency_code
+              ? currency
+              : tokenOffering?.base_currency_code,
+          currency_code:
+            currency_code === tokenOffering?.base_currency
+              ? currency_code
+              : tokenOffering?.base_currency,
           ordered_tokens,
           price_per_token,
           net_investment_value,
           fee,
           total_paid,
           payment_reference,
+          default_currency: default_currency,
+          default_currency_code: default_currency_code,
+          net_investment_value_in_euro: parseFloat(
+            conversionResponse.toFixed(2)
+          ),
+          net_investment_value_by_token: parseFloat(
+            tokenconversionResponse.toFixed(2)
+          ),
           created_by: user_profile_id,
           is_active: true,
           status_id: 1, // Pending Order
-          default_currency: default_currency,
-          default_currency_code: default_currency_code,
-          net_investment_value_in_euro: conversionResponse,
           fulfilled_by: isFulfilledBylicuido ? "admin" : "issuer",
-          net_investment_value_by_token: Math.round(tokenconversionResponse),
         },
         transaction
       );
@@ -265,10 +276,12 @@ const createTokenRedemptionOrders = async (
 
     const default_currency = "€";
     const default_currency_code = "EUR";
+    const amount = ordered_tokens * tokenOffering?.offering_price;
+
     const conversionResponse = await currencyConvert({
       from_currency_code: currency_code,
       to_currency_code: default_currency_code,
-      amount: net_investment_value,
+      amount: amount,
     });
 
     // To check order fulfilled by licuido or issuer
@@ -286,8 +299,14 @@ const createTokenRedemptionOrders = async (
           issuer_entity_id,
           receiver_entity_id: user_entity_id,
           token_offering_id,
-          currency,
-          currency_code,
+          currency:
+            currency === tokenOffering?.base_currency_code
+              ? currency
+              : tokenOffering?.base_currency_code,
+          currency_code:
+            currency_code === tokenOffering?.base_currency
+              ? currency_code
+              : tokenOffering?.base_currency,
           ordered_tokens,
           price_per_token,
           net_investment_value,
@@ -298,11 +317,15 @@ const createTokenRedemptionOrders = async (
           bank_account_name,
           swift_bic_no,
           iban_no,
+          fulfilled_by: isFulfilledBylicuido ? "admin" : "issuer",
           default_currency: default_currency,
           default_currency_code: default_currency_code,
-          net_investment_value_in_euro: conversionResponse,
-          fulfilled_by: isFulfilledBylicuido ? "admin" : "issuer",
-          net_investment_value_by_token: Math.round(tokenconversionResponse),
+          net_investment_value_in_euro: parseFloat(
+            conversionResponse.toFixed(2)
+          ),
+          net_investment_value_by_token: parseFloat(
+            tokenconversionResponse.toFixed(2)
+          ),
         },
         transaction
       );
@@ -888,17 +911,23 @@ const confirmPayment = async ({
 
     const order = await TokenOrders.getOrder({ token_order_id: id });
 
-    const euroConvert = await currencyConvert({
-      from_currency_code: order?.currency_code,
-      to_currency_code: "EUR",
-      amount: Number(received_payment),
-    });
+    // const euroConvert = await currencyConvert({
+    //   from_currency_code: order?.currency_code,
+    //   to_currency_code: "EUR",
+    //   amount: Number(received_payment),
+    // });
 
-    const tokenConvert = await currencyConvert({
-      from_currency_code: order?.currency_code,
-      to_currency_code: order?.token_offering?.base_currency,
-      amount: Number(received_payment),
-    });
+    // const tokenConvert = await currencyConvert({
+    //   from_currency_code: order?.currency_code,
+    //   to_currency_code: order?.token_offering?.base_currency,
+    //   amount: Number(received_payment),
+    // });
+
+    if (received_payment !== order?.net_investment_value) {
+      return {
+        message: successCustomMessage?.amountMismatch,
+      };
+    }
 
     await TokenOrders.update(
       {
@@ -909,10 +938,8 @@ const confirmPayment = async ({
               : status_id === 8
               ? status_id
               : 9, // 3 --> Payment Confirmed | 8 --> Rejected By Issuer | 9 --> Request to mint
-          recived_amount_in_euro:
-            status_id === 3 ? Math.round(euroConvert) : undefined,
           recived_amount_by_token:
-            status_id === 3 ? Math.round(tokenConvert) : undefined,
+            status_id === 3 ? received_payment : undefined,
           is_payment_confirmed: status_id === 3 ? true : false,
           updated_by: user_profile_id,
         },
@@ -994,13 +1021,11 @@ const sendPayment = async ({
   amount_to_pay?: number;
   payment_reference?: string;
 }) => {
-  const order = await TokenOrders.getOrder({ token_order_id: id });
-
-  const euroConvert = await currencyConvert({
-    from_currency_code: order?.currency_code,
-    to_currency_code: "EUR",
-    amount: Number(amount_to_pay),
-  });
+  // const euroConvert = await currencyConvert({
+  //   from_currency_code: order?.currency_code,
+  //   to_currency_code: "EUR",
+  //   amount: Number(amount_to_pay),
+  // });
 
   // Update Send Payment / Reject Order Payment Status
   const result: any = await sequelize.transaction(async (transaction) => {
@@ -1014,8 +1039,8 @@ const sendPayment = async ({
               : status_id === 8
               ? status_id
               : 10, // 3 --> Payment Sent | 8 --> Rejected By Issuer | 10 --> Request to burn
-          recived_amount_in_euro: status_id === 4 ? euroConvert : undefined,
           payment_reference: status_id === 4 ? payment_reference : undefined,
+          recived_amount_by_token: status_id === 4 ? amount_to_pay : undefined,
           is_payment_confirmed: status_id === 4 ? true : false,
           updated_by: user_profile_id,
         },
@@ -1137,10 +1162,29 @@ const getDashboard = async ({
   user_entity_id?: string;
   currency: string;
 }) => {
+  let currency_codes: any = await currencyDetails.getTokenCurrencyDetails({
+    issuer_entity_id: user_entity_id,
+  });
+
+  let currency_values = [];
+  for (const item of currency_codes) {
+    let convertedamount = await currencyConvert({
+      from_currency_code: item,
+      to_currency_code: "EUR",
+      amount: 1,
+    });
+
+    currency_values.push({
+      currency_code: item,
+      euro_value: parseFloat(convertedamount.toFixed(2)),
+    });
+  }
+
   // Get Dashboard
   const result: any = await TokenOrders.getDashboard({
     user_entity_id,
     currency,
+    currency_values,
   });
 
   return result;
@@ -1245,10 +1289,31 @@ const getInvestorDashboard = async ({
   user_entity_id?: string;
   currency?: string;
 }) => {
+  // Get Investor Invested Token Currencies & Values
+  let currency_codes: any =
+    await currencyDetails.getInvestorTokenCurrencyDetails({
+      receiver_entity_id: user_entity_id,
+    });
+
+  let currency_values = [];
+  for (const item of currency_codes) {
+    let convertedamount = await currencyConvert({
+      from_currency_code: item,
+      to_currency_code: "EUR",
+      amount: 1,
+    });
+
+    currency_values.push({
+      currency_code: item,
+      euro_value: parseFloat(convertedamount.toFixed(2)),
+    });
+  }
+
   // Get Investor Dashboard
   const result: any = await TokenOrders.getInvestorDashboard({
     user_entity_id,
     currency,
+    currency_values,
   });
 
   return result;
@@ -1445,10 +1510,12 @@ const getInvestorlast3MonthsPerformance = async ({
   user_entity_id,
   from_date,
   to_date,
+  currency,
 }: {
   user_entity_id?: string;
   from_date?: string;
   to_date?: string;
+  currency?: string;
 }) => {
   // Get Valuation Price Data
 
@@ -1487,8 +1554,29 @@ const getInvestorlast3MonthsPerformance = async ({
   });
   graphData = mergeValuesByDate(dates);
 
+  let currency_codes: any =
+    await currencyDetails.getInvestorTokenCurrencyDetails({
+      receiver_entity_id: user_entity_id,
+    });
+
+  let currency_values = [];
+  for (const item of currency_codes) {
+    let convertedamount = await currencyConvert({
+      from_currency_code: item,
+      to_currency_code: "EUR",
+      amount: 1,
+    });
+
+    currency_values.push({
+      currency_code: item,
+      euro_value: parseFloat(convertedamount.toFixed(2)),
+    });
+  }
+
   let totalInvestment: any = await TokenOrders.getInvestorDashboard({
     user_entity_id,
+    currency,
+    currency_values,
   });
 
   return {

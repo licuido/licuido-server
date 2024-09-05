@@ -1,24 +1,27 @@
+import { Logger } from "@helpers";
+
 export const getTokensHoldingsGraphQuery = (
   from_date?: string,
   to_date?: string,
   user_entity_id?: string
 ) => {
-  /* Get All Token Holdings Graph Query  */
+  try {
+    /* Get All Token Holdings Graph Query  */
 
-  /* In Where Condition
+    /* In Where Condition
            ---- receiver_entity_id = ""
            ---- status_id = 5
            ---- updated_at BETWEEN '' AND '' [ For Date Filters ]  
            */
 
-  // For Date Filters
-  let dateFilter = ``;
-  if (from_date && to_date) {
-    dateFilter = ` AND tor.updated_at BETWEEN '${from_date}' AND '${to_date}'`;
-  }
+    // For Date Filters
+    let dateFilter = ``;
+    if (from_date && to_date) {
+      dateFilter = ` AND tor.updated_at BETWEEN '${from_date}' AND '${to_date}'`;
+    }
 
-  /* For Data */
-  let baseQuery = `SELECT
+    /* For Data */
+    let baseQuery = `SELECT
   tor.token_offering_id AS token_offering_id,
   MIN(tof.name) AS token_name,
   (
@@ -61,7 +64,11 @@ GROUP BY
 ORDER BY
   investment ASC`;
 
-  return baseQuery;
+    return baseQuery;
+  } catch (error: any) {
+    Logger.error(error.message, error);
+    throw error;
+  }
 };
 
 export const getCurrentTokenInvestmentQuery = (
@@ -69,20 +76,21 @@ export const getCurrentTokenInvestmentQuery = (
   limit: number | null,
   user_entity_id?: string
 ) => {
-  /* Get CurrentTokenInvestment Query  */
+  try {
+    /* Get CurrentTokenInvestment Query  */
 
-  /* In Where Condition
+    /* In Where Condition
            ---- receiver_entity_id = "" 
             tor.status_id = 5 | 11 [ Minted | Burned ]
            */
 
-  // For Limit & Offset
-  let limitStatment = ``;
-  if (offset !== null && limit !== null) {
-    limitStatment = ` LIMIT '${limit}' OFFSET '${offset * limit}'`;
-  }
-  /* For Data */
-  let baseQuery = `
+    // For Limit & Offset
+    let limitStatment = ``;
+    if (offset !== null && limit !== null) {
+      limitStatment = ` LIMIT '${limit}' OFFSET '${offset * limit}'`;
+    }
+    /* For Data */
+    let baseQuery = `
   WITH
   last_transaction AS (
     SELECT
@@ -121,6 +129,7 @@ SELECT
   t_ast.url AS token_logo_url,
   tof.symbol AS token_symbol,
   tof.base_currency_code,
+  tof.base_currency,
   tof.isin_number AS token_isin,
   tof.start_date AS token_start_date,
   tof.end_date AS token_end_date,
@@ -175,7 +184,8 @@ SELECT
       LIMIT
         1
     ), tof.offering_price
-  ) AS valuation_price
+  ) AS valuation_price,
+   tof.offering_price AS offering_price
 FROM
   token_orders AS tor
   INNER JOIN token_offerings AS tof ON tor.token_offering_id = tof.id
@@ -205,22 +215,42 @@ GROUP BY
   tof.offering_price,
   ba.total_balance,
   tof.issuer_entity_id,
-  tof.base_currency_code
+  tof.base_currency_code,
+  tof.base_currency
 ORDER BY
   total_holdings DESC
   ${limitStatment};`;
-  return baseQuery;
+    return baseQuery;
+  } catch (error: any) {
+    Logger.error(error.message, error);
+    throw error;
+  }
 };
 
-export const getInvestorDashboardQuery = (user_entity_id?: string) => {
-  /* Get Investor DashBoard  */
+export const getInvestorDashboardQuery = (
+  user_entity_id?: string,
+  currency_data?: any
+) => {
+  try {
+    /* Get Investor DashBoard  */
 
-  /* In Where Condition
+    /* In Where Condition
           
            */
 
-  /* For Data */
-  let baseQuery = `WITH
+    // Currency Conversion table Sample
+    let currencyConversionTable = ``;
+    if (currency_data && currency_data.trim() !== "") {
+      currencyConversionTable = `
+    currency_conversion AS (
+      SELECT * FROM (VALUES ${currency_data}) AS cc(currency_code, euro_value)
+    ),
+  `;
+    }
+
+    /* For Data */
+    let baseQuery = `WITH 
+  ${currencyConversionTable} 
   last_transaction AS (
     SELECT
       tor.token_offering_id,
@@ -255,20 +285,24 @@ export const getInvestorDashboardQuery = (user_entity_id?: string) => {
       SUM(
         CASE
           WHEN tor.type = 'subscription'
-          AND tor.status_id = 5 THEN COALESCE(tor.net_investment_value_in_euro, 0)
+          AND tor.status_id = 5 THEN COALESCE(tor.ordered_tokens * tof.offering_price * ${
+            currency_data && currency_data.trim() !== "" ? "cc.euro_value" : 1
+          }, 0)
           ELSE 0
         END
       ) - SUM(
         CASE
           WHEN tor.type = 'redemption'
-          AND tor.status_id = 11 THEN COALESCE(tor.net_investment_value_in_euro, 0)
+          AND tor.status_id = 11 THEN COALESCE(tor.ordered_tokens * tof.offering_price * ${
+            currency_data && currency_data.trim() !== "" ? "cc.euro_value" : 1
+          }, 0)
           ELSE 0
         END
       ) AS investment,
       COALESCE(
         (
           SELECT
-            tv.valuation_price_in_euro
+            tv.valuation_price
           FROM
             token_valuations AS tv
           WHERE
@@ -285,35 +319,39 @@ export const getInvestorDashboardQuery = (user_entity_id?: string) => {
             start_time DESC
           LIMIT
             1
-        ), tof.offering_price_in_euro
-      ) AS valuation_price,
+        ), tof.offering_price
+      ) * ${
+        currency_data && currency_data.trim() !== "" ? "cc.euro_value" : 1
+      } AS valuation_price,
       token_status.sender_balance AS sender_balance
     FROM
       token_orders AS tor
       INNER JOIN token_offerings AS tof ON tor.token_offering_id = tof.id
-      LEFT JOIN summed_balances AS token_status ON tof.id = token_status.token_offering_id
+      LEFT JOIN summed_balances AS token_status ON tof.id = token_status.token_offering_id 
+       ${
+         currency_data && currency_data.trim() !== ""
+           ? "LEFT JOIN currency_conversion AS cc ON tof.base_currency = cc.currency_code"
+           : ""
+       }
     WHERE
       tor.receiver_entity_id = '${user_entity_id}'
     GROUP BY
       tor.token_offering_id,
-      tof.offering_price_in_euro,
+      tof.offering_price,
       token_status.sender_balance
+      ${currency_data && currency_data.trim() !== "" ? ", cc.euro_value" : ""}
   )
 SELECT
   SUM(COALESCE(investment, 0)) AS investment,
-  SUM(COALESCE(sender_balance * valuation_price, 0)) AS current_value,
-  ROUND(
-    (
-      (
-        SUM(COALESCE(sender_balance * valuation_price, 0)) - SUM(COALESCE(investment, 0))
-      ) / NULLIF(ABS(SUM(COALESCE(investment, 0))), 0)
-    ) * 100,
-    2
-  ) AS percentage_change
+  SUM(COALESCE(sender_balance * valuation_price, 0)) AS current_value
 FROM
   vas_inv`;
 
-  return baseQuery;
+    return baseQuery;
+  } catch (error: any) {
+    Logger.error(error.message, error);
+    throw error;
+  }
 };
 
 export const getAllValuationPriceQuery = (
@@ -321,14 +359,15 @@ export const getAllValuationPriceQuery = (
   to_date?: string,
   token_ids?: any[]
 ) => {
-  /* Get Valuation Price Query  */
+  try {
+    /* Get Valuation Price Query  */
 
-  /* In Where Condition
+    /* In Where Condition
           
            */
 
-  /* For Data */
-  let baseQuery = `WITH
+    /* For Data */
+    let baseQuery = `WITH
   date_series AS (
     SELECT
       generate_series(
@@ -397,18 +436,23 @@ FROM
 GROUP BY
   nv.token_id`;
 
-  return baseQuery;
+    return baseQuery;
+  } catch (error: any) {
+    Logger.error(error.message, error);
+    throw error;
+  }
 };
 
 export const getInvestorTokenHoldingsQuery = (user_entity_id?: string) => {
-  /* Get Investor Token Holdings Query  */
+  try {
+    /* Get Investor Token Holdings Query  */
 
-  /* In Where Condition
+    /* In Where Condition
           
            */
 
-  /* For Data */
-  let baseQuery = `WITH
+    /* For Data */
+    let baseQuery = `WITH
   aggregated_balances AS (
     SELECT
       tor.token_offering_id,
@@ -441,7 +485,11 @@ GROUP BY
 ORDER BY
   token_offering_id`;
 
-  return baseQuery;
+    return baseQuery;
+  } catch (error: any) {
+    Logger.error(error.message, error);
+    throw error;
+  }
 };
 
 export const getAllTokensDeploymentCountQuery = (

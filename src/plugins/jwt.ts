@@ -73,7 +73,7 @@ const jwtPlugin: FastifyPluginAsync<FastifyJWTOptions> = async (
               isError: true,
               origin: request.url,
               timestamp: new Date(),
-              message: "User Does not exisit",
+              message: "User Does not exist",
             },
           });
         }
