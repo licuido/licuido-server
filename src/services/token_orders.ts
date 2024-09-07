@@ -11,6 +11,7 @@ import {
 import queries from "@queries";
 import { createTokenOrders, updateTokenOrders } from "@types";
 import { sequelize } from "@utils";
+import { RESPONSE_VALUE } from "helpers/constants";
 import moment from "moment";
 import { Transaction } from "sequelize";
 
@@ -612,104 +613,206 @@ class TokenOrders {
   static async getDashboard({
     user_entity_id,
     currency,
-    currency_values,
   }: {
     user_entity_id?: string;
     currency?: string;
-    currency_values?: any;
   }): Promise<any> {
     try {
-      // Currency Data
-      const currency_data =
-        currency_values?.length > 0
-          ? currency_values
-              .map((cv: any) => `('${cv.currency_code}', ${cv.euro_value})`)
-              .join(",")
-          : "";
+      let overallInvestment: any = 0;
+      let overallInvestmentTillYesterday: any = 0;
+      let changePercentage: any = 0;
+      let circulatingSupply: any = 0;
+      let circulatingSupplyAmount: any = 0;
+      let pendingRedemption: any = 0;
+      let pendingRedemptionAmount: any = 0;
+      let availableToken: any = 0;
+      let availableTokenAmount: any = 0;
 
-      // For Total Investment Data
+      /* --------- For Total Investment Data----------- */
       const [total_investment_result]: any[] = await sequelize.query(
-        queries.getTotalInvestmentQuery(user_entity_id, currency_data)
+        queries.getTotalInvestmentQuery(user_entity_id)
       );
 
-      // For Circulating Supply Data
+      /*------------ For Circulating Supply Data -----------*/
       const [circulating_supply_result]: any[] = await sequelize.query(
-        queries.getCirculatingSupplyQuery(user_entity_id, currency_data)
+        queries.getCirculatingSupplyQuery(user_entity_id)
       );
-      // For Pending Redemption Data
+
+      /*------------ For Pending Redemption Data -----------*/
       const [pending_redemption_result]: any[] = await sequelize.query(
-        queries.getPendingRedemptionQuery(user_entity_id, currency_data)
+        queries.getPendingRedemptionQuery(user_entity_id)
       );
 
-      let overall_investment = 0;
-      let circulating_supply_amount = 0;
-      let pending_redemption_amount = 0;
+      // For Total Investment In Required Currency
+      if (total_investment_result && total_investment_result?.length > 0) {
+        const overallInvestmentResult: any = Object.values(
+          total_investment_result.reduce((acc: any, curr: any) => {
+            const {
+              base_currency,
+              overall_investment,
+              overall_investment_till_yesterday,
+            } = curr;
 
-      // Currency Conversion At Amount 1 for Expected Currency
-      let convertedamount = await currencyConvert({
-        from_currency_code: "EUR",
-        to_currency_code: currency ?? "EUR",
-        amount: 1,
-      });
+            if (!acc[base_currency]) {
+              acc[base_currency] = {
+                base_currency,
+                overall_investment: 0,
+                overall_investment_till_yesterday: 0,
+              };
+            }
 
-      // Currency Conversion For Dashboard Data - PortFolio Issuer
-      /* For Total Investment */
-      if (
-        total_investment_result &&
-        total_investment_result?.length > 0 &&
-        total_investment_result[0]?.overall_investment &&
-        total_investment_result[0]?.overall_investment > 0
-      ) {
-        const investmentAmount = Number(
-          total_investment_result[0]?.overall_investment ?? 0
+            acc[base_currency].overall_investment += Number(overall_investment);
+            acc[base_currency].overall_investment_till_yesterday += Number(
+              overall_investment_till_yesterday
+            );
+
+            return acc;
+          }, {})
         );
-        if (currency && currency !== "EUR") {
-          overall_investment = investmentAmount * convertedamount;
-          overall_investment = parseFloat(overall_investment.toFixed(2));
-        } else {
-          overall_investment = parseFloat(investmentAmount.toFixed(2));
+
+        if (overallInvestmentResult.length > 0) {
+          for (let overallInvData of overallInvestmentResult) {
+            if (
+              overallInvData?.overall_investment &&
+              Number(overallInvData?.overall_investment) > 0
+            ) {
+              const convertedAmount: any = await currencyConvert({
+                from_currency_code: overallInvData?.base_currency,
+                to_currency_code: currency,
+                amount: Number(overallInvData?.overall_investment),
+              });
+
+              overallInvestment = overallInvestment + convertedAmount;
+            }
+
+            if (
+              overallInvData?.overall_investment_till_yesterday &&
+              Number(overallInvData?.overall_investment_till_yesterday) > 0
+            ) {
+              const convertedAmount: any = await currencyConvert({
+                from_currency_code: overallInvData?.base_currency,
+                to_currency_code: currency,
+                amount: Number(
+                  overallInvData?.overall_investment_till_yesterday
+                ),
+              });
+
+              overallInvestmentTillYesterday =
+                overallInvestmentTillYesterday + convertedAmount;
+            }
+          }
         }
       }
 
-      /* For Circulating Supply */
-      if (
-        circulating_supply_result &&
-        circulating_supply_result?.length > 0 &&
-        circulating_supply_result[0]?.circulating_supply_amount &&
-        circulating_supply_result[0]?.circulating_supply_amount > 0
-      ) {
-        const circulatingSupplyAmount = Number(
-          circulating_supply_result[0]?.circulating_supply_amount ?? 0
+      // Change Percentage
+      changePercentage =
+        overallInvestmentTillYesterday !== 0
+          ? ((overallInvestment - overallInvestmentTillYesterday) /
+              overallInvestmentTillYesterday) *
+            100
+          : 0;
+
+      // For Circulating Supply Amount In Required Currency
+      if (circulating_supply_result && circulating_supply_result?.length > 0) {
+        const circulattingSupplyResult: any = Object.values(
+          circulating_supply_result.reduce((acc: any, curr: any) => {
+            const {
+              base_currency,
+              circulating_supply,
+              circulating_supply_amount,
+            } = curr;
+
+            if (!acc[base_currency]) {
+              acc[base_currency] = {
+                base_currency,
+                circulating_supply: 0,
+                circulating_supply_amount: 0,
+              };
+            }
+
+            acc[base_currency].circulating_supply += Number(circulating_supply);
+            acc[base_currency].circulating_supply_amount += Number(
+              circulating_supply_amount
+            );
+
+            return acc;
+          }, {})
         );
-        if (currency && currency !== "EUR") {
-          circulating_supply_amount = circulatingSupplyAmount * convertedamount;
-          circulating_supply_amount = parseFloat(overall_investment.toFixed(2));
-        } else {
-          circulating_supply_amount = parseFloat(
-            circulatingSupplyAmount.toFixed(2)
-          );
+
+        if (circulattingSupplyResult.length > 0) {
+          for (let cirSupData of circulattingSupplyResult) {
+            if (
+              cirSupData?.circulating_supply_amount &&
+              Number(cirSupData?.circulating_supply_amount) > 0
+            ) {
+              const convertedAmount: any = await currencyConvert({
+                from_currency_code: cirSupData?.base_currency,
+                to_currency_code: currency,
+                amount: Number(cirSupData?.circulating_supply_amount),
+              });
+
+              circulatingSupplyAmount =
+                circulatingSupplyAmount + convertedAmount;
+            }
+
+            circulatingSupply =
+              circulatingSupply + Number(cirSupData?.circulating_supply);
+          }
         }
       }
 
-      /* For Pending Redemption */
-      if (
-        pending_redemption_result &&
-        pending_redemption_result?.length > 0 &&
-        pending_redemption_result[0]?.pending_redemption_amount &&
-        pending_redemption_result[0]?.pending_redemption_amount > 0
-      ) {
-        const pendingRedemptionAmount = Number(
-          pending_redemption_result[0]?.pending_redemption_amount ?? 0
+      // For Pending Redemption Amount In Required Currency
+      if (pending_redemption_result && pending_redemption_result?.length > 0) {
+        const pendingRedemptionResult: any = Object.values(
+          pending_redemption_result.reduce((acc: any, curr: any) => {
+            const {
+              base_currency,
+              pending_redemption,
+              pending_redemption_amount,
+            } = curr;
+
+            if (!acc[base_currency]) {
+              acc[base_currency] = {
+                base_currency,
+                pending_redemption: 0,
+                pending_redemption_amount: 0,
+              };
+            }
+
+            acc[base_currency].pending_redemption += Number(pending_redemption);
+            acc[base_currency].pending_redemption_amount += Number(
+              pending_redemption_amount
+            );
+
+            return acc;
+          }, {})
         );
-        if (currency && currency !== "EUR") {
-          pending_redemption_amount = pendingRedemptionAmount * convertedamount;
-          pending_redemption_amount = parseFloat(overall_investment.toFixed(2));
-        } else {
-          pending_redemption_amount = parseFloat(
-            pendingRedemptionAmount.toFixed(2)
-          );
+
+        if (pendingRedemptionResult.length > 0) {
+          for (let pendRedData of pendingRedemptionResult) {
+            if (
+              pendRedData?.pending_redemption_amount &&
+              Number(pendRedData?.pending_redemption_amount) > 0
+            ) {
+              const convertedAmount: any = await currencyConvert({
+                from_currency_code: pendRedData?.base_currency,
+                to_currency_code: currency,
+                amount: Number(pendRedData?.pending_redemption_amount),
+              });
+
+              pendingRedemptionAmount =
+                pendingRedemptionAmount + convertedAmount;
+            }
+
+            pendingRedemption =
+              pendingRedemption + Number(pendRedData?.pending_redemption);
+          }
         }
       }
+
+      // For Available Token
+      availableToken = circulatingSupply - pendingRedemption;
+      availableTokenAmount = circulatingSupplyAmount - pendingRedemptionAmount;
 
       const obj: any = {};
 
@@ -724,61 +827,28 @@ class TokenOrders {
           : "";
 
       obj["circulating_supply_amount"] =
-        circulating_supply_result &&
-        circulating_supply_result[0]?.circulating_supply_amount
-          ? circulating_supply_amount.toFixed(2)
-          : "0.00";
+        circulatingSupplyAmount.toString() ?? RESPONSE_VALUE.DEFAULT;
 
       obj["pending_redemption_amount"] =
-        pending_redemption_result &&
-        pending_redemption_result[0]?.pending_redemption_amount
-          ? pending_redemption_amount.toFixed(2)
-          : "0.00";
+        pendingRedemptionAmount.toString() ?? RESPONSE_VALUE.DEFAULT;
 
       obj["total_investment"] =
-        total_investment_result && overall_investment
-          ? overall_investment.toFixed(2)
-          : "0.00";
+        overallInvestment.toString() ?? RESPONSE_VALUE.DEFAULT;
 
       obj["percentage_change_from_yesterday"] =
-        total_investment_result &&
-        total_investment_result[0]?.percentage_change_from_yesterday
-          ? parseFloat(
-              total_investment_result[0]?.percentage_change_from_yesterday
-            ).toFixed(2)
-          : "0.00";
+        changePercentage.toString() ?? RESPONSE_VALUE.DEFAULT;
 
       obj["circulating_supply"] =
-        circulating_supply_result &&
-        circulating_supply_result[0]?.circulating_supply
-          ? parseFloat(
-              circulating_supply_result[0]?.circulating_supply
-            ).toFixed(2)
-          : "0.00";
+        circulatingSupply.toString() ?? RESPONSE_VALUE.DEFAULT;
 
       obj["pending_redemption"] =
-        pending_redemption_result &&
-        pending_redemption_result[0]?.pending_redemption
-          ? parseFloat(
-              pending_redemption_result[0]?.pending_redemption
-            ).toFixed(2)
-          : "0.00";
+        pendingRedemption.toString() ?? RESPONSE_VALUE.DEFAULT;
 
       obj["available_tokens"] =
-        parseFloat(
-          (
-            parseFloat(obj["circulating_supply"]) -
-            parseFloat(obj["pending_redemption"])
-          ).toFixed(2)
-        ).toFixed(2) ?? "0.00";
+        availableToken.toString() ?? RESPONSE_VALUE.DEFAULT;
 
       obj["available_tokens_amount"] =
-        parseFloat(
-          (
-            parseFloat(obj["circulating_supply_amount"]) -
-            parseFloat(obj["pending_redemption_amount"])
-          ).toFixed(2)
-        ).toFixed(2) ?? "0.00";
+        availableTokenAmount.toString() ?? RESPONSE_VALUE.DEFAULT;
 
       return obj;
     } catch (error) {
@@ -916,9 +986,9 @@ class TokenOrders {
       );
 
       let object: any = {
-        current_value: "0.00",
-        investment: "0.00",
-        percentage_change: "0.00",
+        current_value: RESPONSE_VALUE.DEFAULT,
+        investment: RESPONSE_VALUE.DEFAULT,
+        percentage_change: RESPONSE_VALUE.DEFAULT,
       };
 
       if (investor_data && investor_data?.length > 0) {
@@ -930,7 +1000,7 @@ class TokenOrders {
               acc[base_currency] = { base_currency, investment: 0 };
             }
 
-            acc[base_currency].investment += parseFloat(investment);
+            acc[base_currency].investment += Number(investment);
 
             return acc;
           }, {})
@@ -940,8 +1010,8 @@ class TokenOrders {
           investor_data.reduce((acc: any, curr: any) => {
             const { base_currency, valuation_price, sender_balance } = curr;
 
-            const validSenderBalance = parseFloat(sender_balance) || 0;
-            const validValuationPrice = parseFloat(valuation_price) || 0;
+            const validSenderBalance = Number(sender_balance) || 0;
+            const validValuationPrice = Number(valuation_price) || 0;
 
             if (!acc[base_currency]) {
               acc[base_currency] = { base_currency, valuation_price: 0 };
@@ -960,7 +1030,7 @@ class TokenOrders {
         if (investmentResult.length > 0) {
           for (let invData of investmentResult) {
             if (invData?.investment && Number(invData?.investment) > 0) {
-              const convertedAmount = await currencyConvert({
+              const convertedAmount: any = await currencyConvert({
                 from_currency_code: invData?.base_currency,
                 to_currency_code: currency,
                 amount: Number(invData?.investment),
@@ -977,7 +1047,7 @@ class TokenOrders {
               valData?.valuation_price &&
               Number(valData?.valuation_price) > 0
             ) {
-              const convertedAmount = await currencyConvert({
+              const convertedAmount: any = await currencyConvert({
                 from_currency_code: valData?.base_currency,
                 to_currency_code: currency,
                 amount: Number(valData?.valuation_price),
@@ -988,13 +1058,15 @@ class TokenOrders {
           }
         }
 
-        let percentage =
-          ((valuation_value - investment_value) / investment_value) * 100;
+        let percentage: any =
+          investment_value > 0
+            ? ((valuation_value - investment_value) / investment_value) * 100
+            : 0;
 
         object = {
-          current_value: investment_value.toFixed(2),
-          investment: valuation_value.toFixed(2),
-          percentage_change: percentage.toFixed(2),
+          current_value: investment_value.toString() ?? RESPONSE_VALUE.DEFAULT,
+          investment: valuation_value.toString() ?? RESPONSE_VALUE.DEFAULT,
+          percentage_change: percentage.toString() ?? RESPONSE_VALUE.DEFAULT,
         };
       }
 

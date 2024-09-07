@@ -1,7 +1,5 @@
 import {
   Logger,
-  currencyConvert,
-  currencyDetails,
   dateTime,
   errorCustomMessage,
   fulfilledStatus,
@@ -61,22 +59,8 @@ const createTokenSubscriptionOrders = async (
       };
     }
 
-    const default_currency = "€";
-    const default_currency_code = "EUR";
-
     const tokenOffering: any =
       await TokenOfferings.getTokenOfferingBaseCurrency(token_offering_id);
-
-    const tokenconversionResponse = await currencyConvert({
-      from_currency_code: currency_code,
-      to_currency_code: tokenOffering?.base_currency,
-      amount: net_investment_value,
-    });
-    const conversionResponse = await currencyConvert({
-      from_currency_code: currency_code,
-      to_currency_code: default_currency_code,
-      amount: net_investment_value,
-    });
 
     // To check order fulfilled by licuido or issuer
     const isFulfilledBylicuido: boolean =
@@ -103,18 +87,11 @@ const createTokenSubscriptionOrders = async (
               : tokenOffering?.base_currency,
           ordered_tokens,
           price_per_token,
-          net_investment_value,
+          net_investment_value: net_investment_value,
           fee,
           total_paid,
           payment_reference,
-          default_currency: default_currency,
-          default_currency_code: default_currency_code,
-          net_investment_value_in_euro: parseFloat(
-            conversionResponse.toFixed(2)
-          ),
-          net_investment_value_by_token: parseFloat(
-            tokenconversionResponse.toFixed(2)
-          ),
+          net_investment_value_by_token: net_investment_value,
           created_by: user_profile_id,
           is_active: true,
           status_id: 1, // Pending Order
@@ -268,21 +245,7 @@ const createTokenRedemptionOrders = async (
     const tokenOffering: any =
       await TokenOfferings.getTokenOfferingBaseCurrency(token_offering_id);
 
-    const tokenconversionResponse = await currencyConvert({
-      from_currency_code: currency_code,
-      to_currency_code: tokenOffering?.base_currency,
-      amount: net_investment_value,
-    });
-
-    const default_currency = "€";
-    const default_currency_code = "EUR";
-    const amount = ordered_tokens * tokenOffering?.offering_price;
-
-    const conversionResponse = await currencyConvert({
-      from_currency_code: currency_code,
-      to_currency_code: default_currency_code,
-      amount: amount,
-    });
+    const token_amount = ordered_tokens * tokenOffering?.offering_price;
 
     // To check order fulfilled by licuido or issuer
     const isFulfilledBylicuido: boolean =
@@ -309,7 +272,7 @@ const createTokenRedemptionOrders = async (
               : tokenOffering?.base_currency,
           ordered_tokens,
           price_per_token,
-          net_investment_value,
+          net_investment_value: net_investment_value,
           created_by: user_profile_id,
           is_active: true,
           status_id: 2, // Pending Redmeption
@@ -318,14 +281,7 @@ const createTokenRedemptionOrders = async (
           swift_bic_no,
           iban_no,
           fulfilled_by: isFulfilledBylicuido ? "admin" : "issuer",
-          default_currency: default_currency,
-          default_currency_code: default_currency_code,
-          net_investment_value_in_euro: parseFloat(
-            conversionResponse.toFixed(2)
-          ),
-          net_investment_value_by_token: parseFloat(
-            tokenconversionResponse.toFixed(2)
-          ),
+          net_investment_value_by_token: token_amount,
         },
         transaction
       );
@@ -1162,29 +1118,10 @@ const getDashboard = async ({
   user_entity_id?: string;
   currency: string;
 }) => {
-  let currency_codes: any = await currencyDetails.getTokenCurrencyDetails({
-    issuer_entity_id: user_entity_id,
-  });
-
-  let currency_values = [];
-  for (const item of currency_codes) {
-    let convertedamount = await currencyConvert({
-      from_currency_code: item,
-      to_currency_code: "EUR",
-      amount: 1,
-    });
-
-    currency_values.push({
-      currency_code: item,
-      euro_value: parseFloat(convertedamount.toFixed(2)),
-    });
-  }
-
   // Get Dashboard
   const result: any = await TokenOrders.getDashboard({
     user_entity_id,
     currency,
-    currency_values,
   });
 
   return result;
