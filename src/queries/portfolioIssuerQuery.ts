@@ -646,16 +646,6 @@ export const getInvestorListQuery = (
   
    */
 
-    // Currency Conversion table Sample
-    let currencyConversionTable = ``;
-    if (currency_data && currency_data.trim() !== "") {
-      currencyConversionTable = `
-    currency_conversion AS (
-      SELECT * FROM (VALUES ${currency_data}) AS cc(currency_code, euro_value)
-    ),
-  `;
-    }
-
     // For Limit & Offset
     let limitStatment = ``;
     if (offset !== null && limit !== null) {
@@ -708,7 +698,6 @@ export const getInvestorListQuery = (
     /* For Data */
     let baseQuery = `
   WITH 
-  ${currencyConversionTable}
   last_transaction AS (
     SELECT
       tor.receiver_entity_id,
@@ -737,6 +726,21 @@ export const getInvestorListQuery = (
     GROUP BY
       receiver_entity_id
   ),
+  token_investments AS (
+    SELECT
+      tor.receiver_entity_id,
+      tor.token_offering_id,
+      tof.base_currency,
+      COALESCE(SUM(CASE WHEN tor.type = 'subscription' AND tor.status_id = 5 THEN tor.ordered_tokens * tof.offering_price ELSE 0 END), 0) AS total_subscription,
+      COALESCE(SUM(CASE WHEN tor.type = 'redemption' AND tor.status_id = 11 THEN tor.ordered_tokens * tof.offering_price ELSE 0 END), 0) AS total_redemption
+    FROM
+      token_orders AS tor
+      LEFT JOIN token_offerings AS tof ON tor.token_offering_id = tof.id
+    WHERE
+      tor.issuer_entity_id = '${user_entity_id}'
+    GROUP BY
+      tor.receiver_entity_id, tor.token_offering_id, tof.base_currency
+  ),
   vas_inv AS (
     SELECT
       ei.investor_entity_id AS investor_entity_id,
@@ -764,54 +768,16 @@ export const getInvestorListQuery = (
         ELSE meis.name
       END AS status_name,
       (
-        COALESCE(
-          (
-            SELECT
-              SUM(COALESCE(tor.ordered_tokens * tof.offering_price * ${
-                currency_data && currency_data.trim() !== ""
-                  ? "cc.euro_value"
-                  : 1
-              }, 0)) 
-            FROM
-              token_orders AS tor
-              LEFT JOIN token_offerings AS tof ON tor.token_offering_id = tof.id 
-              ${
-                currency_data && currency_data.trim() !== ""
-                  ? "LEFT JOIN currency_conversion AS cc ON tof.base_currency = cc.currency_code"
-                  : ""
-              }
-            WHERE
-              tor.receiver_entity_id = ei.investor_entity_id
-              AND tor.issuer_entity_id = '${user_entity_id}'
-              AND tor.type = 'subscription'
-              AND tor.status_id = 5
-          ),
-          0
-        ) - COALESCE(
-          (
-            SELECT
-              SUM(COALESCE(tor.ordered_tokens * tof.offering_price * ${
-                currency_data && currency_data.trim() !== ""
-                  ? "cc.euro_value"
-                  : 1
-              }, 0)) 
-            FROM
-              token_orders AS tor
-              LEFT JOIN token_offerings AS tof ON tor.token_offering_id = tof.id 
-              ${
-                currency_data && currency_data.trim() !== ""
-                  ? "LEFT JOIN currency_conversion AS cc ON tof.base_currency = cc.currency_code"
-                  : ""
-              } 
-            WHERE
-              tor.receiver_entity_id = ei.investor_entity_id
-              AND tor.issuer_entity_id = '${user_entity_id}'
-              AND tor.type = 'redemption'
-              AND tor.status_id = 11
-          ),
-          0
+        SELECT json_agg(
+          json_build_object(
+            'token_offering_id', ti.token_offering_id,
+            'base_currency', ti.base_currency,
+            'investment', COALESCE(ti.total_subscription, 0) - COALESCE(ti.total_redemption, 0)
+          )
         )
-      ) AS investment,
+        FROM token_investments ti
+        WHERE ti.receiver_entity_id = ei.investor_entity_id
+      ) AS investments,
     COUNT(*) OVER() AS total_count 
     FROM
       entity_investors AS ei
@@ -841,6 +807,8 @@ WHERE
 ORDER BY
   created_at ASC 
   ${limitStatment}`;
+
+    console.log(baseQuery);
 
     let baseAdminQuery = `WITH
   last_transaction AS (
