@@ -1079,8 +1079,8 @@ class TokenOrders {
             : 0;
 
         object = {
-          current_value: investment_value.toString() ?? RESPONSE_VALUE.DEFAULT,
-          investment: valuation_value.toString() ?? RESPONSE_VALUE.DEFAULT,
+          current_value: valuation_value.toString() ?? RESPONSE_VALUE.DEFAULT,
+          investment: investment_value.toString() ?? RESPONSE_VALUE.DEFAULT,
           percentage_change: percentage.toString() ?? RESPONSE_VALUE.DEFAULT,
         };
       }
