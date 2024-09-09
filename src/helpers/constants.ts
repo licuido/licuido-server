@@ -160,3 +160,7 @@ export const TIME_VALUE = {
   DEFAULT_END_TIME: "23:59:59",
   DEFAULT_START_TIME: "00:00:00",
 };
+
+export const RESPONSE_VALUE = {
+  DEFAULT: "0",
+};

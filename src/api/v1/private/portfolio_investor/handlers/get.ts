@@ -166,3 +166,41 @@ export async function GET_LAST_PERFORMANCE(
     });
   }
 }
+
+// GET_TOKEN_OVERVIEW
+export async function GET_TOKEN_OVERVIEW(
+  request: FastifyRequest,
+  reply: FastifyReply
+) {
+  try {
+    /* -----------  MAPPER ----------- */
+    const { entity_id, user_entity_id, ...rest }: any =
+      queryRequestInfo(request);
+
+    if (entity_id !== 2) {
+      return handleResponse(request, reply, responseType?.FORBIDDEN, {
+        error: {
+          message: "Only Investor can be get portfolio dashboard",
+        },
+      });
+    }
+    /* -----------  INTERACTOR ----------- */
+    const result = await TokenOrders.getTokenOverview({
+      user_entity_id,
+      ...rest,
+    });
+
+    /* -----------  RESPONSE ----------- */
+
+    return handleResponse(request, reply, responseType?.OK, {
+      data: { ...result },
+    });
+  } catch (error: any) {
+    Logger.error(request, error.message, error);
+    return handleResponse(request, reply, responseType?.INTERNAL_SERVER_ERROR, {
+      error: {
+        message: responseType?.INTERNAL_SERVER_ERROR,
+      },
+    });
+  }
+}

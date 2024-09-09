@@ -1,6 +1,5 @@
 import {
   Logger,
-  currencyConvert,
   errorCustomMessage,
   investedStatus,
   qualifiedStatus,
@@ -208,12 +207,6 @@ const createTokenOfferings = async (options: createTokenOfferingPayload) => {
       banner_asset_id = asset?.[0]?.dataValues?.id;
     }
 
-    const conversionResponse = await currencyConvert({
-      from_currency_code: base_currency,
-      to_currency_code: "EUR",
-      amount: offering_price,
-    });
-
     const data = await TokenOfferings.create({
       issuer_entity_id: user_entity_id,
       name,
@@ -228,7 +221,6 @@ const createTokenOfferings = async (options: createTokenOfferingPayload) => {
       swift_bic_no,
       symbol,
       offering_price,
-      offering_price_in_euro: conversionResponse,
       is_all_countries_allowed,
       is_eligible_for_collateral_enabled,
       is_expected_annual_perc_yield_enabled,
@@ -603,16 +595,9 @@ const updateTokenOfferings = async (options: updateTokenOfferingPayload) => {
       banner_asset_id = asset?.[0]?.dataValues?.id;
     }
 
-    const conversionResponse = await currencyConvert({
-      from_currency_code: base_currency,
-      to_currency_code: "EUR",
-      amount: offering_price,
-    });
-
     // For Token Offerings
     await TokenOfferings.update(
       {
-        offering_price_in_euro: conversionResponse,
         name,
         description,
         start_date,
@@ -802,17 +787,6 @@ const updateTokenValuation = async (option: createTokenValuation) => {
       };
     }
 
-    const tokenOffering: any =
-      await TokenOfferings.getTokenOfferingBaseCurrency(token_id);
-
-    const conversionResponse = await currencyConvert({
-      from_currency_code: tokenOffering?.base_currency,
-      to_currency_code: "EUR",
-      amount: valuation_price,
-    });
-
-    console.log(conversionResponse, "conversionResponse");
-
     await TokenValuations.create({
       token_id,
       offer_price,
@@ -821,7 +795,7 @@ const updateTokenValuation = async (option: createTokenValuation) => {
       start_time,
       valuation_price,
       created_by: user_profile_id,
-      valuation_price_in_euro: conversionResponse,
+      updated_by: user_profile_id,
     });
 
     return {
@@ -936,14 +910,20 @@ const updateTokenOfferingStatus = async ({
   token_ids,
   offer_status_id,
   user_profile_id,
+  user_entity_id,
 }: {
   token_ids: string[];
   offer_status_id: number;
   user_profile_id: string;
+  user_entity_id: string;
 }) => {
   try {
+    if (token_ids?.length === 0) {
+      token_ids = await TokenOfferings.getAllTokenIds(user_entity_id);
+    }
+
     return TokenOfferings.updateTokenOfferingStatus({
-      token_ids,
+      token_ids: token_ids ?? [],
       offer_status_id,
       updated_by: user_profile_id,
     });

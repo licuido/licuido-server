@@ -30,4 +30,5 @@ export interface getInvestorListAsCSVPayload {
   user_entity_id?: string;
   minimum_investment_value?: string;
   maximum_investment_value?: string;
+  currency?: string;
 }
