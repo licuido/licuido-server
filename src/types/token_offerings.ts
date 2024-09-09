@@ -303,10 +303,10 @@ export interface createTokenValuation {
   start_date: string;
   start_time: string;
   created_by?: string;
+  updated_by?: string;
   valuation_price: number;
   user_entity_id?: string;
   user_profile_id?: string;
-  valuation_price_in_euro: number;
 }
 
 export interface getAllTokenAdmin {

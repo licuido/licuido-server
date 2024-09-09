@@ -35,6 +35,7 @@ import {
   getTotalInvestmentIssuersInvestorsCount,
   getAllValuationPriceQuery,
   getInvestorTokenHoldingsQuery,
+  getTokenOverviewQuery,
 } from "./portfolioInvestorQuery";
 
 import {
@@ -97,6 +98,7 @@ const queries = {
   getAllValuationPriceQuery,
   getInvestorTokenHoldingsQuery,
   getBeforeValuationPriceQuery,
+  getTokenOverviewQuery,
 };
 
 export default queries;

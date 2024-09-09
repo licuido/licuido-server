@@ -62,6 +62,24 @@ const createTokenSubscriptionOrders = async (
     const tokenOffering: any =
       await TokenOfferings.getTokenOfferingBaseCurrency(token_offering_id);
 
+    if (
+      net_investment_value >= tokenOffering?.minimum_investment_limit &&
+      net_investment_value <= tokenOffering?.maximum_investment_limit
+    ) {
+    } else {
+      return {
+        code: 400,
+        customMessage: errorCustomMessage.investmentLimit,
+      };
+    }
+
+    if (tokenOffering?.offer_status_id === 2) {
+      return {
+        code: 400,
+        customMessage: errorCustomMessage.tokenPaused,
+      };
+    }
+
     // To check order fulfilled by licuido or issuer
     const isFulfilledBylicuido: boolean =
       await fulfilledStatus.getOrderFulfilledStatus({
@@ -244,6 +262,13 @@ const createTokenRedemptionOrders = async (
 
     const tokenOffering: any =
       await TokenOfferings.getTokenOfferingBaseCurrency(token_offering_id);
+
+    if (tokenOffering?.offer_status_id === 2) {
+      return {
+        code: 400,
+        customMessage: errorCustomMessage.tokenPaused,
+      };
+    }
 
     const token_amount = ordered_tokens * tokenOffering?.offering_price;
 
@@ -879,7 +904,7 @@ const confirmPayment = async ({
     //   amount: Number(received_payment),
     // });
 
-    if (received_payment !== order?.net_investment_value) {
+    if (received_payment >= order?.net_investment_value) {
       return {
         message: successCustomMessage?.amountMismatch,
       };
@@ -1264,7 +1289,6 @@ const getTokenSummaryRecentActivities = async ({
   user_entity_id?: string;
   token_offering_id?: string;
 }) => {
-  token_offering_id;
   // Get Token Summary & Recent Activites
   const result: any = await TokenOrders.getTokenSummaryRecentActivities({
     user_entity_id,
@@ -1481,6 +1505,54 @@ const getInvestorlast3MonthsPerformance = async ({
   };
 };
 
+const getTokenOverview = async ({
+  user_entity_id,
+  token_id,
+}: {
+  user_entity_id?: string;
+  token_id?: string;
+}) => {
+  // Get Token Distribution Data
+  const result: any = await TokenOrders.getTokenOverview({
+    user_entity_id,
+    token_id,
+  });
+
+  let obj: any = {};
+  if (result && result.length > 0) {
+    let initalObj = result?.[0];
+
+    obj["balance_token"] = (initalObj?.balance).toString();
+    obj["balance_amount"] = (
+      initalObj?.balance * initalObj?.valuation_price
+    ).toString();
+    obj["token_symbol"] = initalObj?.token_symbol;
+    obj["current_valuation_price"] = (initalObj?.valuation_price).toString();
+    obj["offering_price"] = (initalObj?.offering_price).toString();
+    obj["pending_token"] = (initalObj?.pending).toString();
+    obj["pending_amount"] = (
+      initalObj?.pending * initalObj?.valuation_price
+    ).toString();
+    obj["available_token"] = (
+      initalObj?.balance - initalObj?.pending
+    ).toString();
+    obj["available_amount"] = (
+      (initalObj?.balance - initalObj?.pending) *
+      initalObj?.valuation_price
+    ).toString();
+    obj["investment_currency"] = initalObj?.investment_currency;
+    obj["valuation_change_percentage"] = initalObj?.offering_price
+      ? (
+          ((initalObj?.valuation_price - initalObj?.offering_price) /
+            initalObj?.offering_price) *
+          100
+        ).toString()
+      : "0";
+  }
+
+  return obj;
+};
+
 export default {
   createTokenSubscriptionOrders,
   getTokenOrder,
@@ -1507,4 +1579,5 @@ export default {
   getIssuerApprovalCount,
   getTotalInvestmentIssuersInvestorsCount,
   getInvestorlast3MonthsPerformance,
+  getTokenOverview,
 };

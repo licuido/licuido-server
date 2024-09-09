@@ -544,3 +544,76 @@ export const getTotalInvestmentIssuersInvestorsCount = (
 
   return countQuery;
 };
+
+export const getTokenOverviewQuery = (
+  user_entity_id?: string,
+  token_id?: string
+) => {
+  try {
+    /* For Data */
+    let baseQuery = `SELECT
+  tof.id,
+  tof.offering_price AS offering_price,
+  tof.symbol AS token_symbol,
+  tof.base_currency_code AS investment_currency,
+  tof.base_currency AS investment_currency_code,
+  COALESCE((
+    SELECT
+      tt.sender_balance AS balance
+    FROM
+      token_transactions AS tt
+      INNER JOIN token_orders AS tor ON tt.order_id = tor.id
+    WHERE
+      tt.status_id IN (1, 2)
+      AND tor.token_offering_id = '${token_id}'
+      AND tor.receiver_entity_id = '${user_entity_id}'
+    ORDER BY
+      tt.updated_at DESC
+    LIMIT
+      1
+  ), 0) AS balance,
+  COALESCE((
+    SELECT
+      SUM(tt.block_token) AS pending
+    FROM
+      token_transactions AS tt
+      INNER JOIN token_orders AS tor ON tt.order_id = tor.id
+    WHERE
+      tt.status_id IN (1, 2)
+      AND tor.token_offering_id = '${token_id}'
+      AND tor.receiver_entity_id = '${user_entity_id}'
+  ),0) AS pending,
+  COALESCE(
+    (
+      SELECT
+        valuation_price
+      FROM
+        token_valuations AS tv
+      WHERE
+        tv.token_offering_id = '${token_id}'
+        AND (
+          tv.start_date < CURRENT_DATE
+          OR (
+            tv.start_date = CURRENT_DATE
+            AND tv.start_time <= CURRENT_TIME
+          )
+        )
+      ORDER BY
+        tv.start_date DESC,
+        tv.start_time DESC
+      LIMIT
+        1
+    ),
+    tof.offering_price
+  ) AS valuation_price
+FROM
+  token_offerings AS tof
+WHERE
+  tof.id = '${token_id}'`;
+
+    return baseQuery;
+  } catch (error: any) {
+    Logger.error(error.message, error);
+    throw error;
+  }
+};

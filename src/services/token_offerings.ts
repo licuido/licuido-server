@@ -614,14 +614,13 @@ class TokenOfferings {
     try {
       return await token_offering.update(
         {
-          offer_status_id,
+          offer_status_id: offer_status_id,
           updated_by,
-          updated_at: new Date(),
         },
         {
           where: {
             id: {
-              [Op.in]: token_ids, // Assuming Sequelize is being used and token_id is an array of IDs
+              [Op.in]: token_ids,
             },
           },
         }
@@ -715,9 +714,42 @@ class TokenOfferings {
         where: {
           id: token_id,
         },
-        attributes: ["base_currency", "base_currency_code", "offering_price"],
+        attributes: [
+          "base_currency",
+          "base_currency_code",
+          "offering_price",
+          "minimum_investment_limit",
+          "maximum_investment_limit",
+          "offer_status_id",
+        ],
       });
       return JSON.parse(JSON.stringify(token_offer));
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async getAllTokenIds(user_entity_id: string): Promise<any> {
+    try {
+      // Update Token Offering Meta Data
+      let token_offer = await token_offering.findAll({
+        where: {
+          issuer_entity_id: user_entity_id,
+        },
+        attributes: ["id"],
+      });
+
+      token_offer = JSON.parse(JSON.stringify(token_offer));
+
+      let token_offer_ids: any = [];
+
+      if (Array.isArray(token_offer) && token_offer?.length > 0) {
+        token_offer_ids = token_offer.map((offer) => offer.id);
+      }
+
+      const unique_ids = [...new Set(token_offer_ids)];
+
+      return unique_ids;
     } catch (error) {
       throw error;
     }

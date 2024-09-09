@@ -139,7 +139,8 @@ export async function UPDATE_TOKEN_OFFERING_STATUS(
     // -----------------------------
     //  MAPPER
     // -----------------------------
-    const { entity_id, user_profile_id, ...rest } = postRequestInfo(request);
+    const { entity_id, user_entity_id, user_profile_id, ...rest } =
+      postRequestInfo(request);
 
     if (entity_id === 2) {
       return handleResponse(
@@ -160,6 +161,7 @@ export async function UPDATE_TOKEN_OFFERING_STATUS(
     await TokenOfferings.updateTokenOfferingStatus({
       ...rest,
       user_profile_id,
+      user_entity_id,
     });
     // -----------------------------
     //  RESPONSE

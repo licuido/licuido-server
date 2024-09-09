@@ -285,7 +285,7 @@ export const getTokenCirculatingSupplyQuery = (token_offering_id?: string) => {
       tof.id = '${token_offering_id}'
       AND tof.is_active = true
       AND tof.status_id = 1
-      AND tof.offer_status_id = 1
+      AND tof.offer_status_id IN (1,2)
   )
 SELECT
   token_offering_id,
@@ -383,7 +383,7 @@ export const getTokenCirculatingSupplyBefore1dayQuery = (
       tof.id = '${token_offering_id}'
       AND tof.is_active = true
       AND tof.status_id = 1
-      AND tof.offer_status_id = 1
+      AND tof.offer_status_id IN (1,2)
   )
 SELECT
   token_offering_id,
@@ -448,6 +448,8 @@ WHERE
 };
 
 export const getByNoOfInvestorsQuery = (
+  limit: number | null,
+  offset: number | null,
   token_offering_id?: string,
   start_date?: string,
   end_date?: string | null
@@ -460,6 +462,7 @@ export const getByNoOfInvestorsQuery = (
                        */
 
     let dateQuery = ``;
+    let limitStatment = ``;
     if (
       start_date &&
       end_date &&
@@ -470,6 +473,10 @@ export const getByNoOfInvestorsQuery = (
       dateQuery = ``;
     } else {
       dateQuery = ` AND tor.updated_at < '${start_date}'`;
+    }
+
+    if (offset !== null && limit !== null) {
+      limitStatment = ` LIMIT '${limit}' OFFSET '${offset * limit}'`;
     }
 
     /* For Data */
@@ -495,10 +502,7 @@ FROM
   vas_id_noi
 ORDER BY
   investor_count DESC 
-  LIMIT
-  5
-OFFSET
-  0`;
+  ${limitStatment}`;
 
     return baseQuery;
   } catch (error: any) {
@@ -508,6 +512,8 @@ OFFSET
 };
 
 export const getByInvestmentAmountQuery = (
+  limit: number | null,
+  offset: number | null,
   token_offering_id?: string,
   start_date?: string,
   end_date?: string | null
@@ -520,6 +526,7 @@ export const getByInvestmentAmountQuery = (
                          */
 
     let dateQuery = ``;
+    let limitStatment = ``;
     if (
       start_date &&
       end_date &&
@@ -530,6 +537,10 @@ export const getByInvestmentAmountQuery = (
       dateQuery = ``;
     } else {
       dateQuery = ` AND tor.updated_at < '${start_date}'`;
+    }
+
+    if (offset !== null && limit !== null) {
+      limitStatment = ` LIMIT '${limit}' OFFSET '${offset * limit}'`;
     }
 
     /* For Data */
@@ -573,10 +584,7 @@ FROM
   vas_id_ia
 ORDER BY
   net_investment DESC 
-  LIMIT
-  5
-OFFSET
-  0`;
+  ${limitStatment}`;
     return baseQuery;
   } catch (error: any) {
     Logger.error(error.message, error);

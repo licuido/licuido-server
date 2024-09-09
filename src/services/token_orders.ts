@@ -958,6 +958,21 @@ class TokenOrders {
         queries.getCurrentTokenInvestmentQuery(offset, limit, user_entity_id)
       );
 
+      if (result && result.length > 0) {
+        for (let item of result) {
+          const offeringPrice = Number(item?.offering_price);
+          const valuationPrice = Number(item?.valuation_price);
+
+          item["valuation_change_percentage"] =
+            offeringPrice > 0
+              ? (
+                  ((valuationPrice - offeringPrice) / offeringPrice) *
+                  100
+                ).toString()
+              : RESPONSE_VALUE.DEFAULT;
+        }
+      }
+
       // For Count
       const [resultCount]: any[] = await sequelize.query(
         queries.getCurrentTokenInvestmentQuery(null, null, user_entity_id)
@@ -1198,6 +1213,8 @@ class TokenOrders {
   }): Promise<any> {
     try {
       const obj: any = {};
+      let limit: number = 5;
+      let offset: number = 0;
 
       // For Last 7 days
       let start_date = moment()
@@ -1224,28 +1241,49 @@ class TokenOrders {
 
       // By No Of Invetors --------------------
       if (investor_distribution_by === "noi") {
-        // Investors List in last 7 days
+        // Investors List in last 7 days With Limit 5 Countries
         const [investors_result_in_last_seven_days]: any[] =
           await sequelize.query(
             queries.getByNoOfInvestorsQuery(
+              limit,
+              offset,
               token_offering_id,
               start_date,
               end_date
             )
           );
+
+        // Overall Investors in last 7 days
+        const [overall_investors_result_in_last_seven_days]: any[] =
+          await sequelize.query(
+            queries.getByNoOfInvestorsQuery(
+              null,
+              null,
+              token_offering_id,
+              start_date,
+              end_date
+            )
+          );
+
         // Investors List Before 7 days
         const [investors_result_before_seven_days]: any[] =
           await sequelize.query(
-            queries.getByNoOfInvestorsQuery(token_offering_id, start_date, null)
+            queries.getByNoOfInvestorsQuery(
+              null,
+              null,
+              token_offering_id,
+              start_date,
+              null
+            )
           );
 
         obj["investor_country_data"] =
           investors_result_in_last_seven_days || [];
 
         const total_investors_last_seven_days = Array.isArray(
-          investors_result_in_last_seven_days
+          overall_investors_result_in_last_seven_days
         )
-          ? calculateTotalInvestors(investors_result_in_last_seven_days)
+          ? calculateTotalInvestors(overall_investors_result_in_last_seven_days)
           : 0;
 
         const total_investors_before_seven_days = Array.isArray(
@@ -1257,7 +1295,7 @@ class TokenOrders {
         obj["total_investors"] = total_investors_last_seven_days.toString();
 
         obj["country_count"] = (
-          investors_result_in_last_seven_days?.length || 0
+          overall_investors_result_in_last_seven_days?.length || 0
         ).toString();
 
         const total_investors_till_now =
@@ -1274,19 +1312,36 @@ class TokenOrders {
 
       // By Investment Amount --------------------
       if (investor_distribution_by === "ia") {
-        // Investment in last 7 days
+        // Investment in last 7 days With First Limit 5 Countries
         const [investment_result_in_last_seven_days]: any[] =
           await sequelize.query(
             queries.getByInvestmentAmountQuery(
+              limit,
+              offset,
               token_offering_id,
               start_date,
               end_date
             )
           );
-        // Investment List Before 7 days
+
+        // Overall Investment in last 7 days
+        const [overall_investment_in_last_seven_days]: any[] =
+          await sequelize.query(
+            queries.getByInvestmentAmountQuery(
+              null,
+              null,
+              token_offering_id,
+              start_date,
+              end_date
+            )
+          );
+
+        // Overall Investment List Before 7 days
         const [investment_result_before_seven_days]: any[] =
           await sequelize.query(
             queries.getByInvestmentAmountQuery(
+              null,
+              null,
               token_offering_id,
               start_date,
               null
@@ -1297,10 +1352,11 @@ class TokenOrders {
           investment_result_in_last_seven_days || [];
 
         const total_investment_last_seven_days = Array.isArray(
-          investment_result_in_last_seven_days
+          overall_investment_in_last_seven_days
         )
-          ? calculateTotalInvestment(investment_result_in_last_seven_days)
+          ? calculateTotalInvestment(overall_investment_in_last_seven_days)
           : 0;
+
         const total_investment_before_seven_days = Array.isArray(
           investment_result_before_seven_days
         )
@@ -1310,7 +1366,7 @@ class TokenOrders {
         obj["total_investment"] = total_investment_last_seven_days.toString();
 
         obj["investors_count"] = (
-          calculateTotalInvestors(investment_result_in_last_seven_days) || 0
+          calculateTotalInvestors(overall_investment_in_last_seven_days) || 0
         ).toString();
 
         const total_investments_till_now =
@@ -1398,6 +1454,25 @@ class TokenOrders {
       return JSON.parse(JSON.stringify(token_offer));
     } catch (error) {
       throw error;
+    }
+  }
+
+  static async getTokenOverview(options: {
+    user_entity_id?: string;
+    token_id?: string;
+  }): Promise<any> {
+    try {
+      const { user_entity_id, token_id } = options;
+
+      // For Data
+      const [result]: any[] = await sequelize.query(
+        queries.getTokenOverviewQuery(user_entity_id, token_id)
+      );
+
+      return result;
+    } catch (error: any) {
+      console.log(error);
+      throw new Error(error.message);
     }
   }
 }

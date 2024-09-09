@@ -7,7 +7,7 @@ export const getTotalInvestmentQuery = (user_entity_id?: string) => {
     /* In Where Condition
            ---- issuer_entity_id = ""
            ---- AND tof.status_id = 1
-           ---- AND tof.offer_status_id = 1
+           ---- AND tof.offer_status_id IN (1,2)
            */
 
     /* For Data */
@@ -85,7 +85,7 @@ export const getTotalInvestmentQuery = (user_entity_id?: string) => {
       tof.issuer_entity_id = '${user_entity_id}'
       AND tof.is_active = true
       AND tof.status_id = 1
-      AND tof.offer_status_id = 1
+      AND tof.offer_status_id IN (1,2)
     GROUP BY
       tof.issuer_entity_id,
       en.legal_name,
@@ -176,7 +176,7 @@ export const getCirculatingSupplyQuery = (user_entity_id?: string) => {
       tof.issuer_entity_id = '${user_entity_id}'
       AND tof.is_active = true
       AND tof.status_id = 1
-      AND tof.offer_status_id = 1
+      AND tof.offer_status_id  IN (1,2)
     GROUP BY
       tof.id,
       tof.base_currency
@@ -203,7 +203,7 @@ export const getPendingRedemptionQuery = (user_entity_id?: string) => {
     /* In Where Condition
            ---- issuer_entity_id = ""
            ---- AND tof.status_id = 1 Active
-           ---- AND tof.offer_status_id = 1 Active
+           ---- AND tof.offer_status_id =  IN (1,2) Active
            */
 
     /* For Data */
@@ -254,7 +254,7 @@ export const getPendingRedemptionQuery = (user_entity_id?: string) => {
       tof.issuer_entity_id = '${user_entity_id}'
       AND tof.is_active = true
       AND tof.status_id = 1
-      AND tof.offer_status_id = 1
+      AND tof.offer_status_id IN (1,2)
     GROUP BY
       tof.id,
       tof.base_currency

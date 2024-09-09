@@ -64,34 +64,20 @@ class TokenValuations {
         start_time,
         valuation_price,
         created_by,
-        valuation_price_in_euro,
+        updated_by,
       } = options;
 
       await token_valuation.create({
         token_offering_id: token_id,
         created_by,
+        updated_by,
         offer_price,
         bid_price,
         start_date,
         start_time,
         valuation_price,
         is_active: true,
-        created_at: new Date(),
-        valuation_price_in_euro,
       });
-
-      token_offering.update(
-        {
-          offering_price: offer_price,
-          valuation_price,
-          updated_by: created_by,
-        },
-        {
-          where: {
-            id: token_id,
-          },
-        }
-      );
 
       return true;
     } catch (error) {

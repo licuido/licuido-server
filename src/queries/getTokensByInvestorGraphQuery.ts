@@ -9,7 +9,7 @@ export const getTokensByInvestorGraphQuery = (
   /* In Where Condition
          ---- issuer_entity_id = ""
          ---- status_id 1 [ Active ]
-         ---- offer_status_id 1 [ Active ]
+         ---- offer_status_id IN (1,2) [ Active,Paused ]
          ---- updated_at BETWEEN '' AND '' [ For Date Filters ]  
          */
 
@@ -54,7 +54,7 @@ export const getTokensByInvestorGraphQuery = (
       tof.issuer_entity_id = '${user_entity_id}'
       AND tof.is_active = true
       AND tof.status_id = 1
-      AND tof.offer_status_id = 1
+      AND tof.offer_status_id IN (1,2)
     GROUP BY
       tof.id
   )
@@ -92,7 +92,7 @@ ORDER BY
       COALESCE(
         (
           SELECT
-            tv.valuation_price_in_euro
+            tv.valuation_price
           FROM
             token_valuations AS tv
           WHERE
@@ -109,14 +109,14 @@ ORDER BY
             tv.start_time DESC
           LIMIT
             1
-        ), tof.offering_price_in_euro
+        ), tof.offering_price
       ) AS valuation_price
     FROM
       token_offerings AS tof
     WHERE
       tof.is_active = true
       AND tof.status_id = 1
-      AND tof.offer_status_id = 1
+      AND tof.offer_status_id IN (1,2)
     GROUP BY
       tof.id,
       tof.name
