@@ -63,19 +63,19 @@ const createTokenSubscriptionOrders = async (
       await TokenOfferings.getTokenOfferingBaseCurrency(token_offering_id);
 
     if (
-      net_investment_value >= tokenOffering?.minimum_investment_limit &&
-      net_investment_value <= tokenOffering?.maximum_investment_limit
+      net_investment_value >= Number(tokenOffering?.minimum_investment_limit) &&
+      net_investment_value <= Number(tokenOffering?.maximum_investment_limit)
     ) {
     } else {
       return {
-        code: 400,
+        code: 403,
         customMessage: errorCustomMessage.investmentLimit,
       };
     }
 
     if (tokenOffering?.offer_status_id === 2) {
       return {
-        code: 400,
+        code: 403,
         customMessage: errorCustomMessage.tokenPaused,
       };
     }
@@ -265,7 +265,7 @@ const createTokenRedemptionOrders = async (
 
     if (tokenOffering?.offer_status_id === 2) {
       return {
-        code: 400,
+        code: 403,
         customMessage: errorCustomMessage.tokenPaused,
       };
     }
