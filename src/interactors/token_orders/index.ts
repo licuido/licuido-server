@@ -904,7 +904,7 @@ const confirmPayment = async ({
     //   amount: Number(received_payment),
     // });
 
-    if (received_payment >= order?.net_investment_value) {
+    if (Number(received_payment) < Number(order?.net_investment_value)) {
       return {
         message: successCustomMessage?.amountMismatch,
       };
