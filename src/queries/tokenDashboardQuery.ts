@@ -171,6 +171,7 @@ export const getTokenStatusQuery = (token_offering_id?: string) => {
     let baseQuery = `SELECT
   tof.id AS token_id,
   tof.name AS token_name,
+  tof.offering_price AS offering_price,
   tof.symbol AS token_symbol,
   mtot.name AS token_type_name,
   ast_t.url AS token_logo_url,
