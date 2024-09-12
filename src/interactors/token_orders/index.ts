@@ -602,14 +602,31 @@ const getTokenSubscriptionOrderAsCSV = async (
           Investor: item?.investor_name ?? "",
           Issuer: item?.issuer_name ?? "",
           Status: item?.status_name ?? "",
-          "Creation Date": item?.creation_date
+          "Creation date": item?.creation_date
             ? dateTime.formatDate(item?.creation_date)
             : "",
-          "Amount to pay": item?.amount_to_pay ?? "",
-          "Tokens ordered": item?.token_ordered ?? "",
-          "Confirmed Payment": item?.confirmed_payment ?? "",
-          "Tokens confirmed": item?.confirmed_tokens ?? "",
-          "Token Price": item?.token_price ?? "",
+          "Amount to pay":
+            (item?.investment_currency ?? "") +
+            "" +
+            (item?.amount_to_pay != null
+              ? parseFloat(item.amount_to_pay).toFixed(2)
+              : ""),
+          "Tokens ordered":
+            (item?.token_ordered ?? "") + " " + (item?.token_symbol ?? ""),
+          "Confirmed Payment":
+            (item?.investment_currency ?? "") +
+            "" +
+            (item?.confirmed_payment != null
+              ? parseFloat(item.confirmed_payment).toFixed(2)
+              : ""),
+          "Tokens confirmed":
+            (item?.confirmed_tokens ?? "") + " " + (item?.token_symbol ?? ""),
+          "Token Price":
+            (item?.investment_currency ?? "") +
+            "" +
+            (item?.token_price != null
+              ? parseFloat(item.token_price).toFixed(2)
+              : ""),
           "Order fulfillment":
             item?.fulfilled_by === "issuer"
               ? "Fulfilled by Issuer"
@@ -631,11 +648,28 @@ const getTokenSubscriptionOrderAsCSV = async (
           "Creation Date": item?.creation_date
             ? dateTime.formatDate(item?.creation_date)
             : "",
-          "Amount to pay": item?.amount_to_pay ?? "",
-          "Tokens ordered": item?.token_ordered ?? "",
-          "Confirmed Payment": item?.confirmed_payment ?? "",
-          "Tokens confirmed": item?.confirmed_tokens ?? "",
-          "Token Price": item?.token_price ?? "",
+          "Amount to pay":
+            (item?.token_base_currency ?? "") +
+            "" +
+            (item?.amount_to_pay != null
+              ? parseFloat(item.amount_to_pay).toFixed(2)
+              : ""),
+          "Tokens ordered":
+            (item?.token_ordered ?? "") + " " + (item?.token_symbol ?? ""),
+          "Confirmed Payment":
+            (item?.token_base_currency ?? "") +
+            "" +
+            (item?.confirmed_payment != null
+              ? parseFloat(item.confirmed_payment).toFixed(2)
+              : ""),
+          "Tokens confirmed":
+            (item?.confirmed_tokens ?? "") + " " + (item?.token_symbol ?? ""),
+          "Token Price":
+            (item?.token_base_currency ?? "") +
+            "" +
+            (item?.token_price != null
+              ? parseFloat(item.token_price).toFixed(2)
+              : ""),
           "Email id": item?.email_id ?? "",
           "Payment reference": item?.payment_reference ?? "",
           TxHash: item?.transaction_hash ?? "",
@@ -652,11 +686,28 @@ const getTokenSubscriptionOrderAsCSV = async (
           "Creation Date": item?.creation_date
             ? dateTime.formatDate(item?.creation_date)
             : "",
-          "Amount to pay": item?.amount_to_pay ?? "",
-          "Tokens ordered": item?.token_ordered ?? "",
-          "Confirmed Payment": item?.confirmed_payment ?? "",
-          "Tokens confirmed": item?.confirmed_tokens ?? "",
-          "Token Price": item?.token_price ?? "",
+          "Amount to pay":
+            (item?.token_base_currency ?? "") +
+            "" +
+            (item?.amount_to_pay != null
+              ? parseFloat(item.amount_to_pay).toFixed(2)
+              : ""),
+          "Tokens ordered":
+            (item?.token_ordered ?? "") + " " + (item?.token_symbol ?? ""),
+          "Confirmed Payment":
+            (item?.token_base_currency ?? "") +
+            "" +
+            (item?.confirmed_payment != null
+              ? parseFloat(item.confirmed_payment).toFixed(2)
+              : ""),
+          "Tokens confirmed":
+            (item?.confirmed_tokens ?? "") + " " + (item?.token_symbol ?? ""),
+          "Token Price":
+            (item?.token_base_currency ?? "") +
+            "" +
+            (item?.token_price != null
+              ? parseFloat(item.token_price).toFixed(2)
+              : ""),
           "Payment reference": item?.payment_reference ?? "",
           TxHash: item?.transaction_hash ?? "",
         }));
@@ -740,10 +791,21 @@ const getTokenRedemptionOrderAsCSV = async (
           "Creation Date": item?.creation_date
             ? dateTime.formatDate(item?.creation_date)
             : "",
-          "Tokens ordered": item?.token_ordered ?? "",
-          "Token price": item?.token_price ?? "",
+          "Tokens ordered":
+            (item?.token_ordered ?? "") + " " + (item?.token_symbol ?? ""),
+          "Token price":
+            (item?.token_base_currency ?? "") +
+            "" +
+            (item?.token_price != null
+              ? parseFloat(item.token_price).toFixed(2)
+              : ""),
           "Token price time": item?.token_price_time ?? "",
-          "Amount to pay": item?.amount_to_pay ?? "",
+          "Amount to pay":
+            (item?.token_base_currency ?? "") +
+            "" +
+            (item?.amount_to_pay != null
+              ? parseFloat(item.amount_to_pay).toFixed(2)
+              : ""),
           "Order fulfillment":
             item?.fulfilled_by === "issuer"
               ? "Fulfilled by Issuer"
@@ -762,10 +824,21 @@ const getTokenRedemptionOrderAsCSV = async (
           "Creation Date": item?.creation_date
             ? dateTime.formatDate(item?.creation_date)
             : "",
-          "Tokens ordered": item?.token_ordered ?? "",
-          "Token Price": item?.token_price ?? "",
+          "Tokens ordered":
+            (item?.token_ordered ?? "") + " " + (item?.token_symbol ?? ""),
+          "Token Price":
+            (item?.token_base_currency ?? "") +
+            "" +
+            (item?.token_price != null
+              ? parseFloat(item.token_price).toFixed(2)
+              : ""),
           "Token price time": item?.token_price_time ?? "",
-          "Amount to pay": item?.amount_to_pay ?? "",
+          "Amount to pay":
+            (item?.token_base_currency ?? "") +
+            "" +
+            (item?.amount_to_pay != null
+              ? parseFloat(item.amount_to_pay).toFixed(2)
+              : ""),
         }));
     }
     /* For Investor */
@@ -779,10 +852,21 @@ const getTokenRedemptionOrderAsCSV = async (
           "Creation Date": item?.creation_date
             ? dateTime.formatDate(item?.creation_date)
             : "",
-          "Tokens ordered": item?.token_ordered ?? "",
-          "Token Price": item?.token_price ?? "",
+          "Tokens ordered":
+            (item?.token_ordered ?? "") + " " + (item?.token_symbol ?? ""),
+          "Token Price":
+            (item?.token_base_currency ?? "") +
+            "" +
+            (item?.token_price != null
+              ? parseFloat(item.token_price).toFixed(2)
+              : ""),
           "Token price time": item?.token_price_time ?? "",
-          "Amount to receive": item?.amount_to_pay ?? "",
+          "Amount to receive":
+            (item?.token_base_currency ?? "") +
+            "" +
+            (item?.amount_to_pay != null
+              ? parseFloat(item.amount_to_pay).toFixed(2)
+              : ""),
         }));
     }
 
