@@ -614,13 +614,15 @@ const getTokenSubscriptionOrderAsCSV = async (
           "Tokens ordered":
             (item?.token_ordered ?? "") + " " + (item?.token_symbol ?? ""),
           "Confirmed Payment":
-            (item?.investment_currency ?? "") +
+            (item?.confirmed_payment != null ? item?.investment_currency : "") +
             "" +
             (item?.confirmed_payment != null
               ? parseFloat(item.confirmed_payment).toFixed(2)
               : ""),
           "Tokens confirmed":
-            (item?.confirmed_tokens ?? "") + " " + (item?.token_symbol ?? ""),
+            (item?.confirmed_tokens != null ? item?.confirmed_tokens : "") +
+            " " +
+            (item?.confirmed_tokens != null ? item?.token_symbol : ""),
           "Token Price":
             (item?.investment_currency ?? "") +
             "" +
@@ -657,13 +659,15 @@ const getTokenSubscriptionOrderAsCSV = async (
           "Tokens ordered":
             (item?.token_ordered ?? "") + " " + (item?.token_symbol ?? ""),
           "Confirmed Payment":
-            (item?.token_base_currency ?? "") +
+            (item?.confirmed_payment != null ? item?.token_base_currency : "") +
             "" +
             (item?.confirmed_payment != null
               ? parseFloat(item.confirmed_payment).toFixed(2)
               : ""),
           "Tokens confirmed":
-            (item?.confirmed_tokens ?? "") + " " + (item?.token_symbol ?? ""),
+            (item?.confirmed_tokens != null ? item?.confirmed_tokens : "") +
+            " " +
+            (item?.confirmed_tokens != null ? item?.token_symbol : ""),
           "Token Price":
             (item?.token_base_currency ?? "") +
             "" +
@@ -695,13 +699,15 @@ const getTokenSubscriptionOrderAsCSV = async (
           "Tokens ordered":
             (item?.token_ordered ?? "") + " " + (item?.token_symbol ?? ""),
           "Confirmed Payment":
-            (item?.token_base_currency ?? "") +
+            (item?.confirmed_payment != null ? item?.token_base_currency : "") +
             "" +
             (item?.confirmed_payment != null
               ? parseFloat(item.confirmed_payment).toFixed(2)
               : ""),
           "Tokens confirmed":
-            (item?.confirmed_tokens ?? "") + " " + (item?.token_symbol ?? ""),
+            (item?.confirmed_tokens != null ? item?.confirmed_tokens : "") +
+            " " +
+            (item?.confirmed_tokens != null ? item?.token_symbol : ""),
           "Token Price":
             (item?.token_base_currency ?? "") +
             "" +
