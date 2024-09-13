@@ -636,8 +636,7 @@ export const getInvestorListQuery = (
   minimum_investment_value?: string,
   maximum_investment_value?: string,
   request?: any,
-  top_five?: Boolean,
-  currency_data?: any
+  top_five?: Boolean
 ) => {
   try {
     /* Get All Investors Query on Search , Limit & Offset */
@@ -807,8 +806,6 @@ WHERE
 ORDER BY
   created_at ASC 
   ${limitStatment}`;
-
-    console.log(baseQuery);
 
     let baseAdminQuery = `WITH
   last_transaction AS (

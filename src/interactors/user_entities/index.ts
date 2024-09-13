@@ -322,7 +322,10 @@ const getInvestorsListAsCSV = async (options: getInvestorListCSVType) => {
           "Email id": item?.email,
           Type: item?.investor_type_name ?? "",
           Country: item?.country_name ?? "",
-          Balance: item?.balance ?? "",
+          Balance:
+            (item?.balance ?? "") +
+            " " +
+            (item?.balance != null ? item?.token_symbol : ""),
           Pending: item?.pending ?? "",
           Available: item?.available ?? "",
           Wallet: item?.wallet ?? "",
