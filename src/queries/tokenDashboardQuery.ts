@@ -426,7 +426,8 @@ export const getTokenRecentActivitiesQuery = (token_offering_id?: string) => {
   tt.status_id AS status_id,
   mts.name AS status_name,
   tt.id AS token_transaction_id,
-  tor.currency
+  tor.currency,
+  tof.symbol AS token_symbol
 FROM
   token_transactions AS tt
   INNER JOIN token_orders AS tor ON tt.order_id = tor.id
@@ -435,6 +436,7 @@ FROM
   INNER JOIN entities AS ent_inv ON tor.receiver_entity_id = ent_inv.id
   LEFT JOIN assets AS ast_iss ON ent_iss.logo_asset_id = ast_iss.id
   LEFT JOIN assets AS ast_inv ON ent_inv.logo_asset_id = ast_inv.id
+  LEFT JOIN token_offerings AS tof ON tor.token_offering_id = tof.id
 WHERE
   tor.token_offering_id = '${token_offering_id}'
   ORDER BY tt.updated_at DESC 

@@ -1,4 +1,4 @@
-import { user_entity, user_profile } from "@models";
+import { token_offering, user_entity, user_profile } from "@models";
 import queries from "@queries";
 import { sequelize } from "@utils";
 
@@ -287,9 +287,27 @@ export async function getInvestorList(options: {
         token_id
       )
     );
+    let token_details: any = {};
+    let finalResult: any = result ?? [];
+
+    if (token_id && token_id !== "" && result.length > 0) {
+      token_details = await token_offering.findOne({
+        attributes: ["symbol"],
+        where: {
+          id: token_id,
+        },
+      });
+
+      token_details = JSON.parse(JSON.stringify(token_details));
+
+      finalResult = await result?.map((item: any) => ({
+        ...item,
+        token_symbol: token_details?.symbol || null,
+      }));
+    }
 
     return {
-      rows: result,
+      rows: finalResult,
       count: dataWithoutOffsetLimit?.length ?? 0,
     };
   } catch (error: any) {
@@ -340,9 +358,26 @@ export async function getInvestorListAsCSV(options: {
         token_id
       )
     );
+    let token_details: any = {};
+    let finalResult: any = result ?? [];
+
+    if (token_id && token_id !== "" && result.length > 0) {
+      token_details = await token_offering.findOne({
+        attributes: ["symbol"],
+        where: {
+          id: token_id,
+        },
+      });
+      token_details = JSON.parse(JSON.stringify(token_details));
+
+      finalResult = await result?.map((item: any) => ({
+        ...item,
+        token_symbol: token_details?.symbol || null,
+      }));
+    }
 
     return {
-      rows: result,
+      rows: finalResult,
     };
   } catch (error: any) {
     console.log(error);

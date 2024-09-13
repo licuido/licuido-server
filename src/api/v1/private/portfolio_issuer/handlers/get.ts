@@ -4,6 +4,7 @@ import { queryRequestInfo } from "@mappers";
 import { EntityInvestors, TokenOfferings, TokenOrders } from "@interactors";
 import { preparePagination } from "serializers/getResponse";
 import { makeExcelFile } from "@utils";
+import { master_country } from "@models";
 
 // Get Orders Graph for Issuer Portfolio
 export async function GET_ORDERS_GRAPH(
@@ -259,13 +260,30 @@ export async function GET_INVESTOR_LIST_AS_CSV(
       });
     }
 
+    let { currency } = rest as any;
+
+    let currency_code: any = await master_country.findAll({
+      attributes: ["currency_symbol"],
+      where: {
+        currency_code: currency,
+      },
+    });
+    currency_code = JSON.parse(JSON.stringify(currency_code));
+
     const excelData =
       result?.length > 0 &&
       result.map((item: any) => ({
         Investor: item?.investor_name ?? "",
         "Wallet Id": item?.wallet_address ?? "",
         Status: item?.status_name ?? "",
-        Investment: item?.investment ?? "",
+        Investment:
+          (item?.investment != null
+            ? currency_code?.[0]?.currency_symbol
+            : "") +
+          "" +
+          (item?.investment != null
+            ? parseFloat(item.investment).toFixed(2)
+            : ""),
         Tokens: item?.tokens ?? "",
         Country: item?.country_name ?? "",
         Sector: item?.sector ?? "",
