@@ -1,51 +1,31 @@
 import { Logger } from "@helpers";
 
-export const getTotalInvestmentQuery = (
-  user_entity_id?: string,
-  currency_data?: any
-) => {
+export const getTotalInvestmentQuery = (user_entity_id?: string) => {
   try {
     /* Get Token Investment & Investment Variation Percentage */
 
     /* In Where Condition
            ---- issuer_entity_id = ""
            ---- AND tof.status_id = 1
-           ---- AND tof.offer_status_id = 1
+           ---- AND tof.offer_status_id IN (1,2)
            */
-
-    // Currency Conversion table Sample
-    let currencyConversionTable = ``;
-    if (currency_data && currency_data.trim() !== "") {
-      currencyConversionTable = `
-    currency_conversion AS (
-      SELECT * FROM (VALUES ${currency_data}) AS cc(currency_code, euro_value)
-    ),
-  `;
-    }
 
     /* For Data */
     let baseQuery = `WITH 
-  ${currencyConversionTable} 
   vas_tot_investment AS(
     SELECT
       tof.issuer_entity_id AS issuer_entity_id,
       en.legal_name AS issuer_name,
       iss_ast.url AS issuer_logo_url,
       tof.id AS token_offering_id,
+      tof.base_currency AS base_currency,
       COALESCE(
         (
           SELECT
-            SUM(COALESCE(tor.ordered_tokens * tofer.offering_price * ${
-              currency_data && currency_data.trim() !== "" ? "cc.euro_value" : 1
-            }, 0)) 
+            SUM(COALESCE(tor.ordered_tokens * tofer.offering_price, 0)) 
           FROM
             token_orders AS tor 
-            LEFT JOIN token_offerings AS tofer ON tor.token_offering_id = tofer.id 
-              ${
-                currency_data && currency_data.trim() !== ""
-                  ? "LEFT JOIN currency_conversion AS cc ON tofer.base_currency = cc.currency_code"
-                  : ""
-              } 
+            LEFT JOIN token_offerings AS tofer ON tor.token_offering_id = tofer.id  
           WHERE
             tor.token_offering_id = tof.id
             AND tor.type = 'subscription'
@@ -56,17 +36,10 @@ export const getTotalInvestmentQuery = (
       COALESCE(
         (
           SELECT
-            SUM(COALESCE(tor.ordered_tokens * tofer.offering_price * ${
-              currency_data && currency_data.trim() !== "" ? "cc.euro_value" : 1
-            }, 0)) 
+            SUM(COALESCE(tor.ordered_tokens * tofer.offering_price, 0)) 
           FROM
             token_orders AS tor 
             LEFT JOIN token_offerings AS tofer ON tor.token_offering_id = tofer.id 
-              ${
-                currency_data && currency_data.trim() !== ""
-                  ? "LEFT JOIN currency_conversion AS cc ON tofer.base_currency = cc.currency_code"
-                  : ""
-              }
           WHERE
             tor.token_offering_id = tof.id
             AND tor.type = 'redemption'
@@ -77,17 +50,10 @@ export const getTotalInvestmentQuery = (
       COALESCE(
         (
           SELECT
-            SUM(COALESCE(tor.ordered_tokens * tofer.offering_price * ${
-              currency_data && currency_data.trim() !== "" ? "cc.euro_value" : 1
-            }, 0)) 
+            SUM(COALESCE(tor.ordered_tokens * tofer.offering_price, 0)) 
           FROM
             token_orders AS tor 
             LEFT JOIN token_offerings AS tofer ON tor.token_offering_id = tofer.id 
-              ${
-                currency_data && currency_data.trim() !== ""
-                  ? "LEFT JOIN currency_conversion AS cc ON tofer.base_currency = cc.currency_code"
-                  : ""
-              }
           WHERE
             tor.token_offering_id = tof.id
             AND tor.type = 'subscription'
@@ -99,17 +65,10 @@ export const getTotalInvestmentQuery = (
       COALESCE(
         (
           SELECT
-            SUM(COALESCE(tor.ordered_tokens * tofer.offering_price * ${
-              currency_data && currency_data.trim() !== "" ? "cc.euro_value" : 1
-            }, 0)) 
+            SUM(COALESCE(tor.ordered_tokens * tofer.offering_price, 0)) 
           FROM
             token_orders AS tor 
             LEFT JOIN token_offerings AS tofer ON tor.token_offering_id = tofer.id 
-              ${
-                currency_data && currency_data.trim() !== ""
-                  ? "LEFT JOIN currency_conversion AS cc ON tofer.base_currency = cc.currency_code"
-                  : ""
-              }
           WHERE
             tor.token_offering_id = tof.id
             AND tor.type = 'redemption'
@@ -126,37 +85,31 @@ export const getTotalInvestmentQuery = (
       tof.issuer_entity_id = '${user_entity_id}'
       AND tof.is_active = true
       AND tof.status_id = 1
-      AND tof.offer_status_id = 1
+      AND tof.offer_status_id IN (1,2)
     GROUP BY
       tof.issuer_entity_id,
       en.legal_name,
       iss_ast.url,
-      tof.id
+      tof.id,
+      tof.base_currency
   )
 SELECT
   issuer_entity_id,
   issuer_name,
   issuer_logo_url,
+  token_offering_id,
+  base_currency,
   (SUM(overall_mint) - SUM(overall_burn)) AS overall_investment,
-  COALESCE(
-    (
-      (
-        (SUM(overall_mint) - SUM(overall_burn)) - (
-          SUM(overall_mint_till_yesterday) - SUM(overall_burn_till_yesterday)
-        )
-      ) / NULLIF(
-        SUM(overall_mint_till_yesterday) - SUM(overall_burn_till_yesterday),
-        0
-      )
-    ) * 100,
-    0
-  ) AS percentage_change_from_yesterday
+  (SUM(overall_mint_till_yesterday) - SUM(overall_burn_till_yesterday)) AS overall_investment_till_yesterday
 FROM
   vas_tot_investment
 GROUP BY
   issuer_entity_id,
   issuer_name,
-  issuer_logo_url`;
+  issuer_logo_url,
+  token_offering_id,
+  base_currency
+  `;
 
     return baseQuery;
   } catch (error: any) {
@@ -165,32 +118,19 @@ GROUP BY
   }
 };
 
-export const getCirculatingSupplyQuery = (
-  user_entity_id?: string,
-  currency_data?: any
-) => {
+export const getCirculatingSupplyQuery = (user_entity_id?: string) => {
   try {
     /* Get Circulating Supply & Amount */
 
     /* In Where Condition
      */
 
-    // Currency Conversion table Sample
-    let currencyConversionTable = ``;
-    if (currency_data && currency_data.trim() !== "") {
-      currencyConversionTable = `
-    currency_conversion AS (
-      SELECT * FROM (VALUES ${currency_data}) AS cc(currency_code, euro_value)
-    ),
-  `;
-    }
-
     /* For Data */
     let baseQuery = `WITH 
-  ${currencyConversionTable}
   vas_cs AS (
     SELECT
-      tof.id,
+      tof.id AS token_offering_id,
+      tof.base_currency AS base_currency,
       COALESCE(
         (
           SELECT
@@ -229,29 +169,23 @@ export const getCirculatingSupplyQuery = (
           LIMIT
             1
         ), tof.offering_price
-      ) * ${
-        currency_data && currency_data.trim() !== "" ? "cc.euro_value" : 1
-      } AS valuation_price
+      ) AS valuation_price
     FROM
-      token_offerings AS tof
-      ${
-        currency_data && currency_data.trim() !== ""
-          ? "LEFT JOIN currency_conversion AS cc ON tof.base_currency = cc.currency_code"
-          : ""
-      } 
+      token_offerings AS tof  
     WHERE
       tof.issuer_entity_id = '${user_entity_id}'
       AND tof.is_active = true
       AND tof.status_id = 1
-      AND tof.offer_status_id = 1
+      AND tof.offer_status_id  IN (1,2)
     GROUP BY
-      tof.id ${
-        currency_data && currency_data.trim() !== "" ? ", cc.euro_value" : ""
-      }
+      tof.id,
+      tof.base_currency
   )
 SELECT
-  COALESCE(SUM(total_supply), 0) AS circulating_supply,
-  SUM(COALESCE(total_supply * valuation_price, 0)) AS circulating_supply_amount
+  token_offering_id,
+  base_currency,
+  COALESCE(total_supply, 0) AS circulating_supply,
+  COALESCE(total_supply * valuation_price, 0) AS circulating_supply_amount
 FROM
   vas_cs`;
 
@@ -262,35 +196,22 @@ FROM
   }
 };
 
-export const getPendingRedemptionQuery = (
-  user_entity_id?: string,
-  currency_data?: any
-) => {
+export const getPendingRedemptionQuery = (user_entity_id?: string) => {
   try {
     /* Get Pending Redemption & Amount */
 
     /* In Where Condition
            ---- issuer_entity_id = ""
            ---- AND tof.status_id = 1 Active
-           ---- AND tof.offer_status_id = 1 Active
+           ---- AND tof.offer_status_id =  IN (1,2) Active
            */
-
-    // Currency Conversion table Sample
-    let currencyConversionTable = ``;
-    if (currency_data && currency_data.trim() !== "") {
-      currencyConversionTable = `
-    currency_conversion AS (
-      SELECT * FROM (VALUES ${currency_data}) AS cc(currency_code, euro_value)
-    ),
-  `;
-    }
 
     /* For Data */
     let baseQuery = `WITH 
-  ${currencyConversionTable}
   vas_pr AS (
     SELECT
-      tof.id,
+      tof.id AS token_offering_id,
+      tof.base_currency AS base_currency,
       COALESCE(
         (
           SELECT
@@ -308,7 +229,7 @@ export const getPendingRedemptionQuery = (
       COALESCE(
         (
           SELECT
-            tv.valuation_price_in_euro
+            tv.valuation_price
           FROM
             token_valuations AS tv
           WHERE
@@ -325,30 +246,24 @@ export const getPendingRedemptionQuery = (
             tv.start_time DESC
           LIMIT
             1
-        ), tof.offering_price_in_euro
-      ) * ${
-        currency_data && currency_data.trim() !== "" ? "cc.euro_value" : 1
-      } AS valuation_price
+        ), tof.offering_price
+      ) AS valuation_price
     FROM
-      token_offerings AS tof 
-      ${
-        currency_data && currency_data.trim() !== ""
-          ? "LEFT JOIN currency_conversion AS cc ON tof.base_currency = cc.currency_code"
-          : ""
-      } 
+      token_offerings AS tof  
     WHERE
       tof.issuer_entity_id = '${user_entity_id}'
       AND tof.is_active = true
       AND tof.status_id = 1
-      AND tof.offer_status_id = 1
+      AND tof.offer_status_id IN (1,2)
     GROUP BY
-      tof.id ${
-        currency_data && currency_data.trim() !== "" ? ", cc.euro_value" : ""
-      }
+      tof.id,
+      tof.base_currency
   )
 SELECT
-  COALESCE(SUM(pending_token), 0) AS pending_redemption,
-  SUM(COALESCE(pending_token * valuation_price, 0)) AS pending_redemption_amount
+  token_offering_id,
+  base_currency,
+  COALESCE(pending_token, 0) AS pending_redemption,
+  COALESCE(pending_token * valuation_price, 0) AS pending_redemption_amount
 FROM
   vas_pr`;
 
@@ -721,8 +636,7 @@ export const getInvestorListQuery = (
   minimum_investment_value?: string,
   maximum_investment_value?: string,
   request?: any,
-  top_five?: Boolean,
-  currency_data?: any
+  top_five?: Boolean
 ) => {
   try {
     /* Get All Investors Query on Search , Limit & Offset */
@@ -730,16 +644,6 @@ export const getInvestorListQuery = (
     /* In Where Condition
   
    */
-
-    // Currency Conversion table Sample
-    let currencyConversionTable = ``;
-    if (currency_data && currency_data.trim() !== "") {
-      currencyConversionTable = `
-    currency_conversion AS (
-      SELECT * FROM (VALUES ${currency_data}) AS cc(currency_code, euro_value)
-    ),
-  `;
-    }
 
     // For Limit & Offset
     let limitStatment = ``;
@@ -793,7 +697,6 @@ export const getInvestorListQuery = (
     /* For Data */
     let baseQuery = `
   WITH 
-  ${currencyConversionTable}
   last_transaction AS (
     SELECT
       tor.receiver_entity_id,
@@ -822,6 +725,21 @@ export const getInvestorListQuery = (
     GROUP BY
       receiver_entity_id
   ),
+  token_investments AS (
+    SELECT
+      tor.receiver_entity_id,
+      tor.token_offering_id,
+      tof.base_currency,
+      COALESCE(SUM(CASE WHEN tor.type = 'subscription' AND tor.status_id = 5 THEN tor.ordered_tokens * tof.offering_price ELSE 0 END), 0) AS total_subscription,
+      COALESCE(SUM(CASE WHEN tor.type = 'redemption' AND tor.status_id = 11 THEN tor.ordered_tokens * tof.offering_price ELSE 0 END), 0) AS total_redemption
+    FROM
+      token_orders AS tor
+      LEFT JOIN token_offerings AS tof ON tor.token_offering_id = tof.id
+    WHERE
+      tor.issuer_entity_id = '${user_entity_id}'
+    GROUP BY
+      tor.receiver_entity_id, tor.token_offering_id, tof.base_currency
+  ),
   vas_inv AS (
     SELECT
       ei.investor_entity_id AS investor_entity_id,
@@ -849,54 +767,16 @@ export const getInvestorListQuery = (
         ELSE meis.name
       END AS status_name,
       (
-        COALESCE(
-          (
-            SELECT
-              SUM(COALESCE(tor.ordered_tokens * tof.offering_price * ${
-                currency_data && currency_data.trim() !== ""
-                  ? "cc.euro_value"
-                  : 1
-              }, 0)) 
-            FROM
-              token_orders AS tor
-              LEFT JOIN token_offerings AS tof ON tor.token_offering_id = tof.id 
-              ${
-                currency_data && currency_data.trim() !== ""
-                  ? "LEFT JOIN currency_conversion AS cc ON tof.base_currency = cc.currency_code"
-                  : ""
-              }
-            WHERE
-              tor.receiver_entity_id = ei.investor_entity_id
-              AND tor.issuer_entity_id = '${user_entity_id}'
-              AND tor.type = 'subscription'
-              AND tor.status_id = 5
-          ),
-          0
-        ) - COALESCE(
-          (
-            SELECT
-              SUM(COALESCE(tor.ordered_tokens * tof.offering_price * ${
-                currency_data && currency_data.trim() !== ""
-                  ? "cc.euro_value"
-                  : 1
-              }, 0)) 
-            FROM
-              token_orders AS tor
-              LEFT JOIN token_offerings AS tof ON tor.token_offering_id = tof.id 
-              ${
-                currency_data && currency_data.trim() !== ""
-                  ? "LEFT JOIN currency_conversion AS cc ON tof.base_currency = cc.currency_code"
-                  : ""
-              } 
-            WHERE
-              tor.receiver_entity_id = ei.investor_entity_id
-              AND tor.issuer_entity_id = '${user_entity_id}'
-              AND tor.type = 'redemption'
-              AND tor.status_id = 11
-          ),
-          0
+        SELECT json_agg(
+          json_build_object(
+            'token_offering_id', ti.token_offering_id,
+            'base_currency', ti.base_currency,
+            'investment', COALESCE(ti.total_subscription, 0) - COALESCE(ti.total_redemption, 0)
+          )
         )
-      ) AS investment,
+        FROM token_investments ti
+        WHERE ti.receiver_entity_id = ei.investor_entity_id
+      ) AS investments,
     COUNT(*) OVER() AS total_count 
     FROM
       entity_investors AS ei

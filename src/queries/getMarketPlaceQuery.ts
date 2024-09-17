@@ -49,7 +49,7 @@ export const getMarketPlaceListingQuery = (
   //For currencyCode
   let currencyCodeFilter = ``;
   if (currencyCode && currencyCode?.length > 0) {
-    currencyCodeFilter = ` AND ts.base_currency_code IN (${currencyCode
+    currencyCodeFilter = ` AND ts.base_currency IN (${currencyCode
       ?.map((value: any) => `'${value}'`)
       .join(",")})`;
   }

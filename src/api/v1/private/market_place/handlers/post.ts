@@ -39,7 +39,7 @@ export async function CREATE_SUBSCRIPTION_ORDER(
       });
     } else {
       return handleResponse(request, reply, responseType?.ACCEPTED, {
-        customMessage: "Token Order Create Redemption is in progress.",
+        customMessage: "Token Order Create Subscription is in progress.",
       });
     }
   } catch (error: any) {
@@ -88,7 +88,7 @@ export async function CREATE_REDEMPTION_ORDER(
       });
     } else {
       return handleResponse(request, reply, responseType?.ACCEPTED, {
-        customMessage: "Token Order Create Subscription is in progress.",
+        customMessage: "Token Order Create Redemption is in progress.",
       });
     }
   } catch (error: any) {

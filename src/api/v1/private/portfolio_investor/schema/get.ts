@@ -88,3 +88,20 @@ export const GET_LAST_PERFORMANCE = {
   query: getLastPerformanceParams,
   response: makeResponseSchema(getLastPerformanceResponse),
 };
+
+const getTokenOverviewParams: JSONSchema = Schema.object()
+  .prop("token_id", Schema.string())
+  .required(["token_id"]);
+
+const getTokenOverviewResponse: JSONSchema = Schema.object()
+  .additionalProperties(true)
+  .prop("meta", Schema.object().prop("message", Schema.string()))
+  .valueOf() as JSONSchema;
+
+export const GET_TOKEN_OVERVIEW = {
+  description:
+    "Defines the structure and constraints for an API endpoint to get Investor Token Overview",
+  tags: ["Investor Portfolio"],
+  query: getTokenOverviewParams,
+  response: makeResponseSchema(getTokenOverviewResponse),
+};

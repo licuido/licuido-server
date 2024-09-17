@@ -87,7 +87,7 @@ const constructBaseQuery = async (
         investment_currency_filters &&
         investment_currency_filters?.length > 0
       ) {
-        investmentCurrencyFilter = ` AND investment_currency_code IN (${investment_currency_filters
+        investmentCurrencyFilter = ` AND investment_currency_symbol IN (${investment_currency_filters
           .map((currency) => `'${currency}'`)
           .join(", ")})`;
       }

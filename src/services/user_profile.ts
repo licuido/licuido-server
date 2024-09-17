@@ -1,4 +1,4 @@
-import { asset, entity, user_profile } from "@models";
+import { asset, entity, master_country, user_profile } from "@models";
 import { createPersonInfo } from "@types";
 
 class UserProfile {
@@ -35,6 +35,11 @@ class UserProfile {
                 model: asset,
                 as: "logo_asset",
                 attributes: ["id", "url"],
+              },
+              {
+                model: master_country,
+                as: "country",
+                attributes: ["name", "currency_code", "currency_symbol"],
               },
             ],
           },

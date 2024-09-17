@@ -1,7 +1,5 @@
 import {
   Logger,
-  currencyConvert,
-  currencyDetails,
   dateTime,
   errorCustomMessage,
   fulfilledStatus,
@@ -61,22 +59,26 @@ const createTokenSubscriptionOrders = async (
       };
     }
 
-    const default_currency = "€";
-    const default_currency_code = "EUR";
-
     const tokenOffering: any =
       await TokenOfferings.getTokenOfferingBaseCurrency(token_offering_id);
 
-    const tokenconversionResponse = await currencyConvert({
-      from_currency_code: currency_code,
-      to_currency_code: tokenOffering?.base_currency,
-      amount: net_investment_value,
-    });
-    const conversionResponse = await currencyConvert({
-      from_currency_code: currency_code,
-      to_currency_code: default_currency_code,
-      amount: net_investment_value,
-    });
+    if (
+      net_investment_value >= Number(tokenOffering?.minimum_investment_limit) &&
+      net_investment_value <= Number(tokenOffering?.maximum_investment_limit)
+    ) {
+    } else {
+      return {
+        code: 403,
+        customMessage: errorCustomMessage.investmentLimit,
+      };
+    }
+
+    if (tokenOffering?.offer_status_id === 2) {
+      return {
+        code: 403,
+        customMessage: errorCustomMessage.tokenPaused,
+      };
+    }
 
     // To check order fulfilled by licuido or issuer
     const isFulfilledBylicuido: boolean =
@@ -103,18 +105,11 @@ const createTokenSubscriptionOrders = async (
               : tokenOffering?.base_currency,
           ordered_tokens,
           price_per_token,
-          net_investment_value,
+          net_investment_value: net_investment_value,
           fee,
           total_paid,
           payment_reference,
-          default_currency: default_currency,
-          default_currency_code: default_currency_code,
-          net_investment_value_in_euro: parseFloat(
-            conversionResponse.toFixed(2)
-          ),
-          net_investment_value_by_token: parseFloat(
-            tokenconversionResponse.toFixed(2)
-          ),
+          net_investment_value_by_token: net_investment_value,
           created_by: user_profile_id,
           is_active: true,
           status_id: 1, // Pending Order
@@ -268,21 +263,14 @@ const createTokenRedemptionOrders = async (
     const tokenOffering: any =
       await TokenOfferings.getTokenOfferingBaseCurrency(token_offering_id);
 
-    const tokenconversionResponse = await currencyConvert({
-      from_currency_code: currency_code,
-      to_currency_code: tokenOffering?.base_currency,
-      amount: net_investment_value,
-    });
+    if (tokenOffering?.offer_status_id === 2) {
+      return {
+        code: 403,
+        customMessage: errorCustomMessage.tokenPaused,
+      };
+    }
 
-    const default_currency = "€";
-    const default_currency_code = "EUR";
-    const amount = ordered_tokens * tokenOffering?.offering_price;
-
-    const conversionResponse = await currencyConvert({
-      from_currency_code: currency_code,
-      to_currency_code: default_currency_code,
-      amount: amount,
-    });
+    const token_amount = ordered_tokens * tokenOffering?.offering_price;
 
     // To check order fulfilled by licuido or issuer
     const isFulfilledBylicuido: boolean =
@@ -309,7 +297,7 @@ const createTokenRedemptionOrders = async (
               : tokenOffering?.base_currency,
           ordered_tokens,
           price_per_token,
-          net_investment_value,
+          net_investment_value: net_investment_value,
           created_by: user_profile_id,
           is_active: true,
           status_id: 2, // Pending Redmeption
@@ -318,14 +306,7 @@ const createTokenRedemptionOrders = async (
           swift_bic_no,
           iban_no,
           fulfilled_by: isFulfilledBylicuido ? "admin" : "issuer",
-          default_currency: default_currency,
-          default_currency_code: default_currency_code,
-          net_investment_value_in_euro: parseFloat(
-            conversionResponse.toFixed(2)
-          ),
-          net_investment_value_by_token: parseFloat(
-            tokenconversionResponse.toFixed(2)
-          ),
+          net_investment_value_by_token: token_amount,
         },
         transaction
       );
@@ -621,14 +602,33 @@ const getTokenSubscriptionOrderAsCSV = async (
           Investor: item?.investor_name ?? "",
           Issuer: item?.issuer_name ?? "",
           Status: item?.status_name ?? "",
-          "Creation Date": item?.creation_date
+          "Creation date": item?.creation_date
             ? dateTime.formatDate(item?.creation_date)
             : "",
-          "Amount to pay": item?.amount_to_pay ?? "",
-          "Tokens ordered": item?.token_ordered ?? "",
-          "Confirmed Payment": item?.confirmed_payment ?? "",
-          "Tokens confirmed": item?.confirmed_tokens ?? "",
-          "Token Price": item?.token_price ?? "",
+          "Amount to pay":
+            (item?.investment_currency ?? "") +
+            "" +
+            (item?.amount_to_pay != null
+              ? parseFloat(item.amount_to_pay).toFixed(2)
+              : ""),
+          "Tokens ordered":
+            (item?.token_ordered ?? "") + " " + (item?.token_symbol ?? ""),
+          "Confirmed Payment":
+            (item?.confirmed_payment != null ? item?.investment_currency : "") +
+            "" +
+            (item?.confirmed_payment != null
+              ? parseFloat(item.confirmed_payment).toFixed(2)
+              : ""),
+          "Tokens confirmed":
+            (item?.confirmed_tokens != null ? item?.confirmed_tokens : "") +
+            " " +
+            (item?.confirmed_tokens != null ? item?.token_symbol : ""),
+          "Token Price":
+            (item?.investment_currency ?? "") +
+            "" +
+            (item?.token_price != null
+              ? parseFloat(item.token_price).toFixed(2)
+              : ""),
           "Order fulfillment":
             item?.fulfilled_by === "issuer"
               ? "Fulfilled by Issuer"
@@ -650,11 +650,30 @@ const getTokenSubscriptionOrderAsCSV = async (
           "Creation Date": item?.creation_date
             ? dateTime.formatDate(item?.creation_date)
             : "",
-          "Amount to pay": item?.amount_to_pay ?? "",
-          "Tokens ordered": item?.token_ordered ?? "",
-          "Confirmed Payment": item?.confirmed_payment ?? "",
-          "Tokens confirmed": item?.confirmed_tokens ?? "",
-          "Token Price": item?.token_price ?? "",
+          "Amount to pay":
+            (item?.token_base_currency ?? "") +
+            "" +
+            (item?.amount_to_pay != null
+              ? parseFloat(item.amount_to_pay).toFixed(2)
+              : ""),
+          "Tokens ordered":
+            (item?.token_ordered ?? "") + " " + (item?.token_symbol ?? ""),
+          "Confirmed Payment":
+            (item?.confirmed_payment != null ? item?.token_base_currency : "") +
+            "" +
+            (item?.confirmed_payment != null
+              ? parseFloat(item.confirmed_payment).toFixed(2)
+              : ""),
+          "Tokens confirmed":
+            (item?.confirmed_tokens != null ? item?.confirmed_tokens : "") +
+            " " +
+            (item?.confirmed_tokens != null ? item?.token_symbol : ""),
+          "Token Price":
+            (item?.token_base_currency ?? "") +
+            "" +
+            (item?.token_price != null
+              ? parseFloat(item.token_price).toFixed(2)
+              : ""),
           "Email id": item?.email_id ?? "",
           "Payment reference": item?.payment_reference ?? "",
           TxHash: item?.transaction_hash ?? "",
@@ -671,11 +690,30 @@ const getTokenSubscriptionOrderAsCSV = async (
           "Creation Date": item?.creation_date
             ? dateTime.formatDate(item?.creation_date)
             : "",
-          "Amount to pay": item?.amount_to_pay ?? "",
-          "Tokens ordered": item?.token_ordered ?? "",
-          "Confirmed Payment": item?.confirmed_payment ?? "",
-          "Tokens confirmed": item?.confirmed_tokens ?? "",
-          "Token Price": item?.token_price ?? "",
+          "Amount to pay":
+            (item?.token_base_currency ?? "") +
+            "" +
+            (item?.amount_to_pay != null
+              ? parseFloat(item.amount_to_pay).toFixed(2)
+              : ""),
+          "Tokens ordered":
+            (item?.token_ordered ?? "") + " " + (item?.token_symbol ?? ""),
+          "Confirmed Payment":
+            (item?.confirmed_payment != null ? item?.token_base_currency : "") +
+            "" +
+            (item?.confirmed_payment != null
+              ? parseFloat(item.confirmed_payment).toFixed(2)
+              : ""),
+          "Tokens confirmed":
+            (item?.confirmed_tokens != null ? item?.confirmed_tokens : "") +
+            " " +
+            (item?.confirmed_tokens != null ? item?.token_symbol : ""),
+          "Token Price":
+            (item?.token_base_currency ?? "") +
+            "" +
+            (item?.token_price != null
+              ? parseFloat(item.token_price).toFixed(2)
+              : ""),
           "Payment reference": item?.payment_reference ?? "",
           TxHash: item?.transaction_hash ?? "",
         }));
@@ -759,10 +797,21 @@ const getTokenRedemptionOrderAsCSV = async (
           "Creation Date": item?.creation_date
             ? dateTime.formatDate(item?.creation_date)
             : "",
-          "Tokens ordered": item?.token_ordered ?? "",
-          "Token price": item?.token_price ?? "",
+          "Tokens ordered":
+            (item?.token_ordered ?? "") + " " + (item?.token_symbol ?? ""),
+          "Token price":
+            (item?.token_base_currency ?? "") +
+            "" +
+            (item?.token_price != null
+              ? parseFloat(item.token_price).toFixed(2)
+              : ""),
           "Token price time": item?.token_price_time ?? "",
-          "Amount to pay": item?.amount_to_pay ?? "",
+          "Amount to pay":
+            (item?.token_base_currency ?? "") +
+            "" +
+            (item?.amount_to_pay != null
+              ? parseFloat(item.amount_to_pay).toFixed(2)
+              : ""),
           "Order fulfillment":
             item?.fulfilled_by === "issuer"
               ? "Fulfilled by Issuer"
@@ -781,10 +830,21 @@ const getTokenRedemptionOrderAsCSV = async (
           "Creation Date": item?.creation_date
             ? dateTime.formatDate(item?.creation_date)
             : "",
-          "Tokens ordered": item?.token_ordered ?? "",
-          "Token Price": item?.token_price ?? "",
+          "Tokens ordered":
+            (item?.token_ordered ?? "") + " " + (item?.token_symbol ?? ""),
+          "Token Price":
+            (item?.token_base_currency ?? "") +
+            "" +
+            (item?.token_price != null
+              ? parseFloat(item.token_price).toFixed(2)
+              : ""),
           "Token price time": item?.token_price_time ?? "",
-          "Amount to pay": item?.amount_to_pay ?? "",
+          "Amount to pay":
+            (item?.token_base_currency ?? "") +
+            "" +
+            (item?.amount_to_pay != null
+              ? parseFloat(item.amount_to_pay).toFixed(2)
+              : ""),
         }));
     }
     /* For Investor */
@@ -798,10 +858,21 @@ const getTokenRedemptionOrderAsCSV = async (
           "Creation Date": item?.creation_date
             ? dateTime.formatDate(item?.creation_date)
             : "",
-          "Tokens ordered": item?.token_ordered ?? "",
-          "Token Price": item?.token_price ?? "",
+          "Tokens ordered":
+            (item?.token_ordered ?? "") + " " + (item?.token_symbol ?? ""),
+          "Token Price":
+            (item?.token_base_currency ?? "") +
+            "" +
+            (item?.token_price != null
+              ? parseFloat(item.token_price).toFixed(2)
+              : ""),
           "Token price time": item?.token_price_time ?? "",
-          "Amount to receive": item?.amount_to_pay ?? "",
+          "Amount to receive":
+            (item?.token_base_currency ?? "") +
+            "" +
+            (item?.amount_to_pay != null
+              ? parseFloat(item.amount_to_pay).toFixed(2)
+              : ""),
         }));
     }
 
@@ -923,7 +994,7 @@ const confirmPayment = async ({
     //   amount: Number(received_payment),
     // });
 
-    if (received_payment !== order?.net_investment_value) {
+    if (Number(received_payment) < Number(order?.net_investment_value)) {
       return {
         message: successCustomMessage?.amountMismatch,
       };
@@ -1162,29 +1233,10 @@ const getDashboard = async ({
   user_entity_id?: string;
   currency: string;
 }) => {
-  let currency_codes: any = await currencyDetails.getTokenCurrencyDetails({
-    issuer_entity_id: user_entity_id,
-  });
-
-  let currency_values = [];
-  for (const item of currency_codes) {
-    let convertedamount = await currencyConvert({
-      from_currency_code: item,
-      to_currency_code: "EUR",
-      amount: 1,
-    });
-
-    currency_values.push({
-      currency_code: item,
-      euro_value: parseFloat(convertedamount.toFixed(2)),
-    });
-  }
-
   // Get Dashboard
   const result: any = await TokenOrders.getDashboard({
     user_entity_id,
     currency,
-    currency_values,
   });
 
   return result;
@@ -1289,31 +1341,10 @@ const getInvestorDashboard = async ({
   user_entity_id?: string;
   currency?: string;
 }) => {
-  // Get Investor Invested Token Currencies & Values
-  let currency_codes: any =
-    await currencyDetails.getInvestorTokenCurrencyDetails({
-      receiver_entity_id: user_entity_id,
-    });
-
-  let currency_values = [];
-  for (const item of currency_codes) {
-    let convertedamount = await currencyConvert({
-      from_currency_code: item,
-      to_currency_code: "EUR",
-      amount: 1,
-    });
-
-    currency_values.push({
-      currency_code: item,
-      euro_value: parseFloat(convertedamount.toFixed(2)),
-    });
-  }
-
   // Get Investor Dashboard
   const result: any = await TokenOrders.getInvestorDashboard({
     user_entity_id,
     currency,
-    currency_values,
   });
 
   return result;
@@ -1348,7 +1379,6 @@ const getTokenSummaryRecentActivities = async ({
   user_entity_id?: string;
   token_offering_id?: string;
 }) => {
-  token_offering_id;
   // Get Token Summary & Recent Activites
   const result: any = await TokenOrders.getTokenSummaryRecentActivities({
     user_entity_id,
@@ -1554,35 +1584,63 @@ const getInvestorlast3MonthsPerformance = async ({
   });
   graphData = mergeValuesByDate(dates);
 
-  let currency_codes: any =
-    await currencyDetails.getInvestorTokenCurrencyDetails({
-      receiver_entity_id: user_entity_id,
-    });
-
-  let currency_values = [];
-  for (const item of currency_codes) {
-    let convertedamount = await currencyConvert({
-      from_currency_code: item,
-      to_currency_code: "EUR",
-      amount: 1,
-    });
-
-    currency_values.push({
-      currency_code: item,
-      euro_value: parseFloat(convertedamount.toFixed(2)),
-    });
-  }
-
   let totalInvestment: any = await TokenOrders.getInvestorDashboard({
     user_entity_id,
     currency,
-    currency_values,
   });
 
   return {
     graphData,
     profitPercentage: totalInvestment?.percentage_change ?? 0,
   };
+};
+
+const getTokenOverview = async ({
+  user_entity_id,
+  token_id,
+}: {
+  user_entity_id?: string;
+  token_id?: string;
+}) => {
+  // Get Token Distribution Data
+  const result: any = await TokenOrders.getTokenOverview({
+    user_entity_id,
+    token_id,
+  });
+
+  let obj: any = {};
+  if (result && result.length > 0) {
+    let initalObj = result?.[0];
+
+    obj["balance_token"] = (initalObj?.balance).toString();
+    obj["balance_amount"] = (
+      initalObj?.balance * initalObj?.valuation_price
+    ).toString();
+    obj["token_symbol"] = initalObj?.token_symbol;
+    obj["current_valuation_price"] = (initalObj?.valuation_price).toString();
+    obj["offering_price"] = (initalObj?.offering_price).toString();
+    obj["pending_token"] = (initalObj?.pending).toString();
+    obj["pending_amount"] = (
+      initalObj?.pending * initalObj?.valuation_price
+    ).toString();
+    obj["available_token"] = (
+      initalObj?.balance - initalObj?.pending
+    ).toString();
+    obj["available_amount"] = (
+      (initalObj?.balance - initalObj?.pending) *
+      initalObj?.valuation_price
+    ).toString();
+    obj["investment_currency"] = initalObj?.investment_currency;
+    obj["valuation_change_percentage"] = initalObj?.offering_price
+      ? (
+          ((initalObj?.valuation_price - initalObj?.offering_price) /
+            initalObj?.offering_price) *
+          100
+        ).toString()
+      : "0";
+  }
+
+  return obj;
 };
 
 export default {
@@ -1611,4 +1669,5 @@ export default {
   getIssuerApprovalCount,
   getTotalInvestmentIssuersInvestorsCount,
   getInvestorlast3MonthsPerformance,
+  getTokenOverview,
 };

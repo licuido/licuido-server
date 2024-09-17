@@ -171,6 +171,7 @@ export const getTokenStatusQuery = (token_offering_id?: string) => {
     let baseQuery = `SELECT
   tof.id AS token_id,
   tof.name AS token_name,
+  tof.offering_price AS offering_price,
   tof.symbol AS token_symbol,
   mtot.name AS token_type_name,
   ast_t.url AS token_logo_url,
@@ -285,7 +286,7 @@ export const getTokenCirculatingSupplyQuery = (token_offering_id?: string) => {
       tof.id = '${token_offering_id}'
       AND tof.is_active = true
       AND tof.status_id = 1
-      AND tof.offer_status_id = 1
+      AND tof.offer_status_id IN (1,2)
   )
 SELECT
   token_offering_id,
@@ -383,7 +384,7 @@ export const getTokenCirculatingSupplyBefore1dayQuery = (
       tof.id = '${token_offering_id}'
       AND tof.is_active = true
       AND tof.status_id = 1
-      AND tof.offer_status_id = 1
+      AND tof.offer_status_id IN (1,2)
   )
 SELECT
   token_offering_id,
@@ -425,7 +426,8 @@ export const getTokenRecentActivitiesQuery = (token_offering_id?: string) => {
   tt.status_id AS status_id,
   mts.name AS status_name,
   tt.id AS token_transaction_id,
-  tor.currency
+  tor.currency,
+  tof.symbol AS token_symbol
 FROM
   token_transactions AS tt
   INNER JOIN token_orders AS tor ON tt.order_id = tor.id
@@ -434,6 +436,7 @@ FROM
   INNER JOIN entities AS ent_inv ON tor.receiver_entity_id = ent_inv.id
   LEFT JOIN assets AS ast_iss ON ent_iss.logo_asset_id = ast_iss.id
   LEFT JOIN assets AS ast_inv ON ent_inv.logo_asset_id = ast_inv.id
+  LEFT JOIN token_offerings AS tof ON tor.token_offering_id = tof.id
 WHERE
   tor.token_offering_id = '${token_offering_id}'
   ORDER BY tt.updated_at DESC 
@@ -448,6 +451,8 @@ WHERE
 };
 
 export const getByNoOfInvestorsQuery = (
+  limit: number | null,
+  offset: number | null,
   token_offering_id?: string,
   start_date?: string,
   end_date?: string | null
@@ -460,6 +465,7 @@ export const getByNoOfInvestorsQuery = (
                        */
 
     let dateQuery = ``;
+    let limitStatment = ``;
     if (
       start_date &&
       end_date &&
@@ -470,6 +476,10 @@ export const getByNoOfInvestorsQuery = (
       dateQuery = ``;
     } else {
       dateQuery = ` AND tor.updated_at < '${start_date}'`;
+    }
+
+    if (offset !== null && limit !== null) {
+      limitStatment = ` LIMIT '${limit}' OFFSET '${offset * limit}'`;
     }
 
     /* For Data */
@@ -495,10 +505,7 @@ FROM
   vas_id_noi
 ORDER BY
   investor_count DESC 
-  LIMIT
-  5
-OFFSET
-  0`;
+  ${limitStatment}`;
 
     return baseQuery;
   } catch (error: any) {
@@ -508,6 +515,8 @@ OFFSET
 };
 
 export const getByInvestmentAmountQuery = (
+  limit: number | null,
+  offset: number | null,
   token_offering_id?: string,
   start_date?: string,
   end_date?: string | null
@@ -520,6 +529,7 @@ export const getByInvestmentAmountQuery = (
                          */
 
     let dateQuery = ``;
+    let limitStatment = ``;
     if (
       start_date &&
       end_date &&
@@ -530,6 +540,10 @@ export const getByInvestmentAmountQuery = (
       dateQuery = ``;
     } else {
       dateQuery = ` AND tor.updated_at < '${start_date}'`;
+    }
+
+    if (offset !== null && limit !== null) {
+      limitStatment = ` LIMIT '${limit}' OFFSET '${offset * limit}'`;
     }
 
     /* For Data */
@@ -573,10 +587,7 @@ FROM
   vas_id_ia
 ORDER BY
   net_investment DESC 
-  LIMIT
-  5
-OFFSET
-  0`;
+  ${limitStatment}`;
     return baseQuery;
   } catch (error: any) {
     Logger.error(error.message, error);

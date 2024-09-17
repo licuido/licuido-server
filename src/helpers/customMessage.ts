@@ -3,6 +3,8 @@ export const errorCustomMessage = {
     "Given Token Name Already Exists, Try Different Token Name",
   notQualified: "You are not qualified yet to invest",
   passTokenOrderId: "Please Pass Token Order ID",
+  investmentLimit: "Investment Limit for the Token Should be Within the Range",
+  tokenPaused: "Token is Paused",
 };
 
 export const successCustomMessage = {
@@ -20,5 +22,5 @@ export const successCustomMessage = {
   paymentRejected: "Token Order Payment Rejected Successflly",
   paymentSend: "Token Order Payment Send Successfully",
   orderRejected: "Token Order Rejected Successfully",
-  amountMismatch: "Amount Mismatch",
+  amountMismatch: "Entered Amount is lesser than Order Amount",
 };

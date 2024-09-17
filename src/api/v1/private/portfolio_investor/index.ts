@@ -37,6 +37,13 @@ const investorPortFolioRoute: FastifyPluginAsync = async (
     { schema: schema.GET_LAST_PERFORMANCE },
     handler.GET_LAST_PERFORMANCE
   );
+
+  /* Token Overview */
+  fastify.get(
+    "/token/overview",
+    { schema: schema.GET_TOKEN_OVERVIEW },
+    handler.GET_TOKEN_OVERVIEW
+  );
 };
 
 export default investorPortFolioRoute;
