@@ -170,7 +170,6 @@ export interface updateTokenOfferingPayload
     | "offer_status_id"
     | "allowed_currencies"
     | "allowed_countries"
-    | "status"
     | "documents"
     | "teams"
   > {
@@ -222,11 +221,7 @@ export interface updateTokenOfferingPayload
 export interface updateTokenOffering
   extends Omit<
     createTokenOffering,
-    | "issuer_entity_id"
-    | "created_by"
-    | "is_active"
-    | "status_id"
-    | "offer_status_id"
+    "issuer_entity_id" | "created_by" | "is_active" | "offer_status_id"
   > {
   updated_by: string;
   circulating_supply_count?: number;
