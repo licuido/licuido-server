@@ -1,5 +1,6 @@
 import {
   Logger,
+  currencyConvert,
   dateTime,
   errorCustomMessage,
   fulfilledStatus,
@@ -1481,40 +1482,96 @@ const rejectOrder = async ({
 
   return result;
 };
-const calculation = (startDate: any, endDate: any, arr1: any, arr2: any) => {
+const calculation = async (
+  startDate: any,
+  endDate: any,
+  arr1: any,
+  arr2: any,
+  base_currency: any,
+  currency: any
+) => {
   const datesArray = [];
   let currentDate = startDate;
 
+  // Create an array of dates from startDate to endDate
   while (currentDate.isSameOrBefore(endDate)) {
     datesArray.push(currentDate.format("YYYY-MM-DD"));
     currentDate.add(1, "day");
   }
 
+  // Initialize last known balance to 0 and last converted value
+  let lastKnownBalance = 0;
+  let lastConvertedAmount: any = 0; // Store the last converted value
+  let lastCalculatedValue: any = 0; // Store the last calculated value
+
+  // Sort arr1 by date to ensure balance is picked in the correct order
+  arr1.sort((a: any, b: any) => (moment(a.date).isBefore(b.date) ? -1 : 1));
+
   // Calculate progress array
-  const progressArray = datesArray.map((date) => {
-    // Get the closest valuation price available on or before the current date
-    const applicableValuation = arr2.reduce((closest: any, current: any) => {
+  const progressArray = await Promise.all(
+    datesArray.map(async (date) => {
+      // Find the closest balance for the current date or earlier
+      const applicableBalanceEntry = arr1.reduce((closest: any, entry: any) => {
+        // Check if the entry date is on or before the current date
+        if (moment(entry.date).isSameOrBefore(date)) {
+          // If this is the first match, or the entry date is closer to the current date, update closest
+          if (!closest || moment(entry.date).isAfter(closest.date)) {
+            return entry;
+          }
+        }
+        return closest;
+      }, null);
+
+      // If a balance is found for this date or earlier, update lastKnownBalance
       if (
-        moment(current.date).isSameOrBefore(date) &&
-        (!closest || moment(current.date).isAfter(closest.date))
+        applicableBalanceEntry &&
+        moment(applicableBalanceEntry.date).isSameOrBefore(date)
       ) {
-        return current;
+        lastKnownBalance = applicableBalanceEntry.sender_balance;
       }
-      return closest;
-    }, null);
 
-    // Get the balance from arr1 (assuming the balance stays constant for the 90 days)
-    const balance = arr1[0].sender_balance;
+      // Get the closest valuation price available on or before the current date
+      const applicableValuation = arr2.reduce((closest: any, current: any) => {
+        if (
+          moment(current.date).isSameOrBefore(date) &&
+          (!closest || moment(current.date).isAfter(closest.date))
+        ) {
+          return current;
+        }
+        return closest;
+      }, null);
 
-    // Calculate the result for the current date
-    const calculatedValue =
-      balance * (applicableValuation ? applicableValuation.valuation_price : 0);
+      // Calculate the result for the current date
+      const calculatedValue =
+        lastKnownBalance *
+        (applicableValuation ? applicableValuation.valuation_price : 0);
 
-    return {
-      date: date,
-      value: calculatedValue,
-    };
-  });
+      let convertedAmount: any = lastConvertedAmount;
+
+      // Only convert currency if the calculatedValue is different from the last one
+      if (calculatedValue !== lastCalculatedValue) {
+        if (calculatedValue !== 0) {
+          convertedAmount = await currencyConvert({
+            from_currency_code: base_currency,
+            to_currency_code: currency,
+            amount: Number(calculatedValue),
+          });
+        } else {
+          convertedAmount = 0;
+        }
+      }
+
+      // Update the lastCalculatedValue and lastConvertedAmount
+      lastCalculatedValue = calculatedValue;
+      lastConvertedAmount = convertedAmount;
+
+      return {
+        date: date,
+        value: convertedAmount,
+      };
+    })
+  );
+
   return progressArray;
 };
 const mergeValuesByDate = (arrays: any) => {
@@ -1569,19 +1626,23 @@ const getInvestorlast3MonthsPerformance = async ({
 
   let graphData: any = [];
 
-  const dates: any = [];
-  tokenHoldings.map((vl: any) => {
-    const matchingEntry = TokenValuationPrice.find(
-      (entry2: any) => entry2.token_id === vl.token_offering_id
-    );
-    let datevalues = calculation(
-      moment(from_date, "YYYY-MM-DD"),
-      moment(to_date, "YYYY-MM-DD"),
-      vl?.aggregated_balance_json ?? [],
-      matchingEntry?.aggregated_valuations ?? []
-    );
-    dates.push(datevalues);
-  });
+  const dates: any = await Promise.all(
+    tokenHoldings.map(async (vl: any) => {
+      const matchingEntry = TokenValuationPrice.find(
+        (entry2: any) => entry2.token_id === vl.token_offering_id
+      );
+      // Await the result of the calculation function to resolve the promise
+      const datevalues = await calculation(
+        moment(from_date, "YYYY-MM-DD"),
+        moment(to_date, "YYYY-MM-DD"),
+        vl?.aggregated_balance_json ?? [],
+        matchingEntry?.aggregated_valuations ?? [],
+        vl?.base_currency,
+        currency
+      );
+      return datevalues;
+    })
+  );
   graphData = mergeValuesByDate(dates);
 
   let totalInvestment: any = await TokenOrders.getInvestorDashboard({
