@@ -554,6 +554,7 @@ const updateTokenOfferings = async (options: updateTokenOfferingPayload) => {
       payback_period,
       payback_period_type,
       annual_percentage_yield,
+      status,
     } = options;
 
     // Check if the Token Name Already Exists
@@ -629,6 +630,7 @@ const updateTokenOfferings = async (options: updateTokenOfferingPayload) => {
         payback_period,
         payback_period_type,
         annual_percentage_yield,
+        status_id: status,
       },
       token_id
     );

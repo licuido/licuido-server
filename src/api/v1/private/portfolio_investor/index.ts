@@ -31,7 +31,7 @@ const investorPortFolioRoute: FastifyPluginAsync = async (
     handler.GET_DASHBOARD
   );
 
-  /* Portfolio Dashboard */
+  /* Last 3 Month Performance */
   fastify.get(
     "/investor/performance",
     { schema: schema.GET_LAST_PERFORMANCE },
