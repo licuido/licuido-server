@@ -5,6 +5,7 @@ import { EntityInvestors, TokenOfferings, TokenOrders } from "@interactors";
 import { preparePagination } from "serializers/getResponse";
 import { makeExcelFile } from "@utils";
 import { master_country } from "@models";
+import { amountFormatter, tokenFormatter } from "utils/formater";
 
 // Get Orders Graph for Issuer Portfolio
 export async function GET_ORDERS_GRAPH(
@@ -281,10 +282,8 @@ export async function GET_INVESTOR_LIST_AS_CSV(
             ? currency_code?.[0]?.currency_symbol
             : "") +
           "" +
-          (item?.investment != null
-            ? parseFloat(item.investment).toFixed(2)
-            : ""),
-        Tokens: item?.tokens ?? "",
+          amountFormatter(item?.investment),
+        Tokens: tokenFormatter(item?.tokens),
         Country: item?.country_name ?? "",
         Sector: item?.sector ?? "",
       }));

@@ -6,6 +6,7 @@ import {
   getAllPositionReportsType,
 } from "@types";
 import { PositionReports, PositionReportInvestors } from "@services";
+import { tokenFormatter } from "utils/formater";
 
 const createPositionReports = async (options: createPositionReport) => {
   try {
@@ -150,9 +151,9 @@ const getAllInvestorsAsCSV = async (options: getAllInvestorsCSVType) => {
         // "Last name": "",
         "Email id": item?.email,
         "Country of Residence": item?.country_name ?? "",
-        Balance: item?.balance ?? "",
-        Pending: item?.pending ?? "",
-        Available: item?.available ?? "",
+        Balance: tokenFormatter(item?.balance),
+        Pending: tokenFormatter(item?.pending),
+        Available: tokenFormatter(item?.available) ?? "",
         Wallet: item?.wallet ?? "",
         "Wallet provider": item?.wallet_type ?? "",
         "Last Transaction": item?.last_transaction

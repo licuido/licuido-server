@@ -23,6 +23,7 @@ import {
 } from "@types";
 import { sequelize } from "@utils";
 import moment from "moment";
+import { amountFormatter, tokenFormatter } from "utils/formater";
 
 const createTokenSubscriptionOrders = async (
   options: createTokenSubscriptionOrderPayload
@@ -607,29 +608,25 @@ const getTokenSubscriptionOrderAsCSV = async (
             ? dateTime.formatDate(item?.creation_date)
             : "",
           "Amount to pay":
-            (item?.investment_currency ?? "") +
+            (item?.amount_to_pay != null ? item?.investment_currency : "") +
             "" +
-            (item?.amount_to_pay != null
-              ? parseFloat(item.amount_to_pay).toFixed(2)
-              : ""),
+            amountFormatter(item?.amount_to_pay),
           "Tokens ordered":
-            (item?.token_ordered ?? "") + " " + (item?.token_symbol ?? ""),
+            tokenFormatter(item?.token_ordered) +
+            " " +
+            (item?.token_ordered != null ? item?.token_symbol : ""),
           "Confirmed Payment":
             (item?.confirmed_payment != null ? item?.investment_currency : "") +
             "" +
-            (item?.confirmed_payment != null
-              ? parseFloat(item.confirmed_payment).toFixed(2)
-              : ""),
+            amountFormatter(item?.confirmed_payment),
           "Tokens confirmed":
-            (item?.confirmed_tokens != null ? item?.confirmed_tokens : "") +
+            tokenFormatter(item?.confirmed_tokens) +
             " " +
             (item?.confirmed_tokens != null ? item?.token_symbol : ""),
           "Token Price":
-            (item?.investment_currency ?? "") +
+            (item?.token_price != null ? item?.investment_currency : "") +
             "" +
-            (item?.token_price != null
-              ? parseFloat(item.token_price).toFixed(2)
-              : ""),
+            amountFormatter(item?.token_price),
           "Order fulfillment":
             item?.fulfilled_by === "issuer"
               ? "Fulfilled by Issuer"
@@ -652,29 +649,25 @@ const getTokenSubscriptionOrderAsCSV = async (
             ? dateTime.formatDate(item?.creation_date)
             : "",
           "Amount to pay":
-            (item?.token_base_currency ?? "") +
+            (item?.amount_to_pay != null ? item?.token_base_currency : "") +
             "" +
-            (item?.amount_to_pay != null
-              ? parseFloat(item.amount_to_pay).toFixed(2)
-              : ""),
+            amountFormatter(item?.amount_to_pay),
           "Tokens ordered":
-            (item?.token_ordered ?? "") + " " + (item?.token_symbol ?? ""),
+            tokenFormatter(item?.token_ordered) +
+            " " +
+            (item?.token_ordered ? item?.token_symbol : ""),
           "Confirmed Payment":
             (item?.confirmed_payment != null ? item?.token_base_currency : "") +
             "" +
-            (item?.confirmed_payment != null
-              ? parseFloat(item.confirmed_payment).toFixed(2)
-              : ""),
+            amountFormatter(item?.confirmed_payment),
           "Tokens confirmed":
-            (item?.confirmed_tokens != null ? item?.confirmed_tokens : "") +
+            tokenFormatter(item?.confirmed_tokens) +
             " " +
             (item?.confirmed_tokens != null ? item?.token_symbol : ""),
           "Token Price":
-            (item?.token_base_currency ?? "") +
+            (item?.token_price != null ? item?.token_base_currency : "") +
             "" +
-            (item?.token_price != null
-              ? parseFloat(item.token_price).toFixed(2)
-              : ""),
+            amountFormatter(item?.token_price),
           "Email id": item?.email_id ?? "",
           "Payment reference": item?.payment_reference ?? "",
           TxHash: item?.transaction_hash ?? "",
@@ -692,29 +685,25 @@ const getTokenSubscriptionOrderAsCSV = async (
             ? dateTime.formatDate(item?.creation_date)
             : "",
           "Amount to pay":
-            (item?.token_base_currency ?? "") +
+            (item?.amount_to_pay != null ? item?.token_base_currency : "") +
             "" +
-            (item?.amount_to_pay != null
-              ? parseFloat(item.amount_to_pay).toFixed(2)
-              : ""),
+            amountFormatter(item?.amount_to_pay),
           "Tokens ordered":
-            (item?.token_ordered ?? "") + " " + (item?.token_symbol ?? ""),
+            tokenFormatter(item?.token_ordered) +
+            " " +
+            (item?.token_ordered != null ? item?.token_symbol : ""),
           "Confirmed Payment":
             (item?.confirmed_payment != null ? item?.token_base_currency : "") +
             "" +
-            (item?.confirmed_payment != null
-              ? parseFloat(item.confirmed_payment).toFixed(2)
-              : ""),
+            amountFormatter(item?.confirmed_payment),
           "Tokens confirmed":
-            (item?.confirmed_tokens != null ? item?.confirmed_tokens : "") +
+            tokenFormatter(item?.confirmed_tokens) +
             " " +
             (item?.confirmed_tokens != null ? item?.token_symbol : ""),
           "Token Price":
-            (item?.token_base_currency ?? "") +
+            (item?.token_price != null ? item?.token_base_currency : "") +
             "" +
-            (item?.token_price != null
-              ? parseFloat(item.token_price).toFixed(2)
-              : ""),
+            amountFormatter(item?.token_price),
           "Payment reference": item?.payment_reference ?? "",
           TxHash: item?.transaction_hash ?? "",
         }));
@@ -799,20 +788,18 @@ const getTokenRedemptionOrderAsCSV = async (
             ? dateTime.formatDate(item?.creation_date)
             : "",
           "Tokens ordered":
-            (item?.token_ordered ?? "") + " " + (item?.token_symbol ?? ""),
+            tokenFormatter(item?.token_ordered) +
+            " " +
+            (item?.token_ordered != null ? item?.token_symbol : ""),
           "Token price":
-            (item?.token_base_currency ?? "") +
+            (item?.token_price != null ? item?.token_base_currency : "") +
             "" +
-            (item?.token_price != null
-              ? parseFloat(item.token_price).toFixed(2)
-              : ""),
+            amountFormatter(item?.token_price),
           "Token price time": item?.token_price_time ?? "",
           "Amount to pay":
-            (item?.token_base_currency ?? "") +
+            (item?.amount_to_pay != null ? item?.token_base_currency : "") +
             "" +
-            (item?.amount_to_pay != null
-              ? parseFloat(item.amount_to_pay).toFixed(2)
-              : ""),
+            amountFormatter(item?.amount_to_pay),
           "Order fulfillment":
             item?.fulfilled_by === "issuer"
               ? "Fulfilled by Issuer"
@@ -832,20 +819,18 @@ const getTokenRedemptionOrderAsCSV = async (
             ? dateTime.formatDate(item?.creation_date)
             : "",
           "Tokens ordered":
-            (item?.token_ordered ?? "") + " " + (item?.token_symbol ?? ""),
+            tokenFormatter(item?.token_ordered) +
+            " " +
+            (item?.token_ordered != null ? item?.token_symbol : ""),
           "Token Price":
-            (item?.token_base_currency ?? "") +
+            (item?.token_price != null ? item?.token_base_currency : "") +
             "" +
-            (item?.token_price != null
-              ? parseFloat(item.token_price).toFixed(2)
-              : ""),
+            amountFormatter(item?.token_price),
           "Token price time": item?.token_price_time ?? "",
           "Amount to pay":
-            (item?.token_base_currency ?? "") +
+            (item?.amount_to_pay != null ? item?.token_base_currency : "") +
             "" +
-            (item?.amount_to_pay != null
-              ? parseFloat(item.amount_to_pay).toFixed(2)
-              : ""),
+            amountFormatter(item?.amount_to_pay),
         }));
     }
     /* For Investor */
@@ -860,20 +845,18 @@ const getTokenRedemptionOrderAsCSV = async (
             ? dateTime.formatDate(item?.creation_date)
             : "",
           "Tokens ordered":
-            (item?.token_ordered ?? "") + " " + (item?.token_symbol ?? ""),
+            tokenFormatter(item?.token_ordered) +
+            " " +
+            (item?.token_ordered != null ? item?.token_symbol : ""),
           "Token Price":
-            (item?.token_base_currency ?? "") +
+            (item?.token_price != null ? item?.token_base_currency : "") +
             "" +
-            (item?.token_price != null
-              ? parseFloat(item.token_price).toFixed(2)
-              : ""),
+            amountFormatter(item?.token_price),
           "Token price time": item?.token_price_time ?? "",
           "Amount to receive":
-            (item?.token_base_currency ?? "") +
+            (item?.amount_to_pay != null ? item?.token_base_currency : "") +
             "" +
-            (item?.amount_to_pay != null
-              ? parseFloat(item.amount_to_pay).toFixed(2)
-              : ""),
+            amountFormatter(item?.amount_to_pay),
         }));
     }
 
