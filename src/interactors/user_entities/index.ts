@@ -13,6 +13,7 @@ import {
   getInvestorListCSVType,
   getInvestorListType,
 } from "@types";
+import { tokenFormatter } from "utils/formater";
 
 const getInvestorCountForQualification = async ({
   entity_type_id, // Investor
@@ -302,9 +303,12 @@ const getInvestorsListAsCSV = async (options: getInvestorListCSVType) => {
           "Email id": item?.email,
           Type: item?.investor_type_name ?? "",
           Country: item?.country_name ?? "",
-          Balance: item?.balance ?? "",
-          Pending: item?.pending ?? "",
-          Available: item?.available ?? "",
+          Balance:
+            tokenFormatter(item?.balance) +
+            " " +
+            (item?.balance != null ? item?.token_symbol : ""),
+          Pending: tokenFormatter(item?.pending),
+          Available: tokenFormatter(item?.available),
           Wallet: item?.wallet ?? "",
           "Wallet provider": item?.wallet_type ?? "",
           "Last Transaction": item?.last_transaction
@@ -323,11 +327,11 @@ const getInvestorsListAsCSV = async (options: getInvestorListCSVType) => {
           Type: item?.investor_type_name ?? "",
           Country: item?.country_name ?? "",
           Balance:
-            (item?.balance ?? "") +
+            tokenFormatter(item?.balance) +
             " " +
             (item?.balance != null ? item?.token_symbol : ""),
-          Pending: item?.pending ?? "",
-          Available: item?.available ?? "",
+          Pending: tokenFormatter(item?.pending),
+          Available: tokenFormatter(item?.available),
           Wallet: item?.wallet ?? "",
           "Wallet provider": item?.wallet_type ?? "",
           "Last Transaction": item?.last_transaction
