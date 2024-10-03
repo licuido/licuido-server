@@ -432,20 +432,27 @@ export const getInvestorTokenHoldingsQuery = (user_entity_id?: string) => {
   aggregated_balances AS (
     SELECT
       tor.token_offering_id,
+      tof.base_currency,
       tt.updated_at::date AS transaction_date,
-      COALESCE(SUM(tt.sender_balance), 0) AS sender_balance
+      COALESCE(tt.sender_balance, 0) AS sender_balance,
+      ROW_NUMBER() OVER (
+        PARTITION BY
+          tor.token_offering_id,
+          tof.base_currency
+        ORDER BY
+          tt.updated_at DESC
+      ) AS rn
     FROM
       token_transactions tt
       INNER JOIN token_orders tor ON tt.order_id = tor.id
+      INNER JOIN token_offerings tof ON tor.token_offering_id = tof.id
     WHERE
       tt.status_id = 2
       AND tor.receiver_entity_id = '${user_entity_id}'
-    GROUP BY
-      tor.token_offering_id,
-      tt.updated_at::date
   )
 SELECT
   token_offering_id,
+  base_currency,
   JSON_AGG(
     JSON_BUILD_OBJECT(
       'date',
@@ -456,8 +463,10 @@ SELECT
   ) AS aggregated_balance_json
 FROM
   aggregated_balances
+  WHERE rn = 1
 GROUP BY
-  token_offering_id
+  token_offering_id,
+  base_currency
 ORDER BY
   token_offering_id`;
 
