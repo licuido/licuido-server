@@ -201,8 +201,7 @@ from
       )
     ORDER BY
       tv.start_date DESC,
-      tv.start_time DESC,
-      tv.updated_at DESC
+      tv.start_time DESC
     LIMIT
       1
   ) v ON true
