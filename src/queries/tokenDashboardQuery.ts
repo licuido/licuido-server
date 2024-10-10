@@ -177,6 +177,7 @@ export const getTokenStatusQuery = (token_offering_id?: string) => {
   ast_t.url AS token_logo_url,
   tof.offer_status_id AS status_id,
   mtos.name AS status_name,
+  COALESCE(v.bid_price, null) AS bid_price,
   COALESCE(v.valuation_price, tof.offering_price) AS valuation_price
 from
   token_offerings AS tof
@@ -185,7 +186,8 @@ from
   INNER JOIN master_token_offering_status AS mtos ON tof.offer_status_id = mtos.id
   LEFT JOIN LATERAL (
     SELECT
-      tv.valuation_price
+      tv.valuation_price,
+      tv.bid_price
     FROM
       token_valuations AS tv
     WHERE
@@ -199,7 +201,8 @@ from
       )
     ORDER BY
       tv.start_date DESC,
-      tv.start_time DESC
+      tv.start_time DESC,
+      tv.updated_at DESC
     LIMIT
       1
   ) v ON true
