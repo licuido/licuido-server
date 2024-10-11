@@ -32,7 +32,7 @@ export const sequelize = new Sequelize(
     host: dbConfig.host,
     dialect: dbConfig.dialect,
     port: dbConfig.port,
-    timezone: "Asia/Kolkata",
+    // timezone: "Asia/Kolkata",
     dialectOptions: {
       ssl: {
         require: true,
